@@ -2,196 +2,99 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>أبو طارق للأدوات المنزلية | الإسكندرية</title>
-  <meta name="description" content="أبو طارق للأدوات المنزلية في الإسكندرية — أدوات منزلية، أطقم سفرة، شاي وقهوة، أكواب وكاسات وأدوات مطبخ.">
-  <meta name="theme-color" content="#171717">
-  <meta property="og:title" content="أبو طارق للأدوات المنزلية">
-  <meta property="og:description" content="كل احتياجات بيتك في مكان واحد">
-  <meta property="og:type" content="website">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='85'%3A%3C/text%3E%3C/svg%3E">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>أبو طارق للأدوات المنزلية</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="header" id="top">
-    <div class="container nav">
-      <a class="brand" href="#top" aria-label="أبو طارق للأدوات المنزلية">
-        <span class="brand-mark">أ</span>
-        <span><b>أبو طارق</b><small>للأدوات المنزلية</small></span>
-      </a>
-      <button class="menu-btn" id="menuBtn" aria-label="فتح القائمة">☰</button>
-      <nav id="navLinks">
-        <a href="#home">الرئيسية</a>
-        <a href="#categories">الأقسام</a>
-        <a href="#products">المنتجات</a>
-        <a href="#about">عن أبو طارق</a>
-        <a href="#branches">فروعنا</a>
-        <a href="#contact">تواصل معنا</a>
-      </nav>
-      <a class="nav-cta" href="#contact">تواصل معنا</a>
-    </div>
-  </header>
+<header class="topbar">
+  <div class="container nav">
+    <a class="brand" href="#home"><img src="assets/logo.png" alt="أبو طارق"></a>
+    <nav>
+      <a href="#home">الرئيسية</a>
+      <a href="#categories">الأقسام</a>
+      <a href="#products">الأصناف</a>
+      <a href="#branches">الفروع</a>
+      <a href="#contact">تواصل معنا</a>
+    </nav>
+    <a class="wa small" href="https://wa.me/201551604163" target="_blank">واتساب</a>
+  </div>
+</header>
 
-  <main>
-    <section class="hero" id="home">
-      <div class="hero-glow"></div>
-      <div class="container hero-grid">
-        <div class="hero-copy">
-          <span class="eyebrow">أدوات منزلية • سفرة • مطبخ</span>
-          <h1>كل احتياجات <span>بيتك</span><br>في مكان واحد</h1>
-          <p>أبو طارق للأدوات المنزلية — تشكيلة متنوعة من الأدوات المنزلية، أطقم السفرة والمشروبات وأدوات المطبخ، في فروعنا بالإسكندرية.</p>
-          <div class="hero-actions">
-            <a class="btn primary" href="#products">شوف المنتجات <span>←</span></a>
-            <a class="btn ghost" href="#branches">اعرف فروعنا</a>
-          </div>
-          <div class="hero-trust">
-            <span>✓ تشكيلة متنوعة</span>
-            <span>✓ فرعان في الإسكندرية</span>
-            <span>✓ تواصل مباشر</span>
-          </div>
-        </div>
-        <div class="hero-art" aria-label="منتجات منزلية">
-          <div class="art-card back"><span>☕</span><b>شاي وقهوة</b></div>
-          <div class="art-card main"><div class="plate">◌</div><span>🍽️</span><b>أطقم سفرة</b></div>
-          <div class="art-card front"><span>🥛</span><b>أكواب وكاسات</b></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="categories section" id="categories">
-      <div class="container">
-        <div class="section-head">
-          <div><span class="eyebrow">اختار اللي يناسبك</span><h2>أقسام المحل</h2></div>
-          <p>تصفح الأقسام بسرعة وشوف المنتجات المتاحة.</p>
-        </div>
-        <div class="category-grid">
-          <button class="category-card" data-filter="سفرة"><span>🍽️</span><b>أطقم السفرة</b><small>أطقم وأدوات تقديم</small></button>
-          <button class="category-card" data-filter="شاي وقهوة"><span>☕</span><b>شاي وقهوة</b><small>أطقم وأكواب</small></button>
-          <button class="category-card" data-filter="أكواب وكاسات"><span>🥛</span><b>أكواب وكاسات</b><small>اختيارات متنوعة</small></button>
-          <button class="category-card" data-filter="مطبخ"><span>🍳</span><b>أدوات المطبخ</b><small>احتياجات يومية</small></button>
-          <button class="category-card" data-filter="أواني طهي"><span>🥘</span><b>أواني الطهي</b><small>أدوات وأواني</small></button>
-          <button class="category-card" data-filter="ميلامين"><span>🟩</span><b>أطقم الميلامين</b><small>للاستخدام المنزلي</small></button>
-        </div>
-      </div>
-    </section>
-
-    <section class="products section" id="products">
-      <div class="container">
-        <div class="section-head">
-          <div><span class="eyebrow">تشكيلة من منتجاتنا</span><h2>منتجات مميزة</h2></div>
-          <p>الأسعار والتوافر يتم تأكيدهما من المحل قبل الطلب.</p>
-        </div>
-        <div class="product-tools">
-          <div class="search"><span>⌕</span><input id="search" type="search" placeholder="ابحث عن منتج..."></div>
-          <div class="filters" id="filters">
-            <button class="active" data-filter="الكل">الكل</button>
-            <button data-filter="سفرة">سفرة</button>
-            <button data-filter="شاي وقهوة">شاي وقهوة</button>
-            <button data-filter="أكواب وكاسات">أكواب وكاسات</button>
-            <button data-filter="مطبخ">مطبخ</button>
-            <button data-filter="أواني طهي">أواني طهي</button>
-            <button data-filter="ميلامين">ميلامين</button>
-          </div>
-        </div>
-        <div class="product-grid" id="productGrid"></div>
-        <div class="empty" id="empty">مفيش منتجات مطابقة للبحث حاليًا.</div>
-      </div>
-    </section>
-
-    <section class="about section" id="about">
-      <div class="container about-grid">
-        <div class="about-visual">
-          <div class="about-box"><span>أبو طارق</span><strong>للأدوات<br>المنزلية</strong><small>الإسكندرية</small></div>
-        </div>
-        <div>
-          <span class="eyebrow">عن المحل</span>
-          <h2>اختيارات لبيتك<br>في مكان واحد</h2>
-          <p>أبو طارق للأدوات المنزلية محل متخصص في تشكيلة متنوعة من احتياجات البيت والمطبخ، ومنها أطقم السفرة والمشروبات والأكواب والكاسات وأدوات المطبخ وأواني الطهي وغيرها من مستلزمات المنزل.</p>
-          <p>تقدر تشوف المنتجات، تعرف الفروع، وتتواصل معنا مباشرة للاستفسار عن المنتج والتوافر والسعر.</p>
-          <div class="features">
-            <div><b>01</b><span><strong>تشكيلة متنوعة</strong><small>اختيارات متعددة للبيت والمطبخ</small></span></div>
-            <div><b>02</b><span><strong>فروع في الإسكندرية</strong><small>الفرع الأول وفرع كوبري الناموس</small></span></div>
-            <div><b>03</b><span><strong>تواصل مباشر</strong><small>اتصل أو راسلنا للاستفسار</small></span></div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="branches section" id="branches">
-      <div class="container">
-        <div class="section-head">
-          <div><span class="eyebrow">زورنا</span><h2>فروعنا</h2></div>
-          <p>اختار الفرع المناسب وافتح موقعه على الخريطة.</p>
-        </div>
-        <div class="branch-grid">
-          <article class="branch-card">
-            <div class="branch-top"><span class="branch-number">01</span><span class="pin">⌖</span></div>
-            <h3>الفرع الأول</h3>
-            <p>افتح موقع الفرع على خرائط Google من الرابط الرسمي.</p>
-            <a class="btn primary full" target="_blank" rel="noopener" href="https://maps.app.goo.gl/a5RCvCy5qVZrkT2n7_gst=ac">فتح الموقع على الخريطة ↗</a>
-          </article>
-          <article class="branch-card featured-branch">
-            <div class="branch-top"><span class="branch-number">02</span><span class="pin">⌖</span></div>
-            <h3>فرع كوبري الناموس</h3>
-            <p>كوبري الناموس – 9 شارع فاطمة الزهراء، متفرع من شارع المواسير، الإسكندرية.</p>
-            <a class="btn primary full" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=كوبري%20الناموس%209%20شارع%20فاطمة%20الزهراء%20متفرع%20من%20شارع%20المواسير%20الإسكندرية">البحث على الخريطة ↗</a>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section class="contact section" id="contact">
-      <div class="container contact-card">
-        <div>
-          <span class="eyebrow">خلينا نتكلم</span>
-          <h2>عايز تعرف سعر أو توافر منتج؟</h2>
-          <p>تواصل معنا مباشرة للاستفسار عن المنتجات والفروع.</p>
-        </div>
-        <div class="contact-actions">
-          <a class="contact-line" href="tel:01551604163"><span>☎</span><div><small>اتصل الآن</small><b>01551604163</b></div></a>
-          <a class="contact-line" href="tel:01223599165"><span>☎</span><div><small>اتصل الآن</small><b>01223599165</b></div></a>
-          <a class="contact-line" href="tel:01201344419"><span>☎</span><div><small>رقم المحفظة / للتواصل</small><b>01201344419</b></div></a>
-          <a class="contact-line" href="tel:035133602"><span>☎</span><div><small>أرضي</small><b>035133602</b></div></a>
-        </div>
-      </div>
-    </section>
-
-    <section class="social section">
-      <div class="container social-inner">
-        <div><span class="eyebrow">تابع الجديد</span><h2>أبو طارق على السوشيال ميديا</h2></div>
-        <div class="social-links">
-          <a target="_blank" rel="noopener" href="https://www.facebook.com/profile.php?id=61587289863971"><span>f</span> Facebook ↗</a>
-          <a target="_blank" rel="noopener" href="https://www.instagram.com/abotarekstore"><span>◎</span> Instagram ↗</a>
-          <a target="_blank" rel="noopener" href="https://www.tiktok.com/@abo.tarek.store2"><span>♪</span> TikTok ↗</a>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <footer class="footer">
-    <div class="container footer-grid">
-      <div class="brand footer-brand"><span class="brand-mark">أ</span><span><b>أبو طارق</b><small>للأدوات المنزلية</small></span></div>
-      <div><b>روابط سريعة</b><a href="#home">الرئيسية</a><a href="#products">المنتجات</a><a href="#branches">الفروع</a><a href="#contact">تواصل معنا</a></div>
-      <div><b>تواصل</b><a href="tel:01551604163">01551604163</a><a href="tel:01223599165">01223599165</a><a href="tel:01201344419">01201344419</a><a href="tel:035133602">035133602</a></div>
-    </div>
-    <div class="container copyright">© أبو طارق للأدوات المنزلية — جميع الحقوق محفوظة</div>
-  </footer>
-
-  <div class="modal" id="modal" aria-hidden="true">
-    <div class="modal-box">
-      <button class="modal-close" id="modalClose" aria-label="إغلاق">×</button>
-      <div class="modal-icon" id="modalIcon">🍽️</div>
-      <span class="eyebrow" id="modalCategory">القسم</span>
-      <h3 id="modalTitle">اسم المنتج</h3>
-      <p id="modalDesc">وصف المنتج</p>
-      <div class="modal-note">للاستفسار عن السعر والتوافر، تواصل معنا مباشرة.</div>
-      <a class="btn primary full" href="#contact" id="modalContact">استفسر عن المنتج</a>
+<main>
+<section id="home" class="hero">
+  <div class="hero-overlay"></div>
+  <div class="container hero-content">
+    <img class="hero-logo" src="assets/logo.png" alt="أبو طارق للأدوات المنزلية">
+    <h1>كل احتياجات البيت في مكان واحد</h1>
+    <p>أدوات منزلية، سفرة، مطبخ، شاي وقهوة، أكواب وكاسات وأواني طهي.</p>
+    <div class="actions">
+      <a class="btn primary" href="#products">شوف الأصناف</a>
+      <a class="btn" href="https://wa.me/201551604163" target="_blank">اسألنا على واتساب</a>
     </div>
   </div>
+</section>
 
-  <script src="script.js"></script>
+<section id="categories" class="section">
+  <div class="container">
+    <div class="section-head"><h2>الأقسام</h2><p>اختار القسم اللي بتدور عليه.</p></div>
+    <div id="categoryGrid" class="category-grid"></div>
+  </div>
+</section>
+
+<section id="products" class="section alt">
+  <div class="container">
+    <div class="section-head">
+      <h2>الأصناف</h2>
+      <p>الأصناف المعروضة هنا بتتحدث من لوحة الإدارة.</p>
+    </div>
+    <div id="filters" class="filters"></div>
+    <div id="productsGrid" class="products-grid"></div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container about">
+    <div>
+      <div class="section-head"><h2>عن أبو طارق</h2></div>
+      <p>أبو طارق للأدوات المنزلية يوفر تشكيلة متنوعة من مستلزمات البيت والاستخدام اليومي، مع تحديث مستمر للأصناف حسب المتاح في المحل.</p>
+    </div>
+    <img src="assets/storefront.jpg" alt="واجهة محل أبو طارق">
+  </div>
+</section>
+
+<section id="branches" class="section alt">
+  <div class="container">
+    <div class="section-head"><h2>فروعنا</h2></div>
+    <div class="branch-grid">
+      <article class="branch">
+        <h3>فرع كوبري الناموس</h3>
+        <a class="btn" target="_blank" href="https://maps.app.goo.gl/eSGccYFsFV8KmgCF7">فتح على الخريطة</a>
+      </article>
+      <article class="branch">
+        <h3>فرع العوايد</h3>
+        <a class="btn" target="_blank" href="https://maps.app.goo.gl/UuSj8ifqPBFMFxDY6">فتح على الخريطة</a>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="section contact">
+  <div class="container">
+    <div class="section-head"><h2>تواصل معنا</h2></div>
+    <div class="phone-grid">
+      <a href="tel:01223599165">01223599165</a>
+      <a href="tel:01551604163">01551604163</a>
+      <a href="tel:01222474380">01222474380</a>
+      <a href="tel:01201344419">01201344419</a>
+      <a href="tel:035133602">035133602</a>
+    </div>
+    <a class="wa big" href="https://wa.me/201551604163" target="_blank">تواصل معنا على واتساب: 01551604163</a>
+  </div>
+</section>
+</main>
+
+<footer><div class="container">© أبو طارق للأدوات المنزلية</div></footer>
+<script src="app.js"></script>
 </body>
 </html>
