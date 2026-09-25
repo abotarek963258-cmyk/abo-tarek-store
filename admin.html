@@ -362,17 +362,17 @@ async function login() {
 
     const data = await api("list");
 
-    if (!Array.isArray(data)) {
+if (!Array.isArray(data)) {
 
-      ADMIN_KEY = "";
+  ADMIN_KEY = "";
 
-      showMessage(
-        "مفتاح الإدارة غير صحيح.",
-        "error"
-      );
+  showMessage(
+    "رد السيرفر: " + JSON.stringify(data),
+    "error"
+  );
 
-      return;
-    }
+  return;
+ }
 
     document.getElementById("loginCard").style.display = "none";
 
