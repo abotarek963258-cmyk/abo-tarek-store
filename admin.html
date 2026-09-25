@@ -1,67 +1,869 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>لوحة إدارة أبو طارق</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
-<style>
-body{margin:0;background:#f4f1ea;color:#18283b;font-family:Cairo,Tahoma,sans-serif}.wrap{width:min(850px,92%);margin:40px auto}.box{background:#fff;border-radius:20px;padding:25px;box-shadow:0 10px 35px #18283b12;margin-bottom:18px}h1{margin-top:0}label{display:block;font-weight:700;margin:12px 0 6px}input,select,textarea{width:100%;box-sizing:border-box;padding:11px;border:1px solid #d8d1c5;border-radius:10px;font:inherit}textarea{min-height:90px}button{border:0;border-radius:10px;padding:11px 18px;font:inherit;font-weight:800;cursor:pointer;background:#182f48;color:#fff;margin-top:14px}.danger{background:#b42318}.muted{color:#687583;font-size:14px}.row{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:600px){.row{grid-template-columns:1fr}}.item{border-top:1px solid #eee;padding:15px 0;display:flex;justify-content:space-between;gap:15px}.status{margin-top:12px;font-weight:700}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <title>لوحة إدارة أبو طارق</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      color: #14263d;
+    }
+
+    .container {
+      width: min(1100px, 94%);
+      margin: auto;
+    }
+
+    header {
+      background: #14263d;
+      color: white;
+      padding: 20px 0;
+      margin-bottom: 25px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 25px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 14px;
+      padding: 22px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 15px rgba(0,0,0,.07);
+    }
+
+    h2 {
+      margin-top: 0;
+    }
+
+    label {
+      display: block;
+      margin: 12px 0 6px;
+      font-weight: bold;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #d7dce1;
+      border-radius: 8px;
+      font-size: 15px;
+      font-family: inherit;
+    }
+
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    button {
+      border: 0;
+      border-radius: 8px;
+      padding: 11px 16px;
+      cursor: pointer;
+      font-size: 14px;
+      font-family: inherit;
+      margin: 5px;
+    }
+
+    .primary {
+      background: #14263d;
+      color: white;
+    }
+
+    .edit {
+      background: #e8eef5;
+      color: #14263d;
+    }
+
+    .toggle {
+      background: #fff3cd;
+      color: #664d03;
+    }
+
+    .delete {
+      background: #f8d7da;
+      color: #842029;
+    }
+
+    .products {
+      display: grid;
+      gap: 15px;
+    }
+
+    .product {
+      border: 1px solid #e2e6ea;
+      border-radius: 12px;
+      padding: 15px;
+      display: grid;
+      grid-template-columns: 100px 1fr;
+      gap: 15px;
+      align-items: center;
+    }
+
+    .product img,
+    .placeholder {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 10px;
+      background: #eef1f4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #777;
+      text-align: center;
+    }
+
+    .product h3 {
+      margin: 0 0 7px;
+    }
+
+    .product p {
+      margin: 5px 0;
+      color: #666;
+    }
+
+    .status {
+      display: inline-block;
+      padding: 4px 9px;
+      border-radius: 20px;
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+
+    .active {
+      background: #d1e7dd;
+      color: #0f5132;
+    }
+
+    .inactive {
+      background: #f8d7da;
+      color: #842029;
+    }
+
+    .actions {
+      margin-top: 10px;
+    }
+
+    #message {
+      padding: 12px;
+      border-radius: 8px;
+      display: none;
+      margin-bottom: 15px;
+    }
+
+    .success {
+      display: block !important;
+      background: #d1e7dd;
+      color: #0f5132;
+    }
+
+    .error {
+      display: block !important;
+      background: #f8d7da;
+      color: #842029;
+    }
+
+    @media (max-width: 600px) {
+      .product {
+        grid-template-columns: 1fr;
+      }
+
+      .product img,
+      .placeholder {
+        width: 100%;
+        height: 180px;
+      }
+    }
+  </style>
 </head>
+
 <body>
-<div class="wrap">
-  <div class="box">
-    <h1>لوحة إدارة الأصناف</h1>
-    <p class="muted">دي لوحة الإدارة المرتبطة بجدول Google Sheets. الأسعار مش موجودة.</p>
-    <label>رابط الـ Web App</label>
-    <input id="api" value="https://script.google.com/macros/s/AKfycbyw7k-K9akpV08vSjXbDmZ8khpHH9LOq2G9WLDHT2-iOJiTThN-kvEaCKI0-wKWu7hY/exec">
+
+<header>
+  <div class="container">
+    <h1>لوحة إدارة أبو طارق للأدوات المنزلية</h1>
+  </div>
+</header>
+
+<main class="container">
+
+  <div id="message"></div>
+
+  <!-- تسجيل الدخول -->
+  <section class="card" id="loginCard">
+
+    <h2>دخول الإدارة</h2>
+
     <label>مفتاح الإدارة</label>
-    <input id="key" type="password" placeholder="اكتب مفتاح الإدارة">
-  </div>
-  <div class="box">
-    <h2>إضافة صنف</h2>
-    <div class="row">
-      <div><label>اسم الصنف</label><input id="name"></div>
-      <div><label>القسم</label><select id="category">
-        <option>السفرة</option><option>الشاي والقهوة</option><option>الأكواب والكاسات</option><option>المطبخ</option><option>أواني الطهي</option><option>الميلامين</option>
-      </select></div>
+
+    <input
+      id="key"
+      type="password"
+      placeholder="اكتب مفتاح الإدارة"
+    >
+
+    <button class="primary" onclick="login()">
+      دخول
+    </button>
+
+  </section>
+
+
+  <!-- إضافة / تعديل -->
+  <section class="card" id="formCard" style="display:none">
+
+    <h2 id="formTitle">إضافة منتج جديد</h2>
+
+    <input type="hidden" id="productId">
+
+    <label>اسم المنتج</label>
+
+    <input
+      id="name"
+      type="text"
+      placeholder="مثال: طقم كوبايات"
+    >
+
+    <label>القسم</label>
+
+    <input
+      id="category"
+      type="text"
+      placeholder="مثال: الأكواب والكاسات"
+    >
+
+    <label>رابط الصورة</label>
+
+    <input
+      id="image"
+      type="url"
+      placeholder="https://..."
+    >
+
+    <label>الوصف</label>
+
+    <textarea
+      id="description"
+      placeholder="اكتب وصف المنتج"
+    ></textarea>
+
+    <button class="primary" onclick="saveProduct()">
+      حفظ المنتج
+    </button>
+
+    <button
+      class="edit"
+      onclick="cancelEdit()"
+      id="cancelBtn"
+      style="display:none"
+    >
+      إلغاء التعديل
+    </button>
+
+  </section>
+
+
+  <!-- المنتجات -->
+  <section class="card" id="productsCard" style="display:none">
+
+    <h2>المنتجات</h2>
+
+    <div id="products" class="products">
+      جاري تحميل المنتجات...
     </div>
-    <label>رابط صورة الصنف (اختياري)</label><input id="image">
-    <label>وصف مختصر (اختياري)</label><textarea id="description"></textarea>
-    <button onclick="addProduct()">إضافة الصنف</button>
-    <div id="status" class="status"></div>
-  </div>
-  <div class="box">
-    <h2>الأصناف الحالية</h2>
-    <div id="list" class="muted">جاري التحميل...</div>
-  </div>
-</div>
+
+  </section>
+
+</main>
+
+
 <script>
-const api=document.getElementById("api"), key=document.getElementById("key"), statusEl=document.getElementById("status"), list=document.getElementById("list");
-function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));}
-async function load(){
-  try{
-    const r=await fetch(api.value,{cache:"no-store"}); const data=await r.json();
-    list.innerHTML=data.length?data.map(p=>`<div class="item"><div><b>${esc(p.name)}</b><div class="muted">${esc(p.category||"")}</div></div><button class="danger" onclick="removeProduct('${esc(p.id)}')">حذف</button></div>`).join(""):"لا توجد أصناف حاليًا.";
-  }catch(e){list.textContent="تعذر تحميل الأصناف."}
+
+const API_URL =
+  "https://script.google.com/macros/s/AKfycbyw7k-K9akpV08vSjXbDmZ8khpHH9LOq2G9WLDHT2-iOJiTThN-kvEaCKI0-wKWu7hY/exec";
+
+
+let ADMIN_KEY = "";
+
+let products = [];
+
+
+function showMessage(text, type) {
+
+  const el = document.getElementById("message");
+
+  el.textContent = text;
+
+  el.className = type;
+
 }
-async function addProduct(){
-  statusEl.textContent="جاري الإضافة...";
-  const product={name:document.getElementById("name").value.trim(),category:document.getElementById("category").value,image:document.getElementById("image").value.trim(),description:document.getElementById("description").value.trim()};
-  if(!product.name){statusEl.textContent="اكتب اسم الصنف أولًا.";return;}
-  const r=await fetch(api.value,{method:"POST",body:JSON.stringify({action:"add",key:key.value,product})});
-  const d=await r.json(); statusEl.textContent=d.ok?"تمت إضافة الصنف.":"حصلت مشكلة: "+(d.error||"غير معروف");
-  if(d.ok){document.getElementById("name").value="";document.getElementById("image").value="";document.getElementById("description").value="";load();}
+
+
+async function api(action, extra = {}) {
+
+  const response = await fetch(API_URL, {
+
+    method: "POST",
+
+    headers: {
+      "Content-Type": "text/plain;charset=utf-8"
+    },
+
+    body: JSON.stringify({
+
+      key: ADMIN_KEY,
+
+      action: action,
+
+      ...extra
+
+    })
+
+  });
+
+  return await response.json();
+
 }
-async function removeProduct(id){
-  if(!confirm("متأكد إنك عايز تحذف الصنف؟")) return;
-  const r=await fetch(api.value,{method:"POST",body:JSON.stringify({action:"delete",key:key.value,id})});
-  const d=await r.json(); statusEl.textContent=d.ok?"تم الحذف.":"حصلت مشكلة: "+(d.error||"غير معروف"); load();
+
+
+async function login() {
+
+  const key =
+    document.getElementById("key").value.trim();
+
+  if (!key) {
+
+    showMessage(
+      "اكتب مفتاح الإدارة أولًا.",
+      "error"
+    );
+
+    return;
+  }
+
+  ADMIN_KEY = key;
+
+  try {
+
+    const data = await api("list");
+
+    if (!Array.isArray(data)) {
+
+      ADMIN_KEY = "";
+
+      showMessage(
+        "مفتاح الإدارة غير صحيح.",
+        "error"
+      );
+
+      return;
+    }
+
+    document.getElementById("loginCard").style.display = "none";
+
+    document.getElementById("formCard").style.display = "block";
+
+    document.getElementById("productsCard").style.display = "block";
+
+    products = data;
+
+    renderProducts();
+
+    showMessage(
+      "تم تسجيل الدخول بنجاح.",
+      "success"
+    );
+
+  } catch (error) {
+
+    ADMIN_KEY = "";
+
+    showMessage(
+      "حصل خطأ في الاتصال بالسيرفر.",
+      "error"
+    );
+
+    console.error(error);
+  }
+
 }
-load();
+
+
+async function saveProduct() {
+
+  const name =
+    document.getElementById("name").value.trim();
+
+  const category =
+    document.getElementById("category").value.trim();
+
+  const image =
+    document.getElementById("image").value.trim();
+
+  const description =
+    document.getElementById("description").value.trim();
+
+  if (!name) {
+
+    showMessage(
+      "اكتب اسم المنتج.",
+      "error"
+    );
+
+    return;
+  }
+
+
+  const id =
+    document.getElementById("productId").value;
+
+
+  try {
+
+    let data;
+
+
+    if (id) {
+
+      data = await api("edit", {
+
+        id: id,
+
+        product: {
+          name,
+          category,
+          image,
+          description
+        }
+
+      });
+
+    } else {
+
+      data = await api("add", {
+
+        product: {
+          name,
+          category,
+          image,
+          description
+        }
+
+      });
+
+    }
+
+
+    if (!data.ok) {
+
+      showMessage(
+        "حصل خطأ: " + (data.error || ""),
+        "error"
+      );
+
+      return;
+    }
+
+
+    showMessage(
+      id
+        ? "تم تعديل المنتج بنجاح."
+        : "تم إضافة المنتج بنجاح.",
+      "success"
+    );
+
+
+    clearForm();
+
+    await loadProducts();
+
+  } catch (error) {
+
+    console.error(error);
+
+    showMessage(
+      "تعذر الاتصال بالسيرفر.",
+      "error"
+    );
+
+  }
+
+}
+
+
+async function loadProducts() {
+
+  try {
+
+    const data = await api("list");
+
+    if (Array.isArray(data)) {
+
+      products = data;
+
+      renderProducts();
+
+    }
+
+  } catch (error) {
+
+    console.error(error);
+
+    showMessage(
+      "تعذر تحميل المنتجات.",
+      "error"
+    );
+
+  }
+
+}
+
+
+function renderProducts() {
+
+  const el =
+    document.getElementById("products");
+
+
+  if (!products.length) {
+
+    el.innerHTML =
+      "<p>لا توجد منتجات حاليًا.</p>";
+
+    return;
+  }
+
+
+  el.innerHTML = products.map(p => {
+
+    const active =
+      String(p.active).toLowerCase() !== "false";
+
+
+    return `
+
+      <article class="product">
+
+        ${
+          p.image
+
+            ? `<img
+                src="${escapeHtml(p.image)}"
+                alt="${escapeHtml(p.name)}"
+              >`
+
+            : `<div class="placeholder">
+                بدون صورة
+              </div>`
+        }
+
+
+        <div>
+
+          <span class="status ${
+            active
+              ? "active"
+              : "inactive"
+          }">
+
+            ${
+              active
+                ? "ظاهر على الموقع"
+                : "مخفي من الموقع"
+            }
+
+          </span>
+
+
+          <h3>
+            ${escapeHtml(p.name)}
+          </h3>
+
+
+          <p>
+            القسم:
+            ${escapeHtml(p.category || "-")}
+          </p>
+
+
+          <p>
+            ${escapeHtml(p.description || "")}
+          </p>
+
+
+          <div class="actions">
+
+            <button
+              class="edit"
+              onclick="editProduct('${escapeJs(p.id)}')"
+            >
+              تعديل
+            </button>
+
+
+            <button
+              class="toggle"
+              onclick="toggleProduct(
+                '${escapeJs(p.id)}',
+                ${active}
+              )"
+            >
+
+              ${
+                active
+                  ? "إخفاء"
+                  : "إظهار"
+              }
+
+            </button>
+
+
+            <button
+              class="delete"
+              onclick="deleteProduct('${escapeJs(p.id)}')"
+            >
+              حذف
+            </button>
+
+          </div>
+
+        </div>
+
+      </article>
+
+    `;
+
+  }).join("");
+
+}
+
+
+function editProduct(id) {
+
+  const p =
+    products.find(
+      item => String(item.id) === String(id)
+    );
+
+
+  if (!p) return;
+
+
+  document.getElementById("productId").value =
+    p.id;
+
+  document.getElementById("name").value =
+    p.name || "";
+
+  document.getElementById("category").value =
+    p.category || "";
+
+  document.getElementById("image").value =
+    p.image || "";
+
+  document.getElementById("description").value =
+    p.description || "";
+
+
+  document.getElementById("formTitle").textContent =
+    "تعديل المنتج";
+
+
+  document.getElementById("cancelBtn").style.display =
+    "inline-block";
+
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+
+}
+
+
+function cancelEdit() {
+
+  clearForm();
+
+}
+
+
+function clearForm() {
+
+  document.getElementById("productId").value =
+    "";
+
+  document.getElementById("name").value =
+    "";
+
+  document.getElementById("category").value =
+    "";
+
+  document.getElementById("image").value =
+    "";
+
+  document.getElementById("description").value =
+    "";
+
+
+  document.getElementById("formTitle").textContent =
+    "إضافة منتج جديد";
+
+
+  document.getElementById("cancelBtn").style.display =
+    "none";
+
+}
+
+
+async function toggleProduct(id, active) {
+
+  const newStatus = !active;
+
+
+  try {
+
+    const data = await api("toggle", {
+
+      id: id,
+
+      active: newStatus
+
+    });
+
+
+    if (!data.ok) {
+
+      showMessage(
+        "حصل خطأ أثناء تغيير حالة المنتج.",
+        "error"
+      );
+
+      return;
+    }
+
+
+    showMessage(
+      newStatus
+        ? "تم إظهار المنتج."
+        : "تم إخفاء المنتج.",
+      "success"
+    );
+
+
+    await loadProducts();
+
+  } catch (error) {
+
+    console.error(error);
+
+    showMessage(
+      "تعذر الاتصال بالسيرفر.",
+      "error"
+    );
+
+  }
+
+}
+
+
+async function deleteProduct(id) {
+
+  const confirmed =
+    confirm(
+      "هل أنت متأكد أنك تريد حذف هذا المنتج نهائيًا؟"
+    );
+
+
+  if (!confirmed) return;
+
+
+  try {
+
+    const data = await api("delete", {
+
+      id: id
+
+    });
+
+
+    if (!data.ok) {
+
+      showMessage(
+        "حصل خطأ أثناء الحذف.",
+        "error"
+      );
+
+      return;
+    }
+
+
+    showMessage(
+      "تم حذف المنتج.",
+      "success"
+    );
+
+
+    await loadProducts();
+
+  } catch (error) {
+
+    console.error(error);
+
+    showMessage(
+      "تعذر الاتصال بالسيرفر.",
+      "error"
+    );
+
+  }
+
+}
+
+
+function escapeHtml(value) {
+
+  return String(value ?? "").replace(
+    /[&<>"']/g,
+    function(m) {
+
+      return {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      }[m];
+
+    }
+  );
+
+}
+
+
+function escapeJs(value) {
+
+  return String(value ?? "")
+    .replace(/\\/g, "\\\\")
+    .replace(/'/g, "\\'");
+
+}
+
 </script>
+
 </body>
 </html>
