@@ -1,4 +1,3 @@
-```javascript
 const DATA_URL = "https://script.google.com/macros/s/AKfycbyw7k-K9akpV08vSjXbDmZ8khpHH9LOq2G9WLDHT2-iOJiTThN-kvEaCKI0-wKWu7hY/exec";
 
 const demoProducts = [
@@ -23,7 +22,6 @@ let products = [];
 let categories = [];
 let current = "الكل";
 
-
 function esc(s) {
   return String(s ?? "").replace(
     /[&<>"']/g,
@@ -37,9 +35,7 @@ function esc(s) {
   );
 }
 
-
 function buildCategories() {
-
   const fromProducts = products
     .map(p => String(p.category || "").trim())
     .filter(Boolean);
@@ -50,9 +46,7 @@ function buildCategories() {
   ])];
 }
 
-
 function renderCategories() {
-
   document.getElementById("categoryGrid").innerHTML =
     categories.map(c => `
       <div class="cat" onclick="selectCategory('${esc(c)}')">
@@ -61,9 +55,7 @@ function renderCategories() {
     `).join("");
 }
 
-
 function renderFilters() {
-
   document.getElementById("filters").innerHTML =
     ["الكل", ...categories].map(c => `
       <button
@@ -74,9 +66,7 @@ function renderFilters() {
     `).join("");
 }
 
-
 function renderProducts() {
-
   const el = document.getElementById("productsGrid");
 
   const list =
@@ -84,20 +74,14 @@ function renderProducts() {
       ? products
       : products.filter(p => String(p.category || "") === current);
 
-
   if (!list.length) {
-
     el.innerHTML =
       '<div class="empty">مفيش أصناف مضافة للقسم ده حاليًا.</div>';
-
     return;
   }
 
-
   el.innerHTML = list.map(p => `
-
     <article class="product">
-
       ${
         p.image
           ? `<img
@@ -109,21 +93,14 @@ function renderProducts() {
       }
 
       <div class="product-body">
-
         <h3>${esc(p.name)}</h3>
-
         <p>${esc(p.description || "")}</p>
-
       </div>
-
     </article>
-
   `).join("");
 }
 
-
 function selectCategory(c) {
-
   current = c;
 
   renderFilters();
@@ -137,7 +114,6 @@ function selectCategory(c) {
     });
 }
 
-
 async function load() {
 
   // نبدأ بالأصناف التجريبية مؤقتًا
@@ -148,4 +124,32 @@ async function load() {
     const r = await fetch(DATA_URL, {
       cache: "no-store"
     });
-```
+
+    if (!r.ok) {
+      throw new Error("HTTP " + r.status);
+    }
+
+    const data = await r.json();
+
+    if (Array.isArray(data)) {
+      products = data.filter(p => p.active !== false);
+    } else {
+      throw new Error("Invalid data");
+    }
+
+  } catch (e) {
+
+    console.warn(
+      "تعذر تحميل البيانات، سيتم عرض الأصناف التجريبية.",
+      e
+    );
+
+  }
+
+  buildCategories();
+  renderCategories();
+  renderFilters();
+  renderProducts();
+}
+
+load();
