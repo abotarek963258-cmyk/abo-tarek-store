@@ -1469,3 +1469,144 @@ footer{
   }
 
 }
+/* =========================
+   PREMIUM HEADER
+========================= */
+
+.site-header{
+  box-shadow:0 4px 18px rgba(24,40,59,.06);
+  border-bottom:1px solid rgba(230,222,212,.7);
+}
+
+.brand{
+  transition:transform .2s ease;
+}
+
+.brand:hover{
+  transform:translateY(-1px);
+}
+
+.brand-mark{
+  box-shadow:0 5px 14px rgba(199,100,22,.18);
+  transition:
+    transform .25s ease,
+    box-shadow .25s ease;
+}
+
+.brand:hover .brand-mark{
+  transform:rotate(-3deg) scale(1.04);
+  box-shadow:0 8px 18px rgba(199,100,22,.24);
+}
+
+.nav a{
+  position:relative;
+  transition:
+    color .2s ease,
+    background .2s ease;
+}
+
+.nav a::after{
+  content:"";
+  position:absolute;
+  right:12px;
+  left:12px;
+  bottom:5px;
+  height:2px;
+  border-radius:999px;
+  background:#c76416;
+  transform:scaleX(0);
+  transform-origin:center;
+  transition:transform .2s ease;
+}
+
+.nav a:hover{
+  color:#c76416;
+}
+
+.nav a:hover::after{
+  transform:scaleX(1);
+}
+
+
+/* =========================
+   HEADER WHATSAPP
+========================= */
+
+.header-whatsapp{
+  box-shadow:0 6px 16px rgba(20,139,87,.15);
+  transition:
+    transform .2s ease,
+    box-shadow .2s ease;
+}
+
+.header-whatsapp:hover{
+  transform:translateY(-2px);
+  box-shadow:0 9px 20px rgba(20,139,87,.22);
+}
+
+
+/* =========================
+   MOBILE HEADER
+========================= */
+
+@media(max-width:900px){
+
+  .site-header{
+    position:sticky;
+    top:0;
+    z-index:1000;
+    backdrop-filter:blur(12px);
+    background:rgba(255,255,255,.96);
+  }
+
+  .header-inner{
+    min-height:66px;
+  }
+
+  .nav{
+    gap:5px;
+  }
+
+  .nav a{
+    padding:8px 7px;
+    font-size:12px;
+  }
+
+  .header-whatsapp{
+    padding:9px 11px;
+    font-size:12px;
+  }
+
+}
+
+@media(max-width:560px){
+
+  .header-inner{
+    gap:8px;
+  }
+
+  .brand{
+    gap:8px;
+  }
+
+  .brand-mark{
+    width:38px;
+    height:38px;
+  }
+
+  .brand-text{
+    font-size:14px;
+  }
+
+  .nav{
+    display:none;
+  }
+
+  .header-whatsapp{
+    margin-right:auto;
+    font-size:11px;
+    padding:8px 10px;
+    border-radius:10px;
+  }
+
+}
