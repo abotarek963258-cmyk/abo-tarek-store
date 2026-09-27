@@ -2,74 +2,37 @@ const DATA_URL = "https://script.google.com/macros/s/AKfycbyw7k-K9akpV08vSjXbDmZ
 
 const WHATSAPP_NUMBER = "201551604163";
 
-const demoProducts = [
-  {
-    name: "أدوات السفرة",
-    category: "السفرة",
-    image: "",
-    description: "تشكيلة متنوعة للاستخدام اليومي"
-  },
-  {
-    name: "طقم شاي وقهوة",
-    category: "الشاي والقهوة",
-    image: "",
-    description: "أصناف متنوعة للشاي والقهوة"
-  },
-  {
-    name: "أكواب وكاسات",
-    category: "الأكواب والكاسات",
-    image: "",
-    description: "مقاسات وأشكال مختلفة"
-  },
-  {
-    name: "أدوات المطبخ",
-    category: "المطبخ",
-    image: "",
-    description: "مستلزمات المطبخ اليومية"
-  },
-  {
-    name: "أواني طهي",
-    category: "أواني الطهي",
-    image: "",
-    description: "أواني للاستخدام المنزلي"
-  },
-  {
-    name: "ميلامين",
-    category: "الميلامين",
-    image: "",
-    description: "أطباق وأطقم متنوعة"
-  }
-];
-
-const defaultCategories = [
-  "السفرة",
-  "الشاي والقهوة",
-  "الأكواب والكاسات",
-  "المطبخ",
-  "أواني الطهي",
-  "الميلامين"
-];
-
 let products = [];
 let categories = [];
-let current = "الكل";
+let currentCategory = "الكل";
 
 
 /* =========================
    حماية النصوص
 ========================= */
 
-function esc(s) {
-  return String(s ?? "").replace(
+function esc(value) {
+  return String(value ?? "").replace(
     /[&<>"']/g,
-    m => ({
-      "&": "&amp;",
-      "<": "&lt;",
-      ">": "&gt;",
-      '"': "&quot;",
-      "'": "&#039;"
-    }[m])
+    function (char) {
+      return {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      }[char];
+    }
   );
+}
+
+
+/* =========================
+   التحقق من حالة المنتج
+========================= */
+
+function isActive(value) {
+  return String(value).toLowerCase() !== "false";
 }
 
 
@@ -79,99 +42,334 @@ function esc(s) {
 
 function getWhatsAppLink(product) {
 
-  const productName = String(product.name || "الصنف").trim();
+  const productName =
+    String(product.name || "الصنف").trim();
 
   const message =
-    `السلام عليكم،\n` +
-    `أرغب في الاستفسار عن:\n` +
-    `🛍️ ${productName}\n` +
-    `هل الصنف متاح؟`;
+    "السلام عليكم،\n" +
+    "أرغب في الاستفسار عن:\n" +
+    "🛍️ " + productName + "\n" +
+    "هل الصنف متاح؟";
 
-  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+  return (
+    "https://wa.me/" +
+    WHATSAPP_NUMBER +
+    "?text=" +
+    encodeURIComponent(message)
+  );
 }
 
 
 /* =========================
-   الأقسام
+   تحميل الأقسام
 ========================= */
 
-function buildCategories() {
+async function loadSections() {
+
+  try {
+
+    const response = await fetch(DATA_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "text/plain;charset=utf-8"
+      },
+      body: JSON.stringify({
+        key: "123456",
+        action: "listSections"
+      }),
+      cache: "no-store"
+    });
+
+    if (!response.ok) {
+      throw new Error(
+        "HTTP " + response.status
+      );
+    }
+
+    const data = await response.json();
+
+    if (
+      data &&
+      data.ok === true &&
+      Array.isArray(data.sections)
+    ) {
+
+      categories = data.sections
+        .filter(function (section) {
+          return (
+            isActive(section.active) &&
+            String(section.name || "").trim()
+          );
+        })
+        .sort(function (a, b) {
+
+          const orderA =
+            Number(a.sortOrder) || 999999;
+
+          const orderB =
+            Number(b.sortOrder) || 999999;
+
+          return orderA - orderB;
+        })
+        .map(function (section) {
+          return String(section.name).trim();
+        });
+
+      return true;
+    }
+
+  } catch (error) {
+
+    console.warn(
+      "تعذر تحميل الأقسام:",
+      error
+    );
+  }
+
+  return false;
+}
+
+
+/* =========================
+   تحميل المنتجات
+========================= */
+
+async function loadProducts() {
+
+  try {
+
+    const response = await fetch(DATA_URL, {
+      cache: "no-store"
+    });
+
+    if (!response.ok) {
+      throw new Error(
+        "HTTP " + response.status
+      );
+    }
+
+    const data = await response.json();
+
+    /*
+      doGet الحالي يرجع:
+      {
+        ok: true,
+        products: [...]
+      }
+    */
+
+    if (
+      data &&
+      data.ok === true &&
+      Array.isArray(data.products)
+    ) {
+
+      products = data.products.filter(
+        function (product) {
+          return isActive(product.active);
+        }
+      );
+
+      return true;
+    }
+
+    throw new Error(
+      "استجابة غير صحيحة من السيرفر"
+    );
+
+  } catch (error) {
+
+    console.error(
+      "تعذر تحميل المنتجات:",
+      error
+    );
+
+    products = [];
+
+    return false;
+  }
+}
+
+
+/* =========================
+   التأكد من الأقسام
+========================= */
+
+function buildCategoriesFallback() {
 
   const fromProducts = products
-    .map(p => String(p.category || "").trim())
+    .map(function (product) {
+      return String(
+        product.category || ""
+      ).trim();
+    })
     .filter(Boolean);
 
   categories = [
-    ...new Set([
-      ...defaultCategories,
-      ...fromProducts
-    ])
+    ...new Set(fromProducts)
   ];
 }
 
 
+/* =========================
+   عرض الأقسام
+========================= */
+
 function renderCategories() {
 
-  const el = document.getElementById("categoryGrid");
+  const element =
+    document.getElementById("categoryGrid");
 
-  if (!el) return;
+  if (!element) {
+    return;
+  }
 
-  el.innerHTML = categories.map(c => `
-    <button
-      type="button"
-      class="cat"
-      onclick="selectCategory('${esc(c)}')"
-    >
-      <span class="cat-icon">🛍️</span>
-      <span>${esc(c)}</span>
-    </button>
-  `).join("");
-}
+  if (!categories.length) {
 
+    element.innerHTML = `
+      <div class="empty">
+        <div class="empty-icon">🛍️</div>
+        <h3>مفيش أقسام متاحة حاليًا</h3>
+        <p>هنضيف الأقسام قريبًا.</p>
+      </div>
+    `;
 
-function renderFilters() {
+    return;
+  }
 
-  const el = document.getElementById("filters");
+  element.innerHTML = categories
+    .map(function (category) {
 
-  if (!el) return;
+      return `
+        <button
+          type="button"
+          class="cat"
+          data-category="${esc(category)}"
+        >
+          <span class="cat-icon">🛍️</span>
+          <span>${esc(category)}</span>
+        </button>
+      `;
 
-  el.innerHTML =
-    ["الكل", ...categories].map(c => `
-      <button
-        type="button"
-        class="filter ${current === c ? "active" : ""}"
-        onclick="selectCategory('${esc(c)}')"
-      >
-        ${esc(c)}
-      </button>
-    `).join("");
+    })
+    .join("");
+
+  element
+    .querySelectorAll(".cat")
+    .forEach(function (button) {
+
+      button.addEventListener(
+        "click",
+        function () {
+
+          selectCategory(
+            button.dataset.category
+          );
+
+        }
+      );
+
+    });
 }
 
 
 /* =========================
-   كروت المنتجات
+   فلاتر المنتجات
+========================= */
+
+function renderFilters() {
+
+  const element =
+    document.getElementById("filters");
+
+  if (!element) {
+    return;
+  }
+
+  const filters = [
+    "الكل",
+    ...categories
+  ];
+
+  element.innerHTML = filters
+    .map(function (category) {
+
+      return `
+        <button
+          type="button"
+          class="filter ${
+            currentCategory === category
+              ? "active"
+              : ""
+          }"
+          data-category="${esc(category)}"
+        >
+          ${esc(category)}
+        </button>
+      `;
+
+    })
+    .join("");
+
+  element
+    .querySelectorAll(".filter")
+    .forEach(function (button) {
+
+      button.addEventListener(
+        "click",
+        function () {
+
+          selectCategory(
+            button.dataset.category,
+            false
+          );
+
+        }
+      );
+
+    });
+}
+
+
+/* =========================
+   عرض المنتجات
 ========================= */
 
 function renderProducts() {
 
-  const el = document.getElementById("productsGrid");
+  const element =
+    document.getElementById("productsGrid");
 
-  if (!el) return;
+  if (!element) {
+    return;
+  }
 
-  const list =
-    current === "الكل"
-      ? products
-      : products.filter(
-          p => String(p.category || "") === current
+  let list = products;
+
+  if (currentCategory !== "الكل") {
+
+    list = products.filter(
+      function (product) {
+
+        return (
+          String(
+            product.category || ""
+          ).trim() === currentCategory
         );
+
+      }
+    );
+  }
 
   if (!list.length) {
 
-    el.innerHTML = `
+    element.innerHTML = `
       <div class="empty">
         <div class="empty-icon">🛍️</div>
         <h3>مفيش أصناف هنا حاليًا</h3>
-        <p>هنضيف أصناف جديدة قريبًا.</p>
+        <p>
+          جرّب قسم تاني أو تابعنا لمعرفة الأصناف الجديدة.
+        </p>
       </div>
     `;
 
@@ -179,77 +377,129 @@ function renderProducts() {
   }
 
 
-  el.innerHTML = list.map(p => {
+  element.innerHTML = list
+    .map(function (product) {
 
-    const name = String(p.name || "صنف بدون اسم");
-    const category = String(p.category || "عام");
-    const description = String(
-      p.description || "تشكيلة مميزة من منتجات أبو طارق"
-    );
+      const name =
+        String(
+          product.name ||
+          "صنف بدون اسم"
+        ).trim();
 
-    const whatsappLink = getWhatsAppLink(p);
+      const category =
+        String(
+          product.category ||
+          "عام"
+        ).trim();
+
+      const description =
+        String(
+          product.description ||
+          "تشكيلة مميزة من منتجات أبو طارق"
+        ).trim();
+
+      const image =
+        String(
+          product.image || ""
+        ).trim();
+
+      const whatsappLink =
+        getWhatsAppLink(product);
 
 
-    const imageHTML = p.image
-      ? `
-        <div class="product-image">
-          <img
-            src="${esc(p.image)}"
-            alt="${esc(name)}"
-            loading="lazy"
-            onerror="this.parentElement.innerHTML='<div class=&quot;product-placeholder&quot;>🛍️<span>صورة الصنف</span></div>'"
-          >
-        </div>
-      `
-      : `
-        <div class="product-image">
-          <div class="product-placeholder">
-            <span class="placeholder-icon">🛍️</span>
-            <span>صورة الصنف</span>
+      let imageHTML;
+
+
+      if (image) {
+
+        imageHTML = `
+          <div class="product-image">
+
+            <img
+              src="${esc(image)}"
+              alt="${esc(name)}"
+              loading="lazy"
+              onerror="this.style.display='none';this.nextElementSibling.style.display='grid';"
+            >
+
+            <div
+              class="product-placeholder"
+              style="display:none;"
+            >
+              <span class="placeholder-icon">
+                🛍️
+              </span>
+
+              <span>
+                صورة الصنف
+              </span>
+            </div>
+
           </div>
-        </div>
+        `;
+
+      } else {
+
+        imageHTML = `
+          <div class="product-image">
+
+            <div class="product-placeholder">
+
+              <span class="placeholder-icon">
+                🛍️
+              </span>
+
+              <span>
+                صورة الصنف
+              </span>
+
+            </div>
+
+          </div>
+        `;
+      }
+
+
+      return `
+        <article class="product">
+
+          ${imageHTML}
+
+          <div class="product-body">
+
+            <div class="product-category">
+              ${esc(category)}
+            </div>
+
+            <h3>
+              ${esc(name)}
+            </h3>
+
+            <p>
+              ${esc(description)}
+            </p>
+
+            <div class="product-footer">
+
+              <a
+                class="product-whatsapp"
+                href="${whatsappLink}"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <span>💬</span>
+                <span>اسأل على واتساب</span>
+              </a>
+
+            </div>
+
+          </div>
+
+        </article>
       `;
 
-
-    return `
-      <article class="product">
-
-        ${imageHTML}
-
-        <div class="product-body">
-
-          <div class="product-category">
-            ${esc(category)}
-          </div>
-
-          <h3>
-            ${esc(name)}
-          </h3>
-
-          <p>
-            ${esc(description)}
-          </p>
-
-          <div class="product-footer">
-
-            <a
-              class="product-whatsapp"
-              href="${whatsappLink}"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <span>💬</span>
-              <span>اطلب على واتساب</span>
-            </a>
-
-          </div>
-
-        </div>
-
-      </article>
-    `;
-
-  }).join("");
+    })
+    .join("");
 }
 
 
@@ -257,77 +507,110 @@ function renderProducts() {
    اختيار القسم
 ========================= */
 
-function selectCategory(c) {
+function selectCategory(
+  category,
+  shouldScroll = true
+) {
 
-  current = c;
+  currentCategory = category;
 
   renderFilters();
   renderProducts();
 
-  const productsSection = document.getElementById("products");
 
-  if (productsSection) {
+  if (shouldScroll) {
 
-    productsSection.scrollIntoView({
-      behavior: "smooth",
-      block: "start"
-    });
+    const productsSection =
+      document.getElementById(
+        "products"
+      );
 
+    if (productsSection) {
+
+      productsSection.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+
+    }
   }
 }
 
 
 /* =========================
-   تحميل البيانات
+   تحميل كل البيانات
 ========================= */
 
-async function load() {
+async function loadStore() {
 
-  // نبدأ بالأصناف التجريبية مؤقتًا
-  products = demoProducts;
+  const productsLoaded =
+    await loadProducts();
 
-  try {
+  const sectionsLoaded =
+    await loadSections();
 
-    const r = await fetch(DATA_URL, {
-      cache: "no-store"
-    });
 
-    if (!r.ok) {
-      throw new Error("HTTP " + r.status);
-    }
+  /*
+    لو الأقسام فشلت لأي سبب،
+    نستخرجها من المنتجات.
+  */
 
-    const data = await r.json();
+  if (
+    !sectionsLoaded ||
+    !categories.length
+  ) {
 
-    if (Array.isArray(data)) {
-
-      products = data.filter(
-        p => p.active !== false
-      );
-
-    } else {
-
-      throw new Error("Invalid data");
-
-    }
-
-  } catch (e) {
-
-    console.warn(
-      "تعذر تحميل البيانات، سيتم عرض الأصناف التجريبية.",
-      e
-    );
-
+    buildCategoriesFallback();
   }
 
-  buildCategories();
+
+  /*
+    لو المنتجات اتحملت بنجاح
+    لكن فيها قسم مش موجود في
+    Sections، نضيفه مؤقتًا للعرض.
+  */
+
+  const productCategories =
+    products
+      .map(function (product) {
+        return String(
+          product.category || ""
+        ).trim();
+      })
+      .filter(Boolean);
+
+
+  categories = [
+    ...new Set([
+      ...categories,
+      ...productCategories
+    ])
+  ];
+
+
   renderCategories();
   renderFilters();
   renderProducts();
+
+
+  if (!productsLoaded) {
+
+    console.warn(
+      "الموقع لم يتمكن من تحميل المنتجات من Google Apps Script."
+    );
+  }
 }
 
 
 /* =========================
-   تشغيل الموقع
+   بداية الموقع
 ========================= */
 
-load();
+document.addEventListener(
+  "DOMContentLoaded",
+  function () {
+
+    loadStore();
+
+  }
+);
