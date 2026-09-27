@@ -1,3 +1,4 @@
+```javascript
 const DATA_URL = "https://script.google.com/macros/s/AKfycbyw7k-K9akpV08vSjXbDmZ8khpHH9LOq2G9WLDHT2-iOJiTThN-kvEaCKI0-wKWu7hY/exec";
 
 const WHATSAPP_NUMBER = "201551604163";
@@ -5,6 +6,7 @@ const WHATSAPP_NUMBER = "201551604163";
 let products = [];
 let categories = [];
 let currentCategory = "الكل";
+let searchText = "";
 
 
 /* =========================
@@ -149,14 +151,6 @@ async function loadProducts() {
     }
 
     const data = await response.json();
-
-    /*
-      doGet الحالي يرجع:
-      {
-        ok: true,
-        products: [...]
-      }
-    */
 
     if (
       data &&
@@ -332,23 +326,48 @@ function renderFilters() {
 
 
 /* =========================
-   عرض المنتجات
+   البحث في المنتجات
 ========================= */
 
-function renderProducts() {
+function setupSearch() {
 
-  const element =
-    document.getElementById("productsGrid");
+  const searchInput =
+    document.getElementById("productSearch");
 
-  if (!element) {
+  if (!searchInput) {
     return;
   }
 
+  searchInput.addEventListener(
+    "input",
+    function () {
+
+      searchText =
+        String(searchInput.value || "")
+          .trim()
+          .toLowerCase();
+
+      renderProducts();
+
+    }
+  );
+}
+
+
+/* =========================
+   فلترة المنتجات
+========================= */
+
+function getFilteredProducts() {
+
   let list = products;
+
+
+  /* فلترة القسم */
 
   if (currentCategory !== "الكل") {
 
-    list = products.filter(
+    list = list.filter(
       function (product) {
 
         return (
@@ -361,14 +380,60 @@ function renderProducts() {
     );
   }
 
+
+  /* فلترة البحث */
+
+  if (searchText) {
+
+    list = list.filter(
+      function (product) {
+
+        const text = [
+          product.name,
+          product.category,
+          product.description
+        ]
+          .map(function (value) {
+            return String(value || "");
+          })
+          .join(" ")
+          .toLowerCase();
+
+        return text.includes(searchText);
+
+      }
+    );
+  }
+
+
+  return list;
+}
+
+
+/* =========================
+   عرض المنتجات
+========================= */
+
+function renderProducts() {
+
+  const element =
+    document.getElementById("productsGrid");
+
+  if (!element) {
+    return;
+  }
+
+  const list =
+    getFilteredProducts();
+
   if (!list.length) {
 
     element.innerHTML = `
       <div class="empty">
-        <div class="empty-icon">🛍️</div>
-        <h3>مفيش أصناف هنا حاليًا</h3>
+        <div class="empty-icon">🔎</div>
+        <h3>مفيش أصناف مطابقة</h3>
         <p>
-          جرّب قسم تاني أو تابعنا لمعرفة الأصناف الجديدة.
+          جرّب كلمة بحث تانية أو اختار قسم مختلف.
         </p>
       </div>
     `;
@@ -610,7 +675,9 @@ document.addEventListener(
   "DOMContentLoaded",
   function () {
 
+    setupSearch();
     loadStore();
 
   }
 );
+```
