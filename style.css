@@ -2046,3 +2046,93 @@ button{
   }
 
 }
+/* =========================
+   MOBILE NAVIGATION
+========================= */
+
+@media(max-width:560px){
+
+  .site-header{
+    position:sticky;
+    top:0;
+    z-index:1000;
+  }
+
+  .header-inner{
+    min-height:66px;
+    flex-wrap:wrap;
+    row-gap:6px;
+    padding-top:8px;
+    padding-bottom:8px;
+  }
+
+  .brand{
+    flex:0 0 auto;
+  }
+
+  .header-whatsapp{
+    margin-right:auto;
+    flex:0 0 auto;
+  }
+
+  .nav{
+    display:flex;
+    order:3;
+    width:100%;
+    gap:4px;
+    padding:3px 0 5px;
+    overflow-x:auto;
+    overflow-y:hidden;
+    justify-content:flex-start;
+    scrollbar-width:none;
+    -webkit-overflow-scrolling:touch;
+  }
+
+  .nav::-webkit-scrollbar{
+    display:none;
+  }
+
+  .nav a{
+    flex:0 0 auto;
+    white-space:nowrap;
+    padding:7px 11px;
+    border-radius:9px;
+    font-size:11px;
+    background:#faf7f2;
+  }
+
+  .nav a::after{
+    display:none;
+  }
+
+  .nav a:hover{
+    background:#fff1e6;
+    color:#c76416;
+  }
+
+}
+
+
+/* =========================
+   MOBILE TOUCH FEEDBACK
+========================= */
+
+@media(max-width:560px){
+
+  .cat:active,
+  .filter:active,
+  .product-whatsapp:active,
+  .header-whatsapp:active,
+  .nav a:active{
+    transform:scale(.97);
+  }
+
+  .cat,
+  .filter,
+  .product-whatsapp,
+  .header-whatsapp,
+  .nav a{
+    touch-action:manipulation;
+  }
+
+}
