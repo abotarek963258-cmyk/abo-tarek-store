@@ -1808,3 +1808,241 @@ footer{
   }
 
 }
+/* =========================
+   PREMIUM CONTACT / SOCIAL
+========================= */
+
+.contact,
+.social{
+  position:relative;
+}
+
+.contact-card,
+.social-card{
+  border-radius:18px;
+  border:1px solid #eee7dd;
+  box-shadow:0 8px 25px rgba(24,40,59,.06);
+  transition:
+    transform .22s ease,
+    box-shadow .22s ease,
+    border-color .22s ease;
+}
+
+.contact-card:hover,
+.social-card:hover{
+  transform:translateY(-4px);
+  border-color:#e5d8c9;
+  box-shadow:0 14px 30px rgba(24,40,59,.10);
+}
+
+.social-links{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+
+.social-links a{
+  transition:
+    transform .2s ease,
+    box-shadow .2s ease;
+}
+
+.social-links a:hover{
+  transform:translateY(-3px);
+  box-shadow:0 7px 18px rgba(24,40,59,.10);
+}
+
+
+/* =========================
+   BRANCHES
+========================= */
+
+.branches{
+  position:relative;
+}
+
+.branch-card{
+  overflow:hidden;
+  border:1px solid #eee7dd;
+  border-radius:18px;
+  background:#fff;
+  box-shadow:0 7px 23px rgba(24,40,59,.06);
+  transition:
+    transform .22s ease,
+    box-shadow .22s ease,
+    border-color .22s ease;
+}
+
+.branch-card:hover{
+  transform:translateY(-5px);
+  border-color:#e5d8c9;
+  box-shadow:0 14px 30px rgba(24,40,59,.10);
+}
+
+.branch-card h3{
+  color:#18283b;
+}
+
+.branch-card p{
+  line-height:1.8;
+}
+
+
+/* =========================
+   FLOATING WHATSAPP
+========================= */
+
+.floating-whatsapp{
+  width:58px;
+  height:58px;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  box-shadow:
+    0 8px 25px rgba(20,139,87,.28);
+  transition:
+    transform .25s ease,
+    box-shadow .25s ease;
+  z-index:999;
+}
+
+.floating-whatsapp:hover{
+  transform:
+    translateY(-4px)
+    scale(1.06);
+  box-shadow:
+    0 13px 30px rgba(20,139,87,.35);
+}
+
+.floating-whatsapp::after{
+  content:"";
+  position:absolute;
+  width:100%;
+  height:100%;
+  border-radius:50%;
+  border:2px solid rgba(20,139,87,.28);
+  animation:whatsappPulse 2.2s infinite;
+  pointer-events:none;
+}
+
+@keyframes whatsappPulse{
+  0%{
+    transform:scale(1);
+    opacity:.7;
+  }
+
+  70%{
+    transform:scale(1.35);
+    opacity:0;
+  }
+
+  100%{
+    transform:scale(1.35);
+    opacity:0;
+  }
+}
+
+
+/* =========================
+   FOOTER
+========================= */
+
+.site-footer{
+  position:relative;
+  overflow:hidden;
+  border-top:1px solid rgba(255,255,255,.06);
+}
+
+.site-footer a{
+  transition:
+    color .2s ease,
+    transform .2s ease;
+}
+
+.site-footer a:hover{
+  color:#c76416;
+}
+
+
+/* =========================
+   SECTION HEADINGS
+========================= */
+
+.section-head h2{
+  letter-spacing:-.3px;
+}
+
+.section-head p{
+  line-height:1.8;
+}
+
+
+/* =========================
+   GLOBAL BUTTON POLISH
+========================= */
+
+.btn,
+button,
+.header-whatsapp,
+.product-whatsapp{
+  -webkit-tap-highlight-color:transparent;
+}
+
+button{
+  font-family:inherit;
+}
+
+a,
+button{
+  -webkit-touch-callout:none;
+}
+
+
+/* =========================
+   MOBILE POLISH
+========================= */
+
+@media(max-width:560px){
+
+  .floating-whatsapp{
+    width:52px;
+    height:52px;
+    bottom:16px;
+    right:16px;
+  }
+
+  .section-head{
+    margin-bottom:18px;
+  }
+
+  .section-head h2{
+    font-size:24px;
+  }
+
+  .section-head p{
+    font-size:13px;
+  }
+
+  .branch-card{
+    border-radius:15px;
+  }
+
+}
+
+
+/* =========================
+   REDUCE MOTION
+========================= */
+
+@media(prefers-reduced-motion:reduce){
+
+  *,
+  *::before,
+  *::after{
+    animation-duration:.01ms !important;
+    animation-iteration-count:1 !important;
+    scroll-behavior:auto !important;
+    transition-duration:.01ms !important;
+  }
+
+}
