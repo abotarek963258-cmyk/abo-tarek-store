@@ -19,6 +19,18 @@ var CACHE_TIME =
 
 
 /* =========================
+   إعدادات الصور
+========================= */
+
+/*
+  عدد الصور الأولى التي يتم تحميلها فورًا.
+  باقي الصور لن تحصل على src إلا عند
+  اقترابها من الشاشة.
+*/
+var INITIAL_IMAGES_COUNT = 6;
+
+
+/* =========================
    حماية النصوص
 ========================= */
 
@@ -709,6 +721,127 @@ function getFilteredProducts() {
 
 
 /* =========================
+   مراقبة الصور
+========================= */
+
+function setupLazyImages() {
+
+  var images =
+    document.querySelectorAll(
+      "#productsGrid img[data-src]"
+    );
+
+  if (!images.length) {
+    return;
+  }
+
+
+  /*
+    لو المتصفح يدعم IntersectionObserver
+    نستخدمه لتحميل الصورة فقط عند
+    اقترابها من الشاشة.
+  */
+
+  if (
+    "IntersectionObserver" in window
+  ) {
+
+    var observer =
+      new IntersectionObserver(
+        function (entries, obs) {
+
+          entries.forEach(
+            function (entry) {
+
+              if (
+                !entry.isIntersecting
+              ) {
+                return;
+              }
+
+              var img =
+                entry.target;
+
+              var source =
+                img.getAttribute(
+                  "data-src"
+                );
+
+              if (source) {
+
+                img.src =
+                  source;
+
+                img.removeAttribute(
+                  "data-src"
+                );
+
+              }
+
+              obs.unobserve(img);
+
+            }
+          );
+
+        },
+        {
+          rootMargin:
+            "500px 0px"
+        }
+      );
+
+
+    for (
+      var i = 0;
+      i < images.length;
+      i++
+    ) {
+
+      observer.observe(
+        images[i]
+      );
+
+    }
+
+    return;
+  }
+
+
+  /*
+    حل احتياطي للمتصفحات القديمة.
+    لو مفيش IntersectionObserver
+    نحمل الصور كلها بالطريقة القديمة.
+  */
+
+  for (
+    var j = 0;
+    j < images.length;
+    j++
+  ) {
+
+    var fallbackImg =
+      images[j];
+
+    var fallbackSource =
+      fallbackImg.getAttribute(
+        "data-src"
+      );
+
+    if (fallbackSource) {
+
+      fallbackImg.src =
+        fallbackSource;
+
+      fallbackImg.removeAttribute(
+        "data-src"
+      );
+
+    }
+  }
+}
+
+
+/* =========================
    عرض المنتجات
 ========================= */
 
@@ -743,7 +876,7 @@ function renderProducts() {
   var html = "";
 
   list.forEach(
-    function (product) {
+    function (product, index) {
 
       var name =
         String(
@@ -775,17 +908,51 @@ function renderProducts() {
 
       if (image) {
 
+        /*
+          أول 6 صور فقط تبدأ التحميل فورًا.
+          باقي الصور لا تحصل على src إطلاقًا
+          حتى تقترب من الشاشة.
+        */
+
+        var imageAttribute = "";
+
+        if (
+          index <
+          INITIAL_IMAGES_COUNT
+        ) {
+
+          imageAttribute =
+            'src="' +
+            esc(image) +
+            '"';
+
+        } else {
+
+          imageAttribute =
+            'data-src="' +
+            esc(image) +
+            '"';
+
+        }
+
+
         imageHTML =
           '<div class="product-image">' +
 
             '<img ' +
-              'src="' +
-                esc(image) +
-              '" ' +
+              imageAttribute +
+              ' ' +
               'alt="' +
                 esc(name) +
               '" ' +
-              'loading="lazy" ' +
+              'loading="' +
+                (
+                  index <
+                  INITIAL_IMAGES_COUNT
+                    ? "eager"
+                    : "lazy"
+                ) +
+              '" ' +
               'decoding="async" ' +
               'onerror="' +
                 "this.style.display='none';" +
@@ -873,6 +1040,13 @@ function renderProducts() {
 
   element.innerHTML =
     html;
+
+
+  /*
+    بعد إنشاء المنتجات،
+    نبدأ مراقبة الصور المؤجلة.
+  */
+  setupLazyImages();
 }
 
 
@@ -929,7 +1103,6 @@ function loadStore() {
   );
 
   /*
-    أهم تعديل:
     المنتجات والأقسام يتحملوا
     في نفس الوقت بدل ما نستنى
     المنتجات تخلص الأول.
