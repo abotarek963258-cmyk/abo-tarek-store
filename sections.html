@@ -369,6 +369,7 @@
       transition: .22s ease;
       display: flex;
       flex-direction: column;
+      min-width: 0;
     }
 
     .product-card:hover {
@@ -412,6 +413,7 @@
       display: flex;
       flex-direction: column;
       flex: 1;
+      background: #fff;
     }
 
     .product-category {
@@ -430,6 +432,8 @@
       margin: 0;
       font-size: 19px;
       line-height: 1.35;
+      color: #14263d;
+      font-weight: 800;
     }
 
     .product-description {
@@ -437,6 +441,8 @@
       color: #737c86;
       font-size: 14px;
       min-height: 45px;
+      white-space: normal;
+      word-break: break-word;
     }
 
     .whatsapp-btn {
@@ -922,11 +928,39 @@
       cleanText(product.name) ||
       "الصنف";
 
+    var description =
+      cleanText(product.description);
+
+    var image =
+      cleanText(product.image);
+
     var message =
-      "السلام عليكم،\n" +
-      "أرغب في الاستفسار عن:\n" +
-      "🛍️ " + name + "\n" +
-      "هل الصنف متاح؟";
+      "السلام عليكم،\n\n" +
+      "أرغب في طلب المنتج التالي:\n\n" +
+      "🛍️ اسم المنتج: " +
+      name +
+      "\n";
+
+    if (description) {
+
+      message +=
+        "📝 الوصف: " +
+        description +
+        "\n";
+
+    }
+
+    if (image) {
+
+      message +=
+        "🖼️ صورة المنتج:\n" +
+        image +
+        "\n";
+
+    }
+
+    message +=
+      "\nهل المنتج متاح؟";
 
     return (
       "https://wa.me/" +
@@ -945,12 +979,6 @@
   function normalizeProduct(product) {
 
     product = product || {};
-
-    /*
-      نقرأ الحقول الأساسية بشكل صريح.
-      وندعم أيضًا بعض الأسماء البديلة تحسبًا
-      لأي اختلاف في البيانات القادمة من السيرفر.
-    */
 
     var name =
       cleanText(
@@ -1016,7 +1044,6 @@
 
   /* =====================================================
      تحميل المنتجات
-     الاتصال المباشر بالـ Web App
   ===================================================== */
 
   function loadProducts() {
@@ -1089,12 +1116,10 @@
 
             });
 
-
         console.log(
           "المنتجات بعد التجهيز:",
           products
         );
-
 
         return products;
 
@@ -1104,7 +1129,7 @@
 
 
   /* =====================================================
-     استخراج الأقسام من المنتجات
+     استخراج الأقسام
   ===================================================== */
 
   function buildCategories() {
@@ -1531,23 +1556,14 @@
 
                 '<img ' +
                 'src="' +
-                escapeHtml(
-                  image
-                ) +
+                escapeHtml(image) +
                 '" ' +
                 'alt="' +
-                escapeHtml(
-                  name
-                ) +
+                escapeHtml(name) +
                 '" ' +
                 'loading="lazy" ' +
-                'onerror="' +
-                "this.onerror=null;" +
-                "this.style.display='none';" +
-                "this.parentNode.innerHTML=" +
-                "'<div class=&quot;product-image-placeholder&quot;>🛍️</div>'" +
-                ';' +
-                '">';
+                'onerror="this.onerror=null;this.parentElement.innerHTML=\'<div class=&quot;product-image-placeholder&quot;>🛍️</div>\';" ' +
+                '>';
 
             } else {
 
@@ -1557,6 +1573,10 @@
                 '</div>';
 
             }
+
+
+            var whatsappLink =
+              getWhatsAppLink(product);
 
 
             return (
@@ -1571,35 +1591,33 @@
 
                 '<div class="product-body">' +
 
-                  '<span class="product-category">' +
-                    escapeHtml(
-                      category
-                    ) +
-                  '</span>' +
+                  (
+                    category
+                      ? (
+                        '<span class="product-category">' +
+                          escapeHtml(category) +
+                        '</span>'
+                      )
+                      : ''
+                  ) +
 
                   '<h3 class="product-name">' +
-                    escapeHtml(
-                      name
-                    ) +
+                    escapeHtml(name) +
                   '</h3>' +
 
                   '<p class="product-description">' +
-                    escapeHtml(
-                      description
-                    ) +
+                    escapeHtml(description) +
                   '</p>' +
 
                   '<a ' +
                   'class="whatsapp-btn" ' +
                   'href="' +
-                  getWhatsAppLink(
-                    product
-                  ) +
+                  whatsappLink +
                   '" ' +
                   'target="_blank" ' +
                   'rel="noopener noreferrer">' +
 
-                    '💬 اسأل على واتساب' +
+                    '🛒 طلب المنتج على واتساب' +
 
                   '</a>' +
 
@@ -1688,7 +1706,6 @@
 
 
         searchText = "";
-
 
         renderCategories();
 
