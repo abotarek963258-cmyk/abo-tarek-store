@@ -1,12 +1,10 @@
-```javascript
-var DATA_URL = "https://script.google.com/macros/s/AKfycbyw7k-K9akpV08vSjXbDmZ8khpHH9LOq2G9WLDHTHT2-iOJiTThN-kvEaCKI0-wKWu7hY/exec";
+var DATA_URL = "https://script.google.com/macros/s/AKfycbyw7k-K9akpV08vSjXbDmZ8khpHH9LOq2G9WLDHT2-iOJiTThN-kvEaCKI0-wKWu7hY/exec";
 
 var WHATSAPP_NUMBER = "201551604163";
 
 var products = [];
 var categories = [];
 var currentCategory = "الكل";
-var searchText = "";
 
 
 /* =========================
@@ -420,39 +418,7 @@ function renderFilters() {
 
 
 /* =========================
-   البحث
-========================= */
-
-function setupSearch() {
-
-  var searchInput =
-    document.getElementById(
-      "productSearch"
-    );
-
-  if (!searchInput) {
-    return;
-  }
-
-  searchInput.addEventListener(
-    "input",
-    function () {
-
-      searchText =
-        String(
-          searchInput.value || ""
-        )
-        .trim()
-        .toLowerCase();
-
-      renderProducts();
-    }
-  );
-}
-
-
-/* =========================
-   فلترة المنتجات
+   فلترة المنتجات حسب القسم
 ========================= */
 
 function getFilteredProducts() {
@@ -473,31 +439,6 @@ function getFilteredProducts() {
           currentCategory
         );
 
-      }
-    );
-  }
-
-  if (searchText) {
-
-    list = list.filter(
-      function (product) {
-
-        var text =
-          String(
-            product.name || ""
-          ) + " " +
-
-          String(
-            product.category || ""
-          ) + " " +
-
-          String(
-            product.description || ""
-          );
-
-        return text
-          .toLowerCase()
-          .indexOf(searchText) !== -1;
       }
     );
   }
@@ -528,10 +469,10 @@ function renderProducts() {
 
     element.innerHTML =
       '<div class="empty">' +
-        '<div class="empty-icon">🔎</div>' +
-        '<h3>مفيش أصناف مطابقة</h3>' +
+        '<div class="empty-icon">🛍️</div>' +
+        '<h3>مفيش أصناف متاحة حاليًا</h3>' +
         '<p>' +
-          'جرّب كلمة بحث تانية أو اختار قسم مختلف.' +
+          'اختار قسم مختلف لمشاهدة الأصناف المتاحة.' +
         '</p>' +
       '</div>';
 
@@ -822,9 +763,7 @@ document.addEventListener(
       "app.js تم تشغيله بنجاح"
     );
 
-    setupSearch();
     loadStore();
 
   }
 );
-```
