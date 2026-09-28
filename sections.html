@@ -205,8 +205,7 @@
       border: 1px solid #dfe4e9;
       border-radius: 17px;
       background: #fff;
-      padding:
-        0 55px 0 20px;
+      padding: 0 55px 0 20px;
       outline: none;
       color: #14263d;
       box-shadow:
@@ -469,6 +468,7 @@
       padding: 45px 20px;
       text-align: center;
       color: #737c86;
+      grid-column: 1 / -1;
     }
 
     .state-icon {
@@ -493,6 +493,7 @@
       0%,100% {
         opacity: .5;
       }
+
       50% {
         opacity: 1;
       }
@@ -621,8 +622,6 @@
 
 <body>
 
-<!-- ================= HEADER ================= -->
-
 <header class="site-header">
 
   <div class="container nav">
@@ -664,8 +663,6 @@
 
 <main>
 
-<!-- ================= HERO ================= -->
-
 <section class="hero">
 
   <div class="container hero-inner">
@@ -687,8 +684,6 @@
   </div>
 
 </section>
-
-<!-- ================= SEARCH ================= -->
 
 <section class="search-section">
 
@@ -713,8 +708,6 @@
   </div>
 
 </section>
-
-<!-- ================= CATEGORIES ================= -->
 
 <section>
 
@@ -762,8 +755,6 @@
   </div>
 
 </section>
-
-<!-- ================= PRODUCTS ================= -->
 
 <section class="products-section">
 
@@ -826,8 +817,6 @@
 
 </main>
 
-<!-- ================= FOOTER ================= -->
-
 <footer>
 
   <div class="container footer-inner">
@@ -851,8 +840,14 @@
      الإعدادات
   ===================================================== */
 
+  /*
+     مهم:
+     ده رابط Web App الصحيح.
+     ممنوع إضافة HT زيادة في آخر الرابط.
+  */
+
   var DATA_URL =
-    "https://script.google.com/macros/s/AKfycbyw7k-K9akpV08vSjXbDmZ8khpHH9LOq2G9WLDHTHT2-iOJiTThN-kvEaCKI0-wKWu7hY/exec";
+    "https://script.google.com/macros/s/AKfycbyw7k-K9akpV08vSjXbDmZ8khpHH9LOq2G9WLDHT2-iOJiTThN-kvEaCKI0-wKWu7hY/exec";
 
   var WHATSAPP_NUMBER =
     "201551604163";
@@ -877,7 +872,7 @@
 
   function escapeHtml(value) {
 
-    return String(value || "")
+    return String(value == null ? "" : value)
       .replace(/[&<>"']/g, function(char) {
 
         var map = {
@@ -932,7 +927,8 @@
 
 
   /* =====================================================
-     تحميل المنتجات - JSONP
+     تحميل المنتجات
+     JSONP
   ===================================================== */
 
   function loadProducts() {
@@ -940,44 +936,53 @@
     return new Promise(function(resolve, reject) {
 
       var callbackName =
-        "storeCallback_" + Date.now();
+        "__aboTarekCallback_" +
+        Date.now() +
+        "_" +
+        Math.floor(
+          Math.random() * 100000
+        );
 
-      var script = null;
+      var script =
+        document.createElement("script");
 
       var finished = false;
+
+      var timeoutId = null;
 
 
       function cleanup() {
 
-        if (script && script.parentNode) {
-          script.parentNode.removeChild(script);
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+        }
+
+        if (
+          script &&
+          script.parentNode
+        ) {
+
+          script.parentNode.removeChild(
+            script
+          );
+
         }
 
         try {
+
           delete window[callbackName];
-        } catch (e) {
-          window[callbackName] = undefined;
+
+        } catch (error) {
+
+          window[callbackName] =
+            undefined;
+
         }
 
       }
 
 
-      function fail(error) {
-
-        if (finished) {
-          return;
-        }
-
-        finished = true;
-
-        cleanup();
-
-        reject(error);
-
-      }
-
-
-      window[callbackName] = function(data) {
+      function finishSuccess(data) {
 
         if (finished) {
           return;
@@ -1000,11 +1005,15 @@
           }
 
           products =
-            data.products.filter(function(product) {
+            data.products.filter(
+              function(product) {
 
-              return isActive(product.active);
+                return isActive(
+                  product.active
+                );
 
-            });
+              }
+            );
 
           cleanup();
 
@@ -1018,22 +1027,58 @@
 
         }
 
-      };
+      }
 
 
-      script =
-        document.createElement("script");
+      function finishError(message) {
+
+        if (finished) {
+          return;
+        }
+
+        finished = true;
+
+        cleanup();
+
+        reject(
+          new Error(message)
+        );
+
+      }
+
+
+      /*
+        لازم يكون الـ callback
+        موجود على window قبل تحميل السكربت.
+      */
+
+      window[callbackName] =
+        function(data) {
+
+          finishSuccess(data);
+
+        };
 
 
       script.async = true;
 
 
+      script.onload = function() {
+
+        /*
+          لو السيرفر رجّع JSON عادي بدل
+          callback() فلن يتم استدعاء الدالة.
+          لذلك ننتظر حتى الـ timeout
+          ونظهر رسالة واضحة.
+        */
+
+      };
+
+
       script.onerror = function() {
 
-        fail(
-          new Error(
-            "تعذر الاتصال بسيرفر المتجر."
-          )
+        finishError(
+          "تعذر الاتصال بسيرفر المتجر."
         );
 
       };
@@ -1042,27 +1087,29 @@
       script.src =
         DATA_URL +
         "?callback=" +
-        encodeURIComponent(callbackName) +
-        "&t=" +
+        encodeURIComponent(
+          callbackName
+        ) +
+        "&_=" +
         Date.now();
 
 
-      document.body.appendChild(script);
+      document.head.appendChild(
+        script
+      );
 
 
-      setTimeout(function() {
+      timeoutId =
+        setTimeout(
+          function() {
 
-        if (!finished) {
-
-          fail(
-            new Error(
+            finishError(
               "انتهت مهلة تحميل بيانات المتجر."
-            )
-          );
+            );
 
-        }
-
-      }, 20000);
+          },
+          20000
+        );
 
     });
 
@@ -1184,18 +1231,24 @@
         "categories"
       );
 
+    if (!element) {
+      return;
+    }
+
     var visibleCategories =
-      categories.filter(function(category) {
+      categories.filter(
+        function(category) {
 
-        if (!searchText) {
-          return true;
+          if (!searchText) {
+            return true;
+          }
+
+          return category.name
+            .toLowerCase()
+            .indexOf(searchText) !== -1;
+
         }
-
-        return category.name
-          .toLowerCase()
-          .indexOf(searchText) !== -1;
-
-      });
+      );
 
 
     if (!visibleCategories.length) {
@@ -1221,9 +1274,11 @@
       '<button ' +
       'type="button" ' +
       'class="category-btn ' +
-      (selectedCategory === "الكل"
-        ? "active"
-        : "") +
+      (
+        selectedCategory === "الكل"
+          ? "active"
+          : ""
+      ) +
       '" ' +
       'data-category="الكل">' +
 
@@ -1249,21 +1304,28 @@
             'type="button" ' +
             'class="category-btn ' +
             (
-              selectedCategory === category.name
+              selectedCategory ===
+              category.name
                 ? "active"
                 : ""
             ) +
             '" ' +
             'data-category="' +
-            escapeHtml(category.name) +
+            escapeHtml(
+              category.name
+            ) +
             '">' +
 
               '<span class="category-icon">' +
-                getCategoryIcon(category.name) +
+                getCategoryIcon(
+                  category.name
+                ) +
               '</span>' +
 
               '<span class="category-name">' +
-                escapeHtml(category.name) +
+                escapeHtml(
+                  category.name
+                ) +
               '</span>' +
 
               '<span class="category-count">' +
@@ -1300,12 +1362,19 @@
 
           renderProducts();
 
-          document
-            .getElementById("products")
-            .scrollIntoView({
+          var productsElement =
+            document.getElementById(
+              "products"
+            );
+
+          if (productsElement) {
+
+            productsElement.scrollIntoView({
               behavior: "smooth",
               block: "start"
             });
+
+          }
 
         }
       );
@@ -1342,60 +1411,68 @@
       );
 
 
+    if (
+      !element ||
+      !selectedBox ||
+      !selectedName ||
+      !selectedCount
+    ) {
+      return;
+    }
+
+
     var filtered =
-      products.filter(function(product) {
+      products.filter(
+        function(product) {
 
-        var category =
-          String(
-            product.category || ""
-          ).trim();
+          var category =
+            String(
+              product.category || ""
+            ).trim();
 
-        var name =
-          String(
-            product.name || ""
-          ).trim()
-          .toLowerCase();
+          var name =
+            String(
+              product.name || ""
+            )
+            .trim()
+            .toLowerCase();
 
-        var description =
-          String(
-            product.description || ""
-          ).trim()
-          .toLowerCase();
+          var description =
+            String(
+              product.description || ""
+            )
+            .trim()
+            .toLowerCase();
 
-        var categoryMatch =
-          selectedCategory === "الكل" ||
-          category === selectedCategory;
+          var categoryMatch =
+            selectedCategory === "الكل" ||
+            category === selectedCategory;
 
-        var searchMatch =
-          !searchText ||
-          name.indexOf(searchText) !== -1 ||
-          description.indexOf(searchText) !== -1 ||
-          category.toLowerCase()
-            .indexOf(searchText) !== -1;
+          var searchMatch =
+            !searchText ||
+            name.indexOf(searchText) !== -1 ||
+            description.indexOf(searchText) !== -1 ||
+            category
+              .toLowerCase()
+              .indexOf(searchText) !== -1;
 
-        return (
-          categoryMatch &&
-          searchMatch
-        );
+          return (
+            categoryMatch &&
+            searchMatch
+          );
 
-      });
+        }
+      );
 
 
     selectedBox.style.display =
       "flex";
 
 
-    if (selectedCategory !== "الكل") {
-
-      selectedName.textContent =
-        selectedCategory;
-
-    } else {
-
-      selectedName.textContent =
-        "كل الأصناف";
-
-    }
+    selectedName.textContent =
+      selectedCategory === "الكل"
+        ? "كل الأصناف"
+        : selectedCategory;
 
 
     selectedCount.textContent =
@@ -1429,99 +1506,117 @@
 
 
     element.innerHTML =
-      filtered.map(function(product) {
+      filtered
+        .map(
+          function(product) {
 
-        var name =
-          String(
-            product.name ||
-            "صنف بدون اسم"
-          );
+            var name =
+              String(
+                product.name ||
+                "صنف بدون اسم"
+              );
 
-        var description =
-          String(
-            product.description || ""
-          );
+            var description =
+              String(
+                product.description ||
+                ""
+              );
 
-        var category =
-          String(
-            product.category || ""
-          );
-
-
-        var imageHtml;
-
-
-        if (product.image) {
-
-          imageHtml =
-
-            '<img ' +
-            'src="' +
-            escapeHtml(product.image) +
-            '" ' +
-            'alt="' +
-            escapeHtml(name) +
-            '" ' +
-            'loading="lazy" ' +
-            'onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'<div class=&quot;product-image-placeholder&quot;>🛍️</div>\';' +
-            '>';
-
-        } else {
-
-          imageHtml =
-            '<div class="product-image-placeholder">' +
-              '🛍️' +
-            '</div>';
-
-        }
+            var category =
+              String(
+                product.category ||
+                ""
+              );
 
 
-        return (
+            var imageHtml;
 
-          '<article class="product-card">' +
 
-            '<div class="product-image">' +
+            if (product.image) {
 
-              imageHtml +
+              imageHtml =
 
-            '</div>' +
-
-            '<div class="product-body">' +
-
-              '<span class="product-category">' +
-                escapeHtml(category) +
-              '</span>' +
-
-              '<h3 class="product-name">' +
-                escapeHtml(name) +
-              '</h3>' +
-
-              '<p class="product-description">' +
+                '<img ' +
+                'src="' +
                 escapeHtml(
-                  description ||
-                  "للاستفسار عن تفاصيل الصنف والتوافر."
+                  product.image
                 ) +
-              '</p>' +
+                '" ' +
+                'alt="' +
+                escapeHtml(
+                  name
+                ) +
+                '" ' +
+                'loading="lazy" ' +
+                'onerror="this.style.display=\'none\';' +
+                'this.parentNode.innerHTML=' +
+                '\'<div class=&quot;product-image-placeholder&quot;>🛍️</div>\';' +
+                '>';
 
-              '<a ' +
-              'class="whatsapp-btn" ' +
-              'href="' +
-              getWhatsAppLink(product) +
-              '" ' +
-              'target="_blank" ' +
-              'rel="noopener noreferrer">' +
+            } else {
 
-                '💬 اسأل على واتساب' +
+              imageHtml =
+                '<div class="product-image-placeholder">' +
+                  '🛍️' +
+                '</div>';
 
-              '</a>' +
+            }
 
-            '</div>' +
 
-          '</article>'
+            return (
 
-        );
+              '<article class="product-card">' +
 
-      }).join("");
+                '<div class="product-image">' +
+
+                  imageHtml +
+
+                '</div>' +
+
+                '<div class="product-body">' +
+
+                  '<span class="product-category">' +
+                    escapeHtml(
+                      category
+                    ) +
+                  '</span>' +
+
+                  '<h3 class="product-name">' +
+                    escapeHtml(
+                      name
+                    ) +
+                  '</h3>' +
+
+                  '<p class="product-description">' +
+                    escapeHtml(
+                      description ||
+                      "للاستفسار عن تفاصيل الصنف والتوافر."
+                    ) +
+                  '</p>' +
+
+                  '<a ' +
+                  'class="whatsapp-btn" ' +
+                  'href="' +
+                  getWhatsAppLink(
+                    product
+                  ) +
+                  '" ' +
+                  'target="_blank" ' +
+                  'rel="noopener noreferrer">' +
+
+                    '💬 اسأل على واتساب' +
+
+                  '</a>' +
+
+                '</div>' +
+
+              '</article>'
+
+            );
+
+          }
+        )
+        .join("");
 
   }
 
@@ -1536,6 +1631,10 @@
       document.getElementById(
         "searchInput"
       );
+
+    if (!input) {
+      return;
+    }
 
 
     input.addEventListener(
@@ -1566,29 +1665,103 @@
 
   function setupClearButton() {
 
-    document
-      .getElementById("clearCategory")
-      .addEventListener(
-        "click",
-        function() {
-
-          selectedCategory =
-            "الكل";
-
-          document
-            .getElementById(
-              "searchInput"
-            )
-            .value = "";
-
-          searchText = "";
-
-          renderCategories();
-
-          renderProducts();
-
-        }
+    var button =
+      document.getElementById(
+        "clearCategory"
       );
+
+    if (!button) {
+      return;
+    }
+
+
+    button.addEventListener(
+      "click",
+      function() {
+
+        selectedCategory =
+          "الكل";
+
+        var input =
+          document.getElementById(
+            "searchInput"
+          );
+
+        if (input) {
+          input.value = "";
+        }
+
+        searchText = "";
+
+        renderCategories();
+
+        renderProducts();
+
+      }
+    );
+
+  }
+
+
+  /* =====================================================
+     رسالة الخطأ
+  ===================================================== */
+
+  function showLoadingError(error) {
+
+    console.error(
+      "Store loading error:",
+      error
+    );
+
+
+    var categoriesElement =
+      document.getElementById(
+        "categories"
+      );
+
+    var productsElement =
+      document.getElementById(
+        "products"
+      );
+
+
+    if (categoriesElement) {
+
+      categoriesElement.innerHTML =
+
+        '<div class="state">' +
+
+          '<div class="state-icon">⚠️</div>' +
+
+          '<h3>تعذر تحميل الأقسام</h3>' +
+
+          '<p>' +
+            'حصلت مشكلة في الاتصال ببيانات المتجر.' +
+          '</p>' +
+
+        '</div>';
+
+    }
+
+
+    if (productsElement) {
+
+      productsElement.innerHTML =
+
+        '<div class="state">' +
+
+          '<div class="state-icon">⚠️</div>' +
+
+          '<h3>تعذر تحميل الأصناف</h3>' +
+
+          '<p>' +
+            'لم نتمكن من الاتصال ببيانات المتجر حاليًا.' +
+          '</p>' +
+
+        '</div>';
+
+    }
 
   }
 
@@ -1613,45 +1786,7 @@
 
       .catch(function(error) {
 
-        console.error(
-          "Store loading error:",
-          error
-        );
-
-
-        document.getElementById(
-          "categories"
-        ).innerHTML =
-
-          '<div class="state">' +
-
-            '<div class="state-icon">⚠️</div>' +
-
-            '<h3>تعذر تحميل الأقسام</h3>' +
-
-            '<p>' +
-              'حصلت مشكلة مؤقتة في تحميل البيانات. ' +
-              'حاول تحديث الصفحة مرة أخرى.' +
-            '</p>' +
-
-          '</div>';
-
-
-        document.getElementById(
-          "products"
-        ).innerHTML =
-
-          '<div class="state">' +
-
-            '<div class="state-icon">⚠️</div>' +
-
-            '<h3>تعذر تحميل الأصناف</h3>' +
-
-            '<p>' +
-              'لم نتمكن من الاتصال ببيانات المتجر حاليًا.' +
-            '</p>' +
-
-          '</div>';
+        showLoadingError(error);
 
       });
 
