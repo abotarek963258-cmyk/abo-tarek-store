@@ -1,1 +1,1635 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
 
+<head>
+
+  <meta charset="utf-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width,initial-scale=1"
+  >
+
+  <meta
+    name="description"
+    content="تصفح أقسام وأصناف أبو طارق للأدوات المنزلية."
+  >
+
+  <meta
+    name="theme-color"
+    content="#14263d"
+  >
+
+  <title>الأقسام والأصناف | أبو طارق للأدوات المنزلية</title>
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family:
+        "Segoe UI",
+        Tahoma,
+        Arial,
+        sans-serif;
+      background: #f7f8fa;
+      color: #14263d;
+      line-height: 1.7;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .container {
+      width: min(1180px, calc(100% - 32px));
+      margin: auto;
+    }
+
+
+    /* ================= HEADER ================= */
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(255,255,255,.96);
+      border-bottom: 1px solid #e8ebef;
+      backdrop-filter: blur(12px);
+    }
+
+    .nav {
+      min-height: 74px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      color: #14263d;
+    }
+
+    .brand-mark {
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #14263d;
+      color: #fff;
+      font-size: 23px;
+    }
+
+    .brand-text strong {
+      display: block;
+      font-size: 17px;
+    }
+
+    .brand-text span {
+      display: block;
+      color: #777;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 10px 18px;
+      border-radius: 12px;
+      background: #14263d;
+      color: #fff;
+      font-weight: 700;
+      transition: .2s ease;
+    }
+
+    .back-btn:hover {
+      transform: translateY(-2px);
+      opacity: .92;
+    }
+
+
+    /* ================= HERO ================= */
+
+    .hero {
+      padding: 70px 0 45px;
+      background:
+        radial-gradient(
+          circle at top right,
+          rgba(20,38,61,.09),
+          transparent 40%
+        ),
+        linear-gradient(
+          180deg,
+          #fff 0%,
+          #f7f8fa 100%
+        );
+    }
+
+    .hero-inner {
+      max-width: 820px;
+      margin: auto;
+      text-align: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 13px;
+      border-radius: 999px;
+      background: #edf1f5;
+      color: #14263d;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(32px, 5vw, 54px);
+      line-height: 1.2;
+      letter-spacing: -.7px;
+    }
+
+    .hero h1 span {
+      color: #53677f;
+    }
+
+    .hero p {
+      max-width: 650px;
+      margin: 18px auto 0;
+      color: #68727d;
+      font-size: 17px;
+    }
+
+
+    /* ================= SEARCH ================= */
+
+    .search-section {
+      margin-top: 8px;
+      margin-bottom: 35px;
+    }
+
+    .search-box {
+      max-width: 700px;
+      margin: auto;
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      height: 58px;
+      border: 1px solid #dfe4e9;
+      border-radius: 17px;
+      background: #fff;
+      padding:
+        0 55px 0 20px;
+      outline: none;
+      color: #14263d;
+      box-shadow:
+        0 8px 25px rgba(20,38,61,.06);
+      transition: .2s ease;
+    }
+
+    .search-box input:focus {
+      border-color: #14263d;
+      box-shadow:
+        0 10px 30px rgba(20,38,61,.10);
+    }
+
+    .search-icon {
+      position: absolute;
+      right: 19px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 21px;
+      pointer-events: none;
+    }
+
+
+    /* ================= CATEGORIES ================= */
+
+    .section-heading {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .section-heading small {
+      display: block;
+      color: #6c7884;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .section-heading h2 {
+      margin: 0;
+      font-size: 30px;
+    }
+
+    .section-heading p {
+      margin: 7px 0 0;
+      color: #737c86;
+    }
+
+    .categories {
+      display: grid;
+      grid-template-columns:
+        repeat(auto-fit, minmax(190px, 1fr));
+      gap: 15px;
+      margin-bottom: 60px;
+    }
+
+    .category-btn {
+      border: 1px solid #e2e6eb;
+      background: #fff;
+      border-radius: 18px;
+      padding: 22px 16px;
+      min-height: 125px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: #14263d;
+      box-shadow:
+        0 7px 22px rgba(20,38,61,.045);
+      transition: .22s ease;
+    }
+
+    .category-btn:hover {
+      transform: translateY(-4px);
+      border-color: #14263d;
+      box-shadow:
+        0 12px 28px rgba(20,38,61,.09);
+    }
+
+    .category-btn.active {
+      background: #14263d;
+      color: #fff;
+      border-color: #14263d;
+    }
+
+    .category-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #edf1f5;
+      font-size: 21px;
+    }
+
+    .category-btn.active .category-icon {
+      background: rgba(255,255,255,.14);
+    }
+
+    .category-name {
+      font-weight: 800;
+      font-size: 15px;
+    }
+
+    .category-count {
+      font-size: 12px;
+      opacity: .65;
+    }
+
+
+    /* ================= PRODUCTS ================= */
+
+    .products-section {
+      padding-bottom: 80px;
+    }
+
+    .selected-category {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      margin-bottom: 22px;
+      padding: 18px 20px;
+      background: #fff;
+      border: 1px solid #e4e8ec;
+      border-radius: 16px;
+    }
+
+    .selected-category strong {
+      font-size: 18px;
+    }
+
+    .selected-category span {
+      color: #737c86;
+      font-size: 13px;
+    }
+
+    .clear-btn {
+      border: 1px solid #dce2e7;
+      background: #fff;
+      color: #14263d;
+      border-radius: 10px;
+      padding: 8px 13px;
+      font-weight: 700;
+    }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns:
+        repeat(auto-fill, minmax(245px, 1fr));
+      gap: 20px;
+    }
+
+    .product-card {
+      background: #fff;
+      border: 1px solid #e5e8ec;
+      border-radius: 19px;
+      overflow: hidden;
+      box-shadow:
+        0 8px 25px rgba(20,38,61,.05);
+      transition: .22s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .product-card:hover {
+      transform: translateY(-4px);
+      box-shadow:
+        0 14px 32px rgba(20,38,61,.10);
+    }
+
+    .product-image {
+      width: 100%;
+      aspect-ratio: 1 / .82;
+      background: #f0f2f4;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .product-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: .3s ease;
+    }
+
+    .product-card:hover .product-image img {
+      transform: scale(1.035);
+    }
+
+    .product-image-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #8b949d;
+      font-size: 45px;
+    }
+
+    .product-body {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .product-category {
+      display: inline-flex;
+      align-self: flex-start;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: #edf1f5;
+      color: #53677f;
+      font-size: 11px;
+      font-weight: 700;
+      margin-bottom: 9px;
+    }
+
+    .product-name {
+      margin: 0;
+      font-size: 19px;
+      line-height: 1.35;
+    }
+
+    .product-description {
+      margin: 8px 0 18px;
+      color: #737c86;
+      font-size: 14px;
+      min-height: 45px;
+    }
+
+    .whatsapp-btn {
+      margin-top: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 11px 14px;
+      border-radius: 12px;
+      background: #14263d;
+      color: #fff;
+      font-weight: 800;
+      transition: .2s ease;
+    }
+
+    .whatsapp-btn:hover {
+      opacity: .9;
+      transform: translateY(-1px);
+    }
+
+
+    /* ================= STATES ================= */
+
+    .state {
+      background: #fff;
+      border: 1px solid #e3e7eb;
+      border-radius: 18px;
+      padding: 45px 20px;
+      text-align: center;
+      color: #737c86;
+    }
+
+    .state-icon {
+      font-size: 43px;
+      margin-bottom: 8px;
+    }
+
+    .state h3 {
+      margin: 0 0 5px;
+      color: #14263d;
+    }
+
+    .state p {
+      margin: 0;
+    }
+
+    .loading {
+      animation: pulse 1.4s infinite ease-in-out;
+    }
+
+    @keyframes pulse {
+      0%,100% {
+        opacity: .5;
+      }
+      50% {
+        opacity: 1;
+      }
+    }
+
+
+    /* ================= FOOTER ================= */
+
+    footer {
+      background: #14263d;
+      color: #fff;
+      padding: 28px 0;
+    }
+
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .footer-inner strong {
+      font-size: 16px;
+    }
+
+    .footer-inner span {
+      color: rgba(255,255,255,.7);
+      font-size: 13px;
+    }
+
+
+    /* ================= MOBILE ================= */
+
+    @media (max-width: 700px) {
+
+      .container {
+        width: min(100% - 22px, 1180px);
+      }
+
+      .nav {
+        min-height: 66px;
+      }
+
+      .brand-mark {
+        width: 40px;
+        height: 40px;
+      }
+
+      .brand-text strong {
+        font-size: 14px;
+      }
+
+      .brand-text span {
+        font-size: 10px;
+      }
+
+      .back-btn {
+        padding: 8px 12px;
+        font-size: 13px;
+      }
+
+      .hero {
+        padding: 45px 0 30px;
+      }
+
+      .hero p {
+        font-size: 15px;
+      }
+
+      .categories {
+        grid-template-columns:
+          repeat(2, minmax(0,1fr));
+        gap: 10px;
+      }
+
+      .category-btn {
+        min-height: 112px;
+        padding: 15px 8px;
+      }
+
+      .products-grid {
+        grid-template-columns:
+          repeat(2, minmax(0,1fr));
+        gap: 10px;
+      }
+
+      .product-body {
+        padding: 13px;
+      }
+
+      .product-name {
+        font-size: 16px;
+      }
+
+      .product-description {
+        font-size: 12px;
+        min-height: 40px;
+      }
+
+      .whatsapp-btn {
+        font-size: 12px;
+        padding: 10px 7px;
+      }
+
+      .selected-category {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+    }
+
+    @media (max-width: 420px) {
+
+      .products-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero h1 {
+        font-size: 32px;
+      }
+
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+
+<!-- ================= HEADER ================= -->
+
+<header class="site-header">
+
+  <div class="container nav">
+
+    <a
+      class="brand"
+      href="./"
+      aria-label="العودة للرئيسية"
+    >
+
+      <div class="brand-mark">
+        🏠
+      </div>
+
+      <div class="brand-text">
+
+        <strong>
+          أبو طارق للأدوات المنزلية
+        </strong>
+
+        <span>
+          الأقسام والأصناف
+        </span>
+
+      </div>
+
+    </a>
+
+
+    <a
+      class="back-btn"
+      href="./"
+    >
+      ← الرئيسية
+    </a>
+
+  </div>
+
+</header>
+
+
+<main>
+
+
+<!-- ================= HERO ================= -->
+
+<section class="hero">
+
+  <div class="container hero-inner">
+
+    <div class="eyebrow">
+      🛍️ متجر أبو طارق
+    </div>
+
+    <h1>
+      الأقسام <span>والأصناف</span>
+    </h1>
+
+    <p>
+      اختار القسم اللي بتدور عليه،
+      وشوف الأصناف المتاحة وتواصل معانا
+      مباشرة على واتساب.
+    </p>
+
+  </div>
+
+</section>
+
+
+<!-- ================= SEARCH ================= -->
+
+<section class="search-section">
+
+  <div class="container">
+
+    <div class="search-box">
+
+      <span class="search-icon">
+        🔎
+      </span>
+
+      <input
+        id="searchInput"
+        type="search"
+        placeholder="ابحث عن صنف أو قسم..."
+        autocomplete="off"
+        aria-label="البحث عن صنف أو قسم"
+      >
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- ================= CATEGORIES ================= -->
+
+<section>
+
+  <div class="container">
+
+    <div class="section-heading">
+
+      <small>
+        اختار اللي يناسبك
+      </small>
+
+      <h2>
+        الأقسام
+      </h2>
+
+      <p>
+        تصفح المنتجات حسب القسم
+      </p>
+
+    </div>
+
+
+    <div
+      id="categories"
+      class="categories"
+    >
+
+      <div class="state loading">
+
+        <div class="state-icon">
+          ⏳
+        </div>
+
+        <h3>
+          جاري تحميل الأقسام
+        </h3>
+
+        <p>
+          لحظات ونجهز لك الأصناف...
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- ================= PRODUCTS ================= -->
+
+<section class="products-section">
+
+  <div class="container">
+
+    <div
+      id="selectedCategory"
+      class="selected-category"
+      style="display:none;"
+    >
+
+      <div>
+
+        <strong id="selectedCategoryName">
+          كل الأصناف
+        </strong>
+
+        <span id="selectedCategoryCount">
+          0 صنف
+        </span>
+
+      </div>
+
+      <button
+        type="button"
+        class="clear-btn"
+        id="clearCategory"
+      >
+        عرض الكل
+      </button>
+
+    </div>
+
+
+    <div
+      id="products"
+      class="products-grid"
+    >
+
+      <div class="state loading">
+
+        <div class="state-icon">
+          ⏳
+        </div>
+
+        <h3>
+          جاري تحميل الأصناف
+        </h3>
+
+        <p>
+          بنجهز لك المنتجات...
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+</main>
+
+
+<!-- ================= FOOTER ================= -->
+
+<footer>
+
+  <div class="container footer-inner">
+
+    <strong>
+      أبو طارق للأدوات المنزلية
+    </strong>
+
+    <span>
+      جميع الحقوق محفوظة ©
+      <span id="year"></span>
+    </span>
+
+  </div>
+
+</footer>
+
+
+<script>
+
+  /* =====================================================
+     الإعدادات
+  ===================================================== */
+
+  var DATA_URL =
+    "https://script.google.com/macros/s/AKfycbyw7k-K9akpV08vSjXbDmZ8khpHH9LOq2G9WLDHTHT2-iOJiTThN-kvEaCKI0-wKWu7hY/exec";
+
+  var WHATSAPP_NUMBER =
+    "201551604163";
+
+
+  /* =====================================================
+     البيانات
+  ===================================================== */
+
+  var products = [];
+
+  var categories = [];
+
+  var selectedCategory = "الكل";
+
+  var searchText = "";
+
+
+  /* =====================================================
+     حماية النصوص
+  ===================================================== */
+
+  function escapeHtml(value) {
+
+    return String(value || "")
+      .replace(/[&<>"']/g, function(char) {
+
+        var map = {
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#039;"
+        };
+
+        return map[char];
+
+      });
+
+  }
+
+
+  /* =====================================================
+     حالة المنتج
+  ===================================================== */
+
+  function isActive(value) {
+
+    return String(value).toLowerCase() !== "false";
+
+  }
+
+
+  /* =====================================================
+     واتساب
+  ===================================================== */
+
+  function getWhatsAppLink(product) {
+
+    var name =
+      String(product.name || "الصنف").trim();
+
+    var message =
+      "السلام عليكم،\n" +
+      "أرغب في الاستفسار عن:\n" +
+      "🛍️ " + name + "\n" +
+      "هل الصنف متاح؟";
+
+    return (
+      "https://wa.me/" +
+      WHATSAPP_NUMBER +
+      "?text=" +
+      encodeURIComponent(message)
+    );
+
+  }
+
+
+  /* =====================================================
+     تحميل المنتجات
+  ===================================================== */
+
+  function loadProducts() {
+
+    var url =
+      DATA_URL +
+      "?t=" +
+      new Date().getTime();
+
+    return fetch(url, {
+      method: "GET",
+      cache: "no-store"
+    })
+
+    .then(function(response) {
+
+      if (!response.ok) {
+
+        throw new Error(
+          "HTTP " + response.status
+        );
+
+      }
+
+      return response.json();
+
+    })
+
+    .then(function(data) {
+
+      if (
+        !data ||
+        data.ok !== true ||
+        !Array.isArray(data.products)
+      ) {
+
+        throw new Error(
+          "استجابة غير صحيحة من السيرفر."
+        );
+
+      }
+
+      products =
+        data.products.filter(function(product) {
+
+          return isActive(product.active);
+
+        });
+
+      return products;
+
+    });
+
+  }
+
+
+  /* =====================================================
+     استخراج الأقسام من المنتجات
+  ===================================================== */
+
+  function buildCategories() {
+
+    var map = {};
+
+    products.forEach(function(product) {
+
+      var category =
+        String(
+          product.category || ""
+        ).trim();
+
+      if (!category) {
+        return;
+      }
+
+      if (!map[category]) {
+
+        map[category] = {
+          name: category,
+          count: 0
+        };
+
+      }
+
+      map[category].count++;
+
+    });
+
+
+    categories =
+      Object.keys(map)
+        .map(function(name) {
+
+          return map[name];
+
+        })
+        .sort(function(a, b) {
+
+          return a.name.localeCompare(
+            b.name,
+            "ar"
+          );
+
+        });
+
+  }
+
+
+  /* =====================================================
+     أيقونة القسم
+  ===================================================== */
+
+  function getCategoryIcon(name) {
+
+    var text =
+      String(name || "").toLowerCase();
+
+    if (
+      text.indexOf("صين") !== -1
+    ) {
+      return "🏺";
+    }
+
+    if (
+      text.indexOf("مطبخ") !== -1
+    ) {
+      return "🍳";
+    }
+
+    if (
+      text.indexOf("كوب") !== -1 ||
+      text.indexOf("كاسات") !== -1
+    ) {
+      return "🥛";
+    }
+
+    if (
+      text.indexOf("شاي") !== -1 ||
+      text.indexOf("قهوة") !== -1
+    ) {
+      return "☕";
+    }
+
+    if (
+      text.indexOf("منظف") !== -1
+    ) {
+      return "🧽";
+    }
+
+    if (
+      text.indexOf("بلاست") !== -1
+    ) {
+      return "📦";
+    }
+
+    return "🛍️";
+
+  }
+
+
+  /* =====================================================
+     عرض الأقسام
+  ===================================================== */
+
+  function renderCategories() {
+
+    var element =
+      document.getElementById(
+        "categories"
+      );
+
+    var visibleCategories =
+      categories.filter(function(category) {
+
+        if (!searchText) {
+          return true;
+        }
+
+        return category.name
+          .toLowerCase()
+          .indexOf(searchText) !== -1;
+
+      });
+
+
+    if (!visibleCategories.length) {
+
+      element.innerHTML =
+
+        '<div class="state">' +
+
+          '<div class="state-icon">🔎</div>' +
+
+          '<h3>مفيش قسم مطابق للبحث</h3>' +
+
+          '<p>جرب كلمة بحث مختلفة.</p>' +
+
+        '</div>';
+
+      return;
+
+    }
+
+
+    element.innerHTML =
+      '<button ' +
+      'type="button" ' +
+      'class="category-btn ' +
+      (selectedCategory === "الكل"
+        ? "active"
+        : "") +
+      '" ' +
+      'data-category="الكل">' +
+
+        '<span class="category-icon">🛍️</span>' +
+
+        '<span class="category-name">' +
+          'كل الأصناف' +
+        '</span>' +
+
+        '<span class="category-count">' +
+          products.length +
+          ' صنف' +
+        '</span>' +
+
+      '</button>' +
+
+      visibleCategories.map(
+        function(category) {
+
+          return (
+
+            '<button ' +
+            'type="button" ' +
+            'class="category-btn ' +
+            (
+              selectedCategory === category.name
+                ? "active"
+                : ""
+            ) +
+            '" ' +
+            'data-category="' +
+            escapeHtml(category.name) +
+            '">' +
+
+              '<span class="category-icon">' +
+                getCategoryIcon(category.name) +
+              '</span>' +
+
+              '<span class="category-name">' +
+                escapeHtml(category.name) +
+              '</span>' +
+
+              '<span class="category-count">' +
+                category.count +
+                ' صنف' +
+              '</span>' +
+
+            '</button>'
+
+          );
+
+        }
+      ).join("");
+
+
+    var buttons =
+      element.querySelectorAll(
+        ".category-btn"
+      );
+
+
+    buttons.forEach(function(button) {
+
+      button.addEventListener(
+        "click",
+        function() {
+
+          selectedCategory =
+            button.getAttribute(
+              "data-category"
+            );
+
+          renderCategories();
+
+          renderProducts();
+
+          document
+            .getElementById("products")
+            .scrollIntoView({
+              behavior: "smooth",
+              block: "start"
+            });
+
+        }
+      );
+
+    });
+
+  }
+
+
+  /* =====================================================
+     عرض المنتجات
+  ===================================================== */
+
+  function renderProducts() {
+
+    var element =
+      document.getElementById(
+        "products"
+      );
+
+    var selectedBox =
+      document.getElementById(
+        "selectedCategory"
+      );
+
+    var selectedName =
+      document.getElementById(
+        "selectedCategoryName"
+      );
+
+    var selectedCount =
+      document.getElementById(
+        "selectedCategoryCount"
+      );
+
+
+    var filtered =
+      products.filter(function(product) {
+
+        var category =
+          String(
+            product.category || ""
+          ).trim();
+
+        var name =
+          String(
+            product.name || ""
+          ).trim()
+          .toLowerCase();
+
+        var description =
+          String(
+            product.description || ""
+          ).trim()
+          .toLowerCase();
+
+        var categoryMatch =
+          selectedCategory === "الكل" ||
+          category === selectedCategory;
+
+        var searchMatch =
+          !searchText ||
+          name.indexOf(searchText) !== -1 ||
+          description.indexOf(searchText) !== -1 ||
+          category.toLowerCase()
+            .indexOf(searchText) !== -1;
+
+        return (
+          categoryMatch &&
+          searchMatch
+        );
+
+      });
+
+
+    if (selectedCategory !== "الكل") {
+
+      selectedBox.style.display =
+        "flex";
+
+      selectedName.textContent =
+        selectedCategory;
+
+    } else {
+
+      selectedBox.style.display =
+        "flex";
+
+      selectedName.textContent =
+        "كل الأصناف";
+
+    }
+
+
+    selectedCount.textContent =
+      filtered.length +
+      (
+        filtered.length === 1
+          ? " صنف"
+          : " أصناف"
+      );
+
+
+    if (!filtered.length) {
+
+      element.innerHTML =
+
+        '<div class="state">' +
+
+          '<div class="state-icon">🛍️</div>' +
+
+          '<h3>مفيش أصناف متاحة</h3>' +
+
+          '<p>' +
+            'جرب قسم تاني أو غيّر كلمة البحث.' +
+          '</p>' +
+
+        '</div>';
+
+      return;
+
+    }
+
+
+    element.innerHTML =
+      filtered.map(function(product) {
+
+        var name =
+          String(
+            product.name ||
+            "صنف بدون اسم"
+          );
+
+        var description =
+          String(
+            product.description || ""
+          );
+
+        var category =
+          String(
+            product.category || ""
+          );
+
+
+        var imageHtml;
+
+        if (product.image) {
+
+          imageHtml =
+
+            '<img ' +
+            'src="' +
+            escapeHtml(product.image) +
+            '" ' +
+            'alt="' +
+            escapeHtml(name) +
+            '" ' +
+            'loading="lazy" ' +
+            'onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'<div class=&quot;product-image-placeholder&quot;>🛍️</div>\';' +
+            '>';
+
+        } else {
+
+          imageHtml =
+            '<div class="product-image-placeholder">' +
+              '🛍️' +
+            '</div>';
+
+        }
+
+
+        return (
+
+          '<article class="product-card">' +
+
+            '<div class="product-image">' +
+
+              imageHtml +
+
+            '</div>' +
+
+            '<div class="product-body">' +
+
+              '<span class="product-category">' +
+                escapeHtml(category) +
+              '</span>' +
+
+              '<h3 class="product-name">' +
+                escapeHtml(name) +
+              '</h3>' +
+
+              '<p class="product-description">' +
+                escapeHtml(
+                  description ||
+                  "للاستفسار عن تفاصيل الصنف والتوافر."
+                ) +
+              '</p>' +
+
+              '<a ' +
+              'class="whatsapp-btn" ' +
+              'href="' +
+              getWhatsAppLink(product) +
+              '" ' +
+              'target="_blank" ' +
+              'rel="noopener noreferrer">' +
+
+                '💬 اسأل على واتساب' +
+
+              '</a>' +
+
+            '</div>' +
+
+          '</article>'
+
+        );
+
+      }).join("");
+
+  }
+
+
+  /* =====================================================
+     البحث
+  ===================================================== */
+
+  function setupSearch() {
+
+    var input =
+      document.getElementById(
+        "searchInput"
+      );
+
+
+    input.addEventListener(
+      "input",
+      function() {
+
+        searchText =
+          String(
+            input.value || ""
+          )
+          .trim()
+          .toLowerCase();
+
+
+        renderCategories();
+
+        renderProducts();
+
+      }
+    );
+
+  }
+
+
+  /* =====================================================
+     عرض الكل
+  ===================================================== */
+
+  function setupClearButton() {
+
+    document
+      .getElementById("clearCategory")
+      .addEventListener(
+        "click",
+        function() {
+
+          selectedCategory =
+            "الكل";
+
+          document
+            .getElementById(
+              "searchInput"
+            )
+            .value = "";
+
+          searchText = "";
+
+          renderCategories();
+
+          renderProducts();
+
+        }
+      );
+
+  }
+
+
+  /* =====================================================
+     تحميل المتجر
+  ===================================================== */
+
+  function loadStore() {
+
+    Promise.resolve()
+
+      .then(function() {
+
+        return loadProducts();
+
+      })
+
+      .then(function() {
+
+        buildCategories();
+
+        renderCategories();
+
+        renderProducts();
+
+      })
+
+      .catch(function(error) {
+
+        console.error(
+          "Store loading error:",
+          error
+        );
+
+
+        document.getElementById(
+          "categories"
+        ).innerHTML =
+
+          '<div class="state">' +
+
+            '<div class="state-icon">⚠️</div>' +
+
+            '<h3>تعذر تحميل الأقسام</h3>' +
+
+            '<p>' +
+              'حصلت مشكلة مؤقتة في تحميل البيانات. ' +
+              'حاول تحديث الصفحة مرة أخرى.' +
+            '</p>' +
+
+          '</div>';
+
+
+        document.getElementById(
+          "products"
+        ).innerHTML =
+
+          '<div class="state">' +
+
+            '<div class="state-icon">⚠️</div>' +
+
+            '<h3>تعذر تحميل الأصناف</h3>' +
+
+            '<p>' +
+              'لم نتمكن من الاتصال ببيانات المتجر حاليًا.' +
+            '</p>' +
+
+          '</div>';
+
+      });
+
+  }
+
+
+  /* =====================================================
+     تشغيل الصفحة
+  ===================================================== */
+
+  document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+      document.getElementById(
+        "year"
+      ).textContent =
+        new Date().getFullYear();
+
+      setupSearch();
+
+      setupClearButton();
+
+      loadStore();
+
+    }
+  );
+
+</script>
+
+
+</body>
+</html>
