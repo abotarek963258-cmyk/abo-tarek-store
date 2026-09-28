@@ -487,13 +487,22 @@ button:disabled{
 
 <script>
 
+/* =========================================================
+   رابط Google Apps Script الحالي
+========================================================= */
+
 const API_URL =
 "https://script.google.com/macros/s/AKfycbyw7k-K9akpV08vSjXbDmZ8khpHH9LOq2G9WLDHT2-iOJiTThN-kvEaCKI0-wKWu7hY/exec";
+
 
 let ADMIN_KEY = "";
 let products = [];
 let sections = [];
 
+
+/* =========================================================
+   الرسائل
+========================================================= */
 
 function showMessage(text,type){
 
@@ -512,41 +521,101 @@ function showMessage(text,type){
 }
 
 
+/* =========================================================
+   الاتصال بالسيرفر
+========================================================= */
+
 async function api(action,extra={}){
 
-  const res =
-    await fetch(API_URL,{
+  const payload = {
+    key: ADMIN_KEY,
+    action: action,
+    ...extra
+  };
 
-      method:"POST",
 
-      headers:{
-        "Content-Type":
-        "text/plain;charset=utf-8"
-      },
+  let res;
 
-      body:JSON.stringify({
-        key:ADMIN_KEY,
-        action,
-        ...extra
-      })
+  try{
 
-    });
+    res = await fetch(
+      API_URL + "?_=" + Date.now(),
+      {
+        method:"POST",
+
+        headers:{
+          "Content-Type":
+            "text/plain;charset=utf-8"
+        },
+
+        body:JSON.stringify(payload),
+
+        cache:"no-store",
+
+        redirect:"follow"
+      }
+    );
+
+  }catch(error){
+
+    throw new Error(
+      "تعذر الاتصال بالسيرفر. تأكد من الإنترنت ورابط Web App."
+    );
+
+  }
 
 
   const raw =
     await res.text();
 
+
+  /*
+    لو Google رجعت صفحة HTML بدل JSON
+    نوضح السبب بدل الرسالة الغامضة.
+  */
+
+  const trimmed =
+    String(raw || "").trim();
+
+
+  if(
+    trimmed.startsWith("<!DOCTYPE") ||
+    trimmed.startsWith("<html") ||
+    trimmed.startsWith("<HTML")
+  ){
+
+    console.error(
+      "Server returned HTML:",
+      trimmed
+    );
+
+
+    throw new Error(
+      "السيرفر رجّع صفحة HTML بدل بيانات JSON. " +
+      "غالبًا نسخة Web App تحتاج تحديث أو صلاحية الوصول ليست Anyone."
+    );
+
+  }
+
+
   let data;
+
 
   try{
 
-    data = JSON.parse(raw);
+    data =
+      JSON.parse(trimmed);
 
   }catch(e){
 
+    console.error(
+      "Invalid server response:",
+      raw
+    );
+
+
     throw new Error(
-      "رد غير صالح من السيرفر: " +
-      raw.slice(0,300)
+      "رد غير صالح من السيرفر."
     );
 
   }
@@ -560,14 +629,51 @@ async function api(action,extra={}){
 
   }
 
+
   return data;
 
 }
 
 
-/* =========================
+/* =========================================================
+   استخراج Array من رد السيرفر
+========================================================= */
+
+function getArrayResponse(data,fieldName){
+
+  if(Array.isArray(data)){
+    return data;
+  }
+
+
+  if(
+    data &&
+    Array.isArray(data[fieldName])
+  ){
+
+    return data[fieldName];
+
+  }
+
+
+  if(
+    data &&
+    Array.isArray(data.data)
+  ){
+
+    return data.data;
+
+  }
+
+
+  return null;
+
+}
+
+
+/* =========================================================
    تسجيل الدخول
-========================= */
+========================================================= */
 
 async function login(){
 
@@ -585,6 +691,7 @@ async function login(){
     );
 
     return;
+
   }
 
 
@@ -604,12 +711,14 @@ async function login(){
       await api("list");
 
 
-    /*
-      Code.gs الحالي يرجع
-      Array مباشرة في list
-    */
+    const list =
+      getArrayResponse(
+        data,
+        "products"
+      );
 
-    if(!Array.isArray(data)){
+
+    if(!list){
 
       throw new Error(
         "مفتاح الإدارة غير صحيح أو تعذر الوصول للسيرفر."
@@ -618,7 +727,7 @@ async function login(){
     }
 
 
-    products = data;
+    products = list;
 
 
     document
@@ -659,7 +768,6 @@ async function login(){
 
     console.error(e);
 
-
   }finally{
 
     btn.disabled = false;
@@ -670,9 +778,9 @@ async function login(){
 }
 
 
-/* =========================
+/* =========================================================
    تحميل الأقسام
-========================= */
+========================================================= */
 
 async function loadSections(){
 
@@ -680,12 +788,14 @@ async function loadSections(){
     await api("listSections");
 
 
-  /*
-    Code.gs الحالي يرجع
-    Array مباشرة
-  */
+  const list =
+    getArrayResponse(
+      data,
+      "sections"
+    );
 
-  if(!Array.isArray(data)){
+
+  if(!list){
 
     throw new Error(
       "تعذر تحميل الأقسام."
@@ -694,7 +804,7 @@ async function loadSections(){
   }
 
 
-  sections = data;
+  sections = list;
 
 
   renderSections();
@@ -706,9 +816,9 @@ async function loadSections(){
 }
 
 
-/* =========================
+/* =========================================================
    تحميل المنتجات
-========================= */
+========================================================= */
 
 async function loadProducts(){
 
@@ -716,7 +826,14 @@ async function loadProducts(){
     await api("list");
 
 
-  if(!Array.isArray(data)){
+  const list =
+    getArrayResponse(
+      data,
+      "products"
+    );
+
+
+  if(!list){
 
     throw new Error(
       "تعذر تحميل المنتجات."
@@ -725,7 +842,7 @@ async function loadProducts(){
   }
 
 
-  products = data;
+  products = list;
 
   renderProducts();
 
@@ -734,9 +851,9 @@ async function loadProducts(){
 }
 
 
-/* =========================
+/* =========================================================
    تحديث الكل
-========================= */
+========================================================= */
 
 async function loadAll(){
 
@@ -771,9 +888,9 @@ async function loadAll(){
 }
 
 
-/* =========================
+/* =========================================================
    الإحصائيات
-========================= */
+========================================================= */
 
 function updateStats(){
 
@@ -805,9 +922,9 @@ function updateStats(){
 }
 
 
-/* =========================
+/* =========================================================
    قوائم الأقسام
-========================= */
+========================================================= */
 
 function fillCategorySelects(){
 
@@ -879,9 +996,9 @@ function fillCategorySelects(){
 }
 
 
-/* =========================
+/* =========================================================
    عرض الأقسام
-========================= */
+========================================================= */
 
 function renderSections(){
 
@@ -991,9 +1108,9 @@ function renderSections(){
 }
 
 
-/* =========================
+/* =========================================================
    إضافة قسم
-========================= */
+========================================================= */
 
 async function addSection(){
 
@@ -1020,11 +1137,6 @@ async function addSection(){
 
 
   try{
-
-    /*
-      Code.gs يطلب:
-      request.section.name
-    */
 
     const data =
       await api(
@@ -1071,9 +1183,9 @@ async function addSection(){
 }
 
 
-/* =========================
+/* =========================================================
    تعديل قسم
-========================= */
+========================================================= */
 
 async function editSection(id){
 
@@ -1115,11 +1227,6 @@ async function editSection(id){
 
 
   try{
-
-    /*
-      Code.gs يطلب:
-      request.section.name
-    */
 
     const data =
       await api(
@@ -1166,9 +1273,9 @@ async function editSection(id){
 }
 
 
-/* =========================
+/* =========================================================
    إظهار / إخفاء قسم
-========================= */
+========================================================= */
 
 async function toggleSection(id,active){
 
@@ -1217,9 +1324,9 @@ async function toggleSection(id,active){
 }
 
 
-/* =========================
+/* =========================================================
    حذف قسم
-========================= */
+========================================================= */
 
 async function deleteSection(id){
 
@@ -1297,9 +1404,9 @@ async function deleteSection(id){
 }
 
 
-/* =========================
+/* =========================================================
    ترتيب الأقسام
-========================= */
+========================================================= */
 
 async function moveSection(id,dir){
 
@@ -1388,9 +1495,9 @@ async function moveSection(id,dir){
 }
 
 
-/* =========================
+/* =========================================================
    حفظ المنتج
-========================= */
+========================================================= */
 
 async function saveProduct(){
 
@@ -1570,9 +1677,9 @@ async function saveProduct(){
 }
 
 
-/* =========================
+/* =========================================================
    رفع الصورة
-========================= */
+========================================================= */
 
 async function uploadImage(file){
 
@@ -1638,9 +1745,9 @@ function fileToBase64(file){
 }
 
 
-/* =========================
+/* =========================================================
    عرض المنتجات
-========================= */
+========================================================= */
 
 function renderProducts(){
 
@@ -1803,9 +1910,9 @@ function renderProducts(){
 }
 
 
-/* =========================
+/* =========================================================
    تعديل منتج
-========================= */
+========================================================= */
 
 function editProduct(id){
 
@@ -1900,9 +2007,9 @@ function editProduct(id){
 }
 
 
-/* =========================
+/* =========================================================
    تنظيف نموذج المنتج
-========================= */
+========================================================= */
 
 function clearForm(){
 
@@ -1954,9 +2061,9 @@ function clearForm(){
 }
 
 
-/* =========================
+/* =========================================================
    إظهار / إخفاء منتج
-========================= */
+========================================================= */
 
 async function toggleProduct(id,active){
 
@@ -2005,9 +2112,9 @@ async function toggleProduct(id,active){
 }
 
 
-/* =========================
+/* =========================================================
    حذف منتج
-========================= */
+========================================================= */
 
 async function deleteProduct(id){
 
@@ -2062,9 +2169,9 @@ async function deleteProduct(id){
 }
 
 
-/* =========================
+/* =========================================================
    معاينة الصورة
-========================= */
+========================================================= */
 
 document
   .getElementById("imageFile")
@@ -2111,9 +2218,9 @@ document
   );
 
 
-/* =========================
+/* =========================================================
    Enter لتسجيل الدخول
-========================= */
+========================================================= */
 
 document
   .getElementById("key")
@@ -2131,9 +2238,9 @@ document
   );
 
 
-/* =========================
+/* =========================================================
    حماية النصوص
-========================= */
+========================================================= */
 
 function escapeHtml(value){
 
