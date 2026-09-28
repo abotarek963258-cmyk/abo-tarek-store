@@ -8,6 +8,17 @@ var currentCategory = "الكل";
 
 
 /* =========================
+   إعدادات الكاش
+========================= */
+
+var PRODUCTS_CACHE_KEY = "abo_tarek_products_cache_v1";
+var SECTIONS_CACHE_KEY = "abo_tarek_sections_cache_v1";
+
+var CACHE_TIME =
+  5 * 60 * 1000;
+
+
+/* =========================
    حماية النصوص
 ========================= */
 
@@ -61,18 +72,130 @@ function getWhatsAppLink(product) {
 
 
 /* =========================
+   قراءة الكاش
+========================= */
+
+function getCache(key) {
+
+  try {
+
+    var raw =
+      localStorage.getItem(key);
+
+    if (!raw) {
+      return null;
+    }
+
+    var data =
+      JSON.parse(raw);
+
+    if (
+      !data ||
+      !data.time ||
+      !Array.isArray(data.value)
+    ) {
+      return null;
+    }
+
+    if (
+      Date.now() - data.time >
+      CACHE_TIME
+    ) {
+      return null;
+    }
+
+    return data.value;
+
+  } catch (error) {
+
+    console.warn(
+      "تعذر قراءة الكاش:",
+      error
+    );
+
+    return null;
+  }
+}
+
+
+/* =========================
+   حفظ الكاش
+========================= */
+
+function setCache(key, value) {
+
+  try {
+
+    localStorage.setItem(
+      key,
+      JSON.stringify({
+        time: Date.now(),
+        value: value
+      })
+    );
+
+  } catch (error) {
+
+    console.warn(
+      "تعذر حفظ الكاش:",
+      error
+    );
+  }
+}
+
+
+/* =========================
    تحميل المنتجات
 ========================= */
 
 function loadProducts() {
 
+  var cachedProducts =
+    getCache(
+      PRODUCTS_CACHE_KEY
+    );
+
+  if (cachedProducts) {
+
+    products =
+      cachedProducts.filter(
+        function (product) {
+          return isActive(product.active);
+        }
+      );
+
+    console.log(
+      "تم تحميل المنتجات من الكاش:",
+      products.length
+    );
+
+    /*
+      تحديث البيانات في الخلفية
+      بدون تعطيل عرض الصفحة
+    */
+    fetchProductsFromServer();
+
+    return Promise.resolve(true);
+  }
+
+  return fetchProductsFromServer();
+}
+
+
+/* =========================
+   تحميل المنتجات من السيرفر
+========================= */
+
+function fetchProductsFromServer() {
+
   return fetch(
-    DATA_URL + "?t=" + new Date().getTime(),
+    DATA_URL,
     {
       method: "GET",
-      cache: "no-store"
+      cache: "default"
     }
   )
+
     .then(function (response) {
 
       if (!response.ok) {
@@ -87,7 +210,7 @@ function loadProducts() {
     .then(function (data) {
 
       console.log(
-        "بيانات المنتجات:",
+        "بيانات المنتجات من السيرفر:",
         data
       );
 
@@ -101,10 +224,29 @@ function loadProducts() {
         );
       }
 
-      products = data.products.filter(
-        function (product) {
-          return isActive(product.active);
-        }
+      setCache(
+        PRODUCTS_CACHE_KEY,
+        data.products
+      );
+
+      products =
+        data.products.filter(
+          function (product) {
+            return isActive(product.active);
+          }
+        );
+
+      /*
+        لو الصفحة بالفعل ظهرت
+        نحدّث المنتجات بدون إعادة تحميل الصفحة
+      */
+      renderCategories();
+      renderFilters();
+      renderProducts();
+
+      console.log(
+        "تم تحديث المنتجات من السيرفر:",
+        products.length
       );
 
       return true;
@@ -116,6 +258,52 @@ function loadProducts() {
         "تعذر تحميل المنتجات:",
         error
       );
+
+      /*
+        لو فشل السيرفر لكن فيه
+        بيانات قديمة محفوظة،
+        نستخدمها
+      */
+      var oldCache = null;
+
+      try {
+
+        var raw =
+          localStorage.getItem(
+            PRODUCTS_CACHE_KEY
+          );
+
+        if (raw) {
+
+          var parsed =
+            JSON.parse(raw);
+
+          if (
+            parsed &&
+            Array.isArray(parsed.value)
+          ) {
+            oldCache =
+              parsed.value;
+          }
+        }
+
+      } catch (e) {}
+
+      if (oldCache) {
+
+        products =
+          oldCache.filter(
+            function (product) {
+              return isActive(product.active);
+            }
+          );
+
+        console.log(
+          "تم استخدام نسخة المنتجات المحفوظة."
+        );
+
+        return true;
+      }
 
       products = [];
 
@@ -130,6 +318,65 @@ function loadProducts() {
 
 function loadSections() {
 
+  var cachedSections =
+    getCache(
+      SECTIONS_CACHE_KEY
+    );
+
+  if (cachedSections) {
+
+    categories =
+      cachedSections
+        .filter(function (section) {
+
+          return (
+            isActive(section.active) &&
+            String(
+              section.name || ""
+            ).trim()
+          );
+
+        })
+        .sort(function (a, b) {
+
+          var orderA =
+            Number(a.sortOrder) || 999999;
+
+          var orderB =
+            Number(b.sortOrder) || 999999;
+
+          return orderA - orderB;
+        })
+        .map(function (section) {
+
+          return String(
+            section.name
+          ).trim();
+
+        });
+
+    console.log(
+      "تم تحميل الأقسام من الكاش."
+    );
+
+    /*
+      تحديث الأقسام في الخلفية
+    */
+    fetchSectionsFromServer();
+
+    return Promise.resolve(true);
+  }
+
+  return fetchSectionsFromServer();
+}
+
+
+/* =========================
+   تحميل الأقسام من السيرفر
+========================= */
+
+function fetchSectionsFromServer() {
+
   return fetch(
     DATA_URL,
     {
@@ -142,7 +389,7 @@ function loadSections() {
         key: "123456",
         action: "listSections"
       }),
-      cache: "no-store"
+      cache: "default"
     }
   )
 
@@ -170,37 +417,46 @@ function loadSections() {
         Array.isArray(data.sections)
       ) {
 
-        categories = data.sections
+        setCache(
+          SECTIONS_CACHE_KEY,
+          data.sections
+        );
 
-          .filter(function (section) {
+        categories =
+          data.sections
 
-            return (
-              isActive(section.active) &&
-              String(
-                section.name || ""
-              ).trim()
-            );
+            .filter(function (section) {
 
-          })
+              return (
+                isActive(section.active) &&
+                String(
+                  section.name || ""
+                ).trim()
+              );
 
-          .sort(function (a, b) {
+            })
 
-            var orderA =
-              Number(a.sortOrder) || 999999;
+            .sort(function (a, b) {
 
-            var orderB =
-              Number(b.sortOrder) || 999999;
+              var orderA =
+                Number(a.sortOrder) || 999999;
 
-            return orderA - orderB;
-          })
+              var orderB =
+                Number(b.sortOrder) || 999999;
 
-          .map(function (section) {
+              return orderA - orderB;
+            })
 
-            return String(
-              section.name
-            ).trim();
+            .map(function (section) {
 
-          });
+              return String(
+                section.name
+              ).trim();
+
+            });
+
+        renderCategories();
+        renderFilters();
 
         return true;
       }
@@ -350,14 +606,17 @@ function renderFilters() {
     i < categories.length;
     i++
   ) {
+
     if (
       filters.indexOf(
         categories[i]
       ) === -1
     ) {
+
       filters.push(
         categories[i]
       );
+
     }
   }
 
@@ -423,24 +682,26 @@ function renderFilters() {
 
 function getFilteredProducts() {
 
-  var list = products.slice();
+  var list =
+    products.slice();
 
   if (
     currentCategory !== "الكل"
   ) {
 
-    list = list.filter(
-      function (product) {
+    list =
+      list.filter(
+        function (product) {
 
-        return (
-          String(
-            product.category || ""
-          ).trim() ===
-          currentCategory
-        );
+          return (
+            String(
+              product.category || ""
+            ).trim() ===
+            currentCategory
+          );
 
-      }
-    );
+        }
+      );
   }
 
   return list;
@@ -525,6 +786,7 @@ function renderProducts() {
                 esc(name) +
               '" ' +
               'loading="lazy" ' +
+              'decoding="async" ' +
               'onerror="' +
                 "this.style.display='none';" +
                 "this.nextElementSibling.style.display='grid';" +
@@ -609,7 +871,8 @@ function renderProducts() {
     }
   );
 
-  element.innerHTML = html;
+  element.innerHTML =
+    html;
 }
 
 
@@ -626,6 +889,7 @@ function selectCategory(
     typeof shouldScroll ===
     "undefined"
   ) {
+
     shouldScroll = true;
   }
 
@@ -648,6 +912,7 @@ function selectCategory(
         behavior: "smooth",
         block: "start"
       });
+
     }
   }
 }
@@ -663,77 +928,99 @@ function loadStore() {
     "app.js اشتغل - بدء تحميل المتجر"
   );
 
-  loadProducts()
+  /*
+    أهم تعديل:
+    المنتجات والأقسام يتحملوا
+    في نفس الوقت بدل ما نستنى
+    المنتجات تخلص الأول.
+  */
 
-    .then(function (productsLoaded) {
+  var productsPromise =
+    loadProducts();
 
-      return loadSections()
-        .then(function (sectionsLoaded) {
+  var sectionsPromise =
+    loadSections();
+
+  Promise.all([
+    productsPromise,
+    sectionsPromise
+  ])
+
+    .then(function (results) {
+
+      var productsLoaded =
+        results[0];
+
+      var sectionsLoaded =
+        results[1];
+
+      if (
+        !sectionsLoaded ||
+        !categories.length
+      ) {
+
+        buildCategoriesFallback();
+      }
+
+      var productCategories = [];
+
+      products.forEach(
+        function (product) {
+
+          var category =
+            String(
+              product.category || ""
+            ).trim();
 
           if (
-            !sectionsLoaded ||
-            !categories.length
+            category &&
+            productCategories.indexOf(
+              category
+            ) === -1
           ) {
-            buildCategoriesFallback();
-          }
 
-          var productCategories = [];
-
-          products.forEach(
-            function (product) {
-
-              var category =
-                String(
-                  product.category || ""
-                ).trim();
-
-              if (
-                category &&
-                productCategories.indexOf(
-                  category
-                ) === -1
-              ) {
-                productCategories.push(
-                  category
-                );
-              }
-
-            }
-          );
-
-          productCategories.forEach(
-            function (category) {
-
-              if (
-                categories.indexOf(
-                  category
-                ) === -1
-              ) {
-                categories.push(
-                  category
-                );
-              }
-
-            }
-          );
-
-          renderCategories();
-          renderFilters();
-          renderProducts();
-
-          console.log(
-            "عدد المنتجات:",
-            products.length
-          );
-
-          if (!productsLoaded) {
-
-            console.warn(
-              "فشل تحميل المنتجات."
+            productCategories.push(
+              category
             );
+
           }
 
-        });
+        }
+      );
+
+      productCategories.forEach(
+        function (category) {
+
+          if (
+            categories.indexOf(
+              category
+            ) === -1
+          ) {
+
+            categories.push(
+              category
+            );
+
+          }
+
+        }
+      );
+
+      renderCategories();
+      renderFilters();
+      renderProducts();
+
+      console.log(
+        "عدد المنتجات:",
+        products.length
+      );
+
+      if (!productsLoaded) {
+
+        console.warn(
+          "فشل تحميل المنتجات."
+        );
+      }
 
     })
 
@@ -747,6 +1034,7 @@ function loadStore() {
       renderCategories();
       renderFilters();
       renderProducts();
+
     });
 }
 
