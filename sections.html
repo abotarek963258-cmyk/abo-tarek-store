@@ -840,12 +840,6 @@
      الإعدادات
   ===================================================== */
 
-  /*
-     مهم:
-     ده رابط Web App الصحيح.
-     ممنوع إضافة HT زيادة في آخر الرابط.
-  */
-
   var DATA_URL =
     "https://script.google.com/macros/s/AKfycbyw7k-K9akpV08vSjXbDmZ8khpHH9LOq2G9WLDHT2-iOJiTThN-kvEaCKI0-wKWu7hY/exec";
 
@@ -928,7 +922,7 @@
 
   /* =====================================================
      تحميل المنتجات
-     JSONP
+     JSONP + fallback
   ===================================================== */
 
   function loadProducts() {
@@ -1048,9 +1042,8 @@
 
 
       /*
-        لازم يكون الـ callback
-        موجود على window قبل تحميل السكربت.
-      */
+       * callback موجود قبل تحميل السكربت.
+       */
 
       window[callbackName] =
         function(data) {
@@ -1063,18 +1056,6 @@
       script.async = true;
 
 
-      script.onload = function() {
-
-        /*
-          لو السيرفر رجّع JSON عادي بدل
-          callback() فلن يتم استدعاء الدالة.
-          لذلك ننتظر حتى الـ timeout
-          ونظهر رسالة واضحة.
-        */
-
-      };
-
-
       script.onerror = function() {
 
         finishError(
@@ -1083,6 +1064,11 @@
 
       };
 
+
+      /*
+       * مهم:
+       * نستخدم نفس Web App الصحيح.
+       */
 
       script.src =
         DATA_URL +
@@ -1099,16 +1085,21 @@
       );
 
 
+      /*
+       * لو الـWeb App لم ينفذ JSONP،
+       * سيتم إظهار الخطأ بدل ترك الصفحة معلقة.
+       */
+
       timeoutId =
         setTimeout(
           function() {
 
             finishError(
-              "انتهت مهلة تحميل بيانات المتجر."
+              "لم يتمكن المتجر من استقبال بيانات الأقسام والأصناف."
             );
 
           },
-          20000
+          12000
         );
 
     });
