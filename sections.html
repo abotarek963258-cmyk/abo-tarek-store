@@ -1,3 +1,4 @@
+```html
 <!doctype html>
 <html lang="ar" dir="rtl">
 
@@ -922,187 +923,58 @@
 
   /* =====================================================
      تحميل المنتجات
-     JSONP + fallback
+     الاتصال المباشر بالـ Web App
   ===================================================== */
 
   function loadProducts() {
 
-    return new Promise(function(resolve, reject) {
+    return fetch(DATA_URL, {
+      method: "GET",
+      cache: "no-store"
+    })
 
-      var callbackName =
-        "__aboTarekCallback_" +
-        Date.now() +
-        "_" +
-        Math.floor(
-          Math.random() * 100000
-        );
+      .then(function(response) {
 
-      var script =
-        document.createElement("script");
+        if (!response.ok) {
 
-      var finished = false;
-
-      var timeoutId = null;
-
-
-      function cleanup() {
-
-        if (timeoutId) {
-          clearTimeout(timeoutId);
-        }
-
-        if (
-          script &&
-          script.parentNode
-        ) {
-
-          script.parentNode.removeChild(
-            script
+          throw new Error(
+            "تعذر الاتصال بسيرفر المتجر."
           );
 
         }
 
-        try {
+        return response.json();
 
-          delete window[callbackName];
+      })
 
-        } catch (error) {
+      .then(function(data) {
 
-          window[callbackName] =
-            undefined;
+        if (
+          !data ||
+          data.ok !== true ||
+          !Array.isArray(data.products)
+        ) {
 
-        }
-
-      }
-
-
-      function finishSuccess(data) {
-
-        if (finished) {
-          return;
-        }
-
-        finished = true;
-
-        try {
-
-          if (
-            !data ||
-            data.ok !== true ||
-            !Array.isArray(data.products)
-          ) {
-
-            throw new Error(
-              "استجابة غير صحيحة من السيرفر."
-            );
-
-          }
-
-          products =
-            data.products.filter(
-              function(product) {
-
-                return isActive(
-                  product.active
-                );
-
-              }
-            );
-
-          cleanup();
-
-          resolve(products);
-
-        } catch (error) {
-
-          cleanup();
-
-          reject(error);
+          throw new Error(
+            "استجابة غير صحيحة من السيرفر."
+          );
 
         }
 
-      }
+        products =
+          data.products.filter(
+            function(product) {
 
+              return isActive(
+                product.active
+              );
 
-      function finishError(message) {
+            }
+          );
 
-        if (finished) {
-          return;
-        }
+        return products;
 
-        finished = true;
-
-        cleanup();
-
-        reject(
-          new Error(message)
-        );
-
-      }
-
-
-      /*
-       * callback موجود قبل تحميل السكربت.
-       */
-
-      window[callbackName] =
-        function(data) {
-
-          finishSuccess(data);
-
-        };
-
-
-      script.async = true;
-
-
-      script.onerror = function() {
-
-        finishError(
-          "تعذر الاتصال بسيرفر المتجر."
-        );
-
-      };
-
-
-      /*
-       * مهم:
-       * نستخدم نفس Web App الصحيح.
-       */
-
-      script.src =
-        DATA_URL +
-        "?callback=" +
-        encodeURIComponent(
-          callbackName
-        ) +
-        "&_=" +
-        Date.now();
-
-
-      document.head.appendChild(
-        script
-      );
-
-
-      /*
-       * لو الـWeb App لم ينفذ JSONP،
-       * سيتم إظهار الخطأ بدل ترك الصفحة معلقة.
-       */
-
-      timeoutId =
-        setTimeout(
-          function() {
-
-            finishError(
-              "لم يتمكن المتجر من استقبال بيانات الأقسام والأصناف."
-            );
-
-          },
-          12000
-        );
-
-    });
+      });
 
   }
 
@@ -1810,3 +1682,4 @@
 
 </body>
 </html>
+```
