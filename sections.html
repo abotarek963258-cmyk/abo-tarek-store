@@ -63,7 +63,6 @@
       margin: auto;
     }
 
-
     /* ================= HEADER ================= */
 
     .site-header {
@@ -133,7 +132,6 @@
       opacity: .92;
     }
 
-
     /* ================= HERO ================= */
 
     .hero {
@@ -188,7 +186,6 @@
       font-size: 17px;
     }
 
-
     /* ================= SEARCH ================= */
 
     .search-section {
@@ -231,7 +228,6 @@
       font-size: 21px;
       pointer-events: none;
     }
-
 
     /* ================= CATEGORIES ================= */
 
@@ -320,7 +316,6 @@
       font-size: 12px;
       opacity: .65;
     }
-
 
     /* ================= PRODUCTS ================= */
 
@@ -465,7 +460,6 @@
       transform: translateY(-1px);
     }
 
-
     /* ================= STATES ================= */
 
     .state {
@@ -504,7 +498,6 @@
       }
     }
 
-
     /* ================= FOOTER ================= */
 
     footer {
@@ -529,7 +522,6 @@
       color: rgba(255,255,255,.7);
       font-size: 13px;
     }
-
 
     /* ================= MOBILE ================= */
 
@@ -627,9 +619,7 @@
 
 </head>
 
-
 <body>
-
 
 <!-- ================= HEADER ================= -->
 
@@ -661,7 +651,6 @@
 
     </a>
 
-
     <a
       class="back-btn"
       href="./"
@@ -673,9 +662,7 @@
 
 </header>
 
-
 <main>
-
 
 <!-- ================= HERO ================= -->
 
@@ -700,7 +687,6 @@
   </div>
 
 </section>
-
 
 <!-- ================= SEARCH ================= -->
 
@@ -728,7 +714,6 @@
 
 </section>
 
-
 <!-- ================= CATEGORIES ================= -->
 
 <section>
@@ -750,7 +735,6 @@
       </p>
 
     </div>
-
 
     <div
       id="categories"
@@ -778,7 +762,6 @@
   </div>
 
 </section>
-
 
 <!-- ================= PRODUCTS ================= -->
 
@@ -814,7 +797,6 @@
 
     </div>
 
-
     <div
       id="products"
       class="products-grid"
@@ -842,9 +824,7 @@
 
 </section>
 
-
 </main>
-
 
 <!-- ================= FOOTER ================= -->
 
@@ -864,7 +844,6 @@
   </div>
 
 </footer>
-
 
 <script>
 
@@ -953,57 +932,137 @@
 
 
   /* =====================================================
-     تحميل المنتجات
+     تحميل المنتجات - JSONP
   ===================================================== */
 
   function loadProducts() {
 
-    var url =
-      DATA_URL +
-      "?t=" +
-      new Date().getTime();
+    return new Promise(function(resolve, reject) {
 
-    return fetch(url, {
-      method: "GET",
-      cache: "no-store"
-    })
+      var callbackName =
+        "storeCallback_" + Date.now();
 
-    .then(function(response) {
+      var script = null;
 
-      if (!response.ok) {
+      var finished = false;
 
-        throw new Error(
-          "HTTP " + response.status
-        );
 
-      }
+      function cleanup() {
 
-      return response.json();
+        if (script && script.parentNode) {
+          script.parentNode.removeChild(script);
+        }
 
-    })
-
-    .then(function(data) {
-
-      if (
-        !data ||
-        data.ok !== true ||
-        !Array.isArray(data.products)
-      ) {
-
-        throw new Error(
-          "استجابة غير صحيحة من السيرفر."
-        );
+        try {
+          delete window[callbackName];
+        } catch (e) {
+          window[callbackName] = undefined;
+        }
 
       }
 
-      products =
-        data.products.filter(function(product) {
 
-          return isActive(product.active);
+      function fail(error) {
 
-        });
+        if (finished) {
+          return;
+        }
 
-      return products;
+        finished = true;
+
+        cleanup();
+
+        reject(error);
+
+      }
+
+
+      window[callbackName] = function(data) {
+
+        if (finished) {
+          return;
+        }
+
+        finished = true;
+
+        try {
+
+          if (
+            !data ||
+            data.ok !== true ||
+            !Array.isArray(data.products)
+          ) {
+
+            throw new Error(
+              "استجابة غير صحيحة من السيرفر."
+            );
+
+          }
+
+          products =
+            data.products.filter(function(product) {
+
+              return isActive(product.active);
+
+            });
+
+          cleanup();
+
+          resolve(products);
+
+        } catch (error) {
+
+          cleanup();
+
+          reject(error);
+
+        }
+
+      };
+
+
+      script =
+        document.createElement("script");
+
+
+      script.async = true;
+
+
+      script.onerror = function() {
+
+        fail(
+          new Error(
+            "تعذر الاتصال بسيرفر المتجر."
+          )
+        );
+
+      };
+
+
+      script.src =
+        DATA_URL +
+        "?callback=" +
+        encodeURIComponent(callbackName) +
+        "&t=" +
+        Date.now();
+
+
+      document.body.appendChild(script);
+
+
+      setTimeout(function() {
+
+        if (!finished) {
+
+          fail(
+            new Error(
+              "انتهت مهلة تحميل بيانات المتجر."
+            )
+          );
+
+        }
+
+      }, 20000);
 
     });
 
@@ -1322,18 +1381,16 @@
       });
 
 
-    if (selectedCategory !== "الكل") {
+    selectedBox.style.display =
+      "flex";
 
-      selectedBox.style.display =
-        "flex";
+
+    if (selectedCategory !== "الكل") {
 
       selectedName.textContent =
         selectedCategory;
 
     } else {
-
-      selectedBox.style.display =
-        "flex";
 
       selectedName.textContent =
         "كل الأصناف";
@@ -1392,6 +1449,7 @@
 
 
         var imageHtml;
+
 
         if (product.image) {
 
@@ -1541,13 +1599,7 @@
 
   function loadStore() {
 
-    Promise.resolve()
-
-      .then(function() {
-
-        return loadProducts();
-
-      })
+    loadProducts()
 
       .then(function() {
 
@@ -1629,7 +1681,6 @@
   );
 
 </script>
-
 
 </body>
 </html>
