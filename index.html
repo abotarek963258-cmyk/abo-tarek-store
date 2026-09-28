@@ -173,7 +173,7 @@
   <div class="container nav">
 
     <a class="brand"
-       href="#home"
+       href="./"
        aria-label="أبو طارق للأدوات المنزلية">
 
       <img src="assets/logo.png"
@@ -185,15 +185,15 @@
     <nav class="desktop-nav"
          aria-label="القائمة الرئيسية">
 
-      <a href="#home">
+      <a href="./">
         الرئيسية
       </a>
 
-      <a href="#categories">
+      <a href="./sections.html">
         الأقسام
       </a>
 
-      <a href="#products">
+      <a href="./sections.html">
         الأصناف
       </a>
 
@@ -264,9 +264,9 @@
       <div class="hero-actions">
 
         <a class="primary-btn"
-           href="#products">
+           href="./sections.html">
 
-          🛍️ تصفح الأصناف
+          🛍️ تصفح الأقسام والأصناف
 
         </a>
 
@@ -477,11 +477,6 @@
     </div>
 
 
-    <!--
-      مهم:
-      الـ JavaScript الحالي بيملأ المكان ده تلقائيًا
-    -->
-
     <div id="categoryGrid"
          class="category-grid">
     </div>
@@ -519,27 +514,29 @@
     </div>
 
 
-   <div class="products-toolbar">
+    <div class="products-toolbar">
 
-  <div class="search-box">
+      <div class="search-box">
 
-    <span class="search-icon">🔎</span>
+        <span class="search-icon">
+          🔎
+        </span>
 
-    <input
-      type="search"
-      id="productSearch"
-      placeholder="ابحث عن صنف..."
-      autocomplete="off"
-      aria-label="البحث عن صنف"
-    >
+        <input
+          type="search"
+          id="productSearch"
+          placeholder="ابحث عن صنف..."
+          autocomplete="off"
+          aria-label="البحث عن صنف"
+        >
 
-  </div>
+      </div>
 
-  <div id="filters"
-       class="filters">
-  </div>
+      <div id="filters"
+           class="filters">
+      </div>
 
-</div>
+    </div>
 
 
     <div id="productsGrid"
@@ -907,7 +904,10 @@
 <script>
   window.APP_JS_LOADED = true;
 </script>
+
 <script src="./app.js?v=999"></script>
+
+
 </body>
 
 </html>
