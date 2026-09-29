@@ -152,12 +152,6 @@
       min-width: 0;
     }
 
-    /*
-      اللوجو الحقيقي
-      الصورة موجودة في نفس مجلد sections.html
-      باسم logo.png
-    */
-
     .brand-logo {
       width: 56px;
       height: 56px;
@@ -1697,7 +1691,6 @@
         aria-label="أبو طارق للأدوات المنزلية"
       >
 
-        <!-- اللوجو الحقيقي -->
         <div class="brand-logo">
           <img
             src="./logo.png"
@@ -2093,13 +2086,34 @@
     const WHATSAPP_NUMBER =
       "201551604163";
 
+
+    /*
+      =========================================================
+      PERFORMANCE CACHE
+      =========================================================
+
+      الكاش الأساسي 30 دقيقة.
+      لكن بعد 10 دقائق فقط يسمح للصفحة بعمل تحديث خلفي.
+
+      النتيجة:
+      - أول زيارة بدون كاش = تحميل من Google Apps Script.
+      - الزيارات التالية = البيانات تظهر فوراً من المتصفح.
+      - لا يوجد طلب سيرفر متكرر كل دقيقة.
+      - التحديث يحصل في الخلفية فقط عند الحاجة.
+    */
+
     const CACHE_KEY =
       "abo_tarek_sections_products_v6";
 
     const CACHE_TIME =
-      5 * 60 * 1000;
+      30 * 60 * 1000;
+
+    const BACKGROUND_REFRESH_TIME =
+      10 * 60 * 1000;
+
 
     const PRIORITY_IMAGES = 1;
+
 
     const PLACEHOLDER =
       "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='500' height='500' viewBox='0 0 500 500'%3E%3Crect width='500' height='500' fill='%23f1f3f6'/%3E%3Ccircle cx='250' cy='220' r='70' fill='%23e2e6eb'/%3E%3Crect x='120' y='320' width='260' height='18' rx='9' fill='%23e2e6eb'/%3E%3C/svg%3E";
@@ -2112,6 +2126,8 @@
     let selectedCategory = "";
 
     let observer = null;
+
+    let searchTimer = null;
 
 
     /* =======================================================
@@ -2384,21 +2400,29 @@
 
     async function fetchProducts() {
 
+      /*
+        مهم جداً:
+        لا نضيف ?t=Date.now()
+
+        لأن إضافته كانت تمنع الاستفادة من
+        HTTP/browser caching وتعمل طلب جديد كل مرة.
+      */
+
       const response =
         await fetch(
-          DATA_URL +
-          "?t=" +
-          Date.now(),
+          DATA_URL,
           {
             method: "GET",
-            cache: "no-store"
+            cache: "default"
           }
         );
 
       if (!response.ok) {
+
         throw new Error(
           "تعذر الاتصال بالسيرفر."
         );
+
       }
 
       const data =
@@ -2451,6 +2475,12 @@
       const cached =
         readCache();
 
+
+      /*
+        لو عندنا بيانات محفوظة:
+        اعرضها فوراً بدون انتظار Google.
+      */
+
       if (
         cached &&
         Array.isArray(cached.products) &&
@@ -2462,26 +2492,62 @@
 
         applyData();
 
+
         const age =
           Date.now() -
           Number(cached.time || 0);
 
-        if (age <= CACHE_TIME) {
+
+        /*
+          أقل من 10 دقائق:
+          لا نعمل أي طلب للسيرفر.
+        */
+
+        if (
+          age <= BACKGROUND_REFRESH_TIME
+        ) {
+
+          return;
+
+        }
+
+
+        /*
+          من 10 إلى 30 دقيقة:
+          تحديث خلفي فقط.
+        */
+
+        if (
+          age <= CACHE_TIME
+        ) {
 
           setTimeout(
             refreshData,
-            1000
+            100
           );
 
           return;
 
         }
 
+
+        /*
+          الكاش قديم جداً:
+          نحدث في الخلفية أيضاً طالما عندنا
+          بيانات صالحة لعرضها.
+        */
+
         refreshData();
 
         return;
 
       }
+
+
+      /*
+        لا يوجد كاش:
+        هنا فقط ننتظر Google Apps Script.
+      */
 
       await refreshData();
 
@@ -2501,6 +2567,14 @@
         applyData();
 
       } catch (error) {
+
+        /*
+          لو الصفحة عندها بيانات قديمة بالفعل
+          لا نعرض رسالة خطأ ولا نغير أي شيء.
+
+          المستخدم يفضل البيانات القديمة
+          على شاشة خطأ.
+        */
 
         if (!allProducts.length) {
 
@@ -2660,43 +2734,6 @@
             }
           )
           .join("");
-
-      container
-        .querySelectorAll(
-          ".category-card"
-        )
-        .forEach(
-          button => {
-
-            button.addEventListener(
-              "click",
-              () => {
-
-                selectedCategory =
-                  button.dataset.category;
-
-                document.getElementById(
-                  "searchInput"
-                ).value = "";
-
-                renderCategories();
-
-                applyFilters();
-
-                document
-                  .getElementById(
-                    "selectedCategory"
-                  )
-                  .scrollIntoView({
-                    behavior: "smooth",
-                    block: "center"
-                  });
-
-              }
-            );
-
-          }
-        );
 
     }
 
@@ -3096,8 +3133,13 @@
 
             },
             {
+              /*
+                نبدأ تحميل الصورة قبل ظهورها
+                بمسافة مناسبة، لكن بدون تحميل
+                عشرات الصور دفعة واحدة.
+              */
               rootMargin:
-                "300px 0px"
+                "200px 0px"
             }
           );
 
@@ -3313,6 +3355,62 @@
 
 
     /* =======================================================
+       CATEGORY EVENTS
+       ======================================================= */
+
+    function setupCategoryEvents() {
+
+      const container =
+        document.getElementById(
+          "categories"
+        );
+
+      /*
+        Event Delegation:
+        بدل إنشاء Event Listener جديد
+        لكل قسم في كل إعادة رسم.
+      */
+
+      container.addEventListener(
+        "click",
+        event => {
+
+          const button =
+            event.target.closest(
+              ".category-card"
+            );
+
+          if (!button) {
+            return;
+          }
+
+          selectedCategory =
+            button.dataset.category || "";
+
+          document.getElementById(
+            "searchInput"
+          ).value = "";
+
+          renderCategories();
+
+          applyFilters();
+
+          document
+            .getElementById(
+              "selectedCategory"
+            )
+            .scrollIntoView({
+              behavior: "smooth",
+              block: "center"
+            });
+
+        }
+      );
+
+    }
+
+
+    /* =======================================================
        ERROR
        ======================================================= */
 
@@ -3369,16 +3467,34 @@
         );
 
 
+      /*
+        Debounce للبحث:
+        لا نعيد رسم مئات المنتجات
+        مع كل حرف يتم ضغطه مباشرة.
+      */
+
       searchInput.addEventListener(
         "input",
         () => {
 
-          selectedCategory =
-            "";
+          clearTimeout(
+            searchTimer
+          );
 
-          renderCategories();
+          searchTimer =
+            setTimeout(
+              () => {
 
-          applyFilters();
+                selectedCategory =
+                  "";
+
+                renderCategories();
+
+                applyFilters();
+
+              },
+              120
+            );
 
         }
       );
@@ -3388,10 +3504,19 @@
         "click",
         () => {
 
+          clearTimeout(
+            searchTimer
+          );
+
           searchInput.value =
             "";
 
           searchInput.focus();
+
+          selectedCategory =
+            "";
+
+          renderCategories();
 
           applyFilters();
 
@@ -3429,6 +3554,8 @@
     setupEvents();
 
     setupModalEvents();
+
+    setupCategoryEvents();
 
     initData();
 
