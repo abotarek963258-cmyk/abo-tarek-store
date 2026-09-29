@@ -1,6 +1,7 @@
 /* =========================================================
    ABO TAREK STORE
    APP.JS
+   PERFORMANCE OPTIMIZED
    Compatible with current Google Apps Script
    ========================================================= */
 
@@ -16,8 +17,22 @@
 
   const WHATSAPP_NUMBER = "201551604163";
 
-  const CACHE_KEY = "abo_tarek_products_v8";
-  const CACHE_TIME = 5 * 60 * 1000;
+  /*
+    الكاش يفضل موجود لفترة أطول.
+    الصفحة تعرضه فوراً، والتحديث يحصل في الخلفية.
+  */
+  const CACHE_KEY = "abo_tarek_products_v9";
+
+  /*
+    30 دقيقة بدل 5 دقائق.
+    حتى لا نطلب Google Apps Script مع كل زيارة.
+  */
+  const CACHE_TIME = 30 * 60 * 1000;
+
+  /*
+    تحديث البيانات في الخلفية بعد هذه المدة.
+  */
+  const BACKGROUND_REFRESH_TIME = 10 * 60 * 1000;
 
   const CATEGORY_ICONS = {
     "سفرة": "🍽️",
@@ -125,10 +140,6 @@
       }
     }
 
-    /*
-      رابط مباشر
-    */
-
     if (
       original.startsWith("https://") ||
       original.startsWith("http://") ||
@@ -137,10 +148,6 @@
       add(original);
       return sources;
     }
-
-    /*
-      رابط نسبي من GitHub
-    */
 
     const relative =
       original
@@ -205,6 +212,7 @@
       }
 
       return data;
+
     } catch (error) {
       return null;
     }
@@ -300,21 +308,26 @@
 
 
   /* =========================================================
-     LOAD PRODUCTS
+     FETCH PRODUCTS
      ========================================================= */
 
   let productsPromise = null;
 
 
   async function fetchProducts() {
+
+    /*
+      لا نستخدم Date.now هنا.
+      ذلك يسمح للمتصفح والاتصال بإعادة استخدام الطلب
+      قدر الإمكان.
+    */
+
     const response =
       await fetch(
-        DATA_URL +
-        "?t=" +
-        Date.now(),
+        DATA_URL,
         {
           method: "GET",
-          cache: "no-store",
+          cache: "default",
           redirect: "follow"
         }
       );
@@ -328,30 +341,13 @@
     const data =
       await response.json();
 
-    /*
-      مهم جداً:
-
-      Code.gs الحالي عندك بيرجع:
-      [
-        {...},
-        {...}
-      ]
-
-      وليس:
-      {
-        ok:true,
-        products:[...]
-      }
-
-      لذلك بنقبل الشكلين.
-    */
-
     let rawProducts = [];
 
     if (
       Array.isArray(data)
     ) {
       rawProducts = data;
+
     } else if (
       data &&
       Array.isArray(
@@ -360,6 +356,7 @@
     ) {
       rawProducts =
         data.products;
+
     } else if (
       data &&
       Array.isArray(
@@ -368,6 +365,7 @@
     ) {
       rawProducts =
         data.data;
+
     } else {
       throw new Error(
         "صيغة البيانات غير صحيحة"
@@ -385,30 +383,46 @@
   }
 
 
+  /* =========================================================
+     GET PRODUCTS
+     ========================================================= */
+
   async function getProducts(
     forceRefresh = false
   ) {
-    if (!forceRefresh) {
-      const cached =
-        readCache();
 
-      if (
-        cached &&
-        Array.isArray(
-          cached.products
-        ) &&
-        Date.now() -
-          cached.time <
-          CACHE_TIME
-      ) {
-        return cached.products;
-      }
+    const cached =
+      readCache();
+
+    /*
+      لو فيه كاش صالح:
+      رجعه فوراً بدون انتظار الشبكة.
+    */
+
+    if (
+      !forceRefresh &&
+      cached &&
+      Array.isArray(
+        cached.products
+      ) &&
+      cached.products.length &&
+      Date.now() -
+        cached.time <
+        CACHE_TIME
+    ) {
+      return cached.products;
     }
 
+    /*
+      منع أكثر من request في نفس الوقت.
+    */
+
     if (!productsPromise) {
+
       productsPromise =
         fetchProducts()
           .then(products => {
+
             writeCache(
               products
             );
@@ -416,6 +430,64 @@
             return products;
           })
           .finally(() => {
+
+            productsPromise =
+              null;
+          });
+    }
+
+    return productsPromise;
+  }
+
+
+  /* =========================================================
+     BACKGROUND REFRESH
+     ========================================================= */
+
+  function refreshInBackground() {
+
+    if (productsPromise) {
+      return productsPromise;
+    }
+
+    const cached =
+      readCache();
+
+    /*
+      لو البيانات حديثة جداً، لا داعي للطلب.
+    */
+
+    if (
+      cached &&
+      cached.time &&
+      Date.now() -
+        cached.time <
+        BACKGROUND_REFRESH_TIME
+    ) {
+      return Promise.resolve(
+        cached.products
+      );
+    }
+
+    if (!productsPromise) {
+
+      productsPromise =
+        fetchProducts()
+          .then(
+            freshProducts => {
+
+              writeCache(
+                freshProducts
+              );
+
+              return freshProducts;
+            }
+          )
+          .catch(
+            () => null
+          )
+          .finally(() => {
+
             productsPromise =
               null;
           });
@@ -433,6 +505,7 @@
     product,
     lazy = true
   ) {
+
     const wrapper =
       document.createElement(
         "div"
@@ -447,6 +520,7 @@
       );
 
     if (!sources.length) {
+
       wrapper.innerHTML = `
         <div class="product-image-placeholder">
           <span class="placeholder-icon">
@@ -475,14 +549,34 @@
     img.width = 600;
     img.height = 600;
 
-    img.decoding = "async";
+    img.decoding =
+      "async";
+
+    /*
+      الصور الأولى فقط يتم تحميلها فوراً.
+      باقي الصور Lazy.
+    */
 
     if (lazy) {
+
       img.loading =
         "lazy";
+
+      /*
+        إخبار المتصفح أن هذه الصورة
+        ليست أولوية.
+      */
+
+      img.fetchPriority =
+        "low";
+
     } else {
+
       img.loading =
         "eager";
+
+      img.fetchPriority =
+        "high";
     }
 
     img.src =
@@ -491,6 +585,7 @@
     img.addEventListener(
       "error",
       () => {
+
         wrapper.innerHTML = `
           <div class="product-image-placeholder">
             <span class="placeholder-icon">
@@ -502,6 +597,7 @@
             </span>
           </div>
         `;
+
       },
       {
         once: true
@@ -523,6 +619,7 @@
   function initHomepage(
     products
   ) {
+
     const grid =
       document.getElementById(
         "productsGrid"
@@ -560,7 +657,8 @@
     let activeCategory =
       "الكل";
 
-    let searchTerm = "";
+    let searchTerm =
+      "";
 
 
     const categories = [
@@ -580,18 +678,22 @@
        ----------------------------------------- */
 
     function renderCategories() {
+
       if (!categoryGrid) {
         return;
       }
 
       if (!categories.length) {
-        categoryGrid.innerHTML = "";
+        categoryGrid.innerHTML =
+          "";
+
         return;
       }
 
       categoryGrid.innerHTML =
         categories
           .map(category => {
+
             const count =
               products.filter(
                 product =>
@@ -643,6 +745,7 @@
        ----------------------------------------- */
 
     function renderFilters() {
+
       if (!filters) {
         return;
       }
@@ -685,6 +788,7 @@
        ----------------------------------------- */
 
     function getFilteredProducts() {
+
       const q =
         normalizeArabic(
           searchTerm
@@ -692,6 +796,7 @@
 
       return products.filter(
         product => {
+
           const categoryMatch =
             activeCategory ===
               "الكل" ||
@@ -721,6 +826,7 @@
       product,
       index
     ) {
+
       const article =
         document.createElement(
           "article"
@@ -731,6 +837,10 @@
 
       article.dataset.id =
         product.id;
+
+      /*
+        أول صورتين فقط أولوية عالية.
+      */
 
       article.appendChild(
         createProductImage(
@@ -795,6 +905,7 @@
       article.addEventListener(
         "click",
         event => {
+
           if (
             event.target.closest(
               "a"
@@ -818,12 +929,15 @@
        ----------------------------------------- */
 
     function renderProducts() {
+
       const list =
         getFilteredProducts();
 
       if (!list.length) {
+
         grid.innerHTML = `
           <div class="empty">
+
             <div class="empty-icon">
               🔎
             </div>
@@ -835,6 +949,7 @@
             <p>
               جرّب اسم صنف تاني أو اختار قسم مختلف.
             </p>
+
           </div>
         `;
 
@@ -846,12 +961,14 @@
 
       list.forEach(
         (product, index) => {
+
           fragment.appendChild(
             createProductCard(
               product,
               index
             )
           );
+
         }
       );
 
@@ -866,9 +983,11 @@
        ----------------------------------------- */
 
     if (filters) {
+
       filters.addEventListener(
         "click",
         event => {
+
           const button =
             event.target.closest(
               "[data-filter]"
@@ -888,10 +1007,12 @@
             )
             .forEach(
               item => {
+
                 item.classList.toggle(
                   "active",
                   item === button
                 );
+
               }
             );
 
@@ -906,9 +1027,11 @@
        ----------------------------------------- */
 
     if (categoryGrid) {
+
       categoryGrid.addEventListener(
         "click",
         event => {
+
           const button =
             event.target.closest(
               "[data-category]"
@@ -923,17 +1046,20 @@
             "الكل";
 
           if (filters) {
+
             filters
               .querySelectorAll(
                 ".filter"
               )
               .forEach(
                 item => {
+
                   item.classList.toggle(
                     "active",
                     item.dataset.filter ===
                       activeCategory
                   );
+
                 }
               );
           }
@@ -946,6 +1072,7 @@
             );
 
           if (section) {
+
             section.scrollIntoView({
               behavior:
                 "smooth",
@@ -963,6 +1090,7 @@
        ----------------------------------------- */
 
     function updateSuggestions() {
+
       if (
         !suggestions ||
         !searchInput
@@ -976,6 +1104,7 @@
         );
 
       if (!q) {
+
         suggestions.hidden =
           true;
 
@@ -1001,13 +1130,16 @@
           );
 
       if (!matches.length) {
+
         suggestions.innerHTML = `
           <div class="search-suggestion">
+
             <span class="search-suggestion-icon">
               🔎
             </span>
 
             <span class="search-suggestion-content">
+
               <span class="search-suggestion-name">
                 مفيش نتائج
               </span>
@@ -1015,7 +1147,9 @@
               <span class="search-suggestion-meta">
                 جرّب كلمة بحث مختلفة
               </span>
+
             </span>
+
           </div>
         `;
 
@@ -1039,6 +1173,7 @@
                 class="product-search-suggestion search-suggestion"
                 data-id="${escapeHtml(product.id)}"
               >
+
                 <span class="search-suggestion-icon">
                   ${escapeHtml(
                     categoryIcon(
@@ -1048,6 +1183,7 @@
                 </span>
 
                 <span class="search-suggestion-content">
+
                   <span class="search-suggestion-name">
                     ${escapeHtml(
                       product.name
@@ -1059,7 +1195,9 @@
                       product.category
                     )}
                   </span>
+
                 </span>
+
               </button>
             `
           )
@@ -1076,13 +1214,16 @@
 
 
     if (searchInput) {
+
       searchInput.addEventListener(
         "input",
         () => {
+
           searchTerm =
             searchInput.value;
 
           if (searchClear) {
+
             searchClear.hidden =
               !searchInput.value;
           }
@@ -1100,10 +1241,12 @@
       searchInput.addEventListener(
         "keydown",
         event => {
+
           if (
             event.key ===
             "Escape"
           ) {
+
             if (suggestions) {
               suggestions.hidden =
                 true;
@@ -1120,9 +1263,11 @@
 
 
     if (searchClear) {
+
       searchClear.addEventListener(
         "click",
         () => {
+
           searchInput.value =
             "";
 
@@ -1146,9 +1291,11 @@
 
 
     if (suggestions) {
+
       suggestions.addEventListener(
         "click",
         event => {
+
           const button =
             event.target.closest(
               "[data-id]"
@@ -1192,17 +1339,20 @@
     document.addEventListener(
       "click",
       event => {
+
         if (
           !event.target.closest(
             "#productSearchBox"
           )
         ) {
+
           if (suggestions) {
             suggestions.hidden =
               true;
           }
 
           if (searchInput) {
+
             searchInput.setAttribute(
               "aria-expanded",
               "false"
@@ -1224,6 +1374,7 @@
      ========================================================= */
 
   function ensureModal() {
+
     let modal =
       document.getElementById(
         "aboTarekProductModal"
@@ -1268,6 +1419,7 @@
         <div class="product-details-modal">
 
           <div class="modal-product-image">
+
             <img
               id="aboModalImage"
               alt=""
@@ -1275,6 +1427,7 @@
               height="700"
               decoding="async"
             >
+
           </div>
 
           <div class="modal-product-info">
@@ -1324,12 +1477,14 @@
     modal.addEventListener(
       "click",
       event => {
+
         if (
           event.target ===
           modal
         ) {
           closeProductModal();
         }
+
       }
     );
 
@@ -1340,6 +1495,7 @@
   function openProductModal(
     product
   ) {
+
     const modal =
       ensureModal();
 
@@ -1374,7 +1530,9 @@
       );
 
     if (image) {
+
       if (sources.length) {
+
         image.src =
           sources[0];
 
@@ -1383,7 +1541,15 @@
 
         image.alt =
           `صورة ${product.name}`;
+
+        image.loading =
+          "eager";
+
+        image.fetchPriority =
+          "high";
+
       } else {
+
         image.removeAttribute(
           "src"
         );
@@ -1404,12 +1570,14 @@
     }
 
     if (description) {
+
       description.textContent =
         product.description ||
         "للاستفسار عن تفاصيل الصنف، تواصل معنا على واتساب.";
     }
 
     if (whatsapp) {
+
       whatsapp.href =
         whatsappUrl(
           product
@@ -1435,6 +1603,7 @@
 
 
   function closeProductModal() {
+
     const modal =
       document.getElementById(
         "aboTarekProductModal"
@@ -1467,6 +1636,7 @@
      ========================================================= */
 
   function initMobileNav() {
+
     const menuButton =
       document.getElementById(
         "menuBtn"
@@ -1487,6 +1657,7 @@
     menuButton.addEventListener(
       "click",
       () => {
+
         nav.classList.toggle(
           "open"
         );
@@ -1499,14 +1670,17 @@
       )
       .forEach(
         link => {
+
           link.addEventListener(
             "click",
             () => {
+
               nav.classList.remove(
                 "open"
               );
             }
           );
+
         }
       );
   }
@@ -1517,6 +1691,7 @@
      ========================================================= */
 
   function showError() {
+
     const grid =
       document.getElementById(
         "productsGrid"
@@ -1560,9 +1735,11 @@
       );
 
     if (retry) {
+
       retry.addEventListener(
         "click",
         () => {
+
           localStorage.removeItem(
             CACHE_KEY
           );
@@ -1579,6 +1756,7 @@
      ========================================================= */
 
   async function startApp() {
+
     initMobileNav();
 
     const homepage =
@@ -1587,6 +1765,7 @@
       );
 
     if (homepage) {
+
       homepage.innerHTML = `
         <div class="loading">
           جاري تحميل الأصناف...
@@ -1595,9 +1774,11 @@
     }
 
     try {
+
       /*
-        الكاش أولاً
-        عشان الصفحة تفتح أسرع
+        ======================================================
+        1) نقرأ الكاش أولاً
+        ======================================================
       */
 
       const cached =
@@ -1610,32 +1791,30 @@
         ) &&
         cached.products.length
       ) {
+
+        /*
+          عرض الصفحة فوراً.
+        */
+
         initHomepage(
           cached.products
         );
 
         /*
-          تحديث صامت في الخلفية
+          تحديث صامت في الخلفية.
+          المستخدم لا ينتظر Google Apps Script.
         */
 
-        fetchProducts()
-          .then(
-            freshProducts => {
-              writeCache(
-                freshProducts
-              );
-            }
-          )
-          .catch(
-            () => {}
-          );
+        refreshInBackground();
 
         return;
       }
 
 
       /*
-        تحميل البيانات من Google Apps Script
+        ======================================================
+        2) لا يوجد كاش
+        ======================================================
       */
 
       const products =
@@ -1648,10 +1827,34 @@
       );
 
     } catch (error) {
+
       console.error(
         "Abo Tarek Store error:",
         error
       );
+
+      /*
+        لو فشل الطلب ولكن يوجد كاش قديم،
+        نستخدمه بدلاً من إظهار خطأ.
+      */
+
+      const fallback =
+        readCache();
+
+      if (
+        fallback &&
+        Array.isArray(
+          fallback.products
+        ) &&
+        fallback.products.length
+      ) {
+
+        initHomepage(
+          fallback.products
+        );
+
+        return;
+      }
 
       showError();
     }
@@ -1665,12 +1868,14 @@
   document.addEventListener(
     "keydown",
     event => {
+
       if (
         event.key ===
         "Escape"
       ) {
         closeProductModal();
       }
+
     }
   );
 
@@ -1683,6 +1888,7 @@
     document.readyState ===
     "loading"
   ) {
+
     document.addEventListener(
       "DOMContentLoaded",
       startApp,
@@ -1690,7 +1896,9 @@
         once: true
       }
     );
+
   } else {
+
     startApp();
   }
 
