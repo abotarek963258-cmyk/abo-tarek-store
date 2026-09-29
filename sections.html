@@ -375,6 +375,22 @@
       color: var(--muted-2);
       font-size: 11px;
       font-weight: 600;
+      text-align: center;
+    }
+
+    .search-result-info {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      margin-top: 9px;
+      color: var(--navy);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .search-result-info.show {
+      display: flex;
     }
 
     .store-content {
@@ -1061,8 +1077,9 @@
           <input
             id="searchInput"
             type="search"
-            placeholder="ابحث عن منتج أو قسم..."
+            placeholder="ابحث عن منتج أو قسم أو وصف..."
             autocomplete="off"
+            aria-label="البحث عن منتج أو قسم"
           >
 
           <button
@@ -1079,9 +1096,14 @@
         <div class="search-hint">
           <span>✨</span>
           <span>
-            اكتب اسم المنتج أو القسم للوصول إليه بسرعة
+            اكتب اسم المنتج أو القسم أو أي كلمة من الوصف
           </span>
         </div>
+
+        <div
+          id="searchResultInfo"
+          class="search-result-info"
+        ></div>
 
       </div>
 
@@ -1301,10 +1323,6 @@
      CONFIG
   ===================================================== */
 
-  /*
-    ده رابط Web App الصحيح
-  */
-
   var DATA_URL =
     "https://script.google.com/macros/s/AKfycbyw7k-K9akpV08vSjXbDmZ8khpHH9LOq2G9WLDHT2-iOJiTThN-kvEaCKI0-wKWu7hY/exec";
 
@@ -1390,38 +1408,87 @@
   }
 
 
+  /*
+    توحيد الحروف العربية عشان البحث يبقى أسهل.
+  */
+
   function normalizeSearch(value) {
 
     return cleanText(value)
       .toLowerCase()
+
+      /*
+        إزالة التشكيل
+      */
+
       .replace(
         /[\u064B-\u065F\u0670]/g,
         ""
       )
+
+      /*
+        توحيد الألف
+      */
+
       .replace(
         /[أإآٱ]/g,
         "ا"
       )
+
+      /*
+        الياء والألف المقصورة
+      */
+
       .replace(
         /ى/g,
         "ي"
       )
+
+      /*
+        الهاء والتاء المربوطة
+      */
+
       .replace(
         /ة/g,
         "ه"
       )
+
+      /*
+        الواو والهمزة
+      */
+
       .replace(
         /ؤ/g,
         "و"
       )
+
+      /*
+        الياء والهمزة
+      */
+
       .replace(
         /ئ/g,
         "ي"
       )
+
+      /*
+        إزالة التطويل
+      */
+
+      .replace(
+        /ـ/g,
+        ""
+      )
+
+      /*
+        توحيد المسافات
+      */
+
       .replace(
         /\s+/g,
         " "
       )
+
       .trim();
 
   }
@@ -1437,8 +1504,6 @@
 
   /*
     تحويل روابط GitHub Raw إلى GitHub Pages.
-    لو صورة GitHub Pages لم تفتح، نرجع تلقائيًا
-    للرابط الأصلي.
   */
 
   function getImageSources(url) {
@@ -1455,10 +1520,12 @@
     var prefix =
       "https://raw.githubusercontent.com/abotarek963258-cmyk/abo-tarek-store/main/";
 
+
     if (url.indexOf(prefix) === 0) {
 
       var path =
         url.substring(prefix.length);
+
 
       return {
         primary:
@@ -1470,6 +1537,7 @@
       };
 
     }
+
 
     return {
       primary: url,
@@ -1492,12 +1560,15 @@
           CACHE_KEY
         );
 
+
       if (!raw) {
         return null;
       }
 
+
       var parsed =
         JSON.parse(raw);
+
 
       if (
         !parsed ||
@@ -1507,6 +1578,7 @@
       ) {
         return null;
       }
+
 
       return parsed;
 
@@ -1598,13 +1670,23 @@
       );
 
 
+    /*
+      البحث يشمل:
+      - اسم المنتج
+      - القسم
+      - الوصف
+      - رقم المنتج إن وجد
+    */
+
     var searchIndex =
       normalizeSearch(
         name +
         " " +
         category +
         " " +
-        description
+        description +
+        " " +
+        id
       );
 
 
@@ -1851,6 +1933,52 @@
   }
 
 
+  /*
+    البحث في الأقسام.
+    لو كلمة البحث موجودة في اسم القسم
+    أو في أحد المنتجات التابعة للقسم، يظهر القسم.
+  */
+
+  function categoryMatchesSearch(categoryName) {
+
+    if (!normalizedSearchText) {
+      return true;
+    }
+
+
+    var categoryText =
+      normalizeSearch(
+        categoryName
+      );
+
+
+    if (
+      categoryText.indexOf(
+        normalizedSearchText
+      ) !== -1
+    ) {
+      return true;
+    }
+
+
+    return products.some(
+      function(product) {
+
+        return (
+          cleanText(
+            product.category
+          ) === categoryName &&
+          product.searchIndex.indexOf(
+            normalizedSearchText
+          ) !== -1
+        );
+
+      }
+    );
+
+  }
+
+
   /* =====================================================
      RENDER CATEGORIES
   ===================================================== */
@@ -1872,16 +2000,9 @@
       categories.filter(
         function(category) {
 
-          if (!normalizedSearchText) {
-            return true;
-          }
-
-
-          return normalizeSearch(
+          return categoryMatchesSearch(
             category.name
-          ).indexOf(
-            normalizedSearchText
-          ) !== -1;
+          );
 
         }
       );
@@ -1981,7 +2102,75 @@
     }
 
 
-    element.innerHTML = html;
+    element.innerHTML =
+      html;
+
+  }
+
+
+  /* =====================================================
+     SEARCH RESULT INFO
+  ===================================================== */
+
+  function renderSearchResultInfo() {
+
+    var element =
+      document.getElementById(
+        "searchResultInfo"
+      );
+
+
+    if (!element) {
+      return;
+    }
+
+
+    if (!normalizedSearchText) {
+
+      element.classList.remove(
+        "show"
+      );
+
+      element.textContent =
+        "";
+
+      return;
+
+    }
+
+
+    var count =
+      getFilteredProducts().length;
+
+
+    if (count === 0) {
+
+      element.innerHTML =
+        "🔎 مفيش نتائج للبحث عن <strong>\"" +
+        escapeHtml(searchText) +
+        "\"</strong>";
+
+    } else {
+
+      element.innerHTML =
+        "🔎 وجدنا <strong>" +
+        count +
+        "</strong> " +
+        (
+          count === 1
+            ? "نتيجة"
+            : "نتيجة"
+        ) +
+        " للبحث عن <strong>\"" +
+        escapeHtml(searchText) +
+        "\"</strong>";
+
+    }
+
+
+    element.classList.add(
+      "show"
+    );
 
   }
 
@@ -2132,6 +2321,11 @@
       "flex";
 
 
+    /*
+      أثناء البحث لا نخفي اسم القسم المختار،
+      لكن لو كانت هناك نتائج من البحث نوضح العدد.
+    */
+
     selectedName.textContent =
       selectedCategory === "الكل"
         ? "كل الأصناف"
@@ -2158,7 +2352,15 @@
           '<h3>مفيش أصناف مطابقة</h3>' +
 
           '<p>' +
-            'جرب كلمة بحث مختلفة أو اختار قسم تاني.' +
+            (
+              normalizedSearchText
+                ? (
+                  'جرب كلمة بحث مختلفة عن "' +
+                  escapeHtml(searchText) +
+                  '" أو امسح البحث.'
+                )
+                : 'جرب اختيار قسم تاني.'
+            ) +
           '</p>' +
 
         '</div>';
@@ -2442,6 +2644,14 @@
     }
 
 
+    /*
+      تأخير بسيط جدًا للبحث أثناء الكتابة
+      لتجنب إعادة الرسم عدة مرات متتالية.
+    */
+
+    var searchTimer = null;
+
+
     input.addEventListener(
       "input",
       function() {
@@ -2467,6 +2677,12 @@
 
         }
 
+
+        /*
+          لو المستخدم بدأ بحثًا جديدًا
+          وكان داخل قسم لا توجد فيه نتيجة،
+          نرجع تلقائيًا لكل الأقسام.
+        */
 
         if (
           selectedCategory !== "الكل"
@@ -2505,9 +2721,26 @@
         }
 
 
-        renderCategories();
+        if (searchTimer) {
+          clearTimeout(
+            searchTimer
+          );
+        }
 
-        renderProducts();
+
+        searchTimer =
+          setTimeout(
+            function() {
+
+              renderCategories();
+
+              renderProducts();
+
+              renderSearchResultInfo();
+
+            },
+            30
+          );
 
       }
     );
@@ -2529,9 +2762,13 @@
             "show"
           );
 
+
           renderCategories();
 
           renderProducts();
+
+          renderSearchResultInfo();
+
 
           input.focus();
 
@@ -2585,6 +2822,8 @@
         renderCategories();
 
         renderProducts();
+
+        renderSearchResultInfo();
 
 
         var productsElement =
@@ -2643,6 +2882,8 @@
         renderCategories();
 
         renderProducts();
+
+        renderSearchResultInfo();
 
 
         var productsElement =
@@ -3040,6 +3281,8 @@
     renderCategories();
 
     renderProducts();
+
+    renderSearchResultInfo();
 
   }
 
