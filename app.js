@@ -5,33 +5,16 @@ var WHATSAPP_NUMBER = "201551604163";
 var products = [];
 var categories = [];
 var currentCategory = "الكل";
-
-
-/* =========================
-   إعدادات الكاش
-========================= */
+var searchQuery = "";
 
 var PRODUCTS_CACHE_KEY = "abo_tarek_products_cache_v1";
 var SECTIONS_CACHE_KEY = "abo_tarek_sections_cache_v1";
 
-var CACHE_TIME =
-  5 * 60 * 1000;
+var CACHE_TIME = 5 * 60 * 1000;
 
 
 /* =========================
-   إعدادات الصور
-========================= */
-
-/*
-  عدد الصور الأولى التي يتم تحميلها فورًا.
-  باقي الصور لن تحصل على src إلا عند
-  اقترابها من الشاشة.
-*/
-var INITIAL_IMAGES_COUNT = 6;
-
-
-/* =========================
-   حماية النصوص
+   HELPERS
 ========================= */
 
 function esc(value) {
@@ -50,28 +33,61 @@ function esc(value) {
 }
 
 
-/* =========================
-   حالة المنتج
-========================= */
-
 function isActive(value) {
   return String(value).toLowerCase() !== "false";
 }
 
 
 /* =========================
-   واتساب
+   SEARCH NORMALIZATION
+========================= */
+
+function normalizeSearchText(value) {
+  return String(value == null ? "" : value)
+    .toLowerCase()
+    .replace(/[\u064B-\u065F\u0670]/g, "")
+    .replace(/[أإآٱ]/g, "ا")
+    .replace(/ى/g, "ي")
+    .replace(/ؤ/g, "و")
+    .replace(/ئ/g, "ي")
+    .replace(/ة/g, "ه")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+
+function productMatchesSearch(product, query) {
+  var search = normalizeSearchText(query);
+
+  if (!search) {
+    return true;
+  }
+
+  var name = normalizeSearchText(product.name);
+  var category = normalizeSearchText(product.category);
+  var description = normalizeSearchText(product.description);
+
+  return (
+    name.indexOf(search) !== -1 ||
+    category.indexOf(search) !== -1 ||
+    description.indexOf(search) !== -1
+  );
+}
+
+
+/* =========================
+   WHATSAPP
 ========================= */
 
 function getWhatsAppLink(product) {
-
-  var productName =
-    String(product.name || "الصنف").trim();
+  var productName = String(product.name || "الصنف").trim();
 
   var message =
     "السلام عليكم،\n" +
     "أرغب في الاستفسار عن:\n" +
-    "🛍️ " + productName + "\n" +
+    "🛍️ " +
+    productName +
+    "\n" +
     "هل الصنف متاح؟";
 
   return (
@@ -84,22 +100,18 @@ function getWhatsAppLink(product) {
 
 
 /* =========================
-   قراءة الكاش
+   CACHE
 ========================= */
 
 function getCache(key) {
-
   try {
-
-    var raw =
-      localStorage.getItem(key);
+    var raw = localStorage.getItem(key);
 
     if (!raw) {
       return null;
     }
 
-    var data =
-      JSON.parse(raw);
+    var data = JSON.parse(raw);
 
     if (
       !data ||
@@ -109,35 +121,21 @@ function getCache(key) {
       return null;
     }
 
-    if (
-      Date.now() - data.time >
-      CACHE_TIME
-    ) {
+    if (Date.now() - data.time > CACHE_TIME) {
       return null;
     }
 
     return data.value;
 
   } catch (error) {
-
-    console.warn(
-      "تعذر قراءة الكاش:",
-      error
-    );
-
+    console.warn("تعذر قراءة الكاش:", error);
     return null;
   }
 }
 
 
-/* =========================
-   حفظ الكاش
-========================= */
-
 function setCache(key, value) {
-
   try {
-
     localStorage.setItem(
       key,
       JSON.stringify({
@@ -147,44 +145,29 @@ function setCache(key, value) {
     );
 
   } catch (error) {
-
-    console.warn(
-      "تعذر حفظ الكاش:",
-      error
-    );
+    console.warn("تعذر حفظ الكاش:", error);
   }
 }
 
 
 /* =========================
-   تحميل المنتجات
+   LOAD PRODUCTS
 ========================= */
 
 function loadProducts() {
-
-  var cachedProducts =
-    getCache(
-      PRODUCTS_CACHE_KEY
-    );
+  var cachedProducts = getCache(PRODUCTS_CACHE_KEY);
 
   if (cachedProducts) {
 
-    products =
-      cachedProducts.filter(
-        function (product) {
-          return isActive(product.active);
-        }
-      );
+    products = cachedProducts.filter(function (product) {
+      return isActive(product.active);
+    });
 
     console.log(
       "تم تحميل المنتجات من الكاش:",
       products.length
     );
 
-    /*
-      تحديث البيانات في الخلفية
-      بدون تعطيل عرض الصفحة
-    */
     fetchProductsFromServer();
 
     return Promise.resolve(true);
@@ -194,26 +177,16 @@ function loadProducts() {
 }
 
 
-/* =========================
-   تحميل المنتجات من السيرفر
-========================= */
-
 function fetchProductsFromServer() {
-
-  return fetch(
-    DATA_URL,
-    {
-      method: "GET",
-      cache: "default"
-    }
-  )
+  return fetch(DATA_URL, {
+    method: "GET",
+    cache: "default"
+  })
 
     .then(function (response) {
 
       if (!response.ok) {
-        throw new Error(
-          "HTTP " + response.status
-        );
+        throw new Error("HTTP " + response.status);
       }
 
       return response.json();
@@ -241,20 +214,16 @@ function fetchProductsFromServer() {
         data.products
       );
 
-      products =
-        data.products.filter(
-          function (product) {
-            return isActive(product.active);
-          }
-        );
+      products = data.products.filter(
+        function (product) {
+          return isActive(product.active);
+        }
+      );
 
-      /*
-        لو الصفحة بالفعل ظهرت
-        نحدّث المنتجات بدون إعادة تحميل الصفحة
-      */
       renderCategories();
       renderFilters();
       renderProducts();
+      setupProductSearch();
 
       console.log(
         "تم تحديث المنتجات من السيرفر:",
@@ -271,11 +240,6 @@ function fetchProductsFromServer() {
         error
       );
 
-      /*
-        لو فشل السيرفر لكن فيه
-        بيانات قديمة محفوظة،
-        نستخدمها
-      */
       var oldCache = null;
 
       try {
@@ -294,8 +258,7 @@ function fetchProductsFromServer() {
             parsed &&
             Array.isArray(parsed.value)
           ) {
-            oldCache =
-              parsed.value;
+            oldCache = parsed.value;
           }
         }
 
@@ -314,6 +277,11 @@ function fetchProductsFromServer() {
           "تم استخدام نسخة المنتجات المحفوظة."
         );
 
+        renderCategories();
+        renderFilters();
+        renderProducts();
+        setupProductSearch();
+
         return true;
       }
 
@@ -325,30 +293,27 @@ function fetchProductsFromServer() {
 
 
 /* =========================
-   تحميل الأقسام
+   LOAD SECTIONS
 ========================= */
 
 function loadSections() {
 
   var cachedSections =
-    getCache(
-      SECTIONS_CACHE_KEY
-    );
+    getCache(SECTIONS_CACHE_KEY);
 
   if (cachedSections) {
 
     categories =
       cachedSections
+
         .filter(function (section) {
 
           return (
             isActive(section.active) &&
-            String(
-              section.name || ""
-            ).trim()
+            String(section.name || "").trim()
           );
-
         })
+
         .sort(function (a, b) {
 
           var orderA =
@@ -359,21 +324,18 @@ function loadSections() {
 
           return orderA - orderB;
         })
+
         .map(function (section) {
 
           return String(
             section.name
           ).trim();
-
         });
 
     console.log(
       "تم تحميل الأقسام من الكاش."
     );
 
-    /*
-      تحديث الأقسام في الخلفية
-    */
     fetchSectionsFromServer();
 
     return Promise.resolve(true);
@@ -383,27 +345,24 @@ function loadSections() {
 }
 
 
-/* =========================
-   تحميل الأقسام من السيرفر
-========================= */
-
 function fetchSectionsFromServer() {
 
-  return fetch(
-    DATA_URL,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type":
-          "text/plain;charset=utf-8"
-      },
-      body: JSON.stringify({
-        key: "123456",
-        action: "listSections"
-      }),
-      cache: "default"
-    }
-  )
+  return fetch(DATA_URL, {
+
+    method: "POST",
+
+    headers: {
+      "Content-Type":
+        "text/plain;charset=utf-8"
+    },
+
+    body: JSON.stringify({
+      key: "123456",
+      action: "listSections"
+    }),
+
+    cache: "default"
+  })
 
     .then(function (response) {
 
@@ -445,16 +404,17 @@ function fetchSectionsFromServer() {
                   section.name || ""
                 ).trim()
               );
-
             })
 
             .sort(function (a, b) {
 
               var orderA =
-                Number(a.sortOrder) || 999999;
+                Number(a.sortOrder) ||
+                999999;
 
               var orderB =
-                Number(b.sortOrder) || 999999;
+                Number(b.sortOrder) ||
+                999999;
 
               return orderA - orderB;
             })
@@ -464,7 +424,6 @@ function fetchSectionsFromServer() {
               return String(
                 section.name
               ).trim();
-
             });
 
         renderCategories();
@@ -489,37 +448,34 @@ function fetchSectionsFromServer() {
 
 
 /* =========================
-   أقسام من المنتجات
+   FALLBACK CATEGORIES
 ========================= */
 
 function buildCategoriesFallback() {
 
   var list = [];
 
-  products.forEach(
-    function (product) {
+  products.forEach(function (product) {
 
-      var category =
-        String(
-          product.category || ""
-        ).trim();
+    var category =
+      String(
+        product.category || ""
+      ).trim();
 
-      if (
-        category &&
-        list.indexOf(category) === -1
-      ) {
-        list.push(category);
-      }
-
+    if (
+      category &&
+      list.indexOf(category) === -1
+    ) {
+      list.push(category);
     }
-  );
+  });
 
   categories = list;
 }
 
 
 /* =========================
-   عرض الأقسام
+   CATEGORIES
 ========================= */
 
 function renderCategories() {
@@ -537,35 +493,33 @@ function renderCategories() {
 
     element.innerHTML =
       '<div class="empty">' +
-        '<div class="empty-icon">🛍️</div>' +
-        '<h3>مفيش أقسام متاحة حاليًا</h3>' +
-        '<p>هنضيف الأقسام قريبًا.</p>' +
-      '</div>';
+      '<div class="empty-icon">🛍️</div>' +
+      '<h3>مفيش أقسام متاحة حاليًا</h3>' +
+      '<p>هنضيف الأقسام قريبًا.</p>' +
+      "</div>";
 
     return;
   }
 
   var html = "";
 
-  categories.forEach(
-    function (category) {
+  categories.forEach(function (category) {
 
-      html +=
-        '<button ' +
-          'type="button" ' +
-          'class="cat" ' +
-          'data-category="' +
-            esc(category) +
-          '">' +
+    html +=
+      '<button type="button" ' +
+      'class="cat" ' +
+      'data-category="' +
+      esc(category) +
+      '">' +
 
-          '<span class="cat-icon">🛍️</span>' +
-          '<span>' +
-            esc(category) +
-          '</span>' +
+      '<span class="cat-icon">🛍️</span>' +
 
-        '</button>';
-    }
-  );
+      "<span>" +
+      esc(category) +
+      "</span>" +
+
+      "</button>";
+  });
 
   element.innerHTML = html;
 
@@ -587,7 +541,6 @@ function renderCategories() {
             "data-category"
           )
         );
-
       }
     );
   }
@@ -595,7 +548,7 @@ function renderCategories() {
 
 
 /* =========================
-   فلاتر المنتجات
+   FILTERS
 ========================= */
 
 function renderFilters() {
@@ -609,9 +562,7 @@ function renderFilters() {
     return;
   }
 
-  var filters = [
-    "الكل"
-  ];
+  var filters = ["الكل"];
 
   for (
     var i = 0;
@@ -628,7 +579,6 @@ function renderFilters() {
       filters.push(
         categories[i]
       );
-
     }
   }
 
@@ -643,18 +593,17 @@ function renderFilters() {
           : "";
 
       html +=
-        '<button ' +
-          'type="button" ' +
-          'class="filter ' +
-            active +
-          '" ' +
-          'data-category="' +
-            esc(category) +
-          '">' +
+        '<button type="button" ' +
+        'class="filter ' +
+        active +
+        '" ' +
+        'data-category="' +
+        esc(category) +
+        '">' +
 
-          esc(category) +
+        esc(category) +
 
-        '</button>';
+        "</button>";
     }
   );
 
@@ -681,7 +630,6 @@ function renderFilters() {
           ),
           false
         );
-
       }
     );
   }
@@ -689,7 +637,7 @@ function renderFilters() {
 
 
 /* =========================
-   فلترة المنتجات حسب القسم
+   FILTER PRODUCTS
 ========================= */
 
 function getFilteredProducts() {
@@ -698,7 +646,8 @@ function getFilteredProducts() {
     products.slice();
 
   if (
-    currentCategory !== "الكل"
+    currentCategory !==
+    "الكل"
   ) {
 
     list =
@@ -711,7 +660,20 @@ function getFilteredProducts() {
             ).trim() ===
             currentCategory
           );
+        }
+      );
+  }
 
+  if (searchQuery) {
+
+    list =
+      list.filter(
+        function (product) {
+
+          return productMatchesSearch(
+            product,
+            searchQuery
+          );
         }
       );
   }
@@ -721,128 +683,378 @@ function getFilteredProducts() {
 
 
 /* =========================
-   مراقبة الصور
+   SEARCH SUGGESTIONS
 ========================= */
 
-function setupLazyImages() {
+function getSearchSuggestions() {
 
-  var images =
-    document.querySelectorAll(
-      "#productsGrid img[data-src]"
+  var query =
+    normalizeSearchText(
+      searchQuery
     );
 
-  if (!images.length) {
+  if (!query) {
+    return [];
+  }
+
+  var matches =
+    products.filter(
+      function (product) {
+
+        return productMatchesSearch(
+          product,
+          query
+        );
+      }
+    );
+
+  return matches.slice(0, 8);
+}
+
+
+function hideSearchSuggestions() {
+
+  var element =
+    document.getElementById(
+      "searchSuggestions"
+    );
+
+  if (!element) {
     return;
   }
 
+  element.innerHTML = "";
+  element.hidden = true;
+}
 
-  /*
-    لو المتصفح يدعم IntersectionObserver
-    نستخدمه لتحميل الصورة فقط عند
-    اقترابها من الشاشة.
-  */
+
+function showSearchSuggestions() {
+
+  var element =
+    document.getElementById(
+      "searchSuggestions"
+    );
+
+  if (!element) {
+    return;
+  }
+
+  var suggestions =
+    getSearchSuggestions();
 
   if (
-    "IntersectionObserver" in window
+    !searchQuery ||
+    !suggestions.length
   ) {
 
-    var observer =
-      new IntersectionObserver(
-        function (entries, obs) {
-
-          entries.forEach(
-            function (entry) {
-
-              if (
-                !entry.isIntersecting
-              ) {
-                return;
-              }
-
-              var img =
-                entry.target;
-
-              var source =
-                img.getAttribute(
-                  "data-src"
-                );
-
-              if (source) {
-
-                img.src =
-                  source;
-
-                img.removeAttribute(
-                  "data-src"
-                );
-
-              }
-
-              obs.unobserve(img);
-
-            }
-          );
-
-        },
-        {
-          rootMargin:
-            "500px 0px"
-        }
-      );
-
-
-    for (
-      var i = 0;
-      i < images.length;
-      i++
-    ) {
-
-      observer.observe(
-        images[i]
-      );
-
-    }
-
+    hideSearchSuggestions();
     return;
   }
 
+  var html = "";
 
-  /*
-    حل احتياطي للمتصفحات القديمة.
-    لو مفيش IntersectionObserver
-    نحمل الصور كلها بالطريقة القديمة.
-  */
+  suggestions.forEach(
+    function (product) {
+
+      var index =
+        products.indexOf(product);
+
+      var name =
+        String(
+          product.name ||
+          "صنف بدون اسم"
+        ).trim();
+
+      var category =
+        String(
+          product.category ||
+          ""
+        ).trim();
+
+      html +=
+        '<button type="button" ' +
+        'class="search-suggestion" ' +
+        'data-product-index="' +
+        index +
+        '">' +
+
+        '<span class="search-suggestion-icon">🛍️</span>' +
+
+        '<span class="search-suggestion-content">' +
+
+        '<strong>' +
+        esc(name) +
+        "</strong>" +
+
+        (
+          category
+            ? '<small>' +
+              esc(category) +
+              "</small>"
+            : ""
+        ) +
+
+        "</span>" +
+
+        '<span class="search-suggestion-arrow">←</span>' +
+
+        "</button>";
+    }
+  );
+
+  element.innerHTML = html;
+  element.hidden = false;
+
+  var buttons =
+    element.querySelectorAll(
+      ".search-suggestion"
+    );
 
   for (
-    var j = 0;
-    j < images.length;
-    j++
+    var i = 0;
+    i < buttons.length;
+    i++
   ) {
 
-    var fallbackImg =
-      images[j];
+    buttons[i].addEventListener(
+      "click",
+      function () {
 
-    var fallbackSource =
-      fallbackImg.getAttribute(
-        "data-src"
-      );
+        var index =
+          Number(
+            this.getAttribute(
+              "data-product-index"
+            )
+          );
 
-    if (fallbackSource) {
-
-      fallbackImg.src =
-        fallbackSource;
-
-      fallbackImg.removeAttribute(
-        "data-src"
-      );
-
-    }
+        chooseSearchProduct(
+          index
+        );
+      }
+    );
   }
 }
 
 
 /* =========================
-   عرض المنتجات
+   CHOOSE SEARCH PRODUCT
+========================= */
+
+function chooseSearchProduct(
+  productIndex
+) {
+
+  var product =
+    products[productIndex];
+
+  if (!product) {
+    return;
+  }
+
+  var input =
+    document.getElementById(
+      "productSearch"
+    );
+
+  if (input) {
+
+    input.value =
+      String(
+        product.name || ""
+      ).trim();
+  }
+
+  searchQuery =
+    String(
+      product.name || ""
+    ).trim();
+
+  hideSearchSuggestions();
+
+  renderProducts();
+
+  setTimeout(
+    function () {
+
+      var card =
+        document.querySelector(
+          '.product[data-product-index="' +
+          productIndex +
+          '"]'
+        );
+
+      if (!card) {
+        return;
+      }
+
+      card.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+      });
+
+      card.classList.remove(
+        "search-highlight"
+      );
+
+      void card.offsetWidth;
+
+      card.classList.add(
+        "search-highlight"
+      );
+
+    },
+    50
+  );
+}
+
+
+/* =========================
+   SETUP SEARCH
+========================= */
+
+function setupProductSearch() {
+
+  var input =
+    document.getElementById(
+      "productSearch"
+    );
+
+  var clearButton =
+    document.getElementById(
+      "clearProductSearch"
+    );
+
+  if (!input) {
+    return;
+  }
+
+  if (
+    input.getAttribute(
+      "data-search-ready"
+    ) === "true"
+  ) {
+    return;
+  }
+
+  input.setAttribute(
+    "data-search-ready",
+    "true"
+  );
+
+  input.addEventListener(
+    "input",
+    function () {
+
+      searchQuery =
+        this.value.trim();
+
+      renderProducts();
+      showSearchSuggestions();
+      updateSearchClearButton();
+    }
+  );
+
+
+  input.addEventListener(
+    "focus",
+    function () {
+
+      if (searchQuery) {
+        showSearchSuggestions();
+      }
+    }
+  );
+
+
+  input.addEventListener(
+    "keydown",
+    function (event) {
+
+      if (
+        event.key === "Enter"
+      ) {
+
+        var suggestions =
+          getSearchSuggestions();
+
+        if (suggestions.length) {
+
+          var index =
+            products.indexOf(
+              suggestions[0]
+            );
+
+          chooseSearchProduct(
+            index
+          );
+
+          event.preventDefault();
+        }
+      }
+
+
+      if (
+        event.key === "Escape"
+      ) {
+
+        hideSearchSuggestions();
+
+        this.blur();
+      }
+    }
+  );
+
+
+  if (clearButton) {
+
+    clearButton.addEventListener(
+      "click",
+      function () {
+
+        input.value = "";
+        searchQuery = "";
+
+        hideSearchSuggestions();
+
+        renderProducts();
+
+        updateSearchClearButton();
+
+        input.focus();
+      }
+    );
+  }
+
+  updateSearchClearButton();
+}
+
+
+function updateSearchClearButton() {
+
+  var input =
+    document.getElementById(
+      "productSearch"
+    );
+
+  var button =
+    document.getElementById(
+      "clearProductSearch"
+    );
+
+  if (
+    !input ||
+    !button
+  ) {
+    return;
+  }
+
+  button.hidden =
+    !input.value.trim();
+}
+
+
+/* =========================
+   PRODUCTS
 ========================= */
 
 function renderProducts() {
@@ -863,12 +1075,10 @@ function renderProducts() {
 
     element.innerHTML =
       '<div class="empty">' +
-        '<div class="empty-icon">🛍️</div>' +
-        '<h3>مفيش أصناف متاحة حاليًا</h3>' +
-        '<p>' +
-          'اختار قسم مختلف لمشاهدة الأصناف المتاحة.' +
-        '</p>' +
-      '</div>';
+      '<div class="empty-icon">🛍️</div>' +
+      '<h3>مفيش أصناف مطابقة</h3>' +
+      '<p>جرب كلمة بحث مختلفة أو اختار قسم تاني.</p>' +
+      "</div>";
 
     return;
   }
@@ -876,7 +1086,10 @@ function renderProducts() {
   var html = "";
 
   list.forEach(
-    function (product, index) {
+    function (product) {
+
+      var originalIndex =
+        products.indexOf(product);
 
       var name =
         String(
@@ -898,160 +1111,115 @@ function renderProducts() {
 
       var image =
         String(
-          product.image || ""
+          product.image ||
+          ""
         ).trim();
 
       var whatsappLink =
-        getWhatsAppLink(product);
+        getWhatsAppLink(
+          product
+        );
 
       var imageHTML = "";
 
+
       if (image) {
-
-        /*
-          أول 6 صور فقط تبدأ التحميل فورًا.
-          باقي الصور لا تحصل على src إطلاقًا
-          حتى تقترب من الشاشة.
-        */
-
-        var imageAttribute = "";
-
-        if (
-          index <
-          INITIAL_IMAGES_COUNT
-        ) {
-
-          imageAttribute =
-            'src="' +
-            esc(image) +
-            '"';
-
-        } else {
-
-          imageAttribute =
-            'data-src="' +
-            esc(image) +
-            '"';
-
-        }
-
 
         imageHTML =
           '<div class="product-image">' +
 
-            '<img ' +
-              imageAttribute +
-              ' ' +
-              'alt="' +
-                esc(name) +
-              '" ' +
-              'loading="' +
-                (
-                  index <
-                  INITIAL_IMAGES_COUNT
-                    ? "eager"
-                    : "lazy"
-                ) +
-              '" ' +
-              'decoding="async" ' +
-              'onerror="' +
-                "this.style.display='none';" +
-                "this.nextElementSibling.style.display='grid';" +
-              '">' +
+          '<img src="' +
+          esc(image) +
+          '" ' +
+          'alt="' +
+          esc(name) +
+          '" ' +
+          'loading="lazy" ' +
+          'decoding="async" ' +
 
-            '<div ' +
-              'class="product-placeholder" ' +
-              'style="display:none;">' +
+          'onerror="' +
+          "this.style.display='none';" +
+          "this.nextElementSibling.style.display='grid';" +
+          '">' +
 
-              '<span class="placeholder-icon">' +
-                '🛍️' +
-              '</span>' +
+          '<div class="product-placeholder" style="display:none;">' +
 
-              '<span>' +
-                'صورة الصنف' +
-              '</span>' +
+          '<span class="placeholder-icon">🛍️</span>' +
 
-            '</div>' +
+          "<span>صورة الصنف</span>" +
 
-          '</div>';
+          "</div>" +
+
+          "</div>";
 
       } else {
 
         imageHTML =
           '<div class="product-image">' +
 
-            '<div class="product-placeholder">' +
+          '<div class="product-placeholder">' +
 
-              '<span class="placeholder-icon">' +
-                '🛍️' +
-              '</span>' +
+          '<span class="placeholder-icon">🛍️</span>' +
 
-              '<span>' +
-                'صورة الصنف' +
-              '</span>' +
+          "<span>صورة الصنف</span>" +
 
-            '</div>' +
+          "</div>" +
 
-          '</div>';
+          "</div>";
       }
+
 
       html +=
 
-        '<article class="product">' +
+        '<article class="product" ' +
+        'data-product-index="' +
+        originalIndex +
+        '">' +
 
-          imageHTML +
+        imageHTML +
 
-          '<div class="product-body">' +
+        '<div class="product-body">' +
 
-            '<div class="product-category">' +
-              esc(category) +
-            '</div>' +
+        '<div class="product-category">' +
+        esc(category) +
+        "</div>" +
 
-            '<h3>' +
-              esc(name) +
-            '</h3>' +
+        "<h3>" +
+        esc(name) +
+        "</h3>" +
 
-            '<p>' +
-              esc(description) +
-            '</p>' +
+        "<p>" +
+        esc(description) +
+        "</p>" +
 
-            '<div class="product-footer">' +
+        '<div class="product-footer">' +
 
-              '<a ' +
-                'class="product-whatsapp" ' +
-                'href="' +
-                  whatsappLink +
-                '" ' +
-                'target="_blank" ' +
-                'rel="noopener noreferrer">' +
+        '<a class="product-whatsapp" ' +
+        'href="' +
+        whatsappLink +
+        '" ' +
+        'target="_blank" ' +
+        'rel="noopener noreferrer">' +
 
-                '<span>💬</span>' +
-                '<span>اسأل على واتساب</span>' +
+        "<span>💬</span>" +
+        "<span>اسأل على واتساب</span>" +
 
-              '</a>' +
+        "</a>" +
 
-            '</div>' +
+        "</div>" +
 
-          '</div>' +
+        "</div>" +
 
-        '</article>';
+        "</article>";
     }
   );
 
-  element.innerHTML =
-    html;
-
-
-  /*
-    بعد إنشاء المنتجات،
-    نبدأ مراقبة الصور المؤجلة.
-  */
-  setupLazyImages();
+  element.innerHTML = html;
 }
 
 
 /* =========================
-   اختيار القسم
+   CATEGORY SELECT
 ========================= */
 
 function selectCategory(
@@ -1063,7 +1231,6 @@ function selectCategory(
     typeof shouldScroll ===
     "undefined"
   ) {
-
     shouldScroll = true;
   }
 
@@ -1086,14 +1253,13 @@ function selectCategory(
         behavior: "smooth",
         block: "start"
       });
-
     }
   }
 }
 
 
 /* =========================
-   تحميل المتجر
+   LOAD STORE
 ========================= */
 
 function loadStore() {
@@ -1102,17 +1268,12 @@ function loadStore() {
     "app.js اشتغل - بدء تحميل المتجر"
   );
 
-  /*
-    المنتجات والأقسام يتحملوا
-    في نفس الوقت بدل ما نستنى
-    المنتجات تخلص الأول.
-  */
-
   var productsPromise =
     loadProducts();
 
   var sectionsPromise =
     loadSections();
+
 
   Promise.all([
     productsPromise,
@@ -1127,6 +1288,7 @@ function loadStore() {
       var sectionsLoaded =
         results[1];
 
+
       if (
         !sectionsLoaded ||
         !categories.length
@@ -1135,15 +1297,19 @@ function loadStore() {
         buildCategoriesFallback();
       }
 
+
       var productCategories = [];
+
 
       products.forEach(
         function (product) {
 
           var category =
             String(
-              product.category || ""
+              product.category ||
+              ""
             ).trim();
+
 
           if (
             category &&
@@ -1155,11 +1321,10 @@ function loadStore() {
             productCategories.push(
               category
             );
-
           }
-
         }
       );
+
 
       productCategories.forEach(
         function (category) {
@@ -1173,20 +1338,22 @@ function loadStore() {
             categories.push(
               category
             );
-
           }
-
         }
       );
+
 
       renderCategories();
       renderFilters();
       renderProducts();
+      setupProductSearch();
+
 
       console.log(
         "عدد المنتجات:",
         products.length
       );
+
 
       if (!productsLoaded) {
 
@@ -1207,13 +1374,39 @@ function loadStore() {
       renderCategories();
       renderFilters();
       renderProducts();
-
+      setupProductSearch();
     });
 }
 
 
 /* =========================
-   بداية الموقع
+   CLOSE SUGGESTIONS OUTSIDE
+========================= */
+
+document.addEventListener(
+  "click",
+  function (event) {
+
+    var searchArea =
+      document.getElementById(
+        "productSearchArea"
+      );
+
+    if (
+      searchArea &&
+      !searchArea.contains(
+        event.target
+      )
+    ) {
+
+      hideSearchSuggestions();
+    }
+  }
+);
+
+
+/* =========================
+   START
 ========================= */
 
 document.addEventListener(
@@ -1225,6 +1418,5 @@ document.addEventListener(
     );
 
     loadStore();
-
   }
 );
