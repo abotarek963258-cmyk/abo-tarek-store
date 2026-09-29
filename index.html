@@ -5,7 +5,10 @@
 
   <meta charset="utf-8">
 
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta
+    name="viewport"
+    content="width=device-width,initial-scale=1"
+  >
 
   <meta name="google-site-verification"
         content="x3vo3hod8GYRSRyByqLLkGvslQO_ehkbVDUlhkrF2dE">
@@ -531,6 +534,43 @@
     </div>
 
 
+    <!-- ================= PRODUCT SEARCH ================= -->
+
+    <div id="productSearchArea"
+         class="product-search-area">
+
+      <div class="product-search-box">
+
+        <span class="product-search-icon"
+              aria-hidden="true">
+          🔎
+        </span>
+
+        <input id="productSearch"
+               class="product-search-input"
+               type="search"
+               placeholder="ابحث عن صنف..."
+               autocomplete="off"
+               aria-label="البحث عن صنف">
+
+        <button id="clearProductSearch"
+                class="clear-product-search"
+                type="button"
+                aria-label="مسح البحث"
+                hidden>
+          ×
+        </button>
+
+      </div>
+
+      <div id="searchSuggestions"
+           class="search-suggestions"
+           hidden>
+      </div>
+
+    </div>
+
+
     <div id="productsGrid"
          class="products-grid">
     </div>
@@ -596,9 +636,6 @@
   </div>
 
 </section>
-
-
-
 <!-- ================= BRANCHES ================= -->
 
 <section id="branches"
@@ -897,7 +934,7 @@
   window.APP_JS_LOADED = true;
 </script>
 
-<script src="./app.js?v=999"></script>
+<script src="./app.js?v=1000"></script>
 
 
 </body>
