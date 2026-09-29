@@ -972,6 +972,18 @@
 
     }
 
+    @media (prefers-reduced-motion: reduce) {
+
+      html {
+        scroll-behavior: auto;
+      }
+
+      .category-btn {
+        transition: none;
+      }
+
+    }
+
   </style>
 
 </head>
@@ -1332,7 +1344,7 @@
 
 
   var CACHE_KEY =
-    "abo_tarek_sections_products_v5";
+    "abo_tarek_sections_products_v6";
 
 
   var CACHE_TIME =
@@ -1340,11 +1352,20 @@
 
 
   /*
-    أول صورتين فقط يتم تحميلهما فورًا.
-    باقي الصور Lazy Loading.
+    صورة واحدة فقط تبدأ فورًا.
+    باقي الصور يتم تحميلها عند الاقتراب منها.
   */
 
-  var PRIORITY_IMAGES = 2;
+  var PRIORITY_IMAGES = 1;
+
+
+  /*
+    تحميل الصورة قبل وصولها للشاشة
+    بمسافة مناسبة، بدون تحميل كل الصور.
+  */
+
+  var LAZY_ROOT_MARGIN =
+    "350px 0px";
 
 
   /* =====================================================
@@ -1408,87 +1429,42 @@
   }
 
 
-  /*
-    توحيد الحروف العربية عشان البحث يبقى أسهل.
-  */
-
   function normalizeSearch(value) {
 
     return cleanText(value)
       .toLowerCase()
-
-      /*
-        إزالة التشكيل
-      */
-
       .replace(
         /[\u064B-\u065F\u0670]/g,
         ""
       )
-
-      /*
-        توحيد الألف
-      */
-
       .replace(
         /[أإآٱ]/g,
         "ا"
       )
-
-      /*
-        الياء والألف المقصورة
-      */
-
       .replace(
         /ى/g,
         "ي"
       )
-
-      /*
-        الهاء والتاء المربوطة
-      */
-
       .replace(
         /ة/g,
         "ه"
       )
-
-      /*
-        الواو والهمزة
-      */
-
       .replace(
         /ؤ/g,
         "و"
       )
-
-      /*
-        الياء والهمزة
-      */
-
       .replace(
         /ئ/g,
         "ي"
       )
-
-      /*
-        إزالة التطويل
-      */
-
       .replace(
         /ـ/g,
         ""
       )
-
-      /*
-        توحيد المسافات
-      */
-
       .replace(
         /\s+/g,
         " "
       )
-
       .trim();
 
   }
@@ -1502,20 +1478,23 @@
   }
 
 
-  /*
-    تحويل روابط GitHub Raw إلى GitHub Pages.
-  */
+  /* =====================================================
+     IMAGE URLS
+  ===================================================== */
 
   function getImageSources(url) {
 
     url = cleanText(url);
 
     if (!url) {
+
       return {
         primary: "",
         fallback: ""
       };
+
     }
+
 
     var prefix =
       "https://raw.githubusercontent.com/abotarek963258-cmyk/abo-tarek-store/main/";
@@ -1528,12 +1507,14 @@
 
 
       return {
+
         primary:
           "https://abotarek963258-cmyk.github.io/abo-tarek-store/" +
           path,
 
         fallback:
           url
+
       };
 
     }
@@ -1669,14 +1650,6 @@
         product.productId
       );
 
-
-    /*
-      البحث يشمل:
-      - اسم المنتج
-      - القسم
-      - الوصف
-      - رقم المنتج إن وجد
-    */
 
     var searchIndex =
       normalizeSearch(
@@ -1933,12 +1906,6 @@
   }
 
 
-  /*
-    البحث في الأقسام.
-    لو كلمة البحث موجودة في اسم القسم
-    أو في أحد المنتجات التابعة للقسم، يظهر القسم.
-  */
-
   function categoryMatchesSearch(categoryName) {
 
     if (!normalizedSearchText) {
@@ -2109,7 +2076,7 @@
 
 
   /* =====================================================
-     SEARCH RESULT INFO
+     SEARCH INFO
   ===================================================== */
 
   function renderSearchResultInfo() {
@@ -2155,13 +2122,7 @@
       element.innerHTML =
         "🔎 وجدنا <strong>" +
         count +
-        "</strong> " +
-        (
-          count === 1
-            ? "نتيجة"
-            : "نتيجة"
-        ) +
-        " للبحث عن <strong>\"" +
+        "</strong> نتيجة للبحث عن <strong>\"" +
         escapeHtml(searchText) +
         "\"</strong>";
 
@@ -2178,6 +2139,35 @@
   /* =====================================================
      LAZY IMAGE LOADING
   ===================================================== */
+
+  function loadLazyImage(img) {
+
+    if (!img) {
+      return;
+    }
+
+
+    var src =
+      img.getAttribute(
+        "data-src"
+      );
+
+
+    if (!src) {
+      return;
+    }
+
+
+    img.src =
+      src;
+
+
+    img.removeAttribute(
+      "data-src"
+    );
+
+  }
+
 
   function setupLazyImages() {
 
@@ -2199,7 +2189,9 @@
       images.forEach(
         function(img) {
 
-          loadLazyImage(img);
+          loadLazyImage(
+            img
+          );
 
         }
       );
@@ -2216,7 +2208,9 @@
           entries.forEach(
             function(entry) {
 
-              if (!entry.isIntersecting) {
+              if (
+                !entry.isIntersecting
+              ) {
                 return;
               }
 
@@ -2235,7 +2229,10 @@
 
         },
         {
-          rootMargin: "600px 0px"
+          rootMargin:
+            LAZY_ROOT_MARGIN,
+          threshold:
+            0.01
         }
       );
 
@@ -2243,7 +2240,9 @@
     images.forEach(
       function(img) {
 
-        observer.observe(img);
+        observer.observe(
+          img
+        );
 
       }
     );
@@ -2251,23 +2250,119 @@
   }
 
 
-  function loadLazyImage(img) {
+  /* =====================================================
+     IMAGE HTML
+  ===================================================== */
 
-    var src =
-      img.getAttribute(
-        "data-src"
+  function buildProductImage(
+    product,
+    index
+  ) {
+
+    var name =
+      cleanText(
+        product.name
+      ) ||
+      "صنف بدون اسم";
+
+
+    var image =
+      cleanText(
+        product.image
       );
 
 
-    if (!src) {
-      return;
+    if (!image) {
+
+      return (
+        '<div class="product-image-placeholder">' +
+          '🛍️' +
+        '</div>'
+      );
+
     }
 
 
-    img.src = src;
+    var sources =
+      getImageSources(
+        image
+      );
 
-    img.removeAttribute(
-      "data-src"
+
+    var priority =
+      index <
+      PRIORITY_IMAGES;
+
+
+    var fallbackAttribute =
+      sources.fallback
+        ? (
+          'data-fallback="' +
+          escapeHtml(
+            sources.fallback
+          ) +
+          '" '
+        )
+        : "";
+
+
+    var errorHandler =
+      "if(this.dataset.fallback && this.src !== this.dataset.fallback){" +
+        "this.src=this.dataset.fallback;" +
+      "}else{" +
+        "this.onerror=null;" +
+        "this.parentElement.innerHTML='<div class=\"product-image-placeholder\">🛍️</div>';" +
+      "}";
+
+
+    if (priority) {
+
+      return (
+        '<img ' +
+        'src="' +
+        escapeHtml(
+          sources.primary
+        ) +
+        '" ' +
+        'alt="' +
+        escapeHtml(name) +
+        '" ' +
+        'loading="eager" ' +
+        'fetchpriority="high" ' +
+        'decoding="async" ' +
+        fallbackAttribute +
+        'onerror="' +
+        escapeHtml(
+          errorHandler
+        ) +
+        '"' +
+        '>'
+      );
+
+    }
+
+
+    return (
+      '<img ' +
+      'src="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27300%27 height=%27300%27%3E%3Crect width=%27100%25%27 height=%27100%25%27 fill=%27%23eef2f5%27/%3E%3C/svg%3E" ' +
+      'data-src="' +
+      escapeHtml(
+        sources.primary
+      ) +
+      '" ' +
+      'alt="' +
+      escapeHtml(name) +
+      '" ' +
+      'loading="lazy" ' +
+      'fetchpriority="low" ' +
+      'decoding="async" ' +
+      fallbackAttribute +
+      'onerror="' +
+      escapeHtml(
+        errorHandler
+      ) +
+      '"' +
+      '>'
     );
 
   }
@@ -2320,11 +2415,6 @@
     selectedBox.style.display =
       "flex";
 
-
-    /*
-      أثناء البحث لا نخفي اسم القسم المختار،
-      لكن لو كانت هناك نتائج من البحث نوضح العدد.
-    */
 
     selectedName.textContent =
       selectedCategory === "الكل"
@@ -2396,99 +2486,10 @@
           );
 
 
-        var image =
-          cleanText(
-            product.image
-          );
-
-
         var whatsappLink =
           getWhatsAppLink(
             product
           );
-
-
-        var imageHtml = "";
-
-
-        if (image) {
-
-          var imageSources =
-            getImageSources(
-              image
-            );
-
-
-          var priority =
-            index <
-            PRIORITY_IMAGES;
-
-
-          if (priority) {
-
-            imageHtml =
-              '<img ' +
-              'src="' +
-              escapeHtml(
-                imageSources.primary
-              ) +
-              '" ' +
-              'alt="' +
-              escapeHtml(name) +
-              '" ' +
-              'loading="eager" ' +
-              'fetchpriority="high" ' +
-              'decoding="async" ' +
-              (
-                imageSources.fallback
-                  ? 'data-fallback="' +
-                    escapeHtml(
-                      imageSources.fallback
-                    ) +
-                    '" '
-                  : ''
-              ) +
-              'onerror="if(this.dataset.fallback && this.src !== this.dataset.fallback){this.src=this.dataset.fallback;}else{this.onerror=null;this.parentElement.innerHTML=\'<div class=&quot;product-image-placeholder&quot;>🛍️</div>\';}"' +
-              '>';
-
-          } else {
-
-            imageHtml =
-              '<img ' +
-              'src="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27300%27 height=%27300%27%3E%3Crect width=%27100%25%27 height=%27100%25%27 fill=%27%23eef2f5%27/%3E%3C/svg%3E" ' +
-              'data-src="' +
-              escapeHtml(
-                imageSources.primary
-              ) +
-              '" ' +
-              'alt="' +
-              escapeHtml(name) +
-              '" ' +
-              'loading="lazy" ' +
-              'fetchpriority="low" ' +
-              'decoding="async" ' +
-              (
-                imageSources.fallback
-                  ? 'data-fallback="' +
-                    escapeHtml(
-                      imageSources.fallback
-                    ) +
-                    '" '
-                  : ''
-              ) +
-              'onerror="if(this.dataset.fallback && this.src !== this.dataset.fallback){this.src=this.dataset.fallback;}else{this.onerror=null;this.parentElement.innerHTML=\'<div class=&quot;product-image-placeholder&quot;>🛍️</div>\';}"' +
-              '>';
-
-          }
-
-        } else {
-
-          imageHtml =
-            '<div class="product-image-placeholder">' +
-              '🛍️' +
-            '</div>';
-
-        }
 
 
         var productIndex =
@@ -2513,7 +2514,10 @@
                   : ""
               ) +
 
-              imageHtml +
+              buildProductImage(
+                product,
+                index
+              ) +
 
             '</div>' +
 
@@ -2644,12 +2648,8 @@
     }
 
 
-    /*
-      تأخير بسيط جدًا للبحث أثناء الكتابة
-      لتجنب إعادة الرسم عدة مرات متتالية.
-    */
-
-    var searchTimer = null;
+    var searchTimer =
+      null;
 
 
     input.addEventListener(
@@ -2677,12 +2677,6 @@
 
         }
 
-
-        /*
-          لو المستخدم بدأ بحثًا جديدًا
-          وكان داخل قسم لا توجد فيه نتيجة،
-          نرجع تلقائيًا لكل الأقسام.
-        */
 
         if (
           selectedCategory !== "الكل"
@@ -2722,9 +2716,11 @@
 
 
         if (searchTimer) {
+
           clearTimeout(
             searchTimer
           );
+
         }
 
 
@@ -3014,6 +3010,27 @@
         );
 
 
+      var fallbackAttribute =
+        sources.fallback
+          ? (
+            'data-fallback="' +
+            escapeHtml(
+              sources.fallback
+            ) +
+            '" '
+          )
+          : "";
+
+
+      var errorHandler =
+        "if(this.dataset.fallback && this.src !== this.dataset.fallback){" +
+          "this.src=this.dataset.fallback;" +
+        "}else{" +
+          "this.onerror=null;" +
+          "this.parentElement.innerHTML='<div class=\"product-image-placeholder\">🛍️</div>';" +
+        "}";
+
+
       imageElement.innerHTML =
 
         '<img ' +
@@ -3028,16 +3045,12 @@
         'loading="eager" ' +
         'fetchpriority="high" ' +
         'decoding="async" ' +
-        (
-          sources.fallback
-            ? 'data-fallback="' +
-              escapeHtml(
-                sources.fallback
-              ) +
-              '" '
-            : ''
+        fallbackAttribute +
+        'onerror="' +
+        escapeHtml(
+          errorHandler
         ) +
-        'onerror="if(this.dataset.fallback && this.src !== this.dataset.fallback){this.src=this.dataset.fallback;}else{this.onerror=null;this.parentElement.innerHTML=\'<div class=&quot;product-image-placeholder&quot;>🛍️</div>\';}"' +
+        '"' +
         '>';
 
     } else {
@@ -3323,13 +3336,46 @@
       .then(
         function(data) {
 
-          if (
-            !data ||
-            data.ok !== true ||
-            !Array.isArray(
+          /*
+            Code.gs الحالي عندك يرجع Array مباشرة.
+
+            نسمح أيضًا بصيغة:
+            { ok:true, products:[...] }
+
+            عشان الصفحة تفضل متوافقة
+            لو تغير شكل الاستجابة مستقبلاً.
+          */
+
+          var rawProducts;
+
+
+          if (Array.isArray(data)) {
+
+            rawProducts =
+              data;
+
+          } else if (
+            data &&
+            data.ok === true &&
+            Array.isArray(
               data.products
             )
           ) {
+
+            rawProducts =
+              data.products;
+
+          } else if (
+            data &&
+            Array.isArray(
+              data.products
+            )
+          ) {
+
+            rawProducts =
+              data.products;
+
+          } else {
 
             throw new Error(
               "استجابة غير صحيحة من السيرفر."
@@ -3339,7 +3385,7 @@
 
 
           var freshProducts =
-            data.products
+            rawProducts
 
               .filter(
                 function(product) {
@@ -3396,6 +3442,47 @@
 
 
   /* =====================================================
+     CACHE HELPERS
+     ===================================================== */
+
+  function applyCachedProducts(
+    cached
+  ) {
+
+    if (
+      !cached ||
+      !Array.isArray(
+        cached.products
+      ) ||
+      !cached.products.length
+    ) {
+
+      return false;
+
+    }
+
+
+    products =
+      cached.products.map(
+        function(product) {
+
+          return normalizeProduct(
+            product
+          );
+
+        }
+      );
+
+
+    renderAll();
+
+
+    return true;
+
+  }
+
+
+  /* =====================================================
      STORE LOAD
   ===================================================== */
 
@@ -3405,95 +3492,24 @@
       getCache();
 
 
-    if (
-      cached &&
-      Array.isArray(
-        cached.products
-      ) &&
-      cached.products.length
-    ) {
-
-      products =
-        cached.products.map(
-          function(product) {
-
-            return normalizeProduct(
-              product
-            );
-
-          }
-        );
-
-
-      renderAll();
-
-
-      var cacheAge =
-        Date.now() -
-        Number(
-          cached.time || 0
-        );
-
-
-      /*
-        لو الكاش لسه جديد:
-        اعرض المنتجات فورًا،
-        وبعدها حدّث البيانات في الخلفية.
-      */
-
-      if (
-        cacheAge <= CACHE_TIME
-      ) {
-
-        setTimeout(
-          function() {
-
-            fetchProducts()
-
-              .then(
-                function(freshProducts) {
-
-                  products =
-                    freshProducts;
-
-
-                  saveCache(
-                    freshProducts
-                  );
-
-
-                  renderAll();
-
-                }
-              )
-
-              .catch(
-                function(error) {
-
-                  console.warn(
-                    "Background refresh failed:",
-                    error
-                  );
-
-                }
-              );
-
-          },
-          1200
-        );
-
-
-        return;
-
-      }
-
-    }
-
-
     /*
-      مفيش كاش أو الكاش قديم:
-      نجيب البيانات مباشرة.
+      أهم تحسين هنا:
+
+      لو عندنا كاش، نعرضه فورًا
+      سواء كان عمره دقيقة أو يوم.
+
+      وبعدها نطلب أحدث البيانات
+      في الخلفية.
+
+      كده المستخدم مش مستني Google Apps Script
+      عشان يشوف المنتجات.
     */
+
+    var hasCache =
+      applyCachedProducts(
+        cached
+      );
+
 
     fetchProducts()
 
@@ -3517,35 +3533,21 @@
       .catch(
         function(error) {
 
+          console.warn(
+            "تعذر تحديث البيانات من السيرفر:",
+            error
+          );
+
+
           /*
-            لو السيرفر فشل لكن عندنا كاش:
-            نعرض الكاش بدل شاشة الخطأ.
+            لو الكاش موجود:
+            لا نغير أي شيء.
+
+            المنتجات بالفعل ظاهرة للمستخدم.
           */
 
-          if (
-            cached &&
-            Array.isArray(
-              cached.products
-            ) &&
-            cached.products.length
-          ) {
-
-            products =
-              cached.products.map(
-                function(product) {
-
-                  return normalizeProduct(
-                    product
-                  );
-
-                }
-              );
-
-
-            renderAll();
-
+          if (hasCache) {
             return;
-
           }
 
 
