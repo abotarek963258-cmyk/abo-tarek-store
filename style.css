@@ -1020,6 +1020,7 @@ footer{
     padding:7px 10px;
   }
 }
+
 /* =========================
    STORE DYNAMIC ELEMENTS
 ========================= */
@@ -1149,7 +1150,6 @@ footer{
   color:#77818b;
 }
 
-
 /* =========================
    PRODUCT HOVER
 ========================= */
@@ -1166,7 +1166,6 @@ footer{
   line-height:1.7;
 }
 
-
 /* =========================
    MOBILE PRODUCT BUTTON
 ========================= */
@@ -1176,6 +1175,7 @@ footer{
   .product-whatsapp{
     padding:10px 12px;
   }
+
 /* =========================
    PRODUCT CARDS - PREMIUM
 ========================= */
@@ -1296,7 +1296,6 @@ footer{
   box-shadow:0 8px 18px rgba(20,139,87,.18);
 }
 
-
 /* =========================
    PRODUCT GRID RESPONSIVE
 ========================= */
@@ -1362,11 +1361,13 @@ footer{
   }
 
 }
+
   .product-category{
     font-size:11px;
   }
 
 }
+
 /* =========================
    CATEGORY CARDS - PREMIUM
 ========================= */
@@ -1424,7 +1425,6 @@ footer{
   background:#ffe9d7;
 }
 
-
 /* =========================
    CATEGORY RESPONSIVE
 ========================= */
@@ -1469,6 +1469,7 @@ footer{
   }
 
 }
+
 /* =========================
    PREMIUM HEADER
 ========================= */
@@ -1497,6 +1498,9 @@ footer{
   transform:rotate(-3deg) scale(1.04);
   box-shadow:0 8px 18px rgba(199,100,22,.24);
 }
+/* =========================
+   NAV POLISH
+========================= */
 
 .nav a{
   position:relative;
@@ -1527,7 +1531,6 @@ footer{
   transform:scaleX(1);
 }
 
-
 /* =========================
    HEADER WHATSAPP
 ========================= */
@@ -1543,7 +1546,6 @@ footer{
   transform:translateY(-2px);
   box-shadow:0 9px 20px rgba(20,139,87,.22);
 }
-
 
 /* =========================
    MOBILE HEADER
@@ -1610,6 +1612,7 @@ footer{
   }
 
 }
+
 /* =========================
    PREMIUM HERO
 ========================= */
@@ -1705,7 +1708,6 @@ footer{
     0 8px 20px rgba(20,139,87,.18);
 }
 
-
 /* =========================
    HERO FEATURE BOXES
 ========================= */
@@ -1754,7 +1756,6 @@ footer{
   color:rgba(255,255,255,.68);
   font-size:11px;
 }
-
 
 /* =========================
    HERO MOBILE
@@ -1808,6 +1809,7 @@ footer{
   }
 
 }
+
 /* =========================
    PREMIUM CONTACT / SOCIAL
 ========================= */
@@ -1852,7 +1854,6 @@ footer{
   box-shadow:0 7px 18px rgba(24,40,59,.10);
 }
 
-
 /* =========================
    BRANCHES
 ========================= */
@@ -1886,7 +1887,6 @@ footer{
 .branch-card p{
   line-height:1.8;
 }
-
 
 /* =========================
    FLOATING WHATSAPP
@@ -1942,7 +1942,6 @@ footer{
   }
 }
 
-
 /* =========================
    FOOTER
 ========================= */
@@ -1963,7 +1962,6 @@ footer{
   color:#c76416;
 }
 
-
 /* =========================
    SECTION HEADINGS
 ========================= */
@@ -1975,7 +1973,6 @@ footer{
 .section-head p{
   line-height:1.8;
 }
-
 
 /* =========================
    GLOBAL BUTTON POLISH
@@ -1996,7 +1993,6 @@ a,
 button{
   -webkit-touch-callout:none;
 }
-
 
 /* =========================
    MOBILE POLISH
@@ -2029,7 +2025,6 @@ button{
 
 }
 
-
 /* =========================
    REDUCE MOTION
 ========================= */
@@ -2046,6 +2041,7 @@ button{
   }
 
 }
+
 /* =========================
    MOBILE NAVIGATION
 ========================= */
@@ -2112,7 +2108,6 @@ button{
 
 }
 
-
 /* =========================
    MOBILE TOUCH FEEDBACK
 ========================= */
@@ -2133,6 +2128,314 @@ button{
   .header-whatsapp,
   .nav a{
     touch-action:manipulation;
+  }
+
+}
+/* =========================
+   PRODUCT SEARCH
+========================= */
+
+.product-search-area{
+  position:relative;
+  width:min(720px,100%);
+  margin:0 auto 26px;
+  z-index:20;
+}
+
+.product-search-box{
+  position:relative;
+  display:flex;
+  align-items:center;
+  width:100%;
+  min-height:56px;
+  background:#fff;
+  border:1px solid #ded7cc;
+  border-radius:16px;
+  box-shadow:0 8px 24px rgba(24,40,59,.06);
+  transition:
+    border-color .2s ease,
+    box-shadow .2s ease,
+    transform .2s ease;
+}
+
+.product-search-box:focus-within{
+  border-color:#c76416;
+  box-shadow:
+    0 10px 28px rgba(24,40,59,.09),
+    0 0 0 3px rgba(199,100,22,.08);
+}
+
+.product-search-icon{
+  flex:0 0 auto;
+  width:48px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:20px;
+  pointer-events:none;
+}
+
+.product-search-input{
+  width:100%;
+  min-width:0;
+  height:54px;
+  padding:0 8px;
+  border:0;
+  outline:0;
+  background:transparent;
+  color:#18283b;
+  font-size:16px;
+  font-weight:700;
+  direction:rtl;
+  text-align:right;
+}
+
+.product-search-input::placeholder{
+  color:#9aa2aa;
+  font-weight:600;
+}
+
+.product-search-input::-webkit-search-cancel-button{
+  -webkit-appearance:none;
+  appearance:none;
+}
+
+.clear-product-search{
+  flex:0 0 auto;
+  width:38px;
+  height:38px;
+  margin-left:9px;
+  margin-right:5px;
+  padding:0;
+  border:0;
+  border-radius:50%;
+  background:#f1ede7;
+  color:#68737d;
+  font-size:25px;
+  line-height:1;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:
+    background .2s ease,
+    color .2s ease,
+    transform .2s ease;
+}
+
+.clear-product-search:hover{
+  background:#e8e1d7;
+  color:#18283b;
+  transform:scale(1.05);
+}
+
+.search-suggestions{
+  position:absolute;
+  top:calc(100% + 8px);
+  right:0;
+  left:0;
+  width:100%;
+  max-height:330px;
+  overflow-y:auto;
+  padding:7px;
+  background:#fff;
+  border:1px solid #e5ded4;
+  border-radius:16px;
+  box-shadow:0 18px 42px rgba(24,40,59,.14);
+  z-index:100;
+}
+
+.search-suggestions[hidden]{
+  display:none !important;
+}
+
+.search-suggestion{
+  width:100%;
+  display:flex;
+  align-items:center;
+  gap:11px;
+  padding:11px 12px;
+  border:0;
+  border-radius:11px;
+  background:transparent;
+  color:#18283b;
+  text-align:right;
+  direction:rtl;
+  cursor:pointer;
+  font:inherit;
+  transition:
+    background .18s ease,
+    transform .18s ease;
+}
+
+.search-suggestion:hover,
+.search-suggestion:focus-visible{
+  background:#fff5ec;
+  outline:none;
+}
+
+.search-suggestion-icon{
+  width:34px;
+  height:34px;
+  flex:0 0 34px;
+  display:grid;
+  place-items:center;
+  border-radius:10px;
+  background:#fff1e6;
+  color:#c76416;
+  font-size:16px;
+}
+
+.search-suggestion-content{
+  min-width:0;
+  flex:1;
+}
+
+.search-suggestion-name{
+  display:block;
+  overflow:hidden;
+  color:#18283b;
+  font-size:14px;
+  font-weight:800;
+  line-height:1.5;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.search-suggestion-meta{
+  display:block;
+  margin-top:2px;
+  overflow:hidden;
+  color:#8a949d;
+  font-size:11px;
+  line-height:1.4;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.search-highlight{
+  animation:searchProductHighlight 1.7s ease;
+}
+
+@keyframes searchProductHighlight{
+
+  0%{
+    transform:translateY(-3px);
+    box-shadow:
+      0 0 0 4px rgba(199,100,22,.18),
+      0 18px 38px rgba(25,38,53,.12);
+  }
+
+  45%{
+    transform:translateY(-5px);
+    box-shadow:
+      0 0 0 6px rgba(199,100,22,.10),
+      0 18px 38px rgba(25,38,53,.14);
+  }
+
+  100%{
+    transform:translateY(0);
+    box-shadow:0 7px 24px rgba(24,40,59,.07);
+  }
+
+}
+
+/* =========================
+   PRODUCT SEARCH MOBILE
+========================= */
+
+@media(max-width:560px){
+
+  .product-search-area{
+    margin-bottom:20px;
+  }
+
+  .product-search-box{
+    min-height:52px;
+    border-radius:14px;
+  }
+
+  .product-search-input{
+    height:50px;
+    padding:0 5px;
+    font-size:14px;
+  }
+
+  .product-search-icon{
+    width:42px;
+    font-size:18px;
+  }
+
+  .clear-product-search{
+    width:34px;
+    height:34px;
+    margin-left:7px;
+    margin-right:4px;
+    font-size:22px;
+  }
+
+  .search-suggestions{
+    max-height:290px;
+    padding:5px;
+    border-radius:14px;
+  }
+
+  .search-suggestion{
+    padding:10px;
+    gap:9px;
+  }
+
+  .search-suggestion-icon{
+    width:31px;
+    height:31px;
+    flex-basis:31px;
+    font-size:14px;
+  }
+
+  .search-suggestion-name{
+    font-size:13px;
+  }
+
+  .search-suggestion-meta{
+    font-size:10px;
+  }
+
+}
+
+/* =========================
+   SEARCH SCROLLBAR
+========================= */
+
+.search-suggestions{
+  scrollbar-width:thin;
+  scrollbar-color:#d7cfc3 transparent;
+}
+
+.search-suggestions::-webkit-scrollbar{
+  width:7px;
+}
+
+.search-suggestions::-webkit-scrollbar-track{
+  background:transparent;
+}
+
+.search-suggestions::-webkit-scrollbar-thumb{
+  background:#d7cfc3;
+  border-radius:999px;
+}
+
+.search-suggestions::-webkit-scrollbar-thumb:hover{
+  background:#c6bcae;
+}
+
+/* =========================
+   SEARCH REDUCED MOTION
+========================= */
+
+@media(prefers-reduced-motion:reduce){
+
+  .search-highlight{
+    animation:none !important;
   }
 
 }
