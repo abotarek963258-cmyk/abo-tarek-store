@@ -2089,28 +2089,25 @@
 
     /*
       =========================================================
-      PERFORMANCE CACHE
+      الإصلاح الجديد
       =========================================================
 
-      الكاش الأساسي 30 دقيقة.
-      لكن بعد 10 دقائق فقط يسمح للصفحة بعمل تحديث خلفي.
+      تم تغيير v6 إلى v7 حتى نتخلص من أي كاش قديم
+      محفوظ من النسخة السابقة.
 
-      النتيجة:
-      - أول زيارة بدون كاش = تحميل من Google Apps Script.
-      - الزيارات التالية = البيانات تظهر فوراً من المتصفح.
-      - لا يوجد طلب سيرفر متكرر كل دقيقة.
-      - التحديث يحصل في الخلفية فقط عند الحاجة.
+      الكاش سيُستخدم فقط لعرض المنتجات فوراً،
+      وبعدها يتم طلب أحدث البيانات من Apps Script
+      في كل مرة يتم فيها فتح الصفحة.
     */
 
     const CACHE_KEY =
-      "abo_tarek_sections_products_v6";
+      "abo_tarek_sections_products_v7";
 
     const CACHE_TIME =
       30 * 60 * 1000;
 
     const BACKGROUND_REFRESH_TIME =
       10 * 60 * 1000;
-
 
     const PRIORITY_IMAGES = 1;
 
@@ -2401,11 +2398,9 @@
     async function fetchProducts() {
 
       /*
-        مهم جداً:
-        لا نضيف ?t=Date.now()
-
-        لأن إضافته كانت تمنع الاستفادة من
-        HTTP/browser caching وتعمل طلب جديد كل مرة.
+        الإصلاح:
+        no-store يمنع المتصفح من الاعتماد على استجابة
+        GET قديمة، ويطلب أحدث نسخة من Apps Script.
       */
 
       const response =
@@ -2413,7 +2408,7 @@
           DATA_URL,
           {
             method: "GET",
-            cache: "default"
+            cache: "no-store"
           }
         );
 
@@ -2467,7 +2462,7 @@
 
 
     /* =======================================================
-       INIT DATA
+       INIT DATA - FIXED
        ======================================================= */
 
     async function initData() {
@@ -2477,14 +2472,13 @@
 
 
       /*
-        لو عندنا بيانات محفوظة:
-        اعرضها فوراً بدون انتظار Google.
+        لو عندنا كاش:
+        نعرضه فوراً حتى لا تكون الصفحة فارغة.
       */
 
       if (
         cached &&
-        Array.isArray(cached.products) &&
-        cached.products.length
+        Array.isArray(cached.products)
       ) {
 
         allProducts =
@@ -2492,64 +2486,47 @@
 
         applyData();
 
-
-        const age =
-          Date.now() -
-          Number(cached.time || 0);
-
-
-        /*
-          أقل من 10 دقائق:
-          لا نعمل أي طلب للسيرفر.
-        */
-
-        if (
-          age <= BACKGROUND_REFRESH_TIME
-        ) {
-
-          return;
-
-        }
-
-
-        /*
-          من 10 إلى 30 دقيقة:
-          تحديث خلفي فقط.
-        */
-
-        if (
-          age <= CACHE_TIME
-        ) {
-
-          setTimeout(
-            refreshData,
-            100
-          );
-
-          return;
-
-        }
-
-
-        /*
-          الكاش قديم جداً:
-          نحدث في الخلفية أيضاً طالما عندنا
-          بيانات صالحة لعرضها.
-        */
-
-        refreshData();
-
-        return;
-
       }
 
 
       /*
-        لا يوجد كاش:
-        هنا فقط ننتظر Google Apps Script.
+        الإصلاح المهم:
+        مهما كان عمر الكاش، نطلب أحدث البيانات
+        من Apps Script عند فتح الصفحة.
+
+        بذلك لو أضفت منتج جديد من لوحة الإدارة،
+        لن تنتظر الصفحة 10 أو 30 دقيقة حتى يظهر.
       */
 
-      await refreshData();
+      try {
+
+        const fresh =
+          await fetchProducts();
+
+        allProducts =
+          fresh;
+
+        applyData();
+
+      } catch (error) {
+
+        /*
+          لو السيرفر فشل وكان عندنا كاش،
+          نترك المنتجات القديمة ظاهرة.
+
+          ولو لم يكن هناك كاش أصلاً،
+          نظهر رسالة الخطأ.
+        */
+
+        if (!allProducts.length) {
+
+          renderError(
+            "تعذر تحميل المنتجات حالياً. حاول تحديث الصفحة."
+          );
+
+        }
+
+      }
 
     }
 
@@ -2567,14 +2544,6 @@
         applyData();
 
       } catch (error) {
-
-        /*
-          لو الصفحة عندها بيانات قديمة بالفعل
-          لا نعرض رسالة خطأ ولا نغير أي شيء.
-
-          المستخدم يفضل البيانات القديمة
-          على شاشة خطأ.
-        */
 
         if (!allProducts.length) {
 
@@ -3133,11 +3102,6 @@
 
             },
             {
-              /*
-                نبدأ تحميل الصورة قبل ظهورها
-                بمسافة مناسبة، لكن بدون تحميل
-                عشرات الصور دفعة واحدة.
-              */
               rootMargin:
                 "200px 0px"
             }
@@ -3365,12 +3329,6 @@
           "categories"
         );
 
-      /*
-        Event Delegation:
-        بدل إنشاء Event Listener جديد
-        لكل قسم في كل إعادة رسم.
-      */
-
       container.addEventListener(
         "click",
         event => {
@@ -3466,12 +3424,6 @@
           "clearCategory"
         );
 
-
-      /*
-        Debounce للبحث:
-        لا نعيد رسم مئات المنتجات
-        مع كل حرف يتم ضغطه مباشرة.
-      */
 
       searchInput.addEventListener(
         "input",
