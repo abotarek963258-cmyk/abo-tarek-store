@@ -4,281 +4,53 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>لوحة إدارة أبو طارق</title>
-
 <style>
 *{box-sizing:border-box}
-
-body{
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:#f4f6f8;
-  color:#14263d;
-}
-
-.container{
-  width:min(1150px,94%);
-  margin:auto;
-}
-
-header{
-  background:#14263d;
-  color:#fff;
-  padding:20px 0;
-  margin-bottom:20px;
-}
-
-header h1{
-  margin:0;
-  font-size:24px;
-}
-
-.card{
-  background:#fff;
-  border-radius:14px;
-  padding:20px;
-  margin-bottom:18px;
-  box-shadow:0 4px 15px rgba(0,0,0,.07);
-}
-
+body{margin:0;font-family:Arial,sans-serif;background:#f4f6f8;color:#14263d}
+.container{width:min(1150px,94%);margin:auto}
+header{background:#14263d;color:#fff;padding:20px 0;margin-bottom:20px}
+header h1{margin:0;font-size:24px}
+.card{background:#fff;border-radius:14px;padding:20px;margin-bottom:18px;box-shadow:0 4px 15px rgba(0,0,0,.07)}
 h2{margin-top:0}
-
-label{
-  display:block;
-  margin:11px 0 6px;
-  font-weight:bold;
-}
-
-input,textarea,select{
-  width:100%;
-  padding:11px;
-  border:1px solid #d7dce1;
-  border-radius:8px;
-  font-size:15px;
-  font-family:inherit;
-}
-
-textarea{
-  min-height:100px;
-  resize:vertical;
-}
-
-button{
-  border:0;
-  border-radius:8px;
-  padding:10px 14px;
-  cursor:pointer;
-  font-size:14px;
-  font-family:inherit;
-  margin:4px;
-}
-
-button:disabled{
-  opacity:.55;
-  cursor:not-allowed;
-}
-
-.primary{
-  background:#14263d;
-  color:#fff;
-}
-
-.edit{
-  background:#e8eef5;
-  color:#14263d;
-}
-
-.toggle{
-  background:#fff3cd;
-  color:#664d03;
-}
-
-.delete{
-  background:#f8d7da;
-  color:#842029;
-}
-
-.move{
-  background:#edf2f7;
-  color:#14263d;
-}
-
-#message{
-  display:none;
-  padding:12px;
-  border-radius:8px;
-  margin-bottom:15px;
-  white-space:pre-wrap;
-  word-break:break-word;
-}
-
-.success{
-  display:block!important;
-  background:#d1e7dd;
-  color:#0f5132;
-}
-
-.error{
-  display:block!important;
-  background:#f8d7da;
-  color:#842029;
-}
-
-.toolbar{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  align-items:center;
-  margin-bottom:14px;
-}
-
-.toolbar input,
-.toolbar select{
-  flex:1;
-  min-width:180px;
-}
-
-.stats{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:12px;
-}
-
-.stat{
-  border:1px solid #e2e6ea;
-  border-radius:12px;
-  padding:16px;
-  text-align:center;
-}
-
-.stat strong{
-  display:block;
-  font-size:28px;
-  margin-top:6px;
-}
-
-.grid{
-  display:grid;
-  gap:12px;
-}
-
-.section-row,
-.product{
-  border:1px solid #e2e6ea;
-  border-radius:12px;
-  padding:14px;
-}
-
-.section-row{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-  flex-wrap:wrap;
-}
-
-.section-info{
-  flex:1;
-  min-width:180px;
-}
-
-.section-actions,
-.actions{
-  display:flex;
-  gap:4px;
-  flex-wrap:wrap;
-}
-
-.status{
-  display:inline-block;
-  padding:4px 9px;
-  border-radius:20px;
-  font-size:12px;
-  margin-bottom:7px;
-}
-
-.active{
-  background:#d1e7dd;
-  color:#0f5132;
-}
-
-.inactive{
-  background:#f8d7da;
-  color:#842029;
-}
-
-.product{
-  display:grid;
-  grid-template-columns:105px 1fr;
-  gap:15px;
-  align-items:center;
-}
-
-.product img,
-.placeholder{
-  width:105px;
-  height:105px;
-  object-fit:cover;
-  border-radius:10px;
-  background:#eef1f4;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:#777;
-  text-align:center;
-}
-
-.product h3{
-  margin:0 0 6px;
-}
-
-.product p{
-  margin:5px 0;
-  color:#666;
-}
-
-.image-preview{
-  margin-top:10px;
-  display:none;
-}
-
-.image-preview img{
-  width:180px;
-  height:180px;
-  object-fit:cover;
-  border-radius:12px;
-  border:1px solid #ddd;
-}
-
-.small{
-  font-size:13px;
-  color:#777;
-}
-
-.hidden{
-  display:none!important;
-}
-
+label{display:block;margin:11px 0 6px;font-weight:bold}
+input,textarea,select{width:100%;padding:11px;border:1px solid #d7dce1;border-radius:8px;font-size:15px;font-family:inherit}
+textarea{min-height:100px;resize:vertical}
+button{border:0;border-radius:8px;padding:10px 14px;cursor:pointer;font-size:14px;font-family:inherit;margin:4px}
+button:disabled{opacity:.55;cursor:not-allowed}
+.primary{background:#14263d;color:#fff}
+.edit{background:#e8eef5;color:#14263d}
+.toggle{background:#fff3cd;color:#664d03}
+.delete{background:#f8d7da;color:#842029}
+.move{background:#edf2f7;color:#14263d}
+#message{display:none;padding:12px;border-radius:8px;margin-bottom:15px;white-space:pre-wrap;word-break:break-word}
+.success{display:block!important;background:#d1e7dd;color:#0f5132}
+.error{display:block!important;background:#f8d7da;color:#842029}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.toolbar input,.toolbar select{flex:1;min-width:180px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.stat{border:1px solid #e2e6ea;border-radius:12px;padding:16px;text-align:center}
+.stat strong{display:block;font-size:28px;margin-top:6px}
+.grid{display:grid;gap:12px}
+.section-row,.product{border:1px solid #e2e6ea;border-radius:12px;padding:14px}
+.section-row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.section-info{flex:1;min-width:180px}
+.section-actions,.actions{display:flex;gap:4px;flex-wrap:wrap}
+.status{display:inline-block;padding:4px 9px;border-radius:20px;font-size:12px;margin-bottom:7px}
+.active{background:#d1e7dd;color:#0f5132}
+.inactive{background:#f8d7da;color:#842029}
+.product{display:grid;grid-template-columns:105px 1fr;gap:15px;align-items:center}
+.product img,.placeholder{width:105px;height:105px;object-fit:cover;border-radius:10px;background:#eef1f4;display:flex;align-items:center;justify-content:center;color:#777;text-align:center}
+.product h3{margin:0 0 6px}
+.product p{margin:5px 0;color:#666}
+.image-preview{margin-top:10px;display:none}
+.image-preview img{width:180px;height:180px;object-fit:cover;border-radius:12px;border:1px solid #ddd}
+.small{font-size:13px;color:#777}
+.hidden{display:none!important}
 @media(max-width:650px){
-
-  .stats{
-    grid-template-columns:1fr;
-  }
-
-  .product{
-    grid-template-columns:1fr;
-  }
-
-  .product img,
-  .placeholder{
-    width:100%;
-    height:180px;
-  }
-
-  .image-preview img{
-    width:100%;
-    height:220px;
-  }
-
+.stats{grid-template-columns:1fr}
+.product{grid-template-columns:1fr}
+.product img,.placeholder{width:100%;height:180px}
+.image-preview img{width:100%;height:220px}
 }
 </style>
 </head>
@@ -286,9 +58,9 @@ button:disabled{
 <body>
 
 <header>
-  <div class="container">
-    <h1>لوحة إدارة أبو طارق للأدوات المنزلية</h1>
-  </div>
+<div class="container">
+<h1>لوحة إدارة أبو طارق للأدوات المنزلية</h1>
+</div>
 </header>
 
 <main class="container">
@@ -296,188 +68,187 @@ button:disabled{
 <div id="message"></div>
 
 <section class="card" id="loginCard">
+<h2>دخول الإدارة</h2>
 
-  <h2>دخول الإدارة</h2>
+<label>مفتاح الإدارة</label>
+<input id="key" type="password" placeholder="اكتب مفتاح الإدارة">
 
-  <label>مفتاح الإدارة</label>
-
-  <input
-    id="key"
-    type="password"
-    placeholder="اكتب مفتاح الإدارة"
-  >
-
-  <button
-    class="primary"
-    id="loginBtn"
-    onclick="login()"
-  >
-    دخول
-  </button>
-
+<button class="primary" id="loginBtn" onclick="login()">دخول</button>
 </section>
 
 <div id="adminArea" class="hidden">
 
 <section class="card">
+<h2>الإحصائيات</h2>
 
-  <h2>الإحصائيات</h2>
+<div class="stats">
 
-  <div class="stats">
+<div class="stat">
+إجمالي المنتجات
+<strong id="totalProducts">0</strong>
+</div>
 
-    <div class="stat">
-      إجمالي المنتجات
-      <strong id="totalProducts">0</strong>
-    </div>
+<div class="stat">
+المنتجات الظاهرة
+<strong id="activeProducts">0</strong>
+</div>
 
-    <div class="stat">
-      المنتجات الظاهرة
-      <strong id="activeProducts">0</strong>
-    </div>
+<div class="stat">
+الأقسام
+<strong id="totalSections">0</strong>
+</div>
 
-    <div class="stat">
-      الأقسام
-      <strong id="totalSections">0</strong>
-    </div>
-
-  </div>
-
+</div>
 </section>
+
 
 <section class="card">
 
-  <h2>إدارة الأقسام</h2>
+<h2>إدارة الأقسام</h2>
 
-  <div class="toolbar">
+<div class="toolbar">
 
-    <input
-      id="newSectionName"
-      placeholder="اسم القسم الجديد"
-    >
+<input
+id="newSectionName"
+placeholder="اسم القسم الجديد"
+>
 
-    <button
-      class="primary"
-      onclick="addSection()"
-    >
-      إضافة قسم
-    </button>
+<button
+class="primary"
+onclick="addSection()"
+>
+إضافة قسم
+</button>
 
-    <button
-      class="edit"
-      onclick="loadAll()"
-    >
-      تحديث
-    </button>
+<button
+class="edit"
+onclick="loadAll()"
+>
+تحديث
+</button>
 
-  </div>
+</div>
 
-  <div id="sections" class="grid">
-    جاري تحميل الأقسام...
-  </div>
-
-</section>
-
-<section class="card">
-
-  <h2 id="formTitle">
-    إضافة منتج جديد
-  </h2>
-
-  <input
-    type="hidden"
-    id="productId"
-  >
-
-  <label>اسم المنتج</label>
-
-  <input
-    id="name"
-    placeholder="مثال: طقم كوبايات"
-  >
-
-  <label>القسم</label>
-
-  <select id="category">
-    <option value="">
-      جاري تحميل الأقسام...
-    </option>
-  </select>
-
-  <label>صورة المنتج</label>
-
-  <input
-    id="imageFile"
-    type="file"
-    accept="image/*"
-  >
-
-  <div class="small">
-    اختار الصورة من جهازك.
-  </div>
-
-  <div id="imagePreview" class="image-preview">
-
-    <img
-      id="previewImg"
-      src=""
-      alt="معاينة"
-    >
-
-    <div id="imageName" class="small"></div>
-
-  </div>
-
-  <label>الوصف</label>
-
-  <textarea
-    id="description"
-    placeholder="اكتب وصف المنتج"
-  ></textarea>
-
-  <button
-    class="primary"
-    id="saveBtn"
-    onclick="saveProduct()"
-  >
-    حفظ المنتج
-  </button>
-
-  <button
-    class="edit hidden"
-    id="cancelBtn"
-    onclick="clearForm()"
-  >
-    إلغاء التعديل
-  </button>
+<div id="sections" class="grid">
+جاري تحميل الأقسام...
+</div>
 
 </section>
 
+
 <section class="card">
 
-  <h2>المنتجات</h2>
+<h2 id="formTitle">
+إضافة منتج جديد
+</h2>
 
-  <div class="toolbar">
+<input
+type="hidden"
+id="productId"
+>
 
-    <input
-      id="search"
-      placeholder="بحث باسم المنتج أو القسم"
-      oninput="renderProducts()"
-    >
+<label>اسم المنتج</label>
 
-    <select
-      id="filterCategory"
-      onchange="renderProducts()"
-    >
-      <option value="">
-        كل الأقسام
-      </option>
-    </select>
+<input
+id="name"
+placeholder="مثال: طقم كوبايات"
+>
 
-  </div>
+<label>القسم</label>
 
-  <div id="products" class="grid">
-    جاري تحميل المنتجات...
-  </div>
+<select id="category">
+<option value="">
+جاري تحميل الأقسام...
+</option>
+</select>
+
+<label>صورة المنتج</label>
+
+<input
+id="imageFile"
+type="file"
+accept="image/*"
+>
+
+<div class="small">
+اختار الصورة من جهازك.
+</div>
+
+<div
+id="imagePreview"
+class="image-preview"
+>
+
+<img
+id="previewImg"
+src=""
+alt="معاينة"
+>
+
+<div
+id="imageName"
+class="small"
+></div>
+
+</div>
+
+<label>الوصف</label>
+
+<textarea
+id="description"
+placeholder="اكتب وصف المنتج"
+></textarea>
+
+<button
+class="primary"
+id="saveBtn"
+onclick="saveProduct()"
+>
+حفظ المنتج
+</button>
+
+<button
+class="edit hidden"
+id="cancelBtn"
+onclick="clearForm()"
+>
+إلغاء التعديل
+</button>
+
+</section>
+
+
+<section class="card">
+
+<h2>المنتجات</h2>
+
+<div class="toolbar">
+
+<input
+id="search"
+placeholder="بحث باسم المنتج أو القسم"
+oninput="renderProducts()"
+>
+
+<select
+id="filterCategory"
+onchange="renderProducts()"
+>
+
+<option value="">
+كل الأقسام
+</option>
+
+</select>
+
+</div>
+
+<div
+id="products"
+class="grid"
+>
+جاري تحميل المنتجات...
+</div>
 
 </section>
 
@@ -485,1795 +256,1635 @@ button:disabled{
 
 </main>
 
-<script>
 
-/* =========================================================
-   رابط Google Apps Script الحالي
-========================================================= */
+<script>
 
 const API_URL =
 "https://script.google.com/macros/s/AKfycbyw7k-K9akpV08vSjXbDmZ8khpHH9LOq2G9WLDHT2-iOJiTThN-kvEaCKI0-wKWu7hY/exec";
 
-
 let ADMIN_KEY = "";
+
 let products = [];
+
 let sections = [];
 
 
-/* =========================================================
-   الرسائل
-========================================================= */
-
 function showMessage(text,type){
 
-  const el =
-    document.getElementById("message");
+const el =
+document.getElementById("message");
 
-  el.textContent = text || "";
-  el.className = type || "";
+el.textContent =
+text || "";
 
-  if(!text){
-    el.style.display = "none";
-  }else{
-    el.style.display = "block";
-  }
+el.className =
+type || "";
+
+if(!text)
+el.style.display = "none";
+else
+el.style.display = "block";
 
 }
 
-
-/* =========================================================
-   الاتصال بالسيرفر
-========================================================= */
 
 async function api(action,extra={}){
 
-  const payload = {
-    key: ADMIN_KEY,
-    action: action,
-    ...extra
-  };
+const res =
+await fetch(API_URL,{
 
+method:"POST",
 
-  let res;
+headers:{
+"Content-Type":
+"text/plain;charset=utf-8"
+},
 
-  try{
+body:JSON.stringify({
 
-    res = await fetch(
-      API_URL + "?_=" + Date.now(),
-      {
-        method:"POST",
+key:ADMIN_KEY,
 
-        headers:{
-          "Content-Type":
-            "text/plain;charset=utf-8"
-        },
+action,
 
-        body:JSON.stringify(payload),
+...extra
 
-        cache:"no-store",
+})
 
-        redirect:"follow"
-      }
-    );
+});
 
-  }catch(error){
+const raw =
+await res.text();
 
-    throw new Error(
-      "تعذر الاتصال بالسيرفر. تأكد من الإنترنت ورابط Web App."
-    );
+let data;
 
-  }
+try{
 
+data =
+JSON.parse(raw);
 
-  const raw =
-    await res.text();
+}catch(e){
 
-
-  /*
-    لو Google رجعت صفحة HTML بدل JSON
-    نوضح السبب بدل الرسالة الغامضة.
-  */
-
-  const trimmed =
-    String(raw || "").trim();
-
-
-  if(
-    trimmed.startsWith("<!DOCTYPE") ||
-    trimmed.startsWith("<html") ||
-    trimmed.startsWith("<HTML")
-  ){
-
-    console.error(
-      "Server returned HTML:",
-      trimmed
-    );
-
-
-    throw new Error(
-      "السيرفر رجّع صفحة HTML بدل بيانات JSON. " +
-      "غالبًا نسخة Web App تحتاج تحديث أو صلاحية الوصول ليست Anyone."
-    );
-
-  }
-
-
-  let data;
-
-
-  try{
-
-    data =
-      JSON.parse(trimmed);
-
-  }catch(e){
-
-    console.error(
-      "Invalid server response:",
-      raw
-    );
-
-
-    throw new Error(
-      "رد غير صالح من السيرفر."
-    );
-
-  }
-
-
-  if(!res.ok){
-
-    throw new Error(
-      "HTTP " + res.status
-    );
-
-  }
-
-
-  return data;
+throw new Error(
+"رد غير صالح من السيرفر: "
++
+raw.slice(0,300)
+);
 
 }
 
+if(!res.ok)
+throw new Error(
+"HTTP "
++
+res.status
+);
 
-/* =========================================================
-   استخراج Array من رد السيرفر
-========================================================= */
-
-function getArrayResponse(data,fieldName){
-
-  if(Array.isArray(data)){
-    return data;
-  }
-
-
-  if(
-    data &&
-    Array.isArray(data[fieldName])
-  ){
-
-    return data[fieldName];
-
-  }
-
-
-  if(
-    data &&
-    Array.isArray(data.data)
-  ){
-
-    return data.data;
-
-  }
-
-
-  return null;
+return data;
 
 }
 
-
-/* =========================================================
-   تسجيل الدخول
-========================================================= */
 
 async function login(){
 
-  const key =
-    document.getElementById("key")
-    .value
-    .trim();
+const key =
+document.getElementById("key").value.trim();
 
+if(!key){
 
-  if(!key){
+showMessage(
+"اكتب مفتاح الإدارة أولًا.",
+"error"
+);
 
-    showMessage(
-      "اكتب مفتاح الإدارة أولًا.",
-      "error"
-    );
-
-    return;
-
-  }
-
-
-  ADMIN_KEY = key;
-
-
-  const btn =
-    document.getElementById("loginBtn");
-
-  btn.disabled = true;
-  btn.textContent = "جاري التحقق...";
-
-
-  try{
-
-    const data =
-      await api("list");
-
-
-    const list =
-      getArrayResponse(
-        data,
-        "products"
-      );
-
-
-    if(!list){
-
-      throw new Error(
-        "مفتاح الإدارة غير صحيح أو تعذر الوصول للسيرفر."
-      );
-
-    }
-
-
-    products = list;
-
-
-    document
-      .getElementById("loginCard")
-      .classList
-      .add("hidden");
-
-
-    document
-      .getElementById("adminArea")
-      .classList
-      .remove("hidden");
-
-
-    await loadSections();
-
-    renderProducts();
-
-    updateStats();
-
-
-    showMessage(
-      "تم تسجيل الدخول بنجاح.",
-      "success"
-    );
-
-
-  }catch(e){
-
-    ADMIN_KEY = "";
-
-
-    showMessage(
-      "حصل خطأ: " + e.message,
-      "error"
-    );
-
-
-    console.error(e);
-
-  }finally{
-
-    btn.disabled = false;
-    btn.textContent = "دخول";
-
-  }
+return;
 
 }
 
+ADMIN_KEY =
+key;
 
-/* =========================================================
-   تحميل الأقسام
-========================================================= */
+const btn =
+document.getElementById("loginBtn");
+
+btn.disabled =
+true;
+
+btn.textContent =
+"جاري التحقق...";
+
+try{
+
+const data =
+await api("list");
+
+if(
+!data ||
+data.ok !== true
+)
+
+throw new Error(
+(data && data.error)
+||
+"مفتاح الإدارة غير صحيح أو تعذر الوصول للسيرفر."
+);
+
+document
+.getElementById("loginCard")
+.classList.add("hidden");
+
+document
+.getElementById("adminArea")
+.classList.remove("hidden");
+
+products =
+Array.isArray(data.products)
+? data.products
+: [];
+
+await loadSections();
+
+renderProducts();
+
+updateStats();
+
+showMessage(
+"تم تسجيل الدخول بنجاح.",
+"success"
+);
+
+}catch(e){
+
+ADMIN_KEY =
+"";
+
+showMessage(
+"حصل خطأ: "
++
+e.message,
+"error"
+);
+
+console.error(e);
+
+}finally{
+
+btn.disabled =
+false;
+
+btn.textContent =
+"دخول";
+
+}
+
+}
+
 
 async function loadSections(){
 
-  const data =
-    await api("listSections");
+const data =
+await api("listSections");
 
+if(
+!data ||
+data.ok !== true
+)
 
-  const list =
-    getArrayResponse(
-      data,
-      "sections"
-    );
+throw new Error(
+(data && data.error)
+||
+"تعذر تحميل الأقسام."
+);
 
+sections =
+Array.isArray(data.sections)
+? data.sections
+: [];
 
-  if(!list){
+renderSections();
 
-    throw new Error(
-      "تعذر تحميل الأقسام."
-    );
+fillCategorySelects();
 
-  }
-
-
-  sections = list;
-
-
-  renderSections();
-
-  fillCategorySelects();
-
-  updateStats();
+updateStats();
 
 }
 
-
-/* =========================================================
-   تحميل المنتجات
-========================================================= */
 
 async function loadProducts(){
 
-  const data =
-    await api("list");
+const data =
+await api("list");
 
+if(
+!data ||
+data.ok !== true
+)
 
-  const list =
-    getArrayResponse(
-      data,
-      "products"
-    );
+throw new Error(
+(data && data.error)
+||
+"تعذر تحميل المنتجات."
+);
 
+products =
+Array.isArray(data.products)
+? data.products
+: [];
 
-  if(!list){
+renderProducts();
 
-    throw new Error(
-      "تعذر تحميل المنتجات."
-    );
-
-  }
-
-
-  products = list;
-
-  renderProducts();
-
-  updateStats();
+updateStats();
 
 }
 
-
-/* =========================================================
-   تحديث الكل
-========================================================= */
 
 async function loadAll(){
 
-  try{
+try{
 
-    showMessage(
-      "جاري تحديث البيانات...",
-      "success"
-    );
+showMessage(
+"جاري تحديث البيانات...",
+"success"
+);
 
+await loadSections();
 
-    await loadSections();
+await loadProducts();
 
-    await loadProducts();
+showMessage(
+"تم تحديث البيانات.",
+"success"
+);
 
+}catch(e){
 
-    showMessage(
-      "تم تحديث البيانات.",
-      "success"
-    );
-
-
-  }catch(e){
-
-    showMessage(
-      "حصل خطأ: " + e.message,
-      "error"
-    );
-
-  }
+showMessage(
+"حصل خطأ: "
++
+e.message,
+"error"
+);
 
 }
 
+}
 
-/* =========================================================
-   الإحصائيات
-========================================================= */
 
 function updateStats(){
 
-  const active =
-    products.filter(
-      p =>
-        String(p.active)
-        .toLowerCase() !== "false"
-    ).length;
+const active =
+products.filter(
+p =>
+String(p.active)
+.toLowerCase()
+!=="false"
+).length;
 
+document
+.getElementById("totalProducts")
+.textContent =
+products.length;
 
-  document
-    .getElementById("totalProducts")
-    .textContent =
-    products.length;
+document
+.getElementById("activeProducts")
+.textContent =
+active;
 
-
-  document
-    .getElementById("activeProducts")
-    .textContent =
-    active;
-
-
-  document
-    .getElementById("totalSections")
-    .textContent =
-    sections.length;
+document
+.getElementById("totalSections")
+.textContent =
+sections.length;
 
 }
 
-
-/* =========================================================
-   قوائم الأقسام
-========================================================= */
 
 function fillCategorySelects(){
 
-  const category =
-    document.getElementById("category");
+const category =
+document.getElementById("category");
 
+const filter =
+document.getElementById("filterCategory");
 
-  const filter =
-    document.getElementById("filterCategory");
+const oldCat =
+category.value;
 
+const oldFilter =
+filter.value;
 
-  const oldCat =
-    category.value;
+const active =
+sections.filter(
+s =>
+String(s.active)
+.toLowerCase()
+!=="false"
+);
 
+category.innerHTML =
+'<option value="">اختر القسم</option>'
++
+active.map(
+s =>
+'<option value="'
++
+escapeHtml(s.name)
++
+'">'
++
+escapeHtml(s.name)
++
+'</option>'
+).join("");
 
-  const oldFilter =
-    filter.value;
+filter.innerHTML =
+'<option value="">كل الأقسام</option>'
++
+sections.map(
+s =>
+'<option value="'
++
+escapeHtml(s.name)
++
+'">'
++
+escapeHtml(s.name)
++
+'</option>'
+).join("");
 
+category.value =
+active.some(
+s => s.name === oldCat
+)
+? oldCat
+: "";
 
-  const active =
-    sections.filter(
-      s =>
-        String(s.active)
-        .toLowerCase() !== "false"
-    );
-
-
-  category.innerHTML =
-    '<option value="">اختر القسم</option>' +
-
-    active.map(
-      s =>
-        '<option value="' +
-        escapeHtml(s.name) +
-        '">' +
-        escapeHtml(s.name) +
-        '</option>'
-    ).join("");
-
-
-  filter.innerHTML =
-    '<option value="">كل الأقسام</option>' +
-
-    sections.map(
-      s =>
-        '<option value="' +
-        escapeHtml(s.name) +
-        '">' +
-        escapeHtml(s.name) +
-        '</option>'
-    ).join("");
-
-
-  category.value =
-    active.some(
-      s => s.name === oldCat
-    )
-    ? oldCat
-    : "";
-
-
-  filter.value =
-    sections.some(
-      s => s.name === oldFilter
-    )
-    ? oldFilter
-    : "";
+filter.value =
+sections.some(
+s => s.name === oldFilter
+)
+? oldFilter
+: "";
 
 }
 
-
-/* =========================================================
-   عرض الأقسام
-========================================================= */
 
 function renderSections(){
 
-  const el =
-    document.getElementById("sections");
+const el =
+document.getElementById("sections");
 
+if(!sections.length){
 
-  if(!sections.length){
+el.innerHTML =
+"<p>لا توجد أقسام حاليًا.</p>";
 
-    el.innerHTML =
-      "<p>لا توجد أقسام حاليًا.</p>";
-
-    return;
-
-  }
-
-
-  el.innerHTML =
-    sections.map(
-      (s,i)=>{
-
-        const active =
-          String(s.active)
-          .toLowerCase() !== "false";
-
-
-        return `
-
-<div class="section-row">
-
-  <div class="section-info">
-
-    <strong>
-      ${escapeHtml(s.name)}
-    </strong>
-
-    <br>
-
-    <span class="status ${
-      active
-      ? "active"
-      : "inactive"
-    }">
-
-      ${active ? "ظاهر" : "مخفي"}
-
-    </span>
-
-  </div>
-
-
-  <div class="section-actions">
-
-    <button
-      class="move"
-      onclick="moveSection('${escapeJs(s.id)}',-1)"
-      ${i===0 ? "disabled" : ""}
-    >
-      ↑
-    </button>
-
-
-    <button
-      class="move"
-      onclick="moveSection('${escapeJs(s.id)}',1)"
-      ${i===sections.length-1 ? "disabled" : ""}
-    >
-      ↓
-    </button>
-
-
-    <button
-      class="edit"
-      onclick="editSection('${escapeJs(s.id)}')"
-    >
-      تعديل
-    </button>
-
-
-    <button
-      class="toggle"
-      onclick="toggleSection(
-        '${escapeJs(s.id)}',
-        ${active}
-      )"
-    >
-      ${active ? "إخفاء" : "إظهار"}
-    </button>
-
-
-    <button
-      class="delete"
-      onclick="deleteSection('${escapeJs(s.id)}')"
-    >
-      حذف
-    </button>
-
-  </div>
-
-</div>
-
-`;
-
-      }
-    ).join("");
+return;
 
 }
 
+el.innerHTML =
+sections.map(
+(s,i)=>{
 
-/* =========================================================
-   إضافة قسم
-========================================================= */
+const active =
+String(s.active)
+.toLowerCase()
+!=="false";
+
+return (
+
+'<div class="section-row">'
+
++
+
+'<div class="section-info">'
+
++
+
+'<strong>'
++
+escapeHtml(s.name)
++
+'</strong>'
+
++
+
+'<br>'
+
++
+
+'<span class="status '
++
+(active
+?"active"
+:"inactive")
++
+'">'
+
++
+
+(active
+?"ظاهر"
+:"مخفي")
+
++
+
+'</span>'
+
++
+
+'</div>'
+
++
+
+'<div class="section-actions">'
+
++
+
+'<button class="move" onclick="moveSection(\''
++
+escapeJs(s.id)
++
+'\',-1)" '
++
+(i===0
+?"disabled"
+:"")
++
+'>↑</button>'
+
++
+
+'<button class="move" onclick="moveSection(\''
++
+escapeJs(s.id)
++
+'\',1)" '
++
+(i===sections.length-1
+?"disabled"
+:"")
++
+'>↓</button>'
+
++
+
+'<button class="edit" onclick="editSection(\''
++
+escapeJs(s.id)
++
+'\')">'
++
+"تعديل"
++
+'</button>'
+
++
+
+'<button class="toggle" onclick="toggleSection(\''
++
+escapeJs(s.id)
++
+'\','
++
+active
++
+')">'
++
+(active
+?"إخفاء"
+:"إظهار")
++
+'</button>'
+
++
+
+'<button class="delete" onclick="deleteSection(\''
++
+escapeJs(s.id)
++
+'\')">'
++
+"حذف"
++
+'</button>'
+
++
+
+'</div>'
+
++
+
+'</div>'
+
+);
+
+}
+
+).join("");
+
+}
+
 
 async function addSection(){
 
-  const input =
-    document.getElementById(
-      "newSectionName"
-    );
+const input =
+document.getElementById(
+"newSectionName"
+);
 
+const name =
+input.value.trim();
 
-  const name =
-    input.value.trim();
+if(!name){
 
+showMessage(
+"اكتب اسم القسم أولًا.",
+"error"
+);
 
-  if(!name){
-
-    showMessage(
-      "اكتب اسم القسم أولًا.",
-      "error"
-    );
-
-    return;
-
-  }
-
-
-  try{
-
-    const data =
-      await api(
-        "addSection",
-        {
-          section:{
-            name:name
-          }
-        }
-      );
-
-
-    if(!data || data.ok !== true){
-
-      throw new Error(
-        (data && data.error) ||
-        "تعذر إضافة القسم."
-      );
-
-    }
-
-
-    input.value = "";
-
-
-    await loadSections();
-
-
-    showMessage(
-      "تم إضافة القسم بنجاح.",
-      "success"
-    );
-
-
-  }catch(e){
-
-    showMessage(
-      "حصل خطأ: " + e.message,
-      "error"
-    );
-
-  }
+return;
 
 }
 
+try{
 
-/* =========================================================
-   تعديل قسم
-========================================================= */
+const data =
+await api(
+"addSection",
+{
+section:{
+name
+}
+}
+);
+
+if(!data.ok)
+
+throw new Error(
+data.error
+||
+"تعذر إضافة القسم."
+);
+
+input.value = "";
+
+await loadSections();
+
+showMessage(
+"تم إضافة القسم بنجاح.",
+"success"
+);
+
+}catch(e){
+
+showMessage(
+"حصل خطأ: "
++
+e.message,
+"error"
+);
+
+}
+
+}
+
 
 async function editSection(id){
 
-  const s =
-    sections.find(
-      x =>
-        String(x.id) ===
-        String(id)
-    );
+const s =
+sections.find(
+x =>
+String(x.id)
+===
+String(id)
+);
 
+if(!s)
+return;
 
-  if(!s)return;
+const name =
+prompt(
+"اكتب الاسم الجديد للقسم:",
+s.name
+);
 
+if(name === null)
+return;
 
-  const name =
-    prompt(
-      "اكتب الاسم الجديد للقسم:",
-      s.name
-    );
+const newName =
+name.trim();
 
+if(!newName){
 
-  if(name === null)return;
+showMessage(
+"اسم القسم لا يمكن أن يكون فارغًا.",
+"error"
+);
 
-
-  const newName =
-    name.trim();
-
-
-  if(!newName){
-
-    showMessage(
-      "اسم القسم لا يمكن أن يكون فارغًا.",
-      "error"
-    );
-
-    return;
-
-  }
-
-
-  try{
-
-    const data =
-      await api(
-        "editSection",
-        {
-          id:id,
-          section:{
-            name:newName
-          }
-        }
-      );
-
-
-    if(!data || data.ok !== true){
-
-      throw new Error(
-        (data && data.error) ||
-        "تعذر تعديل القسم."
-      );
-
-    }
-
-
-    await loadSections();
-
-    await loadProducts();
-
-
-    showMessage(
-      "تم تعديل القسم بنجاح.",
-      "success"
-    );
-
-
-  }catch(e){
-
-    showMessage(
-      "حصل خطأ: " + e.message,
-      "error"
-    );
-
-  }
+return;
 
 }
 
+try{
 
-/* =========================================================
-   إظهار / إخفاء قسم
-========================================================= */
+const data =
+await api(
+"editSection",
+{
+id,
+section:{
+name:newName
+}
+}
+);
+
+if(!data.ok)
+
+throw new Error(
+data.error
+||
+"تعذر تعديل القسم."
+);
+
+await loadSections();
+
+await loadProducts();
+
+showMessage(
+"تم تعديل القسم بنجاح.",
+"success"
+);
+
+}catch(e){
+
+showMessage(
+"حصل خطأ: "
++
+e.message,
+"error"
+);
+
+}
+
+}
+
 
 async function toggleSection(id,active){
 
-  try{
+try{
 
-    const data =
-      await api(
-        "toggleSection",
-        {
-          id:id,
-          active:!active
-        }
-      );
+const data =
+await api(
+"toggleSection",
+{
+id,
+active:!active
+}
+);
 
+if(!data.ok)
 
-    if(!data || data.ok !== true){
+throw new Error(
+data.error
+||
+"تعذر تغيير حالة القسم."
+);
 
-      throw new Error(
-        (data && data.error) ||
-        "تعذر تغيير حالة القسم."
-      );
+await loadSections();
 
-    }
+showMessage(
+!active
+?
+"تم إظهار القسم."
+:
+"تم إخفاء القسم.",
+"success"
+);
 
+}catch(e){
 
-    await loadSections();
-
-
-    showMessage(
-      !active
-      ? "تم إظهار القسم."
-      : "تم إخفاء القسم.",
-      "success"
-    );
-
-
-  }catch(e){
-
-    showMessage(
-      "حصل خطأ: " + e.message,
-      "error"
-    );
-
-  }
+showMessage(
+"حصل خطأ: "
++
+e.message,
+"error"
+);
 
 }
 
+}
 
-/* =========================================================
-   حذف قسم
-========================================================= */
 
 async function deleteSection(id){
 
-  const s =
-    sections.find(
-      x =>
-        String(x.id) ===
-        String(id)
-    );
+const s =
+sections.find(
+x =>
+String(x.id)
+===
+String(id)
+);
 
+if(!s)
+return;
 
-  if(!s)return;
+if(
+!confirm(
+'هل تريد حذف القسم "'
++
+s.name
++
+'"؟'
+)
+)
+return;
 
+try{
 
-  if(
-    !confirm(
-      'هل تريد حذف القسم "' +
-      s.name +
-      '"؟'
-    )
-  ){
+const data =
+await api(
+"deleteSection",
+{id}
+);
 
-    return;
+if(!data.ok){
 
-  }
+const msg =
+data.error ===
+"section_has_products"
 
+?
+"لا يمكن حذف القسم لأنه يحتوي على منتجات. انقل المنتجات أولًا."
 
-  try{
+:
+(
+data.error
+||
+"تعذر حذف القسم."
+);
 
-    const data =
-      await api(
-        "deleteSection",
-        {id:id}
-      );
-
-
-    if(!data || data.ok !== true){
-
-      const msg =
-        data &&
-        data.error ===
-        "section_has_products"
-
-        ? "لا يمكن حذف القسم لأنه يحتوي على منتجات. انقل المنتجات أولًا."
-
-        : (
-            (data && data.error) ||
-            "تعذر حذف القسم."
-          );
-
-
-      throw new Error(msg);
-
-    }
-
-
-    await loadSections();
-
-
-    showMessage(
-      "تم حذف القسم.",
-      "success"
-    );
-
-
-  }catch(e){
-
-    showMessage(
-      "حصل خطأ: " + e.message,
-      "error"
-    );
-
-  }
+throw new Error(msg);
 
 }
 
+await loadSections();
 
-/* =========================================================
-   ترتيب الأقسام
-========================================================= */
+showMessage(
+"تم حذف القسم.",
+"success"
+);
+
+}catch(e){
+
+showMessage(
+"حصل خطأ: "
++
+e.message,
+"error"
+);
+
+}
+
+}
+
 
 async function moveSection(id,dir){
 
-  const index =
-    sections.findIndex(
-      x =>
-        String(x.id) ===
-        String(id)
-    );
+const index =
+sections.findIndex(
+x =>
+String(x.id)
+===
+String(id)
+);
 
+const target =
+index + dir;
 
-  const target =
-    index + dir;
+if(
+index < 0 ||
+target < 0 ||
+target >= sections.length
+)
+return;
 
+const copy =
+[...sections];
 
-  if(
-    index < 0 ||
-    target < 0 ||
-    target >= sections.length
-  ){
+[
+copy[index],
+copy[target]
+]
+=
+[
+copy[target],
+copy[index]
+];
 
-    return;
+try{
 
-  }
+const data =
+await api(
+"reorderSections",
+{
+ids:
+copy.map(
+x=>x.id
+)
+}
+);
 
+if(!data.ok)
 
-  const copy =
-    [...sections];
+throw new Error(
+data.error
+||
+"تعذر ترتيب الأقسام."
+);
 
+sections =
+copy;
 
-  [
-    copy[index],
-    copy[target]
-  ] =
-  [
-    copy[target],
-    copy[index]
-  ];
+renderSections();
 
+showMessage(
+"تم تغيير ترتيب الأقسام.",
+"success"
+);
 
-  try{
+}catch(e){
 
-    const data =
-      await api(
-        "reorderSections",
-        {
-          ids:
-            copy.map(
-              x => x.id
-            )
-        }
-      );
-
-
-    if(!data || data.ok !== true){
-
-      throw new Error(
-        (data && data.error) ||
-        "تعذر ترتيب الأقسام."
-      );
-
-    }
-
-
-    sections = copy;
-
-
-    renderSections();
-
-
-    showMessage(
-      "تم تغيير ترتيب الأقسام.",
-      "success"
-    );
-
-
-  }catch(e){
-
-    showMessage(
-      "حصل خطأ: " + e.message,
-      "error"
-    );
-
-  }
+showMessage(
+"حصل خطأ: "
++
+e.message,
+"error"
+);
 
 }
 
+}
 
-/* =========================================================
-   حفظ المنتج
-========================================================= */
 
 async function saveProduct(){
 
-  const id =
-    document.getElementById(
-      "productId"
-    ).value;
+const id =
+document.getElementById(
+"productId"
+).value;
 
+const name =
+document.getElementById(
+"name"
+).value.trim();
 
-  const name =
-    document.getElementById(
-      "name"
-    ).value.trim();
+const category =
+document.getElementById(
+"category"
+).value.trim();
 
+const description =
+document.getElementById(
+"description"
+).value.trim();
 
-  const category =
-    document.getElementById(
-      "category"
-    ).value.trim();
+const file =
+document.getElementById(
+"imageFile"
+).files[0];
 
+if(!name){
 
-  const description =
-    document.getElementById(
-      "description"
-    ).value.trim();
+showMessage(
+"اكتب اسم المنتج.",
+"error"
+);
 
+return;
 
-  const file =
-    document.getElementById(
-      "imageFile"
-    ).files[0];
+}
 
+if(!category){
 
-  if(!name){
+showMessage(
+"اختر القسم.",
+"error"
+);
 
-    showMessage(
-      "اكتب اسم المنتج.",
-      "error"
-    );
+return;
 
-    return;
+}
 
-  }
+const btn =
+document.getElementById(
+"saveBtn"
+);
 
+btn.disabled =
+true;
 
-  if(!category){
+btn.textContent =
+"جاري الحفظ...";
 
-    showMessage(
-      "اختر القسم.",
-      "error"
-    );
+try{
 
-    return;
+let imageUrl = "";
 
-  }
+if(file){
 
+showMessage(
+"جاري رفع الصورة...",
+"success"
+);
 
-  const btn =
-    document.getElementById(
-      "saveBtn"
-    );
+imageUrl =
+await uploadImage(file);
 
+}
 
-  btn.disabled = true;
-  btn.textContent = "جاري الحفظ...";
+if(!imageUrl && id){
 
+const old =
+products.find(
+p =>
+String(p.id)
+===
+String(id)
+);
 
-  try{
+imageUrl =
+old?.image
+||
+"";
 
-    let imageUrl = "";
+}
 
+const payload = {
 
-    if(file){
+name,
 
-      showMessage(
-        "جاري رفع الصورة...",
-        "success"
-      );
+category,
 
+image:imageUrl,
 
-      imageUrl =
-        await uploadImage(file);
+description
 
-    }
+};
 
+const data =
+id
 
-    if(!imageUrl && id){
+?
 
-      const old =
-        products.find(
-          p =>
-            String(p.id) ===
-            String(id)
-        );
+await api(
+"edit",
+{
+id,
+product:payload
+}
+)
 
+:
 
-      imageUrl =
-        old?.image || "";
+await api(
+"add",
+{
+product:payload
+}
+);
 
-    }
+if(!data.ok)
 
+throw new Error(
+data.error
+||
+"تعذر حفظ المنتج."
+);
 
-    const payload = {
+clearForm();
 
-      name:name,
+await loadProducts();
 
-      category:category,
+showMessage(
+id
+?
+"تم تعديل المنتج بنجاح."
+:
+"تم إضافة المنتج بنجاح.",
+"success"
+);
 
-      image:imageUrl,
+}catch(e){
 
-      description:description
+showMessage(
+"حصل خطأ: "
++
+e.message,
+"error"
+);
 
-    };
+console.error(e);
 
+}finally{
 
-    const data =
-      id
+btn.disabled =
+false;
 
-      ? await api(
-          "edit",
-          {
-            id:id,
-            product:payload
-          }
-        )
+btn.textContent =
+"حفظ المنتج";
 
-      : await api(
-          "add",
-          {
-            product:payload
-          }
-        );
-
-
-    if(!data || data.ok !== true){
-
-      throw new Error(
-        (data && data.error) ||
-        "تعذر حفظ المنتج."
-      );
-
-    }
-
-
-    clearForm();
-
-
-    await loadProducts();
-
-
-    showMessage(
-      id
-      ? "تم تعديل المنتج بنجاح."
-      : "تم إضافة المنتج بنجاح.",
-      "success"
-    );
-
-
-  }catch(e){
-
-    showMessage(
-      "حصل خطأ: " + e.message,
-      "error"
-    );
-
-
-    console.error(e);
-
-
-  }finally{
-
-    btn.disabled = false;
-    btn.textContent = "حفظ المنتج";
-
-  }
+}
 
 }
 
 
-/* =========================================================
-   رفع الصورة
-========================================================= */
-
 async function uploadImage(file){
 
-  const base64 =
-    await fileToBase64(file);
+const base64 =
+await fileToBase64(file);
 
+const data =
+await api(
+"uploadImage",
+{
+image:{
+name:file.name,
+type:file.type,
+data:base64
+}
+}
+);
 
-  const data =
-    await api(
-      "uploadImage",
-      {
-        image:{
-          name:file.name,
-          type:file.type,
-          data:base64
-        }
-      }
-    );
+if(!data.ok)
 
+throw new Error(
+data.error
+||
+"فشل رفع الصورة."
+);
 
-  if(!data || data.ok !== true){
-
-    throw new Error(
-      (data && data.error) ||
-      "فشل رفع الصورة."
-    );
-
-  }
-
-
-  return data.url || "";
+return data.url || "";
 
 }
 
 
 function fileToBase64(file){
 
-  return new Promise(
-    (resolve,reject)=>{
+return new Promise(
+(resolve,reject)=>{
 
-      const reader =
-        new FileReader();
+const reader =
+new FileReader();
 
+reader.onload =
+() =>
+resolve(
+String(reader.result)
+.split(",")[1]
+);
 
-      reader.onload =
-        () =>
-          resolve(
-            String(
-              reader.result
-            ).split(",")[1]
-          );
+reader.onerror =
+reject;
 
+reader.readAsDataURL(file);
 
-      reader.onerror =
-        reject;
-
-
-      reader.readAsDataURL(file);
-
-    }
-  );
+}
+);
 
 }
 
-
-/* =========================================================
-   عرض المنتجات
-========================================================= */
 
 function renderProducts(){
 
-  const el =
-    document.getElementById(
-      "products"
-    );
+const el =
+document.getElementById(
+"products"
+);
 
+const q =
+document.getElementById(
+"search"
+).value
+.trim()
+.toLowerCase();
 
-  const q =
-    document.getElementById(
-      "search"
-    ).value
-    .trim()
-    .toLowerCase();
+const cat =
+document.getElementById(
+"filterCategory"
+).value;
 
+const list =
+products.filter(
+p => {
 
-  const cat =
-    document.getElementById(
-      "filterCategory"
-    ).value;
+const text =
+(
+String(p.name || "")
++
+" "
++
+String(p.category || "")
+)
+.toLowerCase();
 
+return
+(
+!q ||
+text.includes(q)
+)
+&&
+(
+!cat ||
+String(p.category || "")
+===
+cat
+);
 
-  const list =
-    products.filter(
-      p => {
+}
+);
 
-        const text =
-          (
-            String(p.name || "") +
-            " " +
-            String(p.category || "")
-          ).toLowerCase();
+if(!list.length){
 
+el.innerHTML =
+"<p>لا توجد نتائج.</p>";
 
-        return (
-          (!q || text.includes(q)) &&
-          (!cat ||
-            String(p.category || "") ===
-            cat)
-        );
-
-      }
-    );
-
-
-  if(!list.length){
-
-    el.innerHTML =
-      "<p>لا توجد نتائج.</p>";
-
-    return;
-
-  }
-
-
-  el.innerHTML =
-    list.map(
-      p => {
-
-        const active =
-          String(p.active)
-          .toLowerCase() !==
-          "false";
-
-
-        return `
-
-<article class="product">
-
-  ${
-    p.image
-
-    ? `
-      <img
-        src="${escapeHtml(p.image)}"
-        alt="${escapeHtml(p.name)}"
-      >
-    `
-
-    : `
-      <div class="placeholder">
-        بدون صورة
-      </div>
-    `
-  }
-
-  <div>
-
-    <span class="status ${
-      active
-      ? "active"
-      : "inactive"
-    }">
-
-      ${
-        active
-        ? "ظاهر على الموقع"
-        : "مخفي من الموقع"
-      }
-
-    </span>
-
-
-    <h3>
-      ${escapeHtml(p.name)}
-    </h3>
-
-
-    <p>
-      القسم:
-      ${escapeHtml(p.category || "-")}
-    </p>
-
-
-    <p>
-      ${escapeHtml(p.description || "")}
-    </p>
-
-
-    <div class="actions">
-
-      <button
-        class="edit"
-        onclick="editProduct('${escapeJs(p.id)}')"
-      >
-        تعديل
-      </button>
-
-
-      <button
-        class="toggle"
-        onclick="toggleProduct(
-          '${escapeJs(p.id)}',
-          ${active}
-        )"
-      >
-        ${active ? "إخفاء" : "إظهار"}
-      </button>
-
-
-      <button
-        class="delete"
-        onclick="deleteProduct('${escapeJs(p.id)}')"
-      >
-        حذف
-      </button>
-
-    </div>
-
-  </div>
-
-</article>
-
-`;
-
-      }
-    ).join("");
+return;
 
 }
 
+el.innerHTML =
+list.map(
+p => {
 
-/* =========================================================
-   تعديل منتج
-========================================================= */
+const active =
+String(p.active)
+.toLowerCase()
+!=="false";
+
+return (
+
+'<article class="product">'
+
++
+
+(
+p.image
+
+?
+
+'<img src="'
++
+escapeHtml(p.image)
++
+'" alt="'
++
+escapeHtml(p.name)
++
+'">'
+
+:
+
+'<div class="placeholder">'
++
+"بدون صورة"
++
+'</div>'
+)
+
++
+
+'<div>'
+
++
+
+'<span class="status '
++
+(active
+?"active"
+:"inactive")
++
+'">'
+
++
+
+(
+active
+?
+"ظاهر على الموقع"
+:
+"مخفي من الموقع"
+)
+
++
+
+'</span>'
+
++
+
+'<h3>'
++
+escapeHtml(p.name)
++
+'</h3>'
+
++
+
+'<p>القسم: '
++
+escapeHtml(
+p.category || "-"
+)
++
+'</p>'
+
++
+
+'<p>'
++
+escapeHtml(
+p.description || ""
+)
++
+'</p>'
+
++
+
+'<div class="actions">'
+
++
+
+'<button class="edit" onclick="editProduct(\''
++
+escapeJs(p.id)
++
+'\')">'
++
+"تعديل"
++
+'</button>'
+
++
+
+'<button class="toggle" onclick="toggleProduct(\''
++
+escapeJs(p.id)
++
+'\','
++
+active
++
+')">'
++
+(
+active
+?
+"إخفاء"
+:
+"إظهار"
+)
++
+'</button>'
+
++
+
+'<button class="delete" onclick="deleteProduct(\''
++
+escapeJs(p.id)
++
+'\')">'
++
+"حذف"
++
+'</button>'
+
++
+
+'</div>'
+
++
+
+'</div>'
+
++
+
+'</article>'
+
+);
+
+}
+).join("");
+
+}
+
 
 function editProduct(id){
 
-  const p =
-    products.find(
-      x =>
-        String(x.id) ===
-        String(id)
-    );
+const p =
+products.find(
+x =>
+String(x.id)
+===
+String(id)
+);
 
+if(!p)
+return;
 
-  if(!p)return;
+document.getElementById(
+"productId"
+).value =
+p.id;
 
+document.getElementById(
+"name"
+).value =
+p.name || "";
 
-  document.getElementById(
-    "productId"
-  ).value =
-    p.id;
+document.getElementById(
+"category"
+).value =
+p.category || "";
 
+document.getElementById(
+"description"
+).value =
+p.description || "";
 
-  document.getElementById(
-    "name"
-  ).value =
-    p.name || "";
+document.getElementById(
+"imageFile"
+).value =
+"";
 
+document.getElementById(
+"formTitle"
+).textContent =
+"تعديل المنتج";
 
-  document.getElementById(
-    "category"
-  ).value =
-    p.category || "";
+document.getElementById(
+"cancelBtn"
+).classList.remove(
+"hidden"
+);
 
+const preview =
+document.getElementById(
+"imagePreview"
+);
 
-  document.getElementById(
-    "description"
-  ).value =
-    p.description || "";
+if(p.image){
 
+document.getElementById(
+"previewImg"
+).src =
+p.image;
 
-  document.getElementById(
-    "imageFile"
-  ).value = "";
+document.getElementById(
+"imageName"
+).textContent =
+"الصورة الحالية";
 
+preview.style.display =
+"block";
 
-  document.getElementById(
-    "formTitle"
-  ).textContent =
-    "تعديل المنتج";
+}else{
 
-
-  document.getElementById(
-    "cancelBtn"
-  ).classList
-  .remove("hidden");
-
-
-  const preview =
-    document.getElementById(
-      "imagePreview"
-    );
-
-
-  if(p.image){
-
-    document.getElementById(
-      "previewImg"
-    ).src =
-      p.image;
-
-
-    document.getElementById(
-      "imageName"
-    ).textContent =
-      "الصورة الحالية";
-
-
-    preview.style.display =
-      "block";
-
-  }else{
-
-    preview.style.display =
-      "none";
-
-  }
-
-
-  window.scrollTo({
-    top:0,
-    behavior:"smooth"
-  });
+preview.style.display =
+"none";
 
 }
 
+window.scrollTo({
+top:0,
+behavior:"smooth"
+});
 
-/* =========================================================
-   تنظيف نموذج المنتج
-========================================================= */
+}
+
 
 function clearForm(){
 
-  [
-    "productId",
-    "name",
-    "category",
-    "description"
-  ].forEach(
-    id =>
-      document.getElementById(
-        id
-      ).value = ""
-  );
+[
+"productId",
+"name",
+"category",
+"description"
+]
+.forEach(
+id =>
+document.getElementById(id)
+.value=""
+);
 
+document.getElementById(
+"imageFile"
+).value="";
 
-  document.getElementById(
-    "imageFile"
-  ).value = "";
+document.getElementById(
+"formTitle"
+).textContent =
+"إضافة منتج جديد";
 
+document.getElementById(
+"cancelBtn"
+).classList.add(
+"hidden"
+);
 
-  document.getElementById(
-    "formTitle"
-  ).textContent =
-    "إضافة منتج جديد";
+document.getElementById(
+"imagePreview"
+).style.display =
+"none";
 
+document.getElementById(
+"previewImg"
+).src="";
 
-  document.getElementById(
-    "cancelBtn"
-  ).classList
-  .add("hidden");
-
-
-  document.getElementById(
-    "imagePreview"
-  ).style.display =
-    "none";
-
-
-  document.getElementById(
-    "previewImg"
-  ).src = "";
-
-
-  document.getElementById(
-    "imageName"
-  ).textContent = "";
+document.getElementById(
+"imageName"
+).textContent="";
 
 }
 
-
-/* =========================================================
-   إظهار / إخفاء منتج
-========================================================= */
 
 async function toggleProduct(id,active){
 
-  try{
+try{
 
-    const data =
-      await api(
-        "toggle",
-        {
-          id:id,
-          active:!active
-        }
-      );
+const data =
+await api(
+"toggle",
+{
+id,
+active:!active
+}
+);
 
+if(!data.ok)
 
-    if(!data || data.ok !== true){
+throw new Error(
+data.error
+||
+"تعذر تغيير حالة المنتج."
+);
 
-      throw new Error(
-        (data && data.error) ||
-        "تعذر تغيير حالة المنتج."
-      );
+await loadProducts();
 
-    }
+showMessage(
+!active
+?
+"تم إظهار المنتج."
+:
+"تم إخفاء المنتج.",
+"success"
+);
 
+}catch(e){
 
-    await loadProducts();
-
-
-    showMessage(
-      !active
-      ? "تم إظهار المنتج."
-      : "تم إخفاء المنتج.",
-      "success"
-    );
-
-
-  }catch(e){
-
-    showMessage(
-      "حصل خطأ: " + e.message,
-      "error"
-    );
-
-  }
+showMessage(
+"حصل خطأ: "
++
+e.message,
+"error"
+);
 
 }
 
+}
 
-/* =========================================================
-   حذف منتج
-========================================================= */
 
 async function deleteProduct(id){
 
-  if(
-    !confirm(
-      "هل أنت متأكد من حذف المنتج نهائيًا؟"
-    )
-  ){
+if(
+!confirm(
+"هل أنت متأكد من حذف المنتج نهائيًا؟"
+)
+)
+return;
 
-    return;
+try{
 
-  }
+const data =
+await api(
+"delete",
+{id}
+);
 
+if(!data.ok)
 
-  try{
+throw new Error(
+data.error
+||
+"تعذر حذف المنتج."
+);
 
-    const data =
-      await api(
-        "delete",
-        {id:id}
-      );
+await loadProducts();
 
+showMessage(
+"تم حذف المنتج.",
+"success"
+);
 
-    if(!data || data.ok !== true){
+}catch(e){
 
-      throw new Error(
-        (data && data.error) ||
-        "تعذر حذف المنتج."
-      );
+showMessage(
+"حصل خطأ: "
++
+e.message,
+"error"
+);
 
-    }
-
-
-    await loadProducts();
-
-
-    showMessage(
-      "تم حذف المنتج.",
-      "success"
-    );
-
-
-  }catch(e){
-
-    showMessage(
-      "حصل خطأ: " + e.message,
-      "error"
-    );
-
-  }
+}
 
 }
 
 
-/* =========================================================
-   معاينة الصورة
-========================================================= */
+document
+.getElementById("imageFile")
+.addEventListener(
+"change",
+function(){
+
+const file =
+this.files[0];
+
+const preview =
+document.getElementById(
+"imagePreview"
+);
+
+if(!file){
+
+preview.style.display =
+"none";
+
+return;
+
+}
+
+document.getElementById(
+"previewImg"
+).src =
+URL.createObjectURL(file);
+
+document.getElementById(
+"imageName"
+).textContent =
+file.name;
+
+preview.style.display =
+"block";
+
+}
+);
+
 
 document
-  .getElementById("imageFile")
-  .addEventListener(
-    "change",
-    function(){
+.getElementById("key")
+.addEventListener(
+"keydown",
+e => {
 
-      const file =
-        this.files[0];
+if(e.key === "Enter")
+login();
 
+}
+);
 
-      const preview =
-        document.getElementById(
-          "imagePreview"
-        );
-
-
-      if(!file){
-
-        preview.style.display =
-          "none";
-
-        return;
-
-      }
-
-
-      document.getElementById(
-        "previewImg"
-      ).src =
-        URL.createObjectURL(file);
-
-
-      document.getElementById(
-        "imageName"
-      ).textContent =
-        file.name;
-
-
-      preview.style.display =
-        "block";
-
-    }
-  );
-
-
-/* =========================================================
-   Enter لتسجيل الدخول
-========================================================= */
-
-document
-  .getElementById("key")
-  .addEventListener(
-    "keydown",
-    e => {
-
-      if(e.key === "Enter"){
-
-        login();
-
-      }
-
-    }
-  );
-
-
-/* =========================================================
-   حماية النصوص
-========================================================= */
 
 function escapeHtml(value){
 
-  return String(
-    value ?? ""
-  ).replace(
-    /[&<>"']/g,
-    m =>
-      ({
-        "&":"&amp;",
-        "<":"&lt;",
-        ">":"&gt;",
-        '"':"&quot;",
-        "'":"&#039;"
-      }[m])
-  );
+return String(
+value ?? ""
+)
+.replace(
+/[&<>"']/g,
+m =>
+({
+"&":"&amp;",
+"<":"&lt;",
+">":"&gt;",
+'"':"&quot;",
+"'":"&#039;"
+}[m])
+);
 
 }
 
 
 function escapeJs(value){
 
-  return String(
-    value ?? ""
-  )
-  .replace(
-    /\\/g,
-    "\\\\"
-  )
-  .replace(
-    /'/g,
-    "\\'"
-  );
+return String(
+value ?? ""
+)
+.replace(
+/\\/g,
+"\\\\"
+)
+.replace(
+/'/g,
+"\\'"
+);
 
 }
 
