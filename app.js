@@ -21,7 +21,7 @@
     الكاش يفضل موجود لفترة أطول.
     الصفحة تعرضه فوراً، والتحديث يحصل في الخلفية.
   */
-  const CACHE_KEY = "abo_tarek_products_v9";
+  const CACHE_KEY = "abo_tarek_products_v10";
 
   /*
     30 دقيقة بدل 5 دقائق.
@@ -114,6 +114,28 @@
     }
 
     return true;
+  }
+
+
+  function isFlagEnabled(value, defaultValue) {
+    if (value === undefined || value === null || value === "") {
+      return defaultValue;
+    }
+
+    if (value === true || value === 1) return true;
+    if (value === false || value === 0) return false;
+
+    const text = normalizeArabic(value);
+
+    if (["false", "0", "no", "off", "مخفي"].includes(text)) {
+      return false;
+    }
+
+    if (["true", "1", "yes", "on", "نعم", "ظاهر"].includes(text)) {
+      return true;
+    }
+
+    return defaultValue;
   }
 
 
@@ -292,6 +314,20 @@
         true
       );
 
+    const showHome =
+      isFlagEnabled(
+        p.showHome ??
+        p.ShowHome,
+        true
+      );
+
+    const isOffer =
+      isFlagEnabled(
+        p.isOffer ??
+        p.IsOffer,
+        false
+      );
+
     return {
       id,
       name,
@@ -299,6 +335,8 @@
       image,
       description,
       active,
+      showHome,
+      isOffer,
       searchIndex:
         normalizeArabic(
           `${name} ${category} ${description}`
@@ -629,6 +667,26 @@
       return;
     }
 
+    const homeProducts =
+      products.filter(
+        product => product.showHome
+      );
+
+    const offerProducts =
+      products.filter(
+        product => product.isOffer
+      );
+
+    const offersSection =
+      document.getElementById(
+        "offers"
+      );
+
+    const offersGrid =
+      document.getElementById(
+        "offersGrid"
+      );
+
     const filters =
       document.getElementById(
         "filters"
@@ -663,7 +721,7 @@
 
     const categories = [
       ...new Set(
-        products
+        homeProducts
           .map(
             product =>
               product.category
@@ -695,7 +753,7 @@
           .map(category => {
 
             const count =
-              products.filter(
+              homeProducts.filter(
                 product =>
                   product.category ===
                   category
@@ -794,7 +852,7 @@
           searchTerm
         );
 
-      return products.filter(
+      return homeProducts.filter(
         product => {
 
           const categoryMatch =
@@ -858,6 +916,28 @@
         "product-body";
 
       body.innerHTML = `
+        ${
+          product.isOffer
+            ? `
+              <span style="
+                display:inline-flex;
+                align-items:center;
+                gap:5px;
+                width:max-content;
+                margin-bottom:8px;
+                padding:4px 9px;
+                border-radius:999px;
+                background:#fff3cd;
+                color:#8a5a00;
+                font-size:12px;
+                font-weight:800;
+              ">
+                🔥 عرض
+              </span>
+            `
+            : ""
+        }
+
         <span class="product-category">
           ${escapeHtml(
             product.category
@@ -887,6 +967,7 @@
                     <button
                       type="button"
                       class="product-details-trigger"
+                      aria-label="عرض المزيد من التفاصيل عن ${escapeHtml(product.name)}"
                     >
                       عرض المزيد من التفاصيل
                     </button>
@@ -921,18 +1002,12 @@
         "click",
         event => {
 
-          if (
-            event.target.closest(
-              "a"
-            )
-          ) {
+          if (event.target.closest("a")) {
             return;
           }
 
           const detailsButton =
-            event.target.closest(
-              ".product-details-trigger"
-            );
+            event.target.closest(".product-details-trigger");
 
           if (detailsButton) {
             event.preventDefault();
@@ -941,9 +1016,7 @@
             return;
           }
 
-          openProductModal(
-            product
-          );
+          openProductModal(product);
         }
       );
 
@@ -1002,6 +1075,44 @@
       grid.replaceChildren(
         fragment
       );
+    }
+
+
+    /* -----------------------------------------
+       OFFERS
+       ----------------------------------------- */
+
+    function renderOffers() {
+
+      if (!offersGrid || !offersSection) {
+        return;
+      }
+
+      if (!offerProducts.length) {
+        offersGrid.innerHTML = "";
+        offersSection.hidden = true;
+        return;
+      }
+
+      const fragment =
+        document.createDocumentFragment();
+
+      offerProducts.forEach(
+        (product, index) => {
+          fragment.appendChild(
+            createProductCard(
+              product,
+              index
+            )
+          );
+        }
+      );
+
+      offersGrid.replaceChildren(
+        fragment
+      );
+
+      offersSection.hidden = false;
     }
 
 
@@ -1095,7 +1206,7 @@
 
           const section =
             document.getElementById(
-              "products"
+              "homeProducts"
             );
 
           if (section) {
@@ -1144,7 +1255,7 @@
       }
 
       const matches =
-        products
+        homeProducts
           .filter(
             product =>
               product.searchIndex.includes(
@@ -1333,7 +1444,7 @@
           }
 
           const product =
-            products.find(
+            homeProducts.find(
               item =>
                 item.id ===
                 button.dataset.id
@@ -1393,6 +1504,7 @@
     renderCategories();
     renderFilters();
     renderProducts();
+    renderOffers();
   }
 
 
