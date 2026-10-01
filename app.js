@@ -873,11 +873,27 @@
         ${
           product.description
             ? `
-              <p>
-                ${escapeHtml(
-                  product.description
-                )}
-              </p>
+              <div class="product-description-wrap" style="position:relative;">
+                <p style="margin:0;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;line-height:1.75;">
+                  ${escapeHtml(
+                    product.description
+                  )}
+                </p>
+
+                ${
+                  product.description.length > 120
+                    ? `
+                      <button
+                        type="button"
+                        class="product-more-details"
+                        style="margin-top:7px;padding:0;border:0;background:none;color:#d47a25;font:inherit;font-size:13px;font-weight:800;cursor:pointer;"
+                      >
+                        عرض المزيد من التفاصيل
+                      </button>
+                    `
+                    : ""
+                }
+              </div>
             `
             : ""
         }
@@ -919,6 +935,22 @@
           );
         }
       );
+
+      const moreDetailsButton =
+        article.querySelector(
+          ".product-more-details"
+        );
+
+      if (moreDetailsButton) {
+        moreDetailsButton.addEventListener(
+          "click",
+          event => {
+            event.preventDefault();
+            event.stopPropagation();
+            openProductModal(product);
+          }
+        );
+      }
 
       return article;
     }
