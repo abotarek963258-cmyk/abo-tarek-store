@@ -1,20 +1,23 @@
 <!doctype html>
+
 <html lang="ar" dir="rtl">
 
 <head>
   <meta charset="utf-8">
 
-  <meta
-    name="viewport"
-    content="width=device-width,initial-scale=1,viewport-fit=cover"
-  >
+<meta
+name="viewport"
+content="width=device-width,initial-scale=1,viewport-fit=cover"
+
+>
 
   <title>الأقسام والمنتجات | أبو طارق للأدوات المنزلية</title>
 
-  <meta
-    name="description"
-    content="تصفح أقسام ومنتجات أبو طارق للأدوات المنزلية واكتشف تشكيلة متنوعة من الأدوات المنزلية."
-  >
+<meta
+name="description"
+content="تصفح أقسام ومنتجات أبو طارق للأدوات المنزلية واكتشف تشكيلة متنوعة من الأدوات المنزلية."
+
+>
 
   <meta name="theme-color" content="#10243b">
 
@@ -1673,317 +1676,295 @@
       height: 16px;
     }
   </style>
+
 </head>
 
-
 <body>
-
-  <!-- =======================================================
-       HEADER
-       ======================================================= -->
 
   <header class="site-header">
     <div class="container nav">
 
-      <a
-        class="brand"
-        href="./index.html"
-        aria-label="أبو طارق للأدوات المنزلية"
+```
+  <a
+    class="brand"
+    href="./index.html"
+    aria-label="أبو طارق للأدوات المنزلية"
+  >
+
+    <div class="brand-logo">
+      <img
+        src="./logo.png"
+        alt="شعار أبو طارق"
+        width="56"
+        height="56"
       >
-
-        <div class="brand-logo">
-          <img
-            src="./logo.png"
-            alt="شعار أبو طارق"
-            width="56"
-            height="56"
-          >
-        </div>
-
-        <div class="brand-text">
-          <span class="brand-name">
-            أبو طارق
-          </span>
-
-          <span class="brand-sub">
-            للأدوات المنزلية
-          </span>
-        </div>
-
-      </a>
-
-      <a
-        class="back-btn"
-        href="./index.html"
-      >
-
-        <svg
-          class="icon icon-sm"
-          viewBox="0 0 24 24"
-        >
-          <path d="M19 12H5"></path>
-          <path d="M12 19l-7-7 7-7"></path>
-        </svg>
-
-        الرئيسية
-
-      </a>
-
     </div>
+
+    <div class="brand-text">
+      <span class="brand-name">
+        أبو طارق
+      </span>
+
+      <span class="brand-sub">
+        للأدوات المنزلية
+      </span>
+    </div>
+
+  </a>
+
+  <a
+    class="back-btn"
+    href="./index.html"
+  >
+
+    <svg
+      class="icon icon-sm"
+      viewBox="0 0 24 24"
+    >
+      <path d="M19 12H5"></path>
+      <path d="M12 19l-7-7 7-7"></path>
+    </svg>
+
+    الرئيسية
+
+  </a>
+
+</div>
+```
+
   </header>
-
-
-  <!-- =======================================================
-       HERO
-       ======================================================= -->
 
   <section class="hero">
 
-    <div class="container hero-inner">
+```
+<div class="container hero-inner">
 
-      <div class="hero-copy">
+  <div class="hero-copy">
 
-        <span class="hero-kicker">
-          اكتشف تشكيلتنا
+    <span class="hero-kicker">
+      اكتشف تشكيلتنا
+    </span>
+
+    <h1>
+      كل ما تحتاجه للمنزل
+      <span>في مكان واحد</span>
+    </h1>
+
+    <p class="hero-description">
+      تصفح أقسام أبو طارق للأدوات المنزلية واكتشف مجموعة متنوعة من
+      المنتجات المختارة لتناسب احتياجات بيتك اليومية.
+    </p>
+
+  </div>
+
+
+  <div class="hero-stats">
+
+    <div class="stat">
+
+      <span
+        class="stat-number"
+        id="heroProductCount"
+      >
+        —
+      </span>
+
+      <span class="stat-label">
+        منتج متاح
+      </span>
+
+    </div>
+
+    <div class="stat">
+
+      <span
+        class="stat-number"
+        id="heroCategoryCount"
+      >
+        —
+      </span>
+
+      <span class="stat-label">
+        قسم
+      </span>
+
+    </div>
+
+  </div>
+
+</div>
+```
+
+  </section>
+
+  <section class="search-area">
+
+```
+<div class="container">
+
+  <div class="search-box">
+
+    <div class="search-icon">
+
+      <svg
+        class="icon"
+        viewBox="0 0 24 24"
+      >
+        <circle
+          cx="11"
+          cy="11"
+          r="7"
+        ></circle>
+
+        <path
+          d="m20 20-4-4"
+        ></path>
+      </svg>
+
+    </div>
+
+    <input
+      id="searchInput"
+      type="search"
+      autocomplete="off"
+      placeholder="ابحث عن منتج أو قسم..."
+    >
+
+    <button
+      id="clearSearch"
+      type="button"
+      aria-label="مسح البحث"
+    >
+      ×
+    </button>
+
+  </div>
+
+  <div id="searchResultInfo"></div>
+
+</div>
+```
+
+  </section>
+
+  <main class="main">
+
+```
+<div class="container">
+
+  <section>
+
+    <div class="section-heading">
+
+      <div class="heading-copy">
+
+        <span class="eyebrow">
+          تصفح المتجر
         </span>
 
-        <h1>
-          كل ما تحتاجه للمنزل
-          <span>في مكان واحد</span>
-        </h1>
+        <h2>
+          الأقسام
+        </h2>
 
-        <p class="hero-description">
-          تصفح أقسام أبو طارق للأدوات المنزلية واكتشف مجموعة متنوعة من
-          المنتجات المختارة لتناسب احتياجات بيتك اليومية.
+        <p>
+          اختر القسم للوصول إلى المنتجات بسرعة
         </p>
 
       </div>
 
-
-      <div class="hero-stats">
-
-        <div class="stat">
-
-          <span
-            class="stat-number"
-            id="heroProductCount"
-          >
-            —
-          </span>
-
-          <span class="stat-label">
-            منتج متاح
-          </span>
-
-        </div>
-
-        <div class="stat">
-
-          <span
-            class="stat-number"
-            id="heroCategoryCount"
-          >
-            —
-          </span>
-
-          <span class="stat-label">
-            قسم
-          </span>
-
-        </div>
-
-      </div>
-
     </div>
+
+    <div
+      id="categories"
+      class="categories"
+    ></div>
 
   </section>
 
 
-  <!-- =======================================================
-       SEARCH
-       ======================================================= -->
+  <section>
 
-  <section class="search-area">
+    <div
+      id="selectedCategory"
+      class="selected-category"
+      style="display:none;"
+    >
 
-    <div class="container">
+      <div class="selected-info">
 
-      <div class="search-box">
-
-        <div class="search-icon">
+        <div class="selected-mark">
 
           <svg
             class="icon"
             viewBox="0 0 24 24"
           >
-            <circle
-              cx="11"
-              cy="11"
-              r="7"
-            ></circle>
-
-            <path
-              d="m20 20-4-4"
-            ></path>
+            <path d="M4 4h6v6H4z"></path>
+            <path d="M14 4h6v6h-6z"></path>
+            <path d="M4 14h6v6H4z"></path>
+            <path d="M14 14h6v6h-6z"></path>
           </svg>
 
         </div>
 
-        <input
-          id="searchInput"
-          type="search"
-          autocomplete="off"
-          placeholder="ابحث عن منتج أو قسم..."
-        >
+        <div class="selected-title">
 
-        <button
-          id="clearSearch"
-          type="button"
-          aria-label="مسح البحث"
-        >
-          ×
-        </button>
+          <span id="selectedCategoryName">
+            كل المنتجات
+          </span>
+
+          <span id="selectedCategoryCount">
+            —
+          </span>
+
+        </div>
 
       </div>
 
-      <div id="searchResultInfo"></div>
+      <button
+        id="clearCategory"
+        type="button"
+      >
+        عرض الكل
+      </button>
 
     </div>
 
   </section>
 
 
-  <!-- =======================================================
-       MAIN
-       ======================================================= -->
+  <section>
 
-  <main class="main">
+    <div class="section-heading">
 
-    <div class="container">
+      <div class="heading-copy">
 
+        <span class="eyebrow">
+          منتجاتنا
+        </span>
 
-      <!-- CATEGORIES -->
+        <h2>
+          المنتجات
+        </h2>
 
-      <section>
+        <p>
+          اختر المنتج لمعرفة المزيد أو تواصل معنا عبر واتساب
+        </p>
 
-        <div class="section-heading">
-
-          <div class="heading-copy">
-
-            <span class="eyebrow">
-              تصفح المتجر
-            </span>
-
-            <h2>
-              الأقسام
-            </h2>
-
-            <p>
-              اختر القسم للوصول إلى المنتجات بسرعة
-            </p>
-
-          </div>
-
-        </div>
-
-        <div
-          id="categories"
-          class="categories"
-        ></div>
-
-      </section>
-
-
-      <!-- SELECTED CATEGORY -->
-
-      <section>
-
-        <div
-          id="selectedCategory"
-          class="selected-category"
-          style="display:none;"
-        >
-
-          <div class="selected-info">
-
-            <div class="selected-mark">
-
-              <svg
-                class="icon"
-                viewBox="0 0 24 24"
-              >
-                <path d="M4 4h6v6H4z"></path>
-                <path d="M14 4h6v6h-6z"></path>
-                <path d="M4 14h6v6H4z"></path>
-                <path d="M14 14h6v6h-6z"></path>
-              </svg>
-
-            </div>
-
-            <div class="selected-title">
-
-              <span id="selectedCategoryName">
-                كل المنتجات
-              </span>
-
-              <span id="selectedCategoryCount">
-                —
-              </span>
-
-            </div>
-
-          </div>
-
-          <button
-            id="clearCategory"
-            type="button"
-          >
-            عرض الكل
-          </button>
-
-        </div>
-
-      </section>
-
-
-      <!-- PRODUCTS -->
-
-      <section>
-
-        <div class="section-heading">
-
-          <div class="heading-copy">
-
-            <span class="eyebrow">
-              منتجاتنا
-            </span>
-
-            <h2>
-              المنتجات
-            </h2>
-
-            <p>
-              اختر المنتج لمعرفة المزيد أو تواصل معنا عبر واتساب
-            </p>
-
-          </div>
-
-        </div>
-
-        <div
-          id="products"
-          class="products"
-        ></div>
-
-      </section>
+      </div>
 
     </div>
 
+    <div
+      id="products"
+      class="products"
+    ></div>
+
+  </section>
+
+</div>
+```
+
   </main>
-
-
-  <!-- =======================================================
-       MODAL
-       ======================================================= -->
 
   <div
     id="productModal"
@@ -1991,92 +1972,86 @@
     aria-hidden="true"
   >
 
-    <div class="modal-card">
+```
+<div class="modal-card">
 
-      <button
-        id="modalClose"
-        class="modal-close"
-        type="button"
-        aria-label="إغلاق"
+  <button
+    id="modalClose"
+    class="modal-close"
+    type="button"
+    aria-label="إغلاق"
+  >
+    ×
+  </button>
+
+  <div class="modal-content">
+
+    <div class="modal-image-side">
+
+      <img
+        id="modalImage"
+        src=""
+        alt=""
       >
-        ×
-      </button>
 
-      <div class="modal-content">
+    </div>
 
-        <div class="modal-image-side">
+    <div class="modal-info">
 
-          <img
-            id="modalImage"
-            src=""
-            alt=""
-          >
+      <span id="modalCategory"></span>
 
-        </div>
+      <h2 id="modalProductName"></h2>
 
-        <div class="modal-info">
+      <p id="modalDescription"></p>
 
-          <span id="modalCategory"></span>
+      <a
+        id="modalWhatsApp"
+        class="modal-whatsapp"
+        href="#"
+        target="_blank"
+        rel="noopener"
+      >
 
-          <h2 id="modalProductName"></h2>
+        <svg
+          class="icon"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M20 11.5a8.2 8.2 0 0 1-12.4 7L4 20l1.5-3.5A8.2 8.2 0 1 1 20 11.5Z"
+          ></path>
 
-          <p id="modalDescription"></p>
+          <path
+            d="M8.8 8.5c.2-.5.4-.5.8-.5h.4c.2 0 .4.1.5.4l.7 1.6c.1.2.1.4-.1.6l-.5.6c.5 1 1.3 1.8 2.4 2.3l.6-.6c.2-.2.4-.2.6-.1l1.5.7c.3.1.4.3.3.6-.1.6-.4 1.1-.9 1.3-1 .5-2.9-.3-4.3-1.5-1.2-1-2.2-2.3-2.7-3.5-.4-.9-.4-1.5-.2-1.9Z"
+          ></path>
+        </svg>
 
-          <a
-            id="modalWhatsApp"
-            class="modal-whatsapp"
-            href="#"
-            target="_blank"
-            rel="noopener"
-          >
+        طلب المنتج عبر واتساب
 
-            <svg
-              class="icon"
-              viewBox="0 0 24 24"
-            >
-              <path
-                d="M20 11.5a8.2 8.2 0 0 1-12.4 7L4 20l1.5-3.5A8.2 8.2 0 1 1 20 11.5Z"
-              ></path>
-
-              <path
-                d="M8.8 8.5c.2-.5.4-.5.8-.5h.4c.2 0 .4.1.5.4l.7 1.6c.1.2.1.4-.1.6l-.5.6c.5 1 1.3 1.8 2.4 2.3l.6-.6c.2-.2.4-.2.6-.1l1.5.7c.3.1.4.3.3.6-.1.6-.4 1.1-.9 1.3-1 .5-2.9-.3-4.3-1.5-1.2-1-2.2-2.3-2.7-3.5-.4-.9-.4-1.5-.2-1.9Z"
-              ></path>
-            </svg>
-
-            طلب المنتج عبر واتساب
-
-          </a>
-
-        </div>
-
-      </div>
+      </a>
 
     </div>
 
   </div>
 
+</div>
+```
 
-  <!-- =======================================================
-       FOOTER
-       ======================================================= -->
+  </div>
 
   <footer>
 
-    <div class="container">
+```
+<div class="container">
 
-      ©
-      <span id="year"></span>
-      <strong> أبو طارق للأدوات المنزلية </strong>
-      — جميع الحقوق محفوظة
+  ©
+  <span id="year"></span>
+  <strong> أبو طارق للأدوات المنزلية </strong>
+  — جميع الحقوق محفوظة
 
-    </div>
+</div>
+```
 
   </footer>
-
-
-  <!-- =======================================================
-       JAVASCRIPT
-       ======================================================= -->
 
   <script>
 
@@ -2087,21 +2062,8 @@
       "201551604163";
 
 
-    /*
-      =========================================================
-      الإصلاح الجديد
-      =========================================================
-
-      تم تغيير v6 إلى v7 حتى نتخلص من أي كاش قديم
-      محفوظ من النسخة السابقة.
-
-      الكاش سيُستخدم فقط لعرض المنتجات فوراً،
-      وبعدها يتم طلب أحدث البيانات من Apps Script
-      في كل مرة يتم فيها فتح الصفحة.
-    */
-
     const CACHE_KEY =
-      "abo_tarek_sections_products_v7";
+      "abo_tarek_sections_products_v8";
 
     const CACHE_TIME =
       30 * 60 * 1000;
@@ -2178,7 +2140,31 @@
             p.active ??
             p.Active ??
             "true"
-          ).toLowerCase() !== "false"
+          ).toLowerCase() !== "false",
+
+        /*
+          مهم:
+          showHome و isOffer يتم الاحتفاظ بهما
+          للتوافق مع هيكل البيانات الجديد،
+          لكنهما لا يؤثران على ظهور المنتج هنا.
+
+          الأقسام تعرض أي منتج active=true،
+          حتى لو كان مخفياً من الصفحة الرئيسية.
+        */
+
+        showHome:
+          String(
+            p.showHome ??
+            p.ShowHome ??
+            "true"
+          ).toLowerCase() !== "false",
+
+        isOffer:
+          String(
+            p.isOffer ??
+            p.IsOffer ??
+            "false"
+          ).toLowerCase() === "true"
 
       };
 
@@ -2397,12 +2383,6 @@
 
     async function fetchProducts() {
 
-      /*
-        الإصلاح:
-        no-store يمنع المتصفح من الاعتماد على استجابة
-        GET قديمة، ويطلب أحدث نسخة من Apps Script.
-      */
-
       const response =
         await fetch(
           DATA_URL,
@@ -2431,6 +2411,16 @@
 
       } else if (
         data &&
+        data.ok === false
+      ) {
+
+        throw new Error(
+          data.error ||
+          "تعذر تحميل البيانات من السيرفر."
+        );
+
+      } else if (
+        data &&
         Array.isArray(data.products)
       ) {
 
@@ -2447,6 +2437,14 @@
 
       }
 
+      /*
+        active فقط هو المتحكم في ظهور المنتج
+        داخل صفحة الأقسام.
+
+        showHome و isOffer لا يتم استخدامهما
+        في هذا الفلتر.
+      */
+
       const products =
         productsData
           .map(normalizeProduct)
@@ -2462,7 +2460,7 @@
 
 
     /* =======================================================
-       INIT DATA - FIXED
+       INIT DATA
        ======================================================= */
 
     async function initData() {
@@ -2470,11 +2468,6 @@
       const cached =
         readCache();
 
-
-      /*
-        لو عندنا كاش:
-        نعرضه فوراً حتى لا تكون الصفحة فارغة.
-      */
 
       if (
         cached &&
@@ -2489,15 +2482,6 @@
       }
 
 
-      /*
-        الإصلاح المهم:
-        مهما كان عمر الكاش، نطلب أحدث البيانات
-        من Apps Script عند فتح الصفحة.
-
-        بذلك لو أضفت منتج جديد من لوحة الإدارة،
-        لن تنتظر الصفحة 10 أو 30 دقيقة حتى يظهر.
-      */
-
       try {
 
         const fresh =
@@ -2509,14 +2493,6 @@
         applyData();
 
       } catch (error) {
-
-        /*
-          لو السيرفر فشل وكان عندنا كاش،
-          نترك المنتجات القديمة ظاهرة.
-
-          ولو لم يكن هناك كاش أصلاً،
-          نظهر رسالة الخطأ.
-        */
 
         if (!allProducts.length) {
 
