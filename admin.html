@@ -1,3 +1,4 @@
+```html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -40,9 +41,7 @@
       box-shadow: 0 4px 15px rgba(0,0,0,.07);
     }
 
-    h2 {
-      margin-top: 0;
-    }
+    h2 { margin-top: 0; }
 
     label {
       display: block;
@@ -173,6 +172,9 @@
 
     .actions {
       margin-top: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
     }
 
     #message {
@@ -307,7 +309,6 @@
 
   <div id="message"></div>
 
-  <!-- LOGIN -->
   <section class="card" id="loginCard">
     <h2>دخول الإدارة</h2>
 
@@ -319,7 +320,6 @@
 
   <div id="adminArea" class="hidden">
 
-    <!-- DASHBOARD -->
     <section class="dashboard">
       <div class="stat">
         إجمالي المنتجات
@@ -342,12 +342,11 @@
       </div>
     </section>
 
-    <!-- SECTIONS -->
     <section class="card">
       <h2>📁 إدارة الأقسام</h2>
 
       <p class="muted">
-        أضف الأقسام أو عدّل أسماءها ورتّبها. عند تغيير اسم القسم يتم تحديث المنتجات المرتبطة به تلقائيًا.
+        أضف الأقسام أو عدّل أسماءها ورتّبها.
       </p>
 
       <label>اسم القسم</label>
@@ -368,37 +367,24 @@
       </div>
     </section>
 
-
-    <!-- SETTINGS -->
     <section class="card">
       <h2>⚙️ إعدادات الإدارة</h2>
 
       <p class="muted">
-        غيّر مفتاح الإدارة من هنا بدون تعديل الكود أو إعادة النشر.
-        يجب أن تكون مسجّلًا بالمفتاح الحالي.
+        غيّر مفتاح الإدارة من هنا.
       </p>
 
       <label>مفتاح الإدارة الجديد</label>
-      <input
-        id="newAdminKey"
-        type="password"
-        placeholder="اكتب المفتاح الجديد"
-      >
+      <input id="newAdminKey" type="password" placeholder="اكتب المفتاح الجديد">
 
       <label>تأكيد المفتاح الجديد</label>
-      <input
-        id="confirmAdminKey"
-        type="password"
-        placeholder="أعد كتابة المفتاح الجديد"
-      >
+      <input id="confirmAdminKey" type="password" placeholder="أعد كتابة المفتاح الجديد">
 
       <button class="primary" onclick="changeAdminKey()">
         حفظ المفتاح الجديد
       </button>
     </section>
 
-
-    <!-- PRODUCT FORM -->
     <section class="card" id="formCard">
 
       <h2 id="formTitle">إضافة منتج جديد</h2>
@@ -406,352 +392,187 @@
       <input type="hidden" id="productId">
 
       <label>اسم المنتج</label>
-      <input
-        id="name"
-        type="text"
-        placeholder="مثال: طقم كوبايات"
-      >
+      <input id="name" type="text" placeholder="مثال: طقم كوبايات">
 
       <label>القسم</label>
-
       <select id="category">
         <option value="">اختر القسم</option>
       </select>
 
       <label>صورة المنتج</label>
-
-      <input
-        id="imageFile"
-        type="file"
-        accept="image/*"
-      >
+      <input id="imageFile" type="file" accept="image/*">
 
       <div class="upload-note">
         اختار الصورة مباشرة من جهازك.
       </div>
 
-      <div
-        id="imagePreview"
-        class="image-preview"
-      >
-        <img
-          id="previewImg"
-          src=""
-          alt="معاينة الصورة"
-        >
-
-        <div
-          id="imageName"
-          class="image-name"
-        ></div>
+      <div id="imagePreview" class="image-preview">
+        <img id="previewImg" src="" alt="معاينة الصورة">
+        <div id="imageName" class="image-name"></div>
       </div>
 
       <label>الوصف</label>
+      <textarea id="description" placeholder="اكتب وصف المنتج"></textarea>
 
-      <textarea
-        id="description"
-        placeholder="اكتب وصف المنتج"
-      ></textarea>
+      <div style="margin-top:14px;padding:14px;border:1px solid #e2e6ea;border-radius:12px;background:#fafbfc;">
+        <strong style="display:block;margin-bottom:10px;">
+          📌 ظهور المنتج
+        </strong>
 
-
-      <!-- PRODUCT VISIBILITY -->
-      <div
-        style="
-          margin-top:15px;
-          padding:14px;
-          border:1px solid #e2e6ea;
-          border-radius:10px;
-          background:#f8fafc;
-        "
-      >
-
-        <label
-          style="
-            display:flex;
-            align-items:center;
-            gap:9px;
-            margin:0 0 10px;
-            font-weight:bold;
-            cursor:pointer;
-          "
-        >
-
-          <input
-            id="showHome"
-            type="checkbox"
-            checked
-            style="width:auto;"
-          >
-
-          عرض المنتج في الصفحة الرئيسية
-
+        <label style="display:flex;align-items:center;gap:8px;margin:8px 0;cursor:pointer;">
+          <input id="showHome" type="checkbox" checked style="width:auto;">
+          <span>عرض المنتج في الصفحة الرئيسية</span>
         </label>
 
-
-        <label
-          style="
-            display:flex;
-            align-items:center;
-            gap:9px;
-            margin:0;
-            font-weight:bold;
-            cursor:pointer;
-          "
-        >
-
-          <input
-            id="isOffer"
-            type="checkbox"
-            style="width:auto;"
-          >
-
-          إظهار المنتج في قسم العروض
-
+        <label style="display:flex;align-items:center;gap:8px;margin:8px 0;cursor:pointer;">
+          <input id="isOffer" type="checkbox" style="width:auto;">
+          <span>إظهار المنتج في قسم العروض</span>
         </label>
-
       </div>
 
-
-      <button
-        class="primary"
-        id="saveBtn"
-        onclick="saveProduct()"
-      >
+      <button class="primary" id="saveBtn" onclick="saveProduct()">
         حفظ المنتج
       </button>
 
-
-      <button
-        class="edit"
-        onclick="cancelEdit()"
-        id="cancelBtn"
-        style="display:none"
-      >
+      <button class="edit" onclick="cancelEdit()" id="cancelBtn" style="display:none">
         إلغاء التعديل
       </button>
-
     </section>
 
-
-    <!-- PRODUCTS -->
     <section class="card">
-
       <h2>📦 إدارة المنتجات</h2>
 
       <div class="toolbar">
-
         <div>
-
           <label>بحث</label>
-
           <input
             id="searchInput"
             type="text"
             placeholder="ابحث باسم المنتج أو الوصف..."
             oninput="renderProducts()"
           >
-
         </div>
-
 
         <div>
-
           <label>القسم</label>
-
-          <select
-            id="filterCategory"
-            onchange="renderProducts()"
-          >
-
-            <option value="">
-              كل الأقسام
-            </option>
-
+          <select id="filterCategory" onchange="renderProducts()">
+            <option value="">كل الأقسام</option>
           </select>
-
         </div>
 
-
-        <button
-          class="gray"
-          onclick="resetFilters()"
-        >
+        <button class="gray" onclick="resetFilters()">
           إعادة ضبط
         </button>
-
       </div>
 
-
-      <div
-        id="products"
-        class="products"
-      >
+      <div id="products" class="products">
         جاري تحميل المنتجات...
       </div>
-
     </section>
 
   </div>
-
 </main>
-
 
 <script>
 
 const API_URL =
   "https://script.google.com/macros/s/AKfycbyw7k-K9akpV08vSjXbDmZ8khpHH9LOq2G9WLDHT2-iOJiTThN-kvEaCKI0-wKWu7hY/exec";
 
-
 let ADMIN_KEY = "";
-
 let products = [];
-
 let sections = [];
 
 
 function showMessage(text, type) {
-
-  const el =
-    document.getElementById("message");
-
+  const el = document.getElementById("message");
   el.textContent = text;
-
   el.className = type;
-
 }
 
 
 async function api(action, extra = {}) {
 
-  const response =
-    await fetch(
-      API_URL,
-      {
-        method: "POST",
+  const response = await fetch(API_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "text/plain;charset=utf-8"
+    },
+    body: JSON.stringify({
+      key: ADMIN_KEY,
+      action: action,
+      ...extra
+    })
+  });
 
-        headers: {
-          "Content-Type":
-            "text/plain;charset=utf-8"
-        },
-
-        body:
-          JSON.stringify({
-            key: ADMIN_KEY,
-            action: action,
-            ...extra
-          })
-      }
-    );
-
-
-  const raw =
-    await response.text();
-
+  const raw = await response.text();
 
   let data;
 
-
   try {
-
-    data =
-      JSON.parse(raw);
-
+    data = JSON.parse(raw);
   } catch (e) {
-
     throw new Error(
-      "رد غير صالح من السيرفر: " +
-      raw.slice(0,300)
+      "رد غير صالح من السيرفر: " + raw.slice(0, 300)
     );
-
   }
 
-
   return data;
-
 }
 
 
 async function login() {
 
   const key =
-    document
-      .getElementById("key")
-      .value
-      .trim();
-
+    document.getElementById("key").value.trim();
 
   if (!key) {
-
     showMessage(
       "اكتب مفتاح الإدارة أولًا.",
       "error"
     );
-
     return;
-
   }
-
 
   ADMIN_KEY = key;
 
-
   try {
 
-    const data =
-      await api("list");
+    const data = await api("list");
 
-
-    if (
-      !data ||
-      data.ok === false
-    ) {
+    if (!data || data.ok === false) {
 
       ADMIN_KEY = "";
 
       showMessage(
-        data &&
-        data.error === "unauthorized"
+        data && data.error === "unauthorized"
           ? "مفتاح الإدارة غير صحيح."
           : "تعذر تحميل بيانات الإدارة.",
         "error"
       );
 
       return;
-
     }
 
-
-    document
-      .getElementById("loginCard")
-      .style.display = "none";
-
-
-    document
-      .getElementById("adminArea")
-      .classList
-      .remove("hidden");
-
+    document.getElementById("loginCard").style.display = "none";
+    document.getElementById("adminArea").classList.remove("hidden");
 
     products =
       Array.isArray(data)
         ? data
         : (
-            Array.isArray(data.products)
-              ? data.products
-              : []
-          );
-
+          Array.isArray(data.products)
+            ? data.products
+            : []
+        );
 
     await loadSections();
 
     renderAll();
 
-
     showMessage(
       "تم تسجيل الدخول بنجاح.",
       "success"
     );
-
 
   } catch (error) {
 
@@ -763,70 +584,45 @@ async function login() {
     );
 
     console.error(error);
-
   }
-
 }
 
 
 async function loadSections() {
 
-  const data =
-    await api("listSections");
+  const data = await api("listSections");
 
-
-  if (
-    !data ||
-    data.ok === false
-  ) {
-
+  if (!data || data.ok === false) {
     throw new Error(
-      data &&
-      data.error ||
-      "تعذر تحميل الأقسام."
+      data && data.error
+        ? data.error
+        : "تعذر تحميل الأقسام."
     );
-
   }
-
 
   const list =
     Array.isArray(data)
       ? data
       : (
-          Array.isArray(data.sections)
-            ? data.sections
-            : []
-        );
-
-
-  sections =
-    list.filter(function(section) {
-
-      return (
-        String(section.active)
-          .toLowerCase() !== "false"
+        Array.isArray(data.sections)
+          ? data.sections
+          : []
       );
 
-    });
-
+  sections = list.filter(function(section) {
+    return String(section.active).toLowerCase() !== "false";
+  });
 
   renderSectionControls();
-
   renderSections();
-
 }
 
 
 function renderAll() {
-
   renderDashboard();
-
   renderSectionControls();
-
   renderSections();
-
   renderProducts();
-
 }
 
 
@@ -834,38 +630,20 @@ function renderDashboard() {
 
   const active =
     products.filter(function(p) {
-
-      return (
-        String(p.active)
-          .toLowerCase() !== "false"
-      );
-
+      return String(p.active).toLowerCase() !== "false";
     }).length;
 
+  document.getElementById("statProducts").textContent =
+    products.length;
 
-  document
-    .getElementById("statProducts")
-    .textContent =
-      products.length;
+  document.getElementById("statActive").textContent =
+    active;
 
+  document.getElementById("statInactive").textContent =
+    products.length - active;
 
-  document
-    .getElementById("statActive")
-    .textContent =
-      active;
-
-
-  document
-    .getElementById("statInactive")
-    .textContent =
-      products.length - active;
-
-
-  document
-    .getElementById("statSections")
-    .textContent =
-      sections.length;
-
+  document.getElementById("statSections").textContent =
+    sections.length;
 }
 
 
@@ -877,75 +655,55 @@ function renderSectionControls() {
   const filter =
     document.getElementById("filterCategory");
 
-
   const selectedCategory =
     category.value;
 
   const selectedFilter =
     filter.value;
 
-
   category.innerHTML =
     '<option value="">اختر القسم</option>' +
+    sections.map(function(section) {
 
-    sections
-      .map(function(section) {
+      return (
+        '<option value="' +
+        escapeHtml(section.name) +
+        '">' +
+        escapeHtml(section.name) +
+        '</option>'
+      );
 
-        return (
-          '<option value="' +
-          escapeHtml(section.name) +
-          '">' +
-          escapeHtml(section.name) +
-          '</option>'
-        );
-
-      })
-      .join("");
-
+    }).join("");
 
   filter.innerHTML =
     '<option value="">كل الأقسام</option>' +
+    sections.map(function(section) {
 
-    sections
-      .map(function(section) {
+      return (
+        '<option value="' +
+        escapeHtml(section.name) +
+        '">' +
+        escapeHtml(section.name) +
+        '</option>'
+      );
 
-        return (
-          '<option value="' +
-          escapeHtml(section.name) +
-          '">' +
-          escapeHtml(section.name) +
-          '</option>'
-        );
-
-      })
-      .join("");
-
+    }).join("");
 
   if (
     sections.some(
-      s =>
-        s.name === selectedCategory
+      s => s.name === selectedCategory
     )
   ) {
-
-    category.value =
-      selectedCategory;
-
+    category.value = selectedCategory;
   }
-
 
   if (
     sections.some(
-      s =>
-        s.name === selectedFilter
+      s => s.name === selectedFilter
     )
   ) {
-
-    filter.value =
-      selectedFilter;
-
+    filter.value = selectedFilter;
   }
-
 }
 
 
@@ -954,133 +712,104 @@ function renderSections() {
   const el =
     document.getElementById("sections");
 
-
   if (!sections.length) {
 
     el.innerHTML =
-      "<p>لا توجد أقسام حاليًا. أضف أول قسم من الخانة أعلاه.</p>";
+      "<p>لا توجد أقسام حاليًا.</p>";
 
     return;
-
   }
 
-
   el.innerHTML =
-    sections
-      .map(function(section, index) {
+    sections.map(function(section, index) {
 
-        const count =
-          products.filter(function(product) {
+      const count =
+        products.filter(function(product) {
 
-            return (
-              String(
-                product.category || ""
-              ).trim() ===
-              String(
-                section.name || ""
-              ).trim()
-            );
+          return String(
+            product.category || ""
+          ).trim() ===
+          String(
+            section.name || ""
+          ).trim();
 
-          }).length;
+        }).length;
 
+      const active =
+        String(section.active).toLowerCase() !== "false";
 
-        return `
-          <div class="section-item">
+      return `
+        <div class="section-item">
 
-            <div class="order-number">
-              ${index + 1}
+          <div class="order-number">
+            ${index + 1}
+          </div>
+
+          <div>
+            <strong>
+              ${escapeHtml(section.name)}
+            </strong>
+
+            <div class="muted">
+              ${count} منتج
             </div>
+          </div>
 
-            <div>
+          <div class="section-actions">
 
-              <strong>
-                ${escapeHtml(section.name)}
-              </strong>
+            <button
+              class="edit"
+              onclick="editSection('${escapeJs(section.id)}')"
+            >
+              تعديل
+            </button>
 
-              <div class="muted">
-                ${count} منتج
-              </div>
+            <button
+              class="gray"
+              onclick="moveSection('${escapeJs(section.id)}', -1)"
+            >
+              ↑
+            </button>
 
-            </div>
+            <button
+              class="gray"
+              onclick="moveSection('${escapeJs(section.id)}', 1)"
+            >
+              ↓
+            </button>
 
-            <div class="section-actions">
+            <button
+              class="toggle"
+              onclick="toggleSection('${escapeJs(section.id)}', ${active})"
+            >
+              ${active ? "إخفاء" : "إظهار"}
+            </button>
 
-              <button
-                class="edit"
-                onclick="editSection('${escapeJs(section.id)}')"
-              >
-                تعديل
-              </button>
-
-
-              <button
-                class="gray"
-                onclick="moveSection('${escapeJs(section.id)}', -1)"
-              >
-                ↑
-              </button>
-
-
-              <button
-                class="gray"
-                onclick="moveSection('${escapeJs(section.id)}', 1)"
-              >
-                ↓
-              </button>
-
-
-              <button
-                class="toggle"
-                onclick="toggleSection(
-                  '${escapeJs(section.id)}',
-                  ${String(section.active).toLowerCase() !== "false"}
-                )"
-              >
-                ${
-                  String(section.active).toLowerCase() !== "false"
-                    ? "إخفاء"
-                    : "إظهار"
-                }
-              </button>
-
-
-              <button
-                class="delete"
-                onclick="deleteSection('${escapeJs(section.id)}')"
-              >
-                حذف
-              </button>
-
-            </div>
+            <button
+              class="delete"
+              onclick="deleteSection('${escapeJs(section.id)}')"
+            >
+              حذف
+            </button>
 
           </div>
-        `;
+        </div>
+      `;
 
-      })
-      .join("");
-
+    }).join("");
 }
 
 
 async function saveSection() {
 
   const id =
-    document
-      .getElementById("sectionId")
-      .value;
-
+    document.getElementById("sectionId").value;
 
   const name =
-    document
-      .getElementById("sectionName")
-      .value
-      .trim();
-
+    document.getElementById("sectionName").value.trim();
 
   const btn =
-    document
-      .getElementById("sectionSaveBtn");
-
+    document.getElementById("sectionSaveBtn");
 
   if (!name) {
 
@@ -1090,24 +819,18 @@ async function saveSection() {
     );
 
     return;
-
   }
-
 
   try {
 
     btn.disabled = true;
-
-    btn.textContent =
-      "جاري الحفظ...";
-
+    btn.textContent = "جاري الحفظ...";
 
     const data =
       await api(
         id
           ? "editSection"
           : "addSection",
-
         id
           ? {
               id: id,
@@ -1115,7 +838,6 @@ async function saveSection() {
                 name: name
               }
             }
-
           : {
               section: {
                 name: name
@@ -1123,49 +845,30 @@ async function saveSection() {
             }
       );
 
-
     if (!data.ok) {
-
-      if (
-        data.error ===
-        "section_exists"
-      ) {
-
-        throw new Error(
-          "القسم موجود بالفعل."
-        );
-
-      }
-
 
       throw new Error(
         data.error ||
         "تعذر حفظ القسم."
       );
-
     }
-
 
     showMessage(
       id
-        ? "تم تعديل القسم والمنتجات المرتبطة به."
+        ? "تم تعديل القسم."
         : "تم إضافة القسم.",
       "success"
     );
 
-
     clearSectionForm();
 
     await loadSections();
-
     await loadProducts();
-
 
   } catch (error) {
 
     showMessage(
-      "حصل خطأ: " +
-      error.message,
+      "حصل خطأ: " + error.message,
       "error"
     );
 
@@ -1177,9 +880,7 @@ async function saveSection() {
       id
         ? "تعديل القسم"
         : "إضافة قسم";
-
   }
-
 }
 
 
@@ -1187,79 +888,45 @@ function editSection(id) {
 
   const section =
     sections.find(function(item) {
-
-      return (
-        String(item.id) ===
-        String(id)
-      );
-
+      return String(item.id) === String(id);
     });
-
 
   if (!section) return;
 
+  document.getElementById("sectionId").value =
+    section.id;
 
-  document
-    .getElementById("sectionId")
-    .value =
-      section.id;
+  document.getElementById("sectionName").value =
+    section.name;
 
-
-  document
-    .getElementById("sectionName")
-    .value =
-      section.name;
-
-
-  document
-    .getElementById("sectionSaveBtn")
-    .textContent =
-      "تعديل القسم";
-
+  document.getElementById("sectionSaveBtn").textContent =
+    "تعديل القسم";
 
   document
     .getElementById("sectionCancelBtn")
-    .classList
-    .remove("hidden");
-
+    .classList.remove("hidden");
 
   document
     .getElementById("sectionName")
     .focus();
-
 }
 
 
 function clearSectionForm() {
 
-  document
-    .getElementById("sectionId")
-    .value = "";
+  document.getElementById("sectionId").value = "";
+  document.getElementById("sectionName").value = "";
 
-
-  document
-    .getElementById("sectionName")
-    .value = "";
-
-
-  document
-    .getElementById("sectionSaveBtn")
-    .textContent =
-      "إضافة قسم";
-
+  document.getElementById("sectionSaveBtn").textContent =
+    "إضافة قسم";
 
   document
     .getElementById("sectionCancelBtn")
-    .classList
-    .add("hidden");
-
+    .classList.add("hidden");
 }
 
 
-async function toggleSection(
-  id,
-  active
-) {
+async function toggleSection(id, active) {
 
   try {
 
@@ -1272,21 +939,16 @@ async function toggleSection(
         }
       );
 
-
     if (!data.ok) {
-
       throw new Error(
         data.error ||
         "تعذر تغيير حالة القسم."
       );
-
     }
-
 
     await loadSections();
 
     renderDashboard();
-
 
     showMessage(
       !active
@@ -1295,17 +957,13 @@ async function toggleSection(
       "success"
     );
 
-
   } catch (error) {
 
     showMessage(
-      "حصل خطأ: " +
-      error.message,
+      "حصل خطأ: " + error.message,
       "error"
     );
-
   }
-
 }
 
 
@@ -1313,49 +971,32 @@ async function deleteSection(id) {
 
   const section =
     sections.find(function(item) {
-
-      return (
-        String(item.id) ===
-        String(id)
-      );
-
+      return String(item.id) === String(id);
     });
-
 
   if (!section) return;
 
-
   const count =
     products.filter(function(product) {
-
-      return (
-        String(
-          product.category || ""
-        ).trim() ===
-
-        String(
-          section.name || ""
-        ).trim()
-      );
-
+      return String(
+        product.category || ""
+      ).trim() ===
+      String(
+        section.name || ""
+      ).trim();
     }).length;
-
 
   if (count > 0) {
 
     showMessage(
-      "لا يمكن حذف القسم \"" +
-      section.name +
-      "\" لأنه يحتوي على " +
+      "لا يمكن حذف القسم لأنه يحتوي على " +
       count +
-      " منتج. انقل المنتجات لقسم آخر أولًا.",
+      " منتج.",
       "error"
     );
 
     return;
-
   }
-
 
   if (
     !confirm(
@@ -1364,11 +1005,8 @@ async function deleteSection(id) {
       "\"؟"
     )
   ) {
-
     return;
-
   }
-
 
   try {
 
@@ -1380,94 +1018,61 @@ async function deleteSection(id) {
         }
       );
 
-
     if (!data.ok) {
-
       throw new Error(
-        data.error ===
-        "section_has_products"
-
-          ? "القسم يحتوي على منتجات."
-
-          : (
-              data.error ||
-              "تعذر حذف القسم."
-            )
+        data.error ||
+        "تعذر حذف القسم."
       );
-
     }
-
 
     showMessage(
       "تم حذف القسم.",
       "success"
     );
 
-
     await loadSections();
 
     renderDashboard();
 
-
   } catch (error) {
 
     showMessage(
-      "حصل خطأ: " +
-      error.message,
+      "حصل خطأ: " + error.message,
       "error"
     );
-
   }
-
 }
 
 
-async function moveSection(
-  id,
-  direction
-) {
+async function moveSection(id, direction) {
 
   const index =
     sections.findIndex(function(item) {
-
-      return (
-        String(item.id) ===
-        String(id)
-      );
-
+      return String(item.id) === String(id);
     });
-
 
   const newIndex =
     index + direction;
-
 
   if (
     index < 0 ||
     newIndex < 0 ||
     newIndex >= sections.length
   ) {
-
     return;
-
   }
-
 
   const reordered =
     sections.slice();
 
-
   const temp =
     reordered[index];
-
 
   reordered[index] =
     reordered[newIndex];
 
-
   reordered[newIndex] =
     temp;
-
 
   try {
 
@@ -1475,36 +1080,25 @@ async function moveSection(
       await api(
         "reorderSections",
         {
-          ids:
-            reordered.map(
-              function(section) {
-                return section.id;
-              }
-            )
+          ids: reordered.map(function(section) {
+            return section.id;
+          })
         }
       );
 
-
     if (!data.ok) {
-
       throw new Error(
         data.error ||
         "تعذر ترتيب الأقسام."
       );
-
     }
-
 
     sections =
       reordered;
 
-
     renderSections();
-
     renderSectionControls();
-
     renderDashboard();
-
 
   } catch (error) {
 
@@ -1513,61 +1107,41 @@ async function moveSection(
       error.message,
       "error"
     );
-
   }
-
 }
 
 
 async function changeAdminKey() {
 
   const newKey =
-    document
-      .getElementById("newAdminKey")
-      .value;
-
+    document.getElementById("newAdminKey").value;
 
   const confirmKey =
-    document
-      .getElementById("confirmAdminKey")
-      .value;
-
+    document.getElementById("confirmAdminKey").value;
 
   if (!newKey.trim()) {
-
     showMessage(
       "اكتب المفتاح الجديد.",
       "error"
     );
-
     return;
-
   }
 
-
   if (newKey.length < 6) {
-
     showMessage(
       "المفتاح يجب أن يكون 6 أحرف/أرقام على الأقل.",
       "error"
     );
-
     return;
-
   }
 
-
   if (newKey !== confirmKey) {
-
     showMessage(
       "المفتاحان غير متطابقين.",
       "error"
     );
-
     return;
-
   }
-
 
   try {
 
@@ -1580,36 +1154,23 @@ async function changeAdminKey() {
         }
       );
 
-
     if (!data.ok) {
-
       throw new Error(
         data.error ||
         "تعذر تغيير المفتاح."
       );
-
     }
-
 
     ADMIN_KEY =
       newKey;
 
-
-    document
-      .getElementById("newAdminKey")
-      .value = "";
-
-
-    document
-      .getElementById("confirmAdminKey")
-      .value = "";
-
+    document.getElementById("newAdminKey").value = "";
+    document.getElementById("confirmAdminKey").value = "";
 
     showMessage(
-      "تم تغيير مفتاح الإدارة بنجاح. المفتاح الجديد أصبح فعالًا الآن.",
+      "تم تغيير مفتاح الإدارة بنجاح.",
       "success"
     );
-
 
   } catch (error) {
 
@@ -1618,9 +1179,7 @@ async function changeAdminKey() {
       error.message,
       "error"
     );
-
   }
-
 }
 
 
@@ -1633,24 +1192,14 @@ document
       const file =
         this.files[0];
 
-
       const preview =
-        document.getElementById(
-          "imagePreview"
-        );
-
+        document.getElementById("imagePreview");
 
       const img =
-        document.getElementById(
-          "previewImg"
-        );
-
+        document.getElementById("previewImg");
 
       const name =
-        document.getElementById(
-          "imageName"
-        );
-
+        document.getElementById("imageName");
 
       if (!file) {
 
@@ -1658,25 +1207,19 @@ document
           "none";
 
         img.src = "";
-
         name.textContent = "";
 
         return;
-
       }
-
 
       img.src =
         URL.createObjectURL(file);
 
-
       name.textContent =
         file.name;
 
-
       preview.style.display =
         "block";
-
     }
   );
 
@@ -1689,33 +1232,24 @@ function fileToBase64(file) {
       const reader =
         new FileReader();
 
-
       reader.onload =
         function() {
 
           const result =
             reader.result;
 
-
           const base64 =
-            String(result)
-              .split(",")[1];
-
+            String(result).split(",")[1];
 
           resolve(base64);
-
         };
-
 
       reader.onerror =
         reject;
 
-
       reader.readAsDataURL(file);
-
     }
   );
-
 }
 
 
@@ -1723,7 +1257,6 @@ async function uploadImage(file) {
 
   const base64 =
     await fileToBase64(file);
-
 
   const data =
     await api(
@@ -1737,110 +1270,66 @@ async function uploadImage(file) {
       }
     );
 
-
   if (!data.ok) {
-
     throw new Error(
       data.error ||
       "فشل رفع الصورة"
     );
-
   }
 
-
   return data.url;
-
 }
 
 
 async function saveProduct() {
 
   const name =
-    document
-      .getElementById("name")
-      .value
-      .trim();
-
+    document.getElementById("name").value.trim();
 
   const category =
-    document
-      .getElementById("category")
-      .value;
-
+    document.getElementById("category").value;
 
   const description =
-    document
-      .getElementById("description")
-      .value
-      .trim();
-
-
-  const showHome =
-    document
-      .getElementById("showHome")
-      .checked;
-
-
-  const isOffer =
-    document
-      .getElementById("isOffer")
-      .checked;
-
+    document.getElementById("description").value.trim();
 
   const fileInput =
-    document
-      .getElementById("imageFile");
-
+    document.getElementById("imageFile");
 
   const file =
     fileInput.files[0];
 
-
   const id =
-    document
-      .getElementById("productId")
-      .value;
-
+    document.getElementById("productId").value;
 
   const saveBtn =
-    document
-      .getElementById("saveBtn");
-
+    document.getElementById("saveBtn");
 
   if (!name) {
-
     showMessage(
       "اكتب اسم المنتج.",
       "error"
     );
-
     return;
-
   }
 
-
   if (!category) {
-
     showMessage(
       "اختر القسم.",
       "error"
     );
-
     return;
-
   }
-
 
   try {
 
-    saveBtn.disabled = true;
+    saveBtn.disabled =
+      true;
 
     saveBtn.textContent =
       "جاري الحفظ...";
 
-
-    let imageUrl = "";
-
+    let imageUrl =
+      "";
 
     if (file) {
 
@@ -1849,42 +1338,41 @@ async function saveProduct() {
         "success"
       );
 
-
       imageUrl =
         await uploadImage(file);
-
     }
 
-
-    if (
-      !imageUrl &&
-      id
-    ) {
+    if (!imageUrl && id) {
 
       const oldProduct =
         products.find(function(p) {
-
-          return (
-            String(p.id) ===
-            String(id)
-          );
-
+          return String(p.id) === String(id);
         });
-
 
       imageUrl =
         oldProduct
-          ? (
-              oldProduct.image ||
-              ""
-            )
+          ? (oldProduct.image || "")
           : "";
-
     }
-
 
     let data;
 
+    const productData = {
+
+      name: name,
+
+      category: category,
+
+      image: imageUrl,
+
+      description: description,
+
+      showHome:
+        document.getElementById("showHome").checked,
+
+      isOffer:
+        document.getElementById("isOffer").checked
+    };
 
     if (id) {
 
@@ -1893,18 +1381,9 @@ async function saveProduct() {
           "edit",
           {
             id: id,
-
-            product: {
-              name: name,
-              category: category,
-              image: imageUrl,
-              description: description,
-              showHome: showHome,
-              isOffer: isOffer
-            }
+            product: productData
           }
         );
-
 
     } else {
 
@@ -1912,44 +1391,18 @@ async function saveProduct() {
         await api(
           "add",
           {
-            product: {
-              name: name,
-              category: category,
-              image: imageUrl,
-              description: description,
-              showHome: showHome,
-              isOffer: isOffer
-            }
+            product: productData
           }
         );
-
     }
-
 
     if (!data.ok) {
 
-      const errors = {
-
-        invalid_category:
-          "القسم غير صالح أو تم إخفاؤه.",
-
-        category_required:
-          "اختر القسم.",
-
-        name_required:
-          "اكتب اسم المنتج."
-
-      };
-
-
       throw new Error(
-        errors[data.error] ||
         data.error ||
         "حدث خطأ أثناء حفظ المنتج"
       );
-
     }
-
 
     showMessage(
       id
@@ -1958,11 +1411,9 @@ async function saveProduct() {
       "success"
     );
 
-
     clearForm();
 
     await loadProducts();
-
 
   } catch (error) {
 
@@ -1974,16 +1425,14 @@ async function saveProduct() {
       "error"
     );
 
-
   } finally {
 
-    saveBtn.disabled = false;
+    saveBtn.disabled =
+      false;
 
     saveBtn.textContent =
       "حفظ المنتج";
-
   }
-
 }
 
 
@@ -1994,103 +1443,78 @@ async function loadProducts() {
     const data =
       await api("list");
 
-
     if (
       data &&
       data.ok === false
     ) {
-
       throw new Error(
         data.error ||
         "تعذر تحميل المنتجات."
       );
-
     }
-
 
     products =
       Array.isArray(data)
         ? data
         : (
-            Array.isArray(data.products)
-              ? data.products
-              : []
-          );
-
+          Array.isArray(data.products)
+            ? data.products
+            : []
+        );
 
     renderAll();
-
 
   } catch (error) {
 
     console.error(error);
 
     showMessage(
-      "تعذر تحميل المنتجات.",
+      "تعذر تحميل المنتجات: " +
+      error.message,
       "error"
     );
-
   }
-
 }
 
 
 function renderProducts() {
 
   const el =
-    document.getElementById(
-      "products"
-    );
-
+    document.getElementById("products");
 
   const search =
     document
-      .getElementById(
-        "searchInput"
-      )
+      .getElementById("searchInput")
       .value
       .trim()
       .toLowerCase();
 
-
   const category =
-    document
-      .getElementById(
-        "filterCategory"
-      )
-      .value;
-
+    document.getElementById("filterCategory").value;
 
   let filtered =
     products.filter(function(p) {
 
       const text =
-        String(p.name || "") +
-        " " +
-        String(p.description || "");
-
+        (
+          String(p.name || "") +
+          " " +
+          String(p.description || "")
+        ).toLowerCase();
 
       const matchesSearch =
         !search ||
-        text
-          .toLowerCase()
-          .includes(search);
-
+        text.includes(search);
 
       const matchesCategory =
         !category ||
-        String(
-          p.category || ""
-        ).trim() === category;
-
+        String(p.category || "").trim() === category;
 
       return (
         matchesSearch &&
         matchesCategory
       );
-
     });
-
 
   if (!filtered.length) {
 
@@ -2098,340 +1522,195 @@ function renderProducts() {
       "<p>لا توجد نتائج مطابقة.</p>";
 
     return;
-
   }
 
-
   el.innerHTML =
-    filtered
-      .map(function(p) {
+    filtered.map(function(p) {
 
-        const active =
-          String(p.active)
-            .toLowerCase() !==
-          "false";
+      const active =
+        String(p.active).toLowerCase() !== "false";
 
+      const showHome =
+        p.showHome === undefined ||
+        p.showHome === "" ||
+        (
+          String(p.showHome).toLowerCase() !== "false" &&
+          String(p.showHome) !== "0"
+        );
 
-        const showHome =
-          String(p.showHome)
-            .toLowerCase() !==
-          "false";
+      const isOffer =
+        p.isOffer === true ||
+        String(p.isOffer).toLowerCase() === "true" ||
+        String(p.isOffer) === "1";
 
+      return `
+        <article class="product">
 
-        const isOffer =
-          String(p.isOffer)
-            .toLowerCase() ===
-          "true";
-
-
-        return `
-
-          <article class="product">
-
-            ${
-              p.image
-
-                ? `
-                  <img
-                    src="${escapeHtml(p.image)}"
-                    alt="${escapeHtml(p.name)}"
-                  >
-                `
-
-                : `
-                  <div class="placeholder">
-                    بدون صورة
-                  </div>
-                `
-            }
-
-
-            <div>
-
-              <div
-                style="
-                  display:flex;
-                  flex-wrap:wrap;
-                  gap:6px;
-                  margin-bottom:8px;
-                "
-              >
-
-                <span
-                  class="status ${
-                    active
-                      ? "active"
-                      : "inactive"
-                  }"
+          ${
+            p.image
+              ? `
+                <img
+                  src="${escapeHtml(p.image)}"
+                  alt="${escapeHtml(p.name)}"
+                  loading="lazy"
                 >
-                  ${
-                    active
-                      ? "ظاهر على الموقع"
-                      : "مخفي من الموقع"
-                  }
-                </span>
+              `
+              : `
+                <div class="placeholder">
+                  بدون صورة
+                </div>
+              `
+          }
 
+          <div>
 
-                <span
-                  class="status"
-                  style="
-                    background:${
-                      showHome
-                        ? "#dbeafe"
-                        : "#f8d7da"
-                    };
+            <span class="status ${active ? "active" : "inactive"}">
+              ${active ? "ظاهر على الموقع" : "مخفي من الموقع"}
+            </span>
 
-                    color:${
-                      showHome
-                        ? "#1e40af"
-                        : "#842029"
-                    };
-                  "
-                >
-                  الرئيسية:
-                  ${
-                    showHome
-                      ? "ظاهر"
-                      : "مخفي"
-                  }
-                </span>
+            <div
+              style="
+                display:flex;
+                gap:6px;
+                flex-wrap:wrap;
+                margin:7px 0;
+              "
+            >
 
+              <span class="status ${showHome ? "active" : "inactive"}">
+                ${showHome ? "الرئيسية: ظاهر" : "الرئيسية: مخفي"}
+              </span>
 
-                <span
-                  class="status"
-                  style="
-                    background:${
-                      isOffer
-                        ? "#fff3cd"
-                        : "#eef1f4"
-                    };
-
-                    color:${
-                      isOffer
-                        ? "#664d03"
-                        : "#555"
-                    };
-                  "
-                >
-                  العروض:
-                  ${
-                    isOffer
-                      ? "نعم"
-                      : "لا"
-                  }
-                </span>
-
-              </div>
-
-
-              <h3>
-                ${escapeHtml(p.name)}
-              </h3>
-
-
-              <p>
-                <strong>
-                  القسم:
-                </strong>
-
-                ${escapeHtml(
-                  p.category || "-"
-                )}
-              </p>
-
-
-              <p>
-                ${escapeHtml(
-                  p.description || ""
-                )}
-              </p>
-
-
-              <div class="actions">
-
-                <button
-                  class="edit"
-                  onclick="
-                    editProduct(
-                      '${escapeJs(p.id)}'
-                    )
-                  "
-                >
-                  تعديل
-                </button>
-
-
-                <button
-                  class="toggle"
-                  onclick="
-                    toggleProduct(
-                      '${escapeJs(p.id)}',
-                      ${active}
-                    )
-                  "
-                >
-                  ${
-                    active
-                      ? "إخفاء"
-                      : "إظهار"
-                  }
-                </button>
-
-
-                <button
-                  class="gray"
-                  onclick="
-                    toggleHomeProduct(
-                      '${escapeJs(p.id)}',
-                      ${showHome}
-                    )
-                  "
-                >
-                  ${
-                    showHome
-                      ? "إخفاء من الرئيسية"
-                      : "إظهار في الرئيسية"
-                  }
-                </button>
-
-
-                <button
-                  class="gray"
-                  onclick="
-                    toggleOfferProduct(
-                      '${escapeJs(p.id)}',
-                      ${isOffer}
-                    )
-                  "
-                >
-                  ${
-                    isOffer
-                      ? "إزالة من العروض"
-                      : "إضافة للعروض"
-                  }
-                </button>
-
-
-                <button
-                  class="delete"
-                  onclick="
-                    deleteProduct(
-                      '${escapeJs(p.id)}'
-                    )
-                  "
-                >
-                  حذف
-                </button>
-
-
-                <button
-                  class="gray"
-                  onclick="
-                    moveProduct(
-                      '${escapeJs(p.id)}',
-                      -1
-                    )
-                  "
-                >
-                  ↑
-                </button>
-
-
-                <button
-                  class="gray"
-                  onclick="
-                    moveProduct(
-                      '${escapeJs(p.id)}',
-                      1
-                    )
-                  "
-                >
-                  ↓
-                </button>
-
-              </div>
+              <span class="status ${isOffer ? "active" : "inactive"}">
+                ${isOffer ? "العروض: نعم" : "العروض: لا"}
+              </span>
 
             </div>
 
-          </article>
+            <h3>
+              ${escapeHtml(p.name)}
+            </h3>
 
-        `;
+            <p>
+              <strong>القسم:</strong>
+              ${escapeHtml(p.category || "-")}
+            </p>
 
-      })
-      .join("");
+            <p>
+              ${escapeHtml(p.description || "")}
+            </p>
 
+            <div class="actions">
+
+              <button
+                class="edit"
+                onclick="editProduct('${escapeJs(p.id)}')"
+              >
+                تعديل
+              </button>
+
+              <button
+                class="toggle"
+                onclick="toggleProduct('${escapeJs(p.id)}', ${active})"
+              >
+                ${active ? "إخفاء" : "إظهار"}
+              </button>
+
+              <button
+                class="gray"
+                onclick="toggleHomeProduct('${escapeJs(p.id)}', ${showHome})"
+              >
+                ${
+                  showHome
+                    ? "🏠 إخفاء من الرئيسية"
+                    : "🏠 إظهار في الرئيسية"
+                }
+              </button>
+
+              <button
+                class="primary"
+                onclick="toggleOfferProduct('${escapeJs(p.id)}', ${isOffer})"
+              >
+                ${
+                  isOffer
+                    ? "🔥 إزالة من العروض"
+                    : "🔥 إضافة للعروض"
+                }
+              </button>
+
+              <button
+                class="delete"
+                onclick="deleteProduct('${escapeJs(p.id)}')"
+              >
+                حذف
+              </button>
+
+              <button
+                class="gray"
+                onclick="moveProduct('${escapeJs(p.id)}', -1)"
+              >
+                ↑
+              </button>
+
+              <button
+                class="gray"
+                onclick="moveProduct('${escapeJs(p.id)}', 1)"
+              >
+                ↓
+              </button>
+
+            </div>
+
+          </div>
+
+        </article>
+      `;
+
+    }).join("");
 }
 
 
 function resetFilters() {
 
-  document
-    .getElementById(
-      "searchInput"
-    )
-    .value = "";
+  document.getElementById("searchInput").value =
+    "";
 
-
-  document
-    .getElementById(
-      "filterCategory"
-    )
-    .value = "";
-
+  document.getElementById("filterCategory").value =
+    "";
 
   renderProducts();
-
 }
 
 
-async function moveProduct(
-  id,
-  direction
-) {
+async function moveProduct(id, direction) {
 
   const index =
-    products.findIndex(
-      function(item) {
-
-        return (
-          String(item.id) ===
-          String(id)
-        );
-
-      }
-    );
-
+    products.findIndex(function(item) {
+      return String(item.id) === String(id);
+    });
 
   const newIndex =
     index + direction;
-
 
   if (
     index < 0 ||
     newIndex < 0 ||
     newIndex >= products.length
   ) {
-
     return;
-
   }
-
 
   const reordered =
     products.slice();
 
-
   const temp =
     reordered[index];
-
 
   reordered[index] =
     reordered[newIndex];
 
-
   reordered[newIndex] =
     temp;
-
 
   try {
 
@@ -2440,33 +1719,24 @@ async function moveProduct(
         "reorderProducts",
         {
           ids:
-            reordered.map(
-              function(product) {
-                return product.id;
-              }
-            )
+            reordered.map(function(product) {
+              return product.id;
+            })
         }
       );
 
-
     if (!data.ok) {
-
       throw new Error(
         data.error ||
         "تعذر ترتيب المنتجات."
       );
-
     }
-
 
     products =
       reordered;
 
-
     renderDashboard();
-
     renderProducts();
-
 
   } catch (error) {
 
@@ -2475,122 +1745,61 @@ async function moveProduct(
       error.message,
       "error"
     );
-
   }
-
 }
 
 
 function editProduct(id) {
 
   const p =
-    products.find(
-      function(item) {
-
-        return (
-          String(item.id) ===
-          String(id)
-        );
-
-      }
-    );
-
+    products.find(function(item) {
+      return String(item.id) === String(id);
+    });
 
   if (!p) return;
 
+  document.getElementById("productId").value =
+    p.id;
 
-  document
-    .getElementById(
-      "productId"
-    )
-    .value =
-      p.id;
+  document.getElementById("name").value =
+    p.name || "";
 
+  document.getElementById("category").value =
+    p.category || "";
 
-  document
-    .getElementById(
-      "name"
-    )
-    .value =
-      p.name || "";
+  document.getElementById("description").value =
+    p.description || "";
 
+  document.getElementById("showHome").checked =
+    p.showHome === undefined ||
+    p.showHome === "" ||
+    (
+      String(p.showHome).toLowerCase() !== "false" &&
+      String(p.showHome) !== "0"
+    );
 
-  document
-    .getElementById(
-      "category"
-    )
-    .value =
-      p.category || "";
+  document.getElementById("isOffer").checked =
+    p.isOffer === true ||
+    String(p.isOffer).toLowerCase() === "true" ||
+    String(p.isOffer) === "1";
 
+  document.getElementById("imageFile").value =
+    "";
 
-  document
-    .getElementById(
-      "description"
-    )
-    .value =
-      p.description || "";
+  document.getElementById("formTitle").textContent =
+    "تعديل المنتج";
 
-
-  document
-    .getElementById(
-      "showHome"
-    )
-    .checked =
-      String(p.showHome)
-        .toLowerCase() !==
-      "false";
-
-
-  document
-    .getElementById(
-      "isOffer"
-    )
-    .checked =
-      String(p.isOffer)
-        .toLowerCase() ===
-      "true";
-
-
-  document
-    .getElementById(
-      "imageFile"
-    )
-    .value = "";
-
-
-  document
-    .getElementById(
-      "formTitle"
-    )
-    .textContent =
-      "تعديل المنتج";
-
-
-  document
-    .getElementById(
-      "cancelBtn"
-    )
-    .style.display =
-      "inline-block";
-
+  document.getElementById("cancelBtn").style.display =
+    "inline-block";
 
   const preview =
-    document.getElementById(
-      "imagePreview"
-    );
-
+    document.getElementById("imagePreview");
 
   const img =
-    document.getElementById(
-      "previewImg"
-    );
-
+    document.getElementById("previewImg");
 
   const imageName =
-    document.getElementById(
-      "imageName"
-    );
-
+    document.getElementById("imageName");
 
   if (p.image) {
 
@@ -2607,126 +1816,64 @@ function editProduct(id) {
 
     preview.style.display =
       "none";
-
   }
 
-
-  window.scrollTo(
-    {
-      top: 0,
-      behavior: "smooth"
-    }
-  );
-
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
 }
 
 
 function cancelEdit() {
-
   clearForm();
-
 }
 
 
 function clearForm() {
 
-  document
-    .getElementById(
-      "productId"
-    )
-    .value = "";
+  document.getElementById("productId").value =
+    "";
 
+  document.getElementById("name").value =
+    "";
 
-  document
-    .getElementById(
-      "name"
-    )
-    .value = "";
+  document.getElementById("category").value =
+    "";
 
+  document.getElementById("description").value =
+    "";
 
-  document
-    .getElementById(
-      "category"
-    )
-    .value = "";
+  document.getElementById("showHome").checked =
+    true;
 
+  document.getElementById("isOffer").checked =
+    false;
 
-  document
-    .getElementById(
-      "description"
-    )
-    .value = "";
+  document.getElementById("imageFile").value =
+    "";
 
+  document.getElementById("formTitle").textContent =
+    "إضافة منتج جديد";
 
-  document
-    .getElementById(
-      "showHome"
-    )
-    .checked = true;
+  document.getElementById("cancelBtn").style.display =
+    "none";
 
+  document.getElementById("imagePreview").style.display =
+    "none";
 
-  document
-    .getElementById(
-      "isOffer"
-    )
-    .checked = false;
+  document.getElementById("previewImg").src =
+    "";
 
-
-  document
-    .getElementById(
-      "imageFile"
-    )
-    .value = "";
-
-
-  document
-    .getElementById(
-      "formTitle"
-    )
-    .textContent =
-      "إضافة منتج جديد";
-
-
-  document
-    .getElementById(
-      "cancelBtn"
-    )
-    .style.display =
-      "none";
-
-
-  document
-    .getElementById(
-      "imagePreview"
-    )
-    .style.display =
-      "none";
-
-
-  document
-    .getElementById(
-      "previewImg"
-    )
-    .src = "";
-
-
-  document
-    .getElementById(
-      "imageName"
-    )
-    .textContent = "";
-
+  document.getElementById("imageName").textContent =
+    "";
 }
 
 
-async function toggleProduct(
-  id,
-  active
-) {
+async function toggleProduct(id, active) {
 
   const newStatus =
     !active;
-
 
   try {
 
@@ -2739,16 +1886,12 @@ async function toggleProduct(
         }
       );
 
-
     if (!data.ok) {
-
       throw new Error(
         data.error ||
         "حصل خطأ أثناء تغيير حالة المنتج."
       );
-
     }
-
 
     showMessage(
       newStatus
@@ -2757,9 +1900,7 @@ async function toggleProduct(
       "success"
     );
 
-
     await loadProducts();
-
 
   } catch (error) {
 
@@ -2770,16 +1911,15 @@ async function toggleProduct(
       error.message,
       "error"
     );
-
   }
-
 }
 
 
-async function toggleHomeProduct(
-  id,
-  showHome
-) {
+/* ================================
+   إظهار / إخفاء من الصفحة الرئيسية
+   ================================ */
+
+async function toggleHomeProduct(id, currentValue) {
 
   try {
 
@@ -2791,16 +1931,14 @@ async function toggleHomeProduct(
         }
       );
 
-
-    if (!data.ok) {
+    if (!data || !data.ok) {
 
       throw new Error(
-        data.error ||
-        "تعذر تغيير ظهور المنتج في الرئيسية."
+        data && data.error
+          ? data.error
+          : "تعذر تغيير ظهور المنتج في الرئيسية."
       );
-
     }
-
 
     showMessage(
       data.showHome
@@ -2809,29 +1947,26 @@ async function toggleHomeProduct(
       "success"
     );
 
-
     await loadProducts();
-
 
   } catch (error) {
 
     console.error(error);
 
     showMessage(
-      "تعذر تغيير حالة الرئيسية: " +
+      "تعذر تغيير ظهور المنتج في الرئيسية: " +
       error.message,
       "error"
     );
-
   }
-
 }
 
 
-async function toggleOfferProduct(
-  id,
-  isOffer
-) {
+/* ================================
+   إضافة / إزالة من العروض
+   ================================ */
+
+async function toggleOfferProduct(id, currentValue) {
 
   try {
 
@@ -2843,16 +1978,14 @@ async function toggleOfferProduct(
         }
       );
 
-
-    if (!data.ok) {
+    if (!data || !data.ok) {
 
       throw new Error(
-        data.error ||
-        "تعذر تغيير حالة العرض."
+        data && data.error
+          ? data.error
+          : "تعذر تغيير حالة العرض."
       );
-
     }
-
 
     showMessage(
       data.isOffer
@@ -2861,45 +1994,32 @@ async function toggleOfferProduct(
       "success"
     );
 
-
     await loadProducts();
-
 
   } catch (error) {
 
     console.error(error);
 
     showMessage(
-      "تعذر تغيير حالة العروض: " +
+      "تعذر تغيير حالة العرض: " +
       error.message,
       "error"
     );
-
   }
-
 }
 
 
 async function deleteProduct(id) {
 
   const product =
-    products.find(
-      function(item) {
-
-        return (
-          String(item.id) ===
-          String(id)
-        );
-
-      }
-    );
-
+    products.find(function(item) {
+      return String(item.id) === String(id);
+    });
 
   const name =
     product
       ? product.name
       : "هذا المنتج";
-
 
   if (
     !confirm(
@@ -2908,11 +2028,8 @@ async function deleteProduct(id) {
       '" نهائيًا؟'
     )
   ) {
-
     return;
-
   }
-
 
   try {
 
@@ -2924,25 +2041,19 @@ async function deleteProduct(id) {
         }
       );
 
-
     if (!data.ok) {
-
       throw new Error(
         data.error ||
         "حصل خطأ أثناء الحذف."
       );
-
     }
-
 
     showMessage(
       "تم حذف المنتج.",
       "success"
     );
 
-
     await loadProducts();
-
 
   } catch (error) {
 
@@ -2953,9 +2064,7 @@ async function deleteProduct(id) {
       error.message,
       "error"
     );
-
   }
-
 }
 
 
@@ -2965,26 +2074,17 @@ function escapeHtml(value) {
     value ?? ""
   ).replace(
     /[&<>"']/g,
-
     function(m) {
 
       return {
-
         "&": "&amp;",
-
         "<": "&lt;",
-
         ">": "&gt;",
-
         '"': "&quot;",
-
         "'": "&#039;"
-
       }[m];
-
     }
   );
-
 }
 
 
@@ -2993,18 +2093,18 @@ function escapeJs(value) {
   return String(
     value ?? ""
   )
-    .replace(
-      /\\/g,
-      "\\\\"
-    )
-    .replace(
-      /'/g,
-      "\\'"
-    );
-
+  .replace(
+    /\\/g,
+    "\\\\"
+  )
+  .replace(
+    /'/g,
+    "\\'"
+  );
 }
 
 </script>
 
 </body>
 </html>
+```
