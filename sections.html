@@ -1,4 +1,3 @@
-```html
 <!doctype html>
 
 <html lang="ar" dir="rtl">
@@ -2047,19 +2046,23 @@
 
   <script>
 
+    /* =======================================================
+       DATA
+       ======================================================= */
+
     const DATA_URL =
-      "https://script.google.com/macros/s/AKfycbyw7k-K9akpV08vSjXbDmZ8khpHH9LOq2G2WLDHT2-iOJiTThN-kvEaCKI0-wKWu7hY/exec";
+      "https://script.google.com/macros/s/AKfycbyw7k-K9akpV08vSjXbDmZ8khpHH9LOq2G9WLDHT2-iOJiTThN-kvEaCKI0-wKWu7hY/exec";
 
     const WHATSAPP_NUMBER =
       "201551604163";
 
 
     /*
-      تم رفع إصدار الكاش حتى لا نستخدم
-      البيانات القديمة التي كانت لا تحتوي على Sections.
+      إصدار جديد للكاش لأن النسخ القديمة
+      لم تكن تحتوي على بيانات الأقسام.
     */
     const CACHE_KEY =
-      "abo_tarek_sections_products_v9";
+      "abo_tarek_sections_products_v10";
 
     const CACHE_TIME =
       30 * 60 * 1000;
@@ -2080,6 +2083,14 @@
 
     let allSections = [];
 
+    /*
+      مهم:
+      false = لم تصل بيانات Sections بعد.
+      true = السيرفر أرسل Sections فعلاً،
+      حتى لو كانت المصفوفة فارغة.
+    */
+    let sectionsLoaded = false;
+
     let selectedCategory = "";
 
     let observer = null;
@@ -2091,7 +2102,10 @@
        HELPERS
        ======================================================= */
 
-    function normalizeBoolean(value, fallback = false) {
+    function normalizeBoolean(
+      value,
+      fallback = false
+    ) {
 
       if (
         value === undefined ||
@@ -2127,7 +2141,7 @@
             p.id ??
             p.ID ??
             ""
-          ),
+          ).trim(),
 
         name:
           String(
@@ -2188,6 +2202,36 @@
 
       s = s || {};
 
+      const activeRaw =
+        s.active ??
+        s.Active;
+
+      const activeText =
+        String(
+          activeRaw === undefined ||
+          activeRaw === null
+            ? ""
+            : activeRaw
+        )
+          .trim()
+          .toLowerCase();
+
+
+      let sortValue =
+        Number(
+          s.sortOrder ??
+          s.SortOrder
+        );
+
+
+      if (
+        !Number.isFinite(sortValue)
+      ) {
+        sortValue =
+          999999;
+      }
+
+
       return {
 
         id:
@@ -2205,17 +2249,17 @@
           ).trim(),
 
         sortOrder:
-          Number(
-            s.sortOrder ??
-            s.SortOrder ??
-            0
-          ) || 0,
+          sortValue,
 
         active:
-          normalizeBoolean(
-            s.active ??
-            s.Active,
-            true
+          activeRaw === undefined ||
+          activeRaw === null ||
+          activeText === "" ||
+          (
+            activeText !== "false" &&
+            activeText !== "0" &&
+            activeText !== "no" &&
+            activeText !== "off"
           )
 
       };
@@ -2253,6 +2297,7 @@
           /^https?:\/\/raw\.githubusercontent\.com\/([^/]+)\/([^/]+)\/([^/]+)\/(.+)$/i
         );
 
+
       if (rawMatch) {
 
         const user =
@@ -2267,6 +2312,7 @@
         const file =
           rawMatch[4];
 
+
         primary =
           "https://" +
           user +
@@ -2275,30 +2321,44 @@
           "/" +
           file;
 
-        sources.push(primary);
+
+        sources.push(
+          primary
+        );
 
       }
 
-      if (!sources.includes(url)) {
+
+      if (
+        !sources.includes(url)
+      ) {
+
         sources.push(url);
+
       }
+
 
       return sources;
 
     }
 
 
-    function makeWhatsAppUrl(productName) {
+    function makeWhatsAppUrl(
+      productName
+    ) {
 
       const message =
         "مرحباً، أريد الاستفسار عن المنتج: " +
         productName;
 
+
       return (
         "https://wa.me/" +
         WHATSAPP_NUMBER +
         "?text=" +
-        encodeURIComponent(message)
+        encodeURIComponent(
+          message
+        )
       );
 
     }
@@ -2357,6 +2417,7 @@
 
       ];
 
+
       return icons[
         index % icons.length
       ];
@@ -2377,19 +2438,27 @@
             CACHE_KEY
           );
 
+
         if (!raw) {
           return null;
         }
 
+
         const parsed =
           JSON.parse(raw);
 
+
         if (
           !parsed ||
-          !Array.isArray(parsed.products)
+          !Array.isArray(
+            parsed.products
+          )
         ) {
+
           return null;
+
         }
+
 
         return parsed;
 
@@ -2404,7 +2473,8 @@
 
     function writeCache(
       products,
-      sections
+      sections,
+      sectionsLoadedValue
     ) {
 
       try {
@@ -2412,9 +2482,21 @@
         localStorage.setItem(
           CACHE_KEY,
           JSON.stringify({
-            time: Date.now(),
-            products,
-            sections
+
+            time:
+              Date.now(),
+
+            products:
+              products,
+
+            sections:
+              sections,
+
+            sectionsLoaded:
+              Boolean(
+                sectionsLoadedValue
+              )
+
           })
         );
 
@@ -2436,8 +2518,27 @@
             section.name
         )
         .sort(
-          (a, b) =>
-            a.sortOrder - b.sortOrder
+          (a, b) => {
+
+            if (
+              a.sortOrder !==
+              b.sortOrder
+            ) {
+
+              return (
+                a.sortOrder -
+                b.sortOrder
+              );
+
+            }
+
+
+            return a.name.localeCompare(
+              b.name,
+              "ar"
+            );
+
+          }
         );
 
     }
@@ -2448,28 +2549,40 @@
       const existing =
         new Map();
 
+
       allProducts.forEach(
         product => {
 
           const name =
             String(
-              product.category || ""
+              product.category ||
+              ""
             ).trim();
+
 
           if (!name) {
             return;
           }
 
-          if (!existing.has(name)) {
+
+          if (
+            !existing.has(name)
+          ) {
 
             existing.set(
               name,
               {
+
                 id: "",
+
                 name,
+
                 sortOrder:
-                  existing.size,
-                active: true
+                  existing.size + 1,
+
+                active:
+                  true
+
               }
             );
 
@@ -2478,8 +2591,45 @@
         }
       );
 
+
       return Array.from(
         existing.values()
+      );
+
+    }
+
+
+    function getOrderedCategories() {
+
+      /*
+        لو Sections وصلت من السيرفر،
+        هي المصدر الأساسي للترتيب والحالة.
+      */
+
+      if (sectionsLoaded) {
+
+        return getActiveSections()
+          .map(
+            section =>
+              section.name
+          );
+
+      }
+
+
+      /*
+        توافق رجعي فقط في حالة
+        عدم وصول Sections.
+      */
+
+      return Object.keys(
+        getCategoryCounts()
+      ).sort(
+        (a, b) =>
+          a.localeCompare(
+            b,
+            "ar"
+          )
       );
 
     }
@@ -2488,38 +2638,60 @@
     function getVisibleProducts() {
 
       /*
-        إذا كان السيرفر أرسل Sections فعلياً،
-        فالقسم المخفي يخفي منتجاته أيضاً.
-
-        أما لو لم تصل Sections بعد،
-        نحافظ على التوافق القديم ونعرض
-        المنتجات active بشكل طبيعي.
+        لو السيرفر أرسل Sections،
+        نعرض فقط منتجات الأقسام النشطة.
       */
 
-      if (!allSections.length) {
+      if (sectionsLoaded) {
+
+        const activeNames =
+          new Set(
+            getActiveSections()
+              .map(
+                section =>
+                  String(
+                    section.name
+                  )
+                    .trim()
+                    .toLowerCase()
+              )
+          );
+
 
         return allProducts.filter(
-          product =>
-            product.active
+          product => {
+
+            if (!product.active) {
+              return false;
+            }
+
+
+            const category =
+              String(
+                product.category ||
+                ""
+              )
+                .trim()
+                .toLowerCase();
+
+
+            return activeNames.has(
+              category
+            );
+
+          }
         );
 
       }
 
-      const activeNames =
-        new Set(
-          getActiveSections()
-            .map(
-              section =>
-                section.name
-            )
-        );
+
+      /*
+        fallback قديم.
+      */
 
       return allProducts.filter(
         product =>
-          product.active &&
-          activeNames.has(
-            product.category
-          )
+          product.active
       );
 
     }
@@ -2540,6 +2712,7 @@
           }
         );
 
+
       if (!response.ok) {
 
         throw new Error(
@@ -2548,20 +2721,12 @@
 
       }
 
+
       const data =
         await response.json();
 
-      let productsData = null;
 
-      let sectionsData = null;
-
-
-      if (Array.isArray(data)) {
-
-        productsData =
-          data;
-
-      } else if (
+      if (
         data &&
         data.ok === false
       ) {
@@ -2571,19 +2736,53 @@
           "تعذر تحميل البيانات من السيرفر."
         );
 
+      }
+
+
+      let productsData = null;
+
+      let sectionsData = [];
+
+      let hasSectionsPayload =
+        false;
+
+
+      if (
+        Array.isArray(data)
+      ) {
+
+        productsData =
+          data;
+
       } else if (
         data &&
-        Array.isArray(data.products)
+        Array.isArray(
+          data.products
+        )
       ) {
 
         productsData =
           data.products;
 
+
+        /*
+          مهم جداً:
+          مجرد وجود sections كمصفوفة
+          يجعلها المصدر الرسمي،
+          حتى لو كانت [].
+        */
         if (
+          Object.prototype.hasOwnProperty.call(
+            data,
+            "sections"
+          ) &&
           Array.isArray(
             data.sections
           )
         ) {
+
+          hasSectionsPayload =
+            true;
 
           sectionsData =
             data.sections;
@@ -2593,7 +2792,11 @@
       }
 
 
-      if (!Array.isArray(productsData)) {
+      if (
+        !Array.isArray(
+          productsData
+        )
+      ) {
 
         throw new Error(
           "استجابة غير صحيحة من السيرفر."
@@ -2608,16 +2811,19 @@
             normalizeProduct
           )
           .filter(
-            p =>
-              p.active
+            product =>
+              product.active
           );
 
 
+      let sections = [];
+
+
       if (
-        Array.isArray(sectionsData)
+        hasSectionsPayload
       ) {
 
-        allSections =
+        sections =
           sectionsData
             .map(
               normalizeSection
@@ -2627,44 +2833,120 @@
                 section.name
             )
             .sort(
-              (a, b) =>
-                a.sortOrder -
-                b.sortOrder
+              (a, b) => {
+
+                if (
+                  a.sortOrder !==
+                  b.sortOrder
+                ) {
+
+                  return (
+                    a.sortOrder -
+                    b.sortOrder
+                  );
+
+                }
+
+
+                return a.name.localeCompare(
+                  b.name,
+                  "ar"
+                );
+
+              }
             );
+
+
+        /*
+          نحتفظ بكل المنتجات active في
+          allProducts، ثم getVisibleProducts()
+          هي التي تطبق إخفاء الأقسام.
+        */
 
       } else {
 
-        /*
-          توافق رجعي:
-          لو Code.gs الحالي لم يُحدّث بعد
-          لإرجاع Sections، نبني الأقسام
-          مؤقتاً من المنتجات.
-        */
-
-        allSections =
+        sections =
           buildSectionsFromProducts();
 
       }
 
 
+      return {
+
+        products:
+          products,
+
+        sections:
+          sections,
+
+        sectionsLoaded:
+          hasSectionsPayload
+
+      };
+
+    }
+
+
+    /* =======================================================
+       APPLY FRESH DATA
+       ======================================================= */
+
+    function setFreshData(
+      fresh
+    ) {
+
       allProducts =
-        products;
+        Array.isArray(
+          fresh.products
+        )
+          ? fresh.products
+          : [];
+
+
+      allSections =
+        Array.isArray(
+          fresh.sections
+        )
+          ? fresh.sections
+          : [];
+
+
+      sectionsLoaded =
+        Boolean(
+          fresh.sectionsLoaded
+        );
 
 
       writeCache(
         allProducts,
-        allSections
+        allSections,
+        sectionsLoaded
       );
 
 
-      return {
-        products:
-          allProducts,
+      /*
+        لو القسم المختار اختفى أو أصبح مخفياً،
+        نرجع تلقائياً لعرض الكل.
+      */
 
-        sections:
-          allSections
+      const orderedCategories =
+        getOrderedCategories();
 
-      };
+
+      if (
+        selectedCategory &&
+        !orderedCategories.includes(
+          selectedCategory
+        )
+      ) {
+
+        selectedCategory =
+          "";
+
+      }
+
+
+      applyData();
 
     }
 
@@ -2687,26 +2969,70 @@
       ) {
 
         allProducts =
-          cached.products;
+          cached.products
+            .map(
+              normalizeProduct
+            )
+            .filter(
+              product =>
+                product.active
+            );
 
-        allSections =
+
+        if (
           Array.isArray(
             cached.sections
           )
-            ? cached.sections
-                .map(
-                  normalizeSection
-                )
-                .filter(
-                  section =>
-                    section.name
-                )
-                .sort(
-                  (a,b) =>
-                    a.sortOrder -
+        ) {
+
+          allSections =
+            cached.sections
+              .map(
+                normalizeSection
+              )
+              .filter(
+                section =>
+                  section.name
+              )
+              .sort(
+                (a, b) => {
+
+                  if (
+                    a.sortOrder !==
                     b.sortOrder
-                )
-            : buildSectionsFromProducts();
+                  ) {
+
+                    return (
+                      a.sortOrder -
+                      b.sortOrder
+                    );
+
+                  }
+
+
+                  return a.name.localeCompare(
+                    b.name,
+                    "ar"
+                  );
+
+                }
+              );
+
+
+          sectionsLoaded =
+            cached.sectionsLoaded !==
+            false;
+
+        } else {
+
+          allSections =
+            buildSectionsFromProducts();
+
+          sectionsLoaded =
+            false;
+
+        }
+
 
         applyData();
 
@@ -2718,17 +3044,17 @@
         const fresh =
           await fetchProducts();
 
-        allProducts =
-          fresh.products;
 
-        allSections =
-          fresh.sections;
+        setFreshData(
+          fresh
+        );
 
-        applyData();
 
       } catch (error) {
 
-        if (!allProducts.length) {
+        if (
+          !allProducts.length
+        ) {
 
           renderError(
             "تعذر تحميل المنتجات حالياً. حاول تحديث الصفحة."
@@ -2748,17 +3074,17 @@
         const fresh =
           await fetchProducts();
 
-        allProducts =
-          fresh.products;
 
-        allSections =
-          fresh.sections;
+        setFreshData(
+          fresh
+        );
 
-        applyData();
 
       } catch (error) {
 
-        if (!allProducts.length) {
+        if (
+          !allProducts.length
+        ) {
 
           renderError(
             "تعذر تحميل المنتجات حالياً. حاول تحديث الصفحة."
@@ -2777,21 +3103,41 @@
 
     function applyData() {
 
+      const orderedCategories =
+        getOrderedCategories();
+
+
       /*
-        نضمن أن المنتجات المعروضة
-        تتبع الأقسام النشطة فقط.
+        لو القسم المحدد لم يعد موجوداً
+        أو تم إخفاؤه، نلغي الاختيار.
       */
+
+      if (
+        selectedCategory &&
+        !orderedCategories.includes(
+          selectedCategory
+        )
+      ) {
+
+        selectedCategory =
+          "";
+
+      }
+
 
       const visible =
         getVisibleProducts();
+
 
       updateCounters(
         visible
       );
 
+
       renderCategories(
         visible
       );
+
 
       applyFilters();
 
@@ -2810,37 +3156,27 @@
           : getVisibleProducts();
 
 
-      const categories =
-        getActiveSections()
-          .filter(
-            section =>
-              products.some(
-                product =>
-                  product.category ===
-                  section.name
-              )
-          );
+      let categoryCount;
 
 
-      /*
-        في حالة عدم وجود Sections
-        نستخدم الأقسام الناتجة من المنتجات.
-      */
+      if (sectionsLoaded) {
 
-      let categoryCount =
-        categories.length;
+        /*
+          عدد الأقسام النشطة الحقيقي،
+          حتى لو قسم جديد لسه بدون منتجات.
+        */
 
+        categoryCount =
+          getActiveSections().length;
 
-      if (
-        !allSections.length
-      ) {
+      } else {
 
         categoryCount =
           new Set(
             products
               .map(
-                p =>
-                  p.category
+                product =>
+                  product.category
               )
               .filter(Boolean)
           ).size;
@@ -2852,6 +3188,7 @@
         "heroProductCount"
       ).textContent =
         products.length;
+
 
       document.getElementById(
         "heroCategoryCount"
@@ -2876,12 +3213,23 @@
       visibleProducts.forEach(
         product => {
 
-          const cat =
-            product.category ||
-            "عام";
+          const category =
+            String(
+              product.category ||
+              ""
+            ).trim();
 
-          counts[cat] =
-            (counts[cat] || 0) + 1;
+
+          if (!category) {
+            return;
+          }
+
+
+          counts[category] =
+            (
+              counts[category] ||
+              0
+            ) + 1;
 
         }
       );
@@ -2901,6 +3249,7 @@
           "categories"
         );
 
+
       const products =
         Array.isArray(
           visibleProducts
@@ -2911,20 +3260,27 @@
 
       const counts = {};
 
+
       products.forEach(
         product => {
 
           const category =
             String(
-              product.category || ""
+              product.category ||
+              ""
             ).trim();
+
 
           if (!category) {
             return;
           }
 
+
           counts[category] =
-            (counts[category] || 0) + 1;
+            (
+              counts[category] ||
+              0
+            ) + 1;
 
         }
       );
@@ -2934,18 +3290,14 @@
 
 
       /*
-        المصدر الأساسي للترتيب:
-        Sections.sortOrder
+        المصدر الأساسي:
+        Sections + sortOrder + active.
       */
 
-      if (allSections.length) {
+      if (sectionsLoaded) {
 
         categories =
           getActiveSections()
-            .filter(
-              section =>
-                counts[section.name]
-            )
             .map(
               section =>
                 section.name
@@ -2953,59 +3305,47 @@
 
       } else {
 
-        /*
-          fallback قديم في حالة عدم وجود Sections.
-        */
-
         categories =
-          Object.keys(counts)
-            .sort(
-              (a,b) =>
-                a.localeCompare(
-                  b,
-                  "ar"
-                )
-            );
+          Object.keys(
+            counts
+          ).sort(
+            (a, b) =>
+              a.localeCompare(
+                b,
+                "ar"
+              )
+          );
 
       }
 
 
       /*
-        لو فيه منتج مرتبط بقسم لم يصل
-        في Sections، نضيفه في النهاية
-        حتى لا يختفي بشكل مفاجئ.
+        لا نضيف أقسام مخفية هنا.
+        ولو القسم موجود في Sections
+        لكنه بدون منتجات، سيظهر عادي بعدد 0.
       */
-
-      const known =
-        new Set(categories);
-
-
-      Object.keys(counts)
-        .forEach(
-          category => {
-
-            if (
-              !known.has(category)
-            ) {
-
-              categories.push(
-                category
-              );
-
-            }
-
-          }
-        );
 
 
       if (!categories.length) {
 
         container.innerHTML = `
+
           <div class="empty-state">
-            <div class="empty-icon">!</div>
-            <strong>لا توجد أقسام حالياً</strong>
-            <span>سيتم عرض الأقسام عند إضافة المنتجات.</span>
+
+            <div class="empty-icon">
+              !
+            </div>
+
+            <strong>
+              لا توجد أقسام حالياً
+            </strong>
+
+            <span>
+              سيتم عرض الأقسام عند إضافة الأقسام من لوحة الإدارة.
+            </span>
+
           </div>
+
         `;
 
         return;
@@ -3016,11 +3356,20 @@
       container.innerHTML =
         categories
           .map(
-            (category,index) => {
+            (
+              category,
+              index
+            ) => {
 
               const active =
                 selectedCategory ===
                 category;
+
+
+              const count =
+                counts[category] ||
+                0;
+
 
               return `
 
@@ -3049,8 +3398,12 @@
                     </div>
 
                     <div class="category-count">
-                      ${counts[category]}
-                      ${counts[category] === 1 ? "منتج" : "منتجات"}
+                      ${count}
+                      ${
+                        count === 1
+                          ? "منتج"
+                          : "منتجات"
+                      }
                     </div>
 
                   </div>
@@ -3072,14 +3425,18 @@
 
     function applyFilters() {
 
+      const input =
+        document.getElementById(
+          "searchInput"
+        );
+
+
       const search =
-        document
-          .getElementById(
-            "searchInput"
-          )
-          .value
-          .trim()
-          .toLowerCase();
+        input
+          ? input.value
+              .trim()
+              .toLowerCase()
+          : "";
 
 
       const visibleProducts =
@@ -3095,13 +3452,20 @@
               product.category ===
                 selectedCategory;
 
-            if (!matchesCategory) {
+
+            if (
+              !matchesCategory
+            ) {
+
               return false;
+
             }
+
 
             if (!search) {
               return true;
             }
+
 
             return (
 
@@ -3145,10 +3509,12 @@
           "selectedCategory"
         );
 
+
       const name =
         document.getElementById(
           "selectedCategoryName"
         );
+
 
       const count =
         document.getElementById(
@@ -3166,13 +3532,8 @@
       }
 
 
-      /*
-        لو القسم تم إخفاؤه بعد فتح الصفحة
-        يتم إلغاء الاختيار تلقائياً.
-      */
-
       const sectionStillActive =
-        !allSections.length ||
+        !sectionsLoaded ||
         getActiveSections()
           .some(
             section =>
@@ -3181,7 +3542,9 @@
           );
 
 
-      if (!sectionStillActive) {
+      if (
+        !sectionStillActive
+      ) {
 
         selectedCategory =
           "";
@@ -3197,6 +3560,7 @@
       box.style.display =
         "flex";
 
+
       name.textContent =
         selectedCategory;
 
@@ -3204,8 +3568,8 @@
       const total =
         getVisibleProducts()
           .filter(
-            p =>
-              p.category ===
+            product =>
+              product.category ===
               selectedCategory
           )
           .length;
@@ -3234,7 +3598,8 @@
 
       if (!search) {
 
-        info.textContent = "";
+        info.textContent =
+          "";
 
         return;
 
@@ -3261,25 +3626,33 @@
         );
 
 
-      if (!filteredProducts.length) {
+      if (
+        !filteredProducts.length
+      ) {
 
         container.innerHTML = `
 
           <div class="empty-state">
 
             <div class="empty-icon">
+
               <svg
                 class="icon"
                 viewBox="0 0 24 24"
               >
+
                 <circle
                   cx="11"
                   cy="11"
                   r="7"
                 ></circle>
 
-                <path d="m20 20-4-4"></path>
+                <path
+                  d="m20 20-4-4"
+                ></path>
+
               </svg>
+
             </div>
 
             <strong>
@@ -3302,7 +3675,10 @@
       container.innerHTML =
         filteredProducts
           .map(
-            (product,index) =>
+            (
+              product,
+              index
+            ) =>
               productCard(
                 product,
                 index
@@ -3326,22 +3702,28 @@
           product.image
         );
 
+
       const image =
-        imageSources[0] || "";
+        imageSources[0] ||
+        "";
+
 
       const eager =
         index <
         PRIORITY_IMAGES;
+
 
       const safeName =
         escapeHtml(
           product.name
         );
 
+
       const safeCategory =
         escapeHtml(
           product.category
         );
+
 
       const safeDescription =
         escapeHtml(
@@ -3365,10 +3747,22 @@
 
             <img
               class="product-image"
-              src="${eager && image ? escapeHtml(image) : PLACEHOLDER}"
-              ${!eager && image ? `data-src="${escapeHtml(image)}"` : ""}
+              src="${
+                eager && image
+                  ? escapeHtml(image)
+                  : PLACEHOLDER
+              }"
+              ${
+                !eager && image
+                  ? `data-src="${escapeHtml(image)}"`
+                  : ""
+              }
               alt="${safeName}"
-              ${eager ? 'fetchpriority="high"' : 'loading="lazy"'}
+              ${
+                eager
+                  ? 'fetchpriority="high"'
+                  : 'loading="lazy"'
+              }
               decoding="async"
             >
 
@@ -3402,6 +3796,7 @@
                   class="icon icon-sm"
                   viewBox="0 0 24 24"
                 >
+
                   <circle
                     cx="12"
                     cy="12"
@@ -3415,6 +3810,7 @@
                   <path
                     d="M12 7h.01"
                   ></path>
+
                 </svg>
 
                 التفاصيل
@@ -3433,6 +3829,7 @@
                   class="icon icon-sm"
                   viewBox="0 0 24 24"
                 >
+
                   <path
                     d="M20 11.5a8.2 8.2 0 0 1-12.4 7L4 20l1.5-3.5A8.2 8.2 0 1 1 20 11.5Z"
                   ></path>
@@ -3440,6 +3837,7 @@
                   <path
                     d="M9 9c.2-.5.4-.5.8-.5h.4c.2 0 .4.1.5.4l.7 1.6c.1.2.1.4-.1.6l-.5.6c.5 1 1.3 1.8 2.4 2.3l.6-.6c.2-.2.4-.2.6-.1l1.5.7"
                   ></path>
+
                 </svg>
 
                 واتساب
@@ -3482,8 +3880,7 @@
 
 
       if (
-        "IntersectionObserver"
-        in window
+        "IntersectionObserver" in window
       ) {
 
         observer =
@@ -3496,12 +3893,16 @@
                   if (
                     !entry.isIntersecting
                   ) {
+
                     return;
+
                   }
+
 
                   loadLazyImage(
                     entry.target
                   );
+
 
                   observer.unobserve(
                     entry.target
@@ -3552,6 +3953,7 @@
       image.src =
         src;
 
+
       image.removeAttribute(
         "data-src"
       );
@@ -3572,25 +3974,30 @@
           "productModal"
         );
 
+
       const image =
         document.getElementById(
           "modalImage"
         );
+
 
       const category =
         document.getElementById(
           "modalCategory"
         );
 
+
       const name =
         document.getElementById(
           "modalProductName"
         );
 
+
       const description =
         document.getElementById(
           "modalDescription"
         );
+
 
       const whatsapp =
         document.getElementById(
@@ -3607,6 +4014,7 @@
       image.src =
         sources[0] ||
         PLACEHOLDER;
+
 
       image.alt =
         product.name;
@@ -3703,7 +4111,26 @@
 
 
           if (product) {
-            openModal(product);
+
+            /*
+              المنتج هنا من allProducts،
+              لكنه لا يصل للواجهة إلا لو
+              كان القسم نشطاً.
+            */
+
+            const visible =
+              getVisibleProducts()
+                .some(
+                  p =>
+                    String(p.id) ===
+                    String(id)
+                );
+
+
+            if (visible) {
+              openModal(product);
+            }
+
           }
 
         }
@@ -3790,7 +4217,8 @@
 
           document.getElementById(
             "searchInput"
-          ).value = "";
+          ).value =
+            "";
 
 
           renderCategories(
@@ -3806,8 +4234,12 @@
               "selectedCategory"
             )
             .scrollIntoView({
-              behavior: "smooth",
-              block: "center"
+              behavior:
+                "smooth",
+
+              block:
+                "center"
+
             });
 
         }
@@ -3849,7 +4281,8 @@
 
       document.getElementById(
         "products"
-      ).innerHTML = "";
+      ).innerHTML =
+        "";
 
     }
 
@@ -3865,10 +4298,12 @@
           "searchInput"
         );
 
+
       const clearSearch =
         document.getElementById(
           "clearSearch"
         );
+
 
       const clearCategory =
         document.getElementById(
@@ -3978,9 +4413,22 @@
 
     initData();
 
+
+    /*
+      تحديث هادئ في الخلفية بعد فترة،
+      بدون ما نغير التصميم أو نزعج المستخدم.
+    */
+    setTimeout(
+      () => {
+
+        refreshData();
+
+      },
+      BACKGROUND_REFRESH_TIME
+    );
+
   </script>
 
 </body>
 
 </html>
-```
