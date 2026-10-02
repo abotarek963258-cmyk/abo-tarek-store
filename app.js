@@ -1,24 +1,24 @@
 /* =========================================================
    ABO TAREK STORE
-   PREMIUM LIVE CATALOG ENGINE
-   FINAL EDITION
+   APP.JS
+   DARK LUXURY EDITION
    ========================================================= */
 
 (() => {
   "use strict";
 
-  /* =======================================================
+
+  /* =========================================================
      SETTINGS
-     ======================================================= */
+     ========================================================= */
 
   const DATA_URL =
     "https://script.google.com/macros/s/AKfycbyw7k-K9akpV08vSjXbDmZ8khpHH9LOq2G9WLDHT2-iOJiTThN-kvEaCKI0-wKWu7hY/exec";
 
-  const WHATSAPP_NUMBER =
-    "201551604163";
+  const WHATSAPP_NUMBER = "201551604163";
 
   const CACHE_KEY =
-    "abo_tarek_products_v10";
+    "abo_tarek_products_v11";
 
   const CACHE_TIME =
     30 * 60 * 1000;
@@ -27,70 +27,38 @@
     10 * 60 * 1000;
 
 
-  /* =======================================================
+  /* =========================================================
      CATEGORY ICONS
-     ======================================================= */
+     ========================================================= */
 
   const CATEGORY_ICONS = {
-    "مطبخ": "🍳",
-    "ادوات مطبخ": "🍳",
-    "أدوات مطبخ": "🍳",
-
     "سفرة": "🍽️",
-    "أدوات سفرة": "🍽️",
-
-    "أكواب": "🥤",
-    "كاسات": "🥛",
-
-    "شاي": "☕",
-    "قهوة": "☕",
     "شاي وقهوة": "☕",
-
-    "طهي": "🍲",
-    "أواني طهي": "🍲",
-
-    "ميلامين": "🍽️",
-
-    "صيني": "🍽️",
-
-    "منزل": "🏠",
+    "أكواب وكاسات": "🥛",
+    "مطبخ": "🍳",
+    "أواني طهي": "🥘",
+    "ميلامين": "🟩",
     "أدوات منزلية": "🏠",
-
-    "تنظيف": "🧹",
-
-    "بلاستيك": "🧺",
-
-    "تخزين": "🗃️",
-
-    "حمام": "🛁",
-
-    "أطفال": "🧸"
+    "مستلزمات المنزل": "🏠",
+    "الكل": "🛍️"
   };
 
-  const FALLBACK_ICON =
-    "🏠";
+  const FALLBACK_ICON = "✦";
 
 
-  /* =======================================================
-     BASIC HELPERS
-     ======================================================= */
+  /* =========================================================
+     HELPERS
+     ========================================================= */
 
   function cleanText(value) {
-
-    if (
-      value === null ||
-      value === undefined
-    ) {
-      return "";
-    }
-
-    return String(value).trim();
+    return String(value ?? "")
+      .replace(/\s+/g, " ")
+      .trim();
   }
 
 
   function escapeHtml(value) {
-
-    return cleanText(value)
+    return String(value ?? "")
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;")
@@ -99,14 +67,8 @@
   }
 
 
-  function escapeJs(value) {
-
-    return cleanText(value)
-      .replace(/\\/g, "\\\\")
-      .replace(/'/g, "\\'")
-      .replace(/"/g, '\\"')
-      .replace(/\r/g, "\\r")
-      .replace(/\n/g, "\\n");
+  function escapeAttribute(value) {
+    return escapeHtml(value);
   }
 
 
@@ -114,170 +76,119 @@
 
     return cleanText(value)
       .toLowerCase()
-      .replace(/[\u064B-\u065F\u0670]/g, "")
-      .replace(/ـ/g, "")
-      .replace(/[إأآا]/g, "ا")
-      .replace(/ى/g, "ي")
+      .replace(/[أإآ]/g, "ا")
       .replace(/ة/g, "ه")
+      .replace(/ى/g, "ي")
       .replace(/ؤ/g, "و")
       .replace(/ئ/g, "ي")
-      .replace(/\s+/g, " ")
-      .trim();
+      .replace(/ـ/g, "")
+      .replace(/[\u064B-\u065F\u0670]/g, "")
+      .replace(/\s+/g, " ");
   }
 
 
   function categoryIcon(category) {
 
-    const key =
-      cleanText(category);
-
-    if (CATEGORY_ICONS[key]) {
-      return CATEGORY_ICONS[key];
-    }
-
-    const normalized =
-      normalizeArabic(key);
-
-    for (const name in CATEGORY_ICONS) {
-
-      if (
-        normalizeArabic(name) ===
-        normalized
-      ) {
-        return CATEGORY_ICONS[name];
-      }
-    }
-
-    return FALLBACK_ICON;
+    return (
+      CATEGORY_ICONS[
+        cleanText(category)
+      ] ||
+      FALLBACK_ICON
+    );
   }
 
 
   function isActive(value) {
 
     if (
-      value === true ||
-      value === 1 ||
-      value === "1"
+      value === false ||
+      value === 0
     ) {
-      return true;
+      return false;
     }
 
     const text =
       normalizeArabic(value);
 
-    return (
-      text === "true" ||
-      text === "yes" ||
-      text === "active" ||
-      text === "نعم" ||
-      text === "فعال" ||
-      text === "مفعل"
-    );
+    if (
+      [
+        "false",
+        "0",
+        "no",
+        "inactive",
+        "غير نشط",
+        "مخفي"
+      ].includes(text)
+    ) {
+      return false;
+    }
+
+    return true;
   }
 
 
-  function isFlagEnabled(value) {
+  function isFlagEnabled(
+    value,
+    defaultValue
+  ) {
+
+    if (
+      value === undefined ||
+      value === null ||
+      value === ""
+    ) {
+      return defaultValue;
+    }
 
     if (
       value === true ||
-      value === 1 ||
-      value === "1"
+      value === 1
     ) {
       return true;
+    }
+
+    if (
+      value === false ||
+      value === 0
+    ) {
+      return false;
     }
 
     const text =
       normalizeArabic(value);
 
-    return (
-      text === "true" ||
-      text === "yes" ||
-      text === "on" ||
-      text === "نعم" ||
-      text === "مفعل"
-    );
-  }
-
-
-  /* =======================================================
-     IMAGE HELPERS
-     ======================================================= */
-
-  function getImageSources(product) {
-
-    const sources = [];
-
-    const image =
-      cleanText(product.image);
-
-    if (image) {
-
-      sources.push(image);
-
-      if (
-        image.includes(
-          "github.com"
-        ) &&
-        image.includes("/blob/")
-      ) {
-
-        sources.push(
-          image
-            .replace(
-              "github.com",
-              "raw.githubusercontent.com"
-            )
-            .replace(
-              "/blob/",
-              "/"
-            )
-        );
-      }
-
-      if (
-        image.includes(
-          "raw.githubusercontent.com"
-        )
-      ) {
-        sources.push(image);
-      }
+    if (
+      [
+        "false",
+        "0",
+        "no",
+        "off",
+        "مخفي"
+      ].includes(text)
+    ) {
+      return false;
     }
 
-    return [
-      ...new Set(
-        sources.filter(Boolean)
-      )
-    ];
-  }
-
-
-  function whatsappUrl(product) {
-
-    const name =
-      cleanText(product.name);
-
-    const category =
-      cleanText(product.category);
-
-    let message =
-      `السلام عليكم، عايز أعرف تفاصيل عن ${name}`;
-
-    if (category) {
-      message += ` - قسم ${category}`;
+    if (
+      [
+        "true",
+        "1",
+        "yes",
+        "on",
+        "نعم",
+        "ظاهر"
+      ].includes(text)
+    ) {
+      return true;
     }
 
-    return (
-      "https://wa.me/" +
-      WHATSAPP_NUMBER +
-      "?text=" +
-      encodeURIComponent(message)
-    );
+    return defaultValue;
   }
 
 
-  /* =======================================================
+  /* =========================================================
      PRICE HELPERS
-     ======================================================= */
+     ========================================================= */
 
   function normalizePrice(value) {
 
@@ -288,52 +199,72 @@
       return "";
     }
 
-    return String(value)
-      .trim()
-      .replace(/,/g, "");
+    const text =
+      cleanText(value);
+
+    if (!text) {
+      return "";
+    }
+
+    return text;
+  }
+
+
+  function hasPrice(value) {
+    return Boolean(
+      normalizePrice(value)
+    );
   }
 
 
   function formatPrice(value) {
 
-    const raw =
+    const price =
       normalizePrice(value);
 
-    if (!raw) {
+    if (!price) {
       return "";
     }
 
-    const number =
-      Number(raw);
+    const numeric =
+      Number(
+        String(price)
+          .replace(/,/g, "")
+          .replace(/[^\d.]/g, "")
+      );
 
-    if (!Number.isFinite(number)) {
-      return escapeHtml(raw);
+    if (
+      Number.isFinite(numeric) &&
+      numeric > 0
+    ) {
+      return (
+        new Intl.NumberFormat(
+          "ar-EG"
+        ).format(numeric) +
+        " جنيه"
+      );
     }
 
-    return new Intl.NumberFormat(
-      "ar-EG"
-    ).format(number);
-  }
-
-
-  function hasPrice(product) {
-
-    return Boolean(
-      normalizePrice(product.price)
-    );
+    return price;
   }
 
 
   function renderPrice(product) {
 
     const price =
-      normalizePrice(product.price);
+      normalizePrice(
+        product.price
+      );
 
     const oldPrice =
-      normalizePrice(product.oldPrice);
+      normalizePrice(
+        product.oldPrice
+      );
 
     const offerPrice =
-      normalizePrice(product.offerPrice);
+      normalizePrice(
+        product.offerPrice
+      );
 
     if (
       !price &&
@@ -343,121 +274,144 @@
       return "";
     }
 
-    let html =
-      `<div class="price-box">`;
+    const current =
+      offerPrice ||
+      price;
 
-    if (oldPrice) {
+    return `
+      <div class="price-box">
 
-      html += `
-        <span class="old-price">
-          ${formatPrice(oldPrice)} جنيه
-        </span>
-      `;
-    }
+        ${
+          oldPrice
+            ? `
+              <span class="old-price">
+                ${escapeHtml(
+                  formatPrice(
+                    oldPrice
+                  )
+                )}
+              </span>
+            `
+            : ""
+        }
 
-    if (offerPrice) {
+        ${
+          current
+            ? `
+              <strong class="current-price">
+                ${escapeHtml(
+                  formatPrice(
+                    current
+                  )
+                )}
+              </strong>
+            `
+            : ""
+        }
 
-      html += `
-        <span class="current-price">
-          ${formatPrice(offerPrice)} جنيه
-        </span>
-      `;
-
-    } else if (price) {
-
-      html += `
-        <span class="current-price">
-          ${formatPrice(price)} جنيه
-        </span>
-      `;
-    }
-
-    html += `
       </div>
     `;
-
-    return html;
   }
 
 
-  /* =======================================================
-     PRODUCT NORMALIZATION
-     ======================================================= */
+  /* =========================================================
+     IMAGE SOURCES
+     ========================================================= */
 
-  function normalizeProduct(raw, index) {
+  function getImageSources(image) {
 
-    if (!raw) {
-      return null;
+    const original =
+      cleanText(image);
+
+    if (!original) {
+      return [];
     }
 
-    const product = {
+    const sources = [];
 
-      id:
-        cleanText(raw.id) ||
-        `product-${index + 1}`,
+    function add(url) {
 
-      name:
-        cleanText(raw.name),
+      if (
+        url &&
+        !sources.includes(url)
+      ) {
+        sources.push(url);
+      }
+    }
 
-      category:
-        cleanText(raw.category),
 
-      image:
-        cleanText(raw.image),
+    if (
+      original.startsWith(
+        "https://"
+      ) ||
+      original.startsWith(
+        "http://"
+      ) ||
+      original.startsWith(
+        "data:"
+      )
+    ) {
 
-      description:
-        cleanText(raw.description),
+      add(original);
 
-      active:
-        isActive(raw.active),
+      return sources;
+    }
 
-      showHome:
-        isFlagEnabled(
-          raw.showHome
-        ),
 
-      isOffer:
-        isFlagEnabled(
-          raw.isOffer
-        ),
+    const relative =
+      original
+        .replace(/^\.?\//, "")
+        .replace(/^\/+/, "");
 
-      sortOrder:
-        Number(raw.sortOrder) || 0,
 
-      price:
-        normalizePrice(
-          raw.price
-        ),
-
-      oldPrice:
-        normalizePrice(
-          raw.oldPrice
-        ),
-
-      offerPrice:
-        normalizePrice(
-          raw.offerPrice
+    add(
+      "https://abotarek963258-cmyk.github.io/abo-tarek-store/" +
+      relative
+        .split("/")
+        .map(
+          part =>
+            encodeURIComponent(
+              part
+            )
         )
-    };
+        .join("/")
+    );
 
 
-    product.searchIndex =
-      normalizeArabic(
-        [
-          product.name,
-          product.category,
-          product.description
-        ].join(" ")
-      );
-
-
-    return product;
+    return sources;
   }
 
 
-  /* =======================================================
+  /* =========================================================
+     WHATSAPP
+     ========================================================= */
+
+  function whatsappUrl(product) {
+
+    const name =
+      cleanText(
+        product.name
+      );
+
+    const message =
+      name
+        ? `السلام عليكم، عايز أعرف تفاصيل عن صنف: ${name}`
+        : "السلام عليكم، عايز أعرف تفاصيل عن أحد الأصناف الموجودة عندكم.";
+
+    return (
+      "https://wa.me/" +
+      WHATSAPP_NUMBER +
+      "?text=" +
+      encodeURIComponent(
+        message
+      )
+    );
+  }
+
+
+  /* =========================================================
      CACHE
-     ======================================================= */
+     ========================================================= */
 
   function readCache() {
 
@@ -472,33 +426,33 @@
         return null;
       }
 
-      const cache =
+      const data =
         JSON.parse(raw);
 
       if (
-        !cache ||
+        !data ||
         !Array.isArray(
-          cache.products
-        )
+          data.products
+        ) ||
+        !data.time
       ) {
         return null;
       }
 
-      return cache;
+      return data;
 
-    } catch (error) {
-
-      console.warn(
-        "Cache read failed:",
-        error
-      );
+    } catch (
+      error
+    ) {
 
       return null;
     }
   }
 
 
-  function writeCache(products) {
+  function writeCache(
+    products
+  ) {
 
     try {
 
@@ -510,19 +464,167 @@
         })
       );
 
-    } catch (error) {
+    } catch (
+      error
+    ) {
 
-      console.warn(
-        "Cache write failed:",
-        error
-      );
+      /* تجاهل أخطاء التخزين */
     }
   }
 
 
-  /* =======================================================
-     API FETCH
-     ======================================================= */
+  /* =========================================================
+     NORMALIZE PRODUCT
+     ========================================================= */
+
+  function normalizeProduct(
+    product,
+    index
+  ) {
+
+    const p =
+      product || {};
+
+
+    const id =
+      cleanText(
+        p.id ??
+        p.ID ??
+        p.Id
+      ) ||
+      `product-${index + 1}`;
+
+
+    const name =
+      cleanText(
+        p.name ??
+        p.Name ??
+        p.product ??
+        p.title
+      ) ||
+      "صنف بدون اسم";
+
+
+    const category =
+      cleanText(
+        p.category ??
+        p.Category ??
+        p.cat
+      ) ||
+      "أدوات منزلية";
+
+
+    const image =
+      cleanText(
+        p.image ??
+        p.Image ??
+        p.imageUrl ??
+        p.photo
+      );
+
+
+    const description =
+      cleanText(
+        p.description ??
+        p.Description ??
+        p.desc
+      );
+
+
+    const active =
+      isActive(
+        p.active ??
+        p.Active ??
+        true
+      );
+
+
+    const showHome =
+      isFlagEnabled(
+        p.showHome ??
+        p.ShowHome,
+        true
+      );
+
+
+    const isOffer =
+      isFlagEnabled(
+        p.isOffer ??
+        p.IsOffer,
+        false
+      );
+
+
+    const price =
+      normalizePrice(
+        p.price ??
+        p.Price
+      );
+
+
+    const oldPrice =
+      normalizePrice(
+        p.oldPrice ??
+        p.OldPrice
+      );
+
+
+    const offerPrice =
+      normalizePrice(
+        p.offerPrice ??
+        p.OfferPrice
+      );
+
+
+    const sortOrder =
+      Number(
+        p.sortOrder ??
+        p.SortOrder ??
+        0
+      ) || 0;
+
+
+    return {
+
+      id,
+
+      name,
+
+      category,
+
+      image,
+
+      description,
+
+      active,
+
+      showHome,
+
+      isOffer,
+
+      price,
+
+      oldPrice,
+
+      offerPrice,
+
+      sortOrder,
+
+      searchIndex:
+        normalizeArabic(
+          `${name} ${category} ${description}`
+        )
+    };
+  }
+
+
+  /* =========================================================
+     FETCH PRODUCTS
+     ========================================================= */
+
+  let productsPromise =
+    null;
+
 
   async function fetchProducts() {
 
@@ -531,9 +633,11 @@
         DATA_URL,
         {
           method: "GET",
-          cache: "no-store"
+          cache: "default",
+          redirect: "follow"
         }
       );
+
 
     if (!response.ok) {
 
@@ -542,15 +646,21 @@
       );
     }
 
+
     const data =
       await response.json();
 
 
-    let rows = [];
+    let rawProducts =
+      [];
 
-    if (Array.isArray(data)) {
 
-      rows = data;
+    if (
+      Array.isArray(data)
+    ) {
+
+      rawProducts =
+        data;
 
     } else if (
       data &&
@@ -559,7 +669,8 @@
       )
     ) {
 
-      rows = data.products;
+      rawProducts =
+        data.products;
 
     } else if (
       data &&
@@ -568,128 +679,515 @@
       )
     ) {
 
-      rows = data.data;
+      rawProducts =
+        data.data;
+
+    } else {
+
+      throw new Error(
+        "صيغة البيانات غير صحيحة"
+      );
     }
 
 
-    return rows
-      .map(normalizeProduct)
-      .filter(Boolean)
+    return rawProducts
+
+      .map(
+        normalizeProduct
+      )
+
       .filter(
         product =>
           product.active
       )
+
       .sort(
-        (a, b) =>
+        (
+          a,
+          b
+        ) =>
           a.sortOrder -
           b.sortOrder
       );
   }
 
 
-  /* =======================================================
-     GLOBAL LOADING
-     ======================================================= */
+  /* =========================================================
+     GET PRODUCTS
+     ========================================================= */
 
-  function showLoading() {
+  async function getProducts(
+    forceRefresh = false
+  ) {
 
-    const grid =
-      document.getElementById(
-        "productsGrid"
+    const cached =
+      readCache();
+
+
+    if (
+      !forceRefresh &&
+      cached &&
+      Array.isArray(
+        cached.products
+      ) &&
+      cached.products.length &&
+      Date.now() -
+        cached.time <
+        CACHE_TIME
+    ) {
+
+      return cached.products;
+    }
+
+
+    if (!productsPromise) {
+
+      productsPromise =
+        fetchProducts()
+
+          .then(
+            products => {
+
+              writeCache(
+                products
+              );
+
+              return products;
+            }
+          )
+
+          .finally(
+            () => {
+
+              productsPromise =
+                null;
+            }
+          );
+    }
+
+
+    return productsPromise;
+  }
+
+
+  /* =========================================================
+     BACKGROUND REFRESH
+     ========================================================= */
+
+  function refreshInBackground() {
+
+    if (
+      productsPromise
+    ) {
+      return productsPromise;
+    }
+
+
+    const cached =
+      readCache();
+
+
+    if (
+      cached &&
+      cached.time &&
+      Date.now() -
+        cached.time <
+        BACKGROUND_REFRESH_TIME
+    ) {
+
+      return Promise.resolve(
+        cached.products
+      );
+    }
+
+
+    productsPromise =
+      fetchProducts()
+
+        .then(
+          freshProducts => {
+
+            writeCache(
+              freshProducts
+            );
+
+            return freshProducts;
+          }
+        )
+
+        .catch(
+          () => null
+        )
+
+        .finally(
+          () => {
+
+            productsPromise =
+              null;
+          }
+        );
+
+
+    return productsPromise;
+  }
+
+
+  /* =========================================================
+     PRODUCT IMAGE
+     ========================================================= */
+
+  function createProductImage(
+    product,
+    lazy = true
+  ) {
+
+    const wrapper =
+      document.createElement(
+        "div"
       );
 
-    if (grid) {
 
-      grid.innerHTML = `
-        <div class="loading-state">
-          <div class="loading-spinner"></div>
-          <strong>
-            جاري تحميل الأصناف...
-          </strong>
-          <span>
-            لحظات ونجهز لك المنتجات
+    wrapper.className =
+      "product-image";
+
+
+    const sources =
+      getImageSources(
+        product.image
+      );
+
+
+    if (!sources.length) {
+
+      wrapper.innerHTML = `
+        <div class="product-image-placeholder">
+
+          <span class="placeholder-icon">
+            ${escapeHtml(
+              categoryIcon(
+                product.category
+              )
+            )}
           </span>
+
         </div>
       `;
+
+      return wrapper;
     }
 
 
-    const categoryGrid =
-      document.getElementById(
-        "categoryGrid"
+    const img =
+      document.createElement(
+        "img"
       );
 
-    if (categoryGrid) {
 
-      categoryGrid.innerHTML = `
-        <div class="loading-state">
-          <div class="loading-spinner"></div>
-          <strong>
-            جاري تحميل الأقسام...
-          </strong>
-        </div>
-      `;
+    img.alt =
+      product.name
+        ? `صورة ${product.name}`
+        : "صورة المنتج";
+
+
+    img.width = 700;
+    img.height = 700;
+
+
+    img.decoding =
+      "async";
+
+
+    if (lazy) {
+
+      img.loading =
+        "lazy";
+
+      img.fetchPriority =
+        "low";
+
+    } else {
+
+      img.loading =
+        "eager";
+
+      img.fetchPriority =
+        "high";
     }
-  }
 
 
-  function showError() {
+    img.src =
+      sources[0];
 
-    const grid =
-      document.getElementById(
-        "productsGrid"
-      );
 
-    if (grid) {
+    img.addEventListener(
+      "error",
+      () => {
 
-      grid.innerHTML = `
-        <div class="empty error-state">
-          <div class="empty-icon">
-            ⚠️
+        wrapper.innerHTML = `
+          <div class="product-image-placeholder">
+
+            <span class="placeholder-icon">
+              ${escapeHtml(
+                categoryIcon(
+                  product.category
+                )
+              )}
+            </span>
+
           </div>
+        `;
 
-          <h3>
-            حصلت مشكلة في تحميل الأصناف
-          </h3>
+      },
+      {
+        once: true
+      }
+    );
 
-          <p>
-            حاول تحديث الصفحة مرة تانية.
-          </p>
 
-          <button
-            type="button"
-            class="primary-btn"
-            onclick="location.reload()"
-          >
-            إعادة المحاولة
-          </button>
-        </div>
-      `;
-    }
+    wrapper.appendChild(
+      img
+    );
+
+
+    return wrapper;
   }
 
 
-  /* =======================================================
-     HOMEPAGE
-     ======================================================= */
+  /* =========================================================
+     PRODUCT CARD
+     ========================================================= */
 
-  function initHomepage(products) {
+  function createProductCard(
+    product,
+    index
+  ) {
+
+    const article =
+      document.createElement(
+        "article"
+      );
+
+
+    article.className =
+      "product";
+
+
+    article.dataset.id =
+      product.id;
+
+
+    article.appendChild(
+      createProductImage(
+        product,
+        index > 1
+      )
+    );
+
+
+    const body =
+      document.createElement(
+        "div"
+      );
+
+
+    body.className =
+      "product-body";
+
+
+    const shortDescription =
+      product.description
+        ? (
+            product.description.length >
+            115
+              ? product.description
+                  .slice(
+                    0,
+                    115
+                  )
+                  .trimEnd() +
+                "..."
+              : product.description
+          )
+        : "";
+
+
+    body.innerHTML = `
+
+      <div class="product-meta">
+
+        <span class="product-category">
+          ${escapeHtml(
+            product.category
+          )}
+        </span>
+
+        ${
+          product.isOffer
+            ? `
+              <span class="offer-badge">
+                🔥 عرض
+              </span>
+            `
+            : ""
+        }
+
+      </div>
+
+
+      <h3 class="product-name">
+        ${escapeHtml(
+          product.name
+        )}
+      </h3>
+
+
+      ${
+        shortDescription
+          ? `
+            <p class="product-description">
+              ${escapeHtml(
+                shortDescription
+              )}
+            </p>
+          `
+          : ""
+      }
+
+
+      ${
+        product.description &&
+        product.description.length >
+          115
+          ? `
+            <button
+              type="button"
+              class="product-details-trigger"
+            >
+              عرض المزيد من التفاصيل
+              <span>←</span>
+            </button>
+          `
+          : ""
+      }
+
+
+      ${renderPrice(
+        product
+      )}
+
+
+      <div class="product-actions">
+
+        <button
+          type="button"
+          class="product-details-trigger product-details-main"
+        >
+          تفاصيل الصنف
+          <span>←</span>
+        </button>
+
+
+        <a
+          class="product-whatsapp"
+          href="${escapeAttribute(
+            whatsappUrl(
+              product
+            )
+          )}"
+          target="_blank"
+          rel="noopener"
+        >
+          💬 واتساب
+        </a>
+
+      </div>
+
+    `;
+
+
+    article.appendChild(
+      body
+    );
+
+
+    article.addEventListener(
+      "click",
+      event => {
+
+        if (
+          event.target.closest(
+            "a"
+          )
+        ) {
+          return;
+        }
+
+
+        if (
+          event.target.closest(
+            ".product-details-trigger"
+          )
+        ) {
+
+          event.preventDefault();
+
+          event.stopPropagation();
+
+          openProductModal(
+            product
+          );
+
+          return;
+        }
+
+
+        openProductModal(
+          product
+        );
+      }
+    );
+
+
+    return article;
+  }
+
+
+  /* =========================================================
+     HOMEPAGE
+     ========================================================= */
+
+  function initHomepage(
+    products
+  ) {
 
     const grid =
       document.getElementById(
         "productsGrid"
       );
+
 
     if (!grid) {
       return;
     }
 
 
-    const homeProducts =
+    /*
+      مهم:
+      لو showHome غير محدد لأي منتج،
+      نعرض كل المنتجات بدل الصفحة الفاضية.
+    */
+
+    const explicitlyHome =
       products.filter(
         product =>
           product.showHome
       );
+
+
+    const homeProducts =
+      explicitlyHome.length
+        ? explicitlyHome
+        : products;
 
 
     const offerProducts =
@@ -704,15 +1202,18 @@
         "offers"
       );
 
+
     const offersGrid =
       document.getElementById(
         "offersGrid"
       );
 
+
     const filters =
       document.getElementById(
         "filters"
       );
+
 
     const categoryGrid =
       document.getElementById(
@@ -722,6 +1223,7 @@
 
     let activeCategory =
       "الكل";
+
 
     let searchTerm =
       "";
@@ -754,18 +1256,7 @@
 
         categoryGrid.innerHTML = `
           <div class="empty">
-            <div class="empty-icon">
-              🏠
-            </div>
-
-            <h3>
-              الأقسام هتظهر هنا
-            </h3>
-
-            <p>
-              أضف منتجات من لوحة التحكم
-              لتظهر الأقسام تلقائيًا.
-            </p>
+            لا توجد أقسام متاحة حاليًا.
           </div>
         `;
 
@@ -775,53 +1266,62 @@
 
       categoryGrid.innerHTML =
         categories
-          .map(category => {
+          .map(
+            category => {
 
-            const count =
-              homeProducts.filter(
-                product =>
-                  product.category ===
-                  category
-              ).length;
+              const count =
+                products.filter(
+                  product =>
+                    product.category ===
+                      category &&
+                    product.active
+                ).length;
 
 
-            return `
-              <button
-                class="cat"
-                type="button"
-                data-category="${escapeHtml(category)}"
-                aria-label="عرض ${escapeHtml(category)}"
-              >
+              return `
 
-                <span
-                  class="cat-icon"
-                  aria-hidden="true"
+                <button
+                  class="cat"
+                  type="button"
+                  data-category="${escapeAttribute(
+                    category
+                  )}"
                 >
-                  ${escapeHtml(
-                    categoryIcon(category)
-                  )}
-                </span>
 
-                <span class="cat-content">
+                  <span class="cat-icon">
+                    ${escapeHtml(
+                      categoryIcon(
+                        category
+                      )
+                    )}
+                  </span>
 
-                  <strong>
-                    ${escapeHtml(category)}
-                  </strong>
 
-                  <small>
-                    ${count} صنف
-                  </small>
+                  <span class="cat-content">
 
-                </span>
+                    <strong>
+                      ${escapeHtml(
+                        category
+                      )}
+                    </strong>
 
-                <span class="cat-arrow">
-                  ←
-                </span>
+                    <small>
+                      ${count}
+                      ${count === 1 ? "صنف" : "أصناف"}
+                    </small>
 
-              </button>
-            `;
+                  </span>
 
-          })
+
+                  <span class="cat-arrow">
+                    ←
+                  </span>
+
+                </button>
+
+              `;
+            }
+          )
           .join("");
     }
 
@@ -850,20 +1350,31 @@
         ${categories
           .map(
             category => `
+
               <button
                 class="filter"
                 type="button"
-                data-filter="${escapeHtml(category)}"
+                data-filter="${escapeAttribute(
+                  category
+                )}"
               >
+
                 ${escapeHtml(
-                  categoryIcon(category)
+                  categoryIcon(
+                    category
+                  )
                 )}
 
-                ${escapeHtml(category)}
+                ${escapeHtml(
+                  category
+                )}
+
               </button>
+
             `
           )
           .join("")}
+
       `;
     }
 
@@ -907,301 +1418,6 @@
 
 
     /* =====================================================
-       PRODUCT IMAGE
-       ===================================================== */
-
-    function createProductImage(product) {
-
-      const wrapper =
-        document.createElement(
-          "div"
-        );
-
-      wrapper.className =
-        "product-image";
-
-
-      const sources =
-        getImageSources(
-          product
-        );
-
-
-      if (!sources.length) {
-
-        wrapper.innerHTML = `
-          <div class="product-image-placeholder">
-
-            <span
-              class="placeholder-icon"
-              aria-hidden="true"
-            >
-              ${escapeHtml(
-                categoryIcon(
-                  product.category
-                )
-              )}
-            </span>
-
-          </div>
-        `;
-
-        return wrapper;
-      }
-
-
-      const img =
-        document.createElement(
-          "img"
-        );
-
-
-      let current =
-        0;
-
-
-      img.src =
-        sources[current];
-
-      img.alt =
-        product.name ||
-        "منتج من أبو طارق";
-
-      img.loading =
-        "lazy";
-
-      img.decoding =
-        "async";
-
-
-      img.addEventListener(
-        "error",
-        () => {
-
-          current++;
-
-          if (
-            current <
-            sources.length
-          ) {
-
-            img.src =
-              sources[current];
-
-            return;
-          }
-
-
-          wrapper.innerHTML = `
-            <div class="product-image-placeholder">
-
-              <span
-                class="placeholder-icon"
-                aria-hidden="true"
-              >
-                ${escapeHtml(
-                  categoryIcon(
-                    product.category
-                  )
-                )}
-              </span>
-
-            </div>
-          `;
-
-        },
-        {
-          once: false
-        }
-      );
-
-
-      wrapper.appendChild(img);
-
-      return wrapper;
-    }
-
-
-    /* =====================================================
-       PRODUCT CARD
-       ===================================================== */
-
-    function createProductCard(
-      product,
-      index
-    ) {
-
-      const article =
-        document.createElement(
-          "article"
-        );
-
-      article.className =
-        "product";
-
-      article.dataset.id =
-        product.id;
-
-
-      const image =
-        createProductImage(
-          product
-        );
-
-
-      const body =
-        document.createElement(
-          "div"
-        );
-
-      body.className =
-        "product-body";
-
-
-      let description =
-        cleanText(
-          product.description
-        );
-
-
-      const shortDescription =
-        description.length > 95
-          ? description.slice(0, 95) + "..."
-          : description;
-
-
-      const offerBadge =
-        product.isOffer
-          ? `
-            <span class="offer-badge">
-              🔥 عرض
-            </span>
-          `
-          : "";
-
-
-      body.innerHTML = `
-
-        <div class="product-meta">
-
-          <span class="product-category">
-            ${escapeHtml(
-              product.category
-            )}
-          </span>
-
-          ${offerBadge}
-
-        </div>
-
-
-        <h3 class="product-name">
-          ${escapeHtml(
-            product.name
-          )}
-        </h3>
-
-
-        ${
-          shortDescription
-            ? `
-              <p class="product-description">
-                ${escapeHtml(
-                  shortDescription
-                )}
-              </p>
-            `
-            : ""
-        }
-
-
-        ${renderPrice(product)}
-
-
-        <div class="product-actions">
-
-          ${
-            description
-              ? `
-                <button
-                  type="button"
-                  class="product-details-trigger"
-                >
-                  عرض المزيد من التفاصيل
-                </button>
-              `
-              : ""
-          }
-
-
-          <a
-            class="product-whatsapp"
-            href="${whatsappUrl(product)}"
-            target="_blank"
-            rel="noopener"
-          >
-            💬 واتساب
-          </a>
-
-        </div>
-
-      `;
-
-
-      article.appendChild(
-        image
-      );
-
-      article.appendChild(
-        body
-      );
-
-
-      article.addEventListener(
-        "click",
-        event => {
-
-          if (
-            event.target.closest(
-              "a"
-            )
-          ) {
-            return;
-          }
-
-
-          const detailsButton =
-            event.target.closest(
-              ".product-details-trigger"
-            );
-
-
-          if (detailsButton) {
-
-            event.preventDefault();
-
-            event.stopPropagation();
-
-            openProductModal(
-              product
-            );
-
-            return;
-          }
-
-
-          openProductModal(
-            product
-          );
-        }
-      );
-
-
-      return article;
-    }
-
-
-    /* =====================================================
        RENDER PRODUCTS
        ===================================================== */
 
@@ -1214,6 +1430,7 @@
       if (!list.length) {
 
         grid.innerHTML = `
+
           <div class="empty">
 
             <div class="empty-icon">
@@ -1228,14 +1445,8 @@
               جرّب اسم صنف تاني أو اختار قسم مختلف.
             </p>
 
-            <a
-              href="./sections.html"
-              class="primary-btn"
-            >
-              🛍️ افتح كل الأصناف
-            </a>
-
           </div>
+
         `;
 
         return;
@@ -1247,7 +1458,10 @@
 
 
       list.forEach(
-        (product, index) => {
+        (
+          product,
+          index
+        ) => {
 
           fragment.appendChild(
             createProductCard(
@@ -1255,7 +1469,6 @@
               index
             )
           );
-
         }
       );
 
@@ -1280,7 +1493,9 @@
       }
 
 
-      if (!offerProducts.length) {
+      if (
+        !offerProducts.length
+      ) {
 
         offersGrid.innerHTML =
           "";
@@ -1297,7 +1512,10 @@
 
 
       offerProducts.forEach(
-        (product, index) => {
+        (
+          product,
+          index
+        ) => {
 
           fragment.appendChild(
             createProductCard(
@@ -1305,7 +1523,6 @@
               index
             )
           );
-
         }
       );
 
@@ -1357,7 +1574,6 @@
                   "active",
                   item === button
                 );
-
               }
             );
 
@@ -1389,56 +1605,21 @@
           }
 
 
-          activeCategory =
+          const category =
             button.dataset.category ||
             "الكل";
 
 
-          if (filters) {
+          /*
+            افتح الكتالوج الكامل
+            على القسم المختار.
+          */
 
-            filters
-              .querySelectorAll(
-                ".filter"
-              )
-              .forEach(
-                item => {
-
-                  item.classList.toggle(
-                    "active",
-                    item.dataset.filter ===
-                      activeCategory
-                  );
-
-                }
-              );
-          }
-
-
-          renderProducts();
-
-
-          const section =
-            document.getElementById(
-              "products"
+          window.location.href =
+            "./sections.html?category=" +
+            encodeURIComponent(
+              category
             );
-
-
-          if (section) {
-
-            setTimeout(
-              () => {
-
-                section.scrollIntoView({
-                  behavior:
-                    "smooth",
-                  block:
-                    "start"
-                });
-
-              },
-              30
-            );
-          }
 
         }
       );
@@ -1446,10 +1627,10 @@
 
 
     /* =====================================================
-       SEARCH
+       SEARCH BOX
        ===================================================== */
 
-    function createSearchUI() {
+    function ensureSearchBox() {
 
       const toolbar =
         document.querySelector(
@@ -1462,39 +1643,55 @@
       }
 
 
-      const wrapper =
+      let box =
+        document.getElementById(
+          "productSearchBox"
+        );
+
+
+      if (box) {
+        return box;
+      }
+
+
+      box =
         document.createElement(
           "div"
         );
 
-      wrapper.className =
+
+      box.id =
+        "productSearchBox";
+
+
+      box.className =
         "product-search";
 
 
-      wrapper.innerHTML = `
+      box.innerHTML = `
 
         <div class="product-search-box">
 
-          <span
-            class="search-icon"
-            aria-hidden="true"
-          >
+          <span class="search-icon">
             🔎
           </span>
+
 
           <input
             id="productSearchInput"
             type="search"
-            placeholder="ابحث عن صنف..."
+            placeholder="دور على صنف..."
             autocomplete="off"
-            aria-label="البحث عن منتج"
+            aria-label="البحث عن صنف"
+            aria-expanded="false"
           >
+
 
           <button
             id="productSearchClear"
             type="button"
-            aria-label="مسح البحث"
             hidden
+            aria-label="مسح البحث"
           >
             ×
           </button>
@@ -1506,46 +1703,51 @@
           id="productSearchSuggestions"
           class="product-search-suggestions"
           hidden
-        >
-        </div>
+        ></div>
 
       `;
 
 
       toolbar.prepend(
-        wrapper
+        box
       );
 
 
-      return {
-        input:
-          document.getElementById(
-            "productSearchInput"
-          ),
-
-        clear:
-          document.getElementById(
-            "productSearchClear"
-          ),
-
-        suggestions:
-          document.getElementById(
-            "productSearchSuggestions"
-          )
-      };
+      return box;
     }
 
 
-    const search =
-      createSearchUI();
+    const searchBox =
+      ensureSearchBox();
 
+
+    const searchInput =
+      document.getElementById(
+        "productSearchInput"
+      );
+
+
+    const searchClear =
+      document.getElementById(
+        "productSearchClear"
+      );
+
+
+    const suggestions =
+      document.getElementById(
+        "productSearchSuggestions"
+      );
+
+
+    /* =====================================================
+       SEARCH SUGGESTIONS
+       ===================================================== */
 
     function updateSuggestions() {
 
       if (
-        !search ||
-        !search.input ||
-        !search.suggestions
+        !searchInput ||
+        !suggestions
       ) {
         return;
       }
@@ -1553,17 +1755,19 @@
 
       const query =
         normalizeArabic(
-          search.input.value
+          searchInput.value
         );
 
 
       if (!query) {
 
-        search.suggestions.hidden =
+        suggestions.hidden =
           true;
 
-        search.suggestions.innerHTML =
-          "";
+        searchInput.setAttribute(
+          "aria-expanded",
+          "false"
+        );
 
         return;
       }
@@ -1577,40 +1781,91 @@
                 query
               )
           )
-          .slice(0, 8);
+          .slice(
+            0,
+            8
+          );
 
 
       if (!matches.length) {
 
-        search.suggestions.hidden =
-          true;
+        suggestions.innerHTML = `
 
-        search.suggestions.innerHTML =
-          "";
+          <div class="search-suggestion no-result">
+
+            <span class="search-suggestion-icon">
+              🔎
+            </span>
+
+            <span class="search-suggestion-content">
+
+              <strong>
+                مفيش نتائج
+              </strong>
+
+              <small>
+                جرّب كلمة بحث مختلفة
+              </small>
+
+            </span>
+
+          </div>
+
+        `;
+
+        suggestions.hidden =
+          false;
+
+        searchInput.setAttribute(
+          "aria-expanded",
+          "true"
+        );
 
         return;
       }
 
 
-      search.suggestions.innerHTML =
+      suggestions.innerHTML =
         matches
           .map(
             product => `
+
               <button
                 type="button"
                 class="search-suggestion"
-                data-product-id="${escapeHtml(product.id)}"
+                data-id="${escapeAttribute(
+                  product.id
+                )}"
               >
 
-                <span>
-                  ${escapeHtml(
-                    categoryIcon(
-                      product.category
-                    )
-                  )}
+                <span class="search-suggestion-icon">
+
+                  ${
+                    getImageSources(
+                      product.image
+                    ).length
+                      ? `
+                        <img
+                          src="${escapeAttribute(
+                            getImageSources(
+                              product.image
+                            )[0]
+                          )}"
+                          alt=""
+                          loading="lazy"
+                        >
+                      `
+                      : escapeHtml(
+                          categoryIcon(
+                            product.category
+                          )
+                        )
+                  }
+
                 </span>
 
-                <span>
+
+                <span class="search-suggestion-content">
 
                   <strong>
                     ${escapeHtml(
@@ -1627,44 +1882,54 @@
                 </span>
 
               </button>
+
             `
           )
           .join("");
 
 
-      search.suggestions.hidden =
+      suggestions.hidden =
         false;
+
+
+      searchInput.setAttribute(
+        "aria-expanded",
+        "true"
+      );
     }
 
 
-    if (
-      search &&
-      search.input
-    ) {
+    if (searchInput) {
 
-      search.input.addEventListener(
+      searchInput.addEventListener(
         "input",
         () => {
 
           searchTerm =
-            search.input.value;
+            searchInput.value;
 
-          if (search.clear) {
 
-            search.clear.hidden =
-              !searchTerm;
+          if (searchClear) {
+
+            searchClear.hidden =
+              !searchInput.value;
           }
 
 
           updateSuggestions();
 
           renderProducts();
-
         }
       );
 
 
-      search.input.addEventListener(
+      searchInput.addEventListener(
+        "focus",
+        updateSuggestions
+      );
+
+
+      searchInput.addEventListener(
         "keydown",
         event => {
 
@@ -1673,70 +1938,69 @@
             "Escape"
           ) {
 
-            search.input.value =
-              "";
+            if (suggestions) {
 
-            searchTerm =
-              "";
-
-            if (search.clear) {
-              search.clear.hidden =
+              suggestions.hidden =
                 true;
             }
 
-            if (search.suggestions) {
-              search.suggestions.hidden =
-                true;
-            }
 
-            renderProducts();
+            searchInput.setAttribute(
+              "aria-expanded",
+              "false"
+            );
           }
         }
       );
     }
 
 
-    if (
-      search &&
-      search.clear
-    ) {
+    if (searchClear) {
 
-      search.clear.addEventListener(
+      searchClear.addEventListener(
         "click",
         () => {
 
-          search.input.value =
+          if (!searchInput) {
+            return;
+          }
+
+
+          searchInput.value =
             "";
 
           searchTerm =
             "";
 
-          search.clear.hidden =
+
+          searchClear.hidden =
             true;
 
-          search.suggestions.hidden =
-            true;
+
+          if (suggestions) {
+
+            suggestions.hidden =
+              true;
+          }
+
 
           renderProducts();
 
-          search.input.focus();
+          searchInput.focus();
         }
       );
     }
 
 
-    if (
-      search &&
-      search.suggestions
-    ) {
+    if (suggestions) {
 
-      search.suggestions.addEventListener(
+      suggestions.addEventListener(
         "click",
         event => {
 
           const button =
             event.target.closest(
-              "[data-product-id]"
+              "[data-id]"
             );
 
 
@@ -1746,10 +2010,10 @@
 
 
           const product =
-            products.find(
+            homeProducts.find(
               item =>
                 item.id ===
-                button.dataset.productId
+                button.dataset.id
             );
 
 
@@ -1758,9 +2022,26 @@
           }
 
 
-          search.suggestions.hidden =
+          searchInput.value =
+            product.name;
+
+
+          searchTerm =
+            product.name;
+
+
+          if (searchClear) {
+
+            searchClear.hidden =
+              false;
+          }
+
+
+          suggestions.hidden =
             true;
 
+
+          renderProducts();
 
           openProductModal(
             product
@@ -1775,16 +2056,24 @@
       event => {
 
         if (
-          search &&
           !event.target.closest(
-            ".product-search"
+            "#productSearchBox"
           )
         ) {
 
-          if (search.suggestions) {
+          if (suggestions) {
 
-            search.suggestions.hidden =
+            suggestions.hidden =
               true;
+          }
+
+
+          if (searchInput) {
+
+            searchInput.setAttribute(
+              "aria-expanded",
+              "false"
+            );
           }
         }
       }
@@ -1792,7 +2081,7 @@
 
 
     /* =====================================================
-       INITIAL RENDER
+       RENDER
        ===================================================== */
 
     renderCategories();
@@ -1805,11 +2094,11 @@
   }
 
 
-  /* =======================================================
+  /* =========================================================
      PRODUCT MODAL
-     ======================================================= */
+     ========================================================= */
 
-  function ensureProductModal() {
+  function ensureModal() {
 
     let modal =
       document.getElementById(
@@ -1827,11 +2116,20 @@
         "div"
       );
 
+
     modal.id =
       "aboTarekProductModal";
 
+
     modal.className =
       "product-modal";
+
+
+    modal.setAttribute(
+      "aria-hidden",
+      "true"
+    );
+
 
     modal.innerHTML = `
 
@@ -1845,23 +2143,29 @@
         class="product-modal-dialog"
         role="dialog"
         aria-modal="true"
-        aria-labelledby="aboModalTitle"
+        aria-label="تفاصيل المنتج"
       >
 
         <button
           type="button"
           class="product-modal-close"
-          data-close-modal
           aria-label="إغلاق"
         >
           ×
         </button>
 
 
-        <div
-          id="aboModalImage"
-          class="product-modal-image"
-        >
+        <div class="product-modal-image-wrap">
+
+          <img
+            id="aboModalImage"
+            class="product-modal-image"
+            alt=""
+            width="700"
+            height="700"
+            decoding="async"
+          >
+
         </div>
 
 
@@ -1870,36 +2174,33 @@
           <span
             id="aboModalCategory"
             class="product-modal-category"
-          >
-          </span>
+          ></span>
 
 
-          <h2 id="aboModalTitle">
-          </h2>
+          <h2
+            id="aboModalName"
+          ></h2>
 
 
-          <div
+          <p
             id="aboModalDescription"
             class="product-modal-description"
-          >
-          </div>
+          ></p>
 
 
           <div
             id="aboModalPrice"
             class="modal-price-box"
-          >
-          </div>
+          ></div>
 
 
           <a
-            id="aboModalWhatsapp"
-            class="wa-btn large"
-            href="#"
+            id="aboModalWhatsApp"
+            class="product-whatsapp modal-whatsapp"
             target="_blank"
             rel="noopener"
           >
-            💬 اسأل عن المنتج على واتساب
+            💬 اسأل عن الصنف على واتساب
           </a>
 
         </div>
@@ -1914,29 +2215,29 @@
     );
 
 
+    const closeButton =
+      modal.querySelector(
+        ".product-modal-close"
+      );
+
+
+    if (closeButton) {
+
+      closeButton.addEventListener(
+        "click",
+        closeProductModal
+      );
+    }
+
+
     modal.addEventListener(
       "click",
       event => {
 
         if (
-          event.target.closest(
+          event.target.matches(
             "[data-close-modal]"
           )
-        ) {
-
-          closeProductModal();
-        }
-      }
-    );
-
-
-    document.addEventListener(
-      "keydown",
-      event => {
-
-        if (
-          event.key ===
-          "Escape"
         ) {
 
           closeProductModal();
@@ -1954,105 +2255,131 @@
   ) {
 
     const modal =
-      ensureProductModal();
+      ensureModal();
 
 
-    const imageBox =
+    const image =
       document.getElementById(
         "aboModalImage"
       );
 
-    const title =
-      document.getElementById(
-        "aboModalTitle"
-      );
 
     const category =
       document.getElementById(
         "aboModalCategory"
       );
 
+
+    const name =
+      document.getElementById(
+        "aboModalName"
+      );
+
+
     const description =
       document.getElementById(
         "aboModalDescription"
       );
+
 
     const price =
       document.getElementById(
         "aboModalPrice"
       );
 
+
     const whatsapp =
       document.getElementById(
-        "aboModalWhatsapp"
-      );
-
-
-    title.textContent =
-      product.name ||
-      "منتج";
-
-
-    category.textContent =
-      product.category ||
-      "";
-
-
-    description.textContent =
-      product.description ||
-      "لا يوجد وصف إضافي لهذا المنتج.";
-
-
-    price.innerHTML =
-      renderPrice(
-        product
-      );
-
-
-    whatsapp.href =
-      whatsappUrl(
-        product
+        "aboModalWhatsApp"
       );
 
 
     const sources =
       getImageSources(
-        product
+        product.image
       );
 
 
-    if (sources.length) {
+    if (image) {
 
-      imageBox.innerHTML = `
-        <img
-          src="${escapeHtml(sources[0])}"
-          alt="${escapeHtml(product.name)}"
-        >
-      `;
+      if (
+        sources.length
+      ) {
 
-    } else {
+        image.src =
+          sources[0];
 
-      imageBox.innerHTML = `
-        <div class="product-image-placeholder">
+        image.style.display =
+          "block";
 
-          <span
-            class="placeholder-icon"
-            aria-hidden="true"
-          >
-            ${escapeHtml(
-              categoryIcon(
-                product.category
-              )
-            )}
-          </span>
+        image.alt =
+          `صورة ${product.name}`;
 
-        </div>
-      `;
+      } else {
+
+        image.removeAttribute(
+          "src"
+        );
+
+        image.style.display =
+          "none";
+      }
+    }
+
+
+    if (category) {
+
+      category.textContent =
+        product.category;
+    }
+
+
+    if (name) {
+
+      name.textContent =
+        product.name;
+    }
+
+
+    if (description) {
+
+      description.textContent =
+        product.description ||
+        "للاستفسار عن تفاصيل الصنف، تواصل معنا على واتساب.";
+    }
+
+
+    if (price) {
+
+      price.innerHTML =
+        renderPrice(
+          product
+        );
+    }
+
+
+    if (whatsapp) {
+
+      whatsapp.href =
+        whatsappUrl(
+          product
+        );
     }
 
 
     modal.classList.add(
+      "show"
+    );
+
+
+    modal.classList.add(
       "open"
+    );
+
+
+    modal.setAttribute(
+      "aria-hidden",
+      "false"
     );
 
 
@@ -2061,21 +2388,8 @@
     );
 
 
-    setTimeout(
-      () => {
-
-        const close =
-          modal.querySelector(
-            ".product-modal-close"
-          );
-
-        if (close) {
-          close.focus();
-        }
-
-      },
-      50
-    );
+    document.body.style.overflow =
+      "hidden";
   }
 
 
@@ -2093,26 +2407,42 @@
 
 
     modal.classList.remove(
+      "show"
+    );
+
+
+    modal.classList.remove(
       "open"
+    );
+
+
+    modal.setAttribute(
+      "aria-hidden",
+      "true"
     );
 
 
     document.body.classList.remove(
       "modal-open"
     );
+
+
+    document.body.style.overflow =
+      "";
   }
 
 
-  /* =======================================================
+  /* =========================================================
      MOBILE NAV
-     ======================================================= */
+     ========================================================= */
 
   function initMobileNav() {
 
-    const menuBtn =
+    const menuButton =
       document.getElementById(
         "menuBtn"
       );
+
 
     const nav =
       document.getElementById(
@@ -2121,14 +2451,14 @@
 
 
     if (
-      !menuBtn ||
+      !menuButton ||
       !nav
     ) {
       return;
     }
 
 
-    menuBtn.addEventListener(
+    menuButton.addEventListener(
       "click",
       () => {
 
@@ -2138,7 +2468,7 @@
           );
 
 
-        menuBtn.setAttribute(
+        menuButton.setAttribute(
           "aria-expanded",
           opened
             ? "true"
@@ -2149,7 +2479,9 @@
 
 
     nav
-      .querySelectorAll("a")
+      .querySelectorAll(
+        "a"
+      )
       .forEach(
         link => {
 
@@ -2161,124 +2493,258 @@
                 "open"
               );
 
-              menuBtn.setAttribute(
+
+              menuButton.setAttribute(
                 "aria-expanded",
                 "false"
               );
-
             }
           );
-
         }
       );
+
+
+    document.addEventListener(
+      "click",
+      event => {
+
+        if (
+          !event.target.closest(
+            ".site-header"
+          )
+        ) {
+
+          nav.classList.remove(
+            "open"
+          );
+
+
+          menuButton.setAttribute(
+            "aria-expanded",
+            "false"
+          );
+        }
+      }
+    );
   }
 
 
-  /* =======================================================
-     START
-     ======================================================= */
+  /* =========================================================
+     ERROR
+     ========================================================= */
 
-  async function start() {
+  function showError() {
 
-    initMobileNav();
-
-    showLoading();
-
-
-    const cached =
-      readCache();
-
-
-    if (
-      cached &&
-      Array.isArray(
-        cached.products
-      )
-    ) {
-
-      const normalized =
-        cached.products
-          .map(
-            normalizeProduct
-          )
-          .filter(Boolean)
-          .filter(
-            product =>
-              product.active
-          );
-
-
-      initHomepage(
-        normalized
+    const grid =
+      document.getElementById(
+        "productsGrid"
       );
 
 
-      const cacheAge =
-        Date.now() -
-        Number(
-          cached.time || 0
-        );
+    if (!grid) {
+      return;
+    }
 
 
-      if (
-        cacheAge <
-        BACKGROUND_REFRESH_TIME
-      ) {
-        return;
-      }
+    grid.innerHTML = `
+
+      <div class="empty error-state">
+
+        <div class="empty-icon">
+          ⚠️
+        </div>
+
+
+        <h3>
+          تعذر تحميل الأصناف
+        </h3>
+
+
+        <p>
+          حصلت مشكلة أثناء الاتصال بالبيانات.
+          حاول تحديث الصفحة مرة تانية.
+        </p>
+
+
+        <button
+          type="button"
+          id="retryProducts"
+          class="primary-btn"
+        >
+          🔄 إعادة المحاولة
+        </button>
+
+      </div>
+
+    `;
+
+
+    const retry =
+      document.getElementById(
+        "retryProducts"
+      );
+
+
+    if (retry) {
+
+      retry.addEventListener(
+        "click",
+        () => {
+
+          try {
+
+            localStorage.removeItem(
+              CACHE_KEY
+            );
+
+          } catch (
+            error
+          ) {}
+
+
+          window.location.reload();
+        }
+      );
+    }
+  }
+
+
+  /* =========================================================
+     START
+     ========================================================= */
+
+  async function startApp() {
+
+    initMobileNav();
+
+
+    const homepage =
+      document.getElementById(
+        "productsGrid"
+      );
+
+
+    if (homepage) {
+
+      homepage.innerHTML = `
+
+        <div class="loading">
+
+          <span class="loading-spinner"></span>
+
+          جاري تحميل الأصناف...
+
+        </div>
+
+      `;
     }
 
 
     try {
 
+      const cached =
+        readCache();
+
+
+      if (
+        cached &&
+        Array.isArray(
+          cached.products
+        ) &&
+        cached.products.length
+      ) {
+
+        initHomepage(
+          cached.products
+        );
+
+
+        refreshInBackground();
+
+        return;
+      }
+
+
       const products =
-        await fetchProducts();
-
-
-      writeCache(
-        products
-      );
+        await getProducts(
+          true
+        );
 
 
       initHomepage(
         products
       );
 
-    } catch (error) {
+
+    } catch (
+      error
+    ) {
 
       console.error(
-        "Abo Tarek catalog error:",
+        "Abo Tarek Store error:",
         error
       );
 
 
+      const fallback =
+        readCache();
+
+
       if (
-        !cached ||
-        !Array.isArray(
-          cached.products
-        )
+        fallback &&
+        Array.isArray(
+          fallback.products
+        ) &&
+        fallback.products.length
       ) {
 
-        showError();
+        initHomepage(
+          fallback.products
+        );
+
+        return;
       }
+
+
+      showError();
     }
   }
 
 
-  /* =======================================================
-     GLOBAL EXPORTS
-     ======================================================= */
+  /* =========================================================
+     GLOBAL MODAL ACCESS
+     ========================================================= */
 
   window.openProductModal =
     openProductModal;
+
 
   window.closeProductModal =
     closeProductModal;
 
 
-  /* =======================================================
-     BOOT
-     ======================================================= */
+  /* =========================================================
+     KEYBOARD
+     ========================================================= */
+
+  document.addEventListener(
+    "keydown",
+    event => {
+
+      if (
+        event.key ===
+        "Escape"
+      ) {
+
+        closeProductModal();
+      }
+    }
+  );
+
+
+  /* =========================================================
+     RUN
+     ========================================================= */
 
   if (
     document.readyState ===
@@ -2287,7 +2753,7 @@
 
     document.addEventListener(
       "DOMContentLoaded",
-      start,
+      startApp,
       {
         once: true
       }
@@ -2295,7 +2761,7 @@
 
   } else {
 
-    start();
+    startApp();
   }
 
 })();
