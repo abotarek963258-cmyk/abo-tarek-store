@@ -17,21 +17,8 @@
 
   const WHATSAPP_NUMBER = "201551604163";
 
-  /*
-    الكاش يفضل موجود لفترة أطول.
-    الصفحة تعرضه فوراً، والتحديث يحصل في الخلفية.
-  */
   const CACHE_KEY = "abo_tarek_products_v10";
-
-  /*
-    30 دقيقة بدل 5 دقائق.
-    حتى لا نطلب Google Apps Script مع كل زيارة.
-  */
   const CACHE_TIME = 30 * 60 * 1000;
-
-  /*
-    تحديث البيانات في الخلفية بعد هذه المدة.
-  */
   const BACKGROUND_REFRESH_TIME = 10 * 60 * 1000;
 
   const CATEGORY_ICONS = {
@@ -118,24 +105,150 @@
 
 
   function isFlagEnabled(value, defaultValue) {
-    if (value === undefined || value === null || value === "") {
+    if (
+      value === undefined ||
+      value === null ||
+      value === ""
+    ) {
       return defaultValue;
     }
 
     if (value === true || value === 1) return true;
     if (value === false || value === 0) return false;
 
-    const text = normalizeArabic(value);
+    const text =
+      normalizeArabic(value);
 
-    if (["false", "0", "no", "off", "مخفي"].includes(text)) {
+    if (
+      [
+        "false",
+        "0",
+        "no",
+        "off",
+        "مخفي"
+      ].includes(text)
+    ) {
       return false;
     }
 
-    if (["true", "1", "yes", "on", "نعم", "ظاهر"].includes(text)) {
+    if (
+      [
+        "true",
+        "1",
+        "yes",
+        "on",
+        "نعم",
+        "ظاهر"
+      ].includes(text)
+    ) {
       return true;
     }
 
     return defaultValue;
+  }
+
+
+  /* =========================================================
+     PRICE HELPERS
+     ========================================================= */
+
+  function cleanPrice(value) {
+    const text = cleanText(value);
+
+    if (!text) {
+      return "";
+    }
+
+    return text;
+  }
+
+
+  function getOfferPrice(product) {
+    return cleanPrice(
+      product.offerPrice ??
+      product.OfferPrice ??
+      product.offer_price
+    );
+  }
+
+
+  function getOldPrice(product) {
+    return cleanPrice(
+      product.oldPrice ??
+      product.OldPrice ??
+      product.old_price
+    );
+  }
+
+
+  function getRegularPrice(product) {
+    return cleanPrice(
+      product.price ??
+      product.Price
+    );
+  }
+
+
+  function hasOfferPricing(product) {
+    return Boolean(
+      getOfferPrice(product) ||
+      getOldPrice(product)
+    );
+  }
+
+
+  function renderProductPricing(product) {
+    if (!product.isOffer) {
+      return "";
+    }
+
+    const offerPrice =
+      getOfferPrice(product);
+
+    const oldPrice =
+      getOldPrice(product);
+
+    const regularPrice =
+      getRegularPrice(product);
+
+    if (
+      !offerPrice &&
+      !oldPrice
+    ) {
+      return "";
+    }
+
+    return `
+      <div class="product-offer-pricing">
+
+        ${
+          oldPrice
+            ? `
+              <span class="product-old-price">
+                ${escapeHtml(oldPrice)}
+              </span>
+            `
+            : regularPrice
+              ? `
+                <span class="product-old-price">
+                  ${escapeHtml(regularPrice)}
+                </span>
+              `
+              : ""
+        }
+
+        ${
+          offerPrice
+            ? `
+              <span class="product-offer-price">
+                ${escapeHtml(offerPrice)}
+              </span>
+            `
+            : ""
+        }
+
+      </div>
+    `;
   }
 
 
@@ -328,6 +441,26 @@
         false
       );
 
+    const price =
+      cleanPrice(
+        p.price ??
+        p.Price
+      );
+
+    const oldPrice =
+      cleanPrice(
+        p.oldPrice ??
+        p.OldPrice ??
+        p.old_price
+      );
+
+    const offerPrice =
+      cleanPrice(
+        p.offerPrice ??
+        p.OfferPrice ??
+        p.offer_price
+      );
+
     return {
       id,
       name,
@@ -337,6 +470,9 @@
       active,
       showHome,
       isOffer,
+      price,
+      oldPrice,
+      offerPrice,
       searchIndex:
         normalizeArabic(
           `${name} ${category} ${description}`
@@ -353,12 +489,6 @@
 
 
   async function fetchProducts() {
-
-    /*
-      لا نستخدم Date.now هنا.
-      ذلك يسمح للمتصفح والاتصال بإعادة استخدام الطلب
-      قدر الإمكان.
-    */
 
     const response =
       await fetch(
@@ -432,11 +562,6 @@
     const cached =
       readCache();
 
-    /*
-      لو فيه كاش صالح:
-      رجعه فوراً بدون انتظار الشبكة.
-    */
-
     if (
       !forceRefresh &&
       cached &&
@@ -450,10 +575,6 @@
     ) {
       return cached.products;
     }
-
-    /*
-      منع أكثر من request في نفس الوقت.
-    */
 
     if (!productsPromise) {
 
@@ -491,10 +612,6 @@
     const cached =
       readCache();
 
-    /*
-      لو البيانات حديثة جداً، لا داعي للطلب.
-    */
-
     if (
       cached &&
       cached.time &&
@@ -517,6 +634,21 @@
               writeCache(
                 freshProducts
               );
+
+              /*
+                تحديث الصفحة بصريًا بعد وصول
+                البيانات الجديدة، حتى تظهر
+                تغييرات العروض بدون Reload.
+              */
+              if (
+                document.getElementById(
+                  "productsGrid"
+                )
+              ) {
+                initHomepage(
+                  freshProducts
+                );
+              }
 
               return freshProducts;
             }
@@ -552,6 +684,28 @@
     wrapper.className =
       "product-image";
 
+    /*
+      لو المنتج عرض:
+      نضيف طبقة العرض فوق الصورة.
+    */
+    if (product.isOffer) {
+
+      const offerBadge =
+        document.createElement(
+          "span"
+        );
+
+      offerBadge.className =
+        "product-offer-badge";
+
+      offerBadge.innerHTML =
+        "🔥 عرض مميز";
+
+      wrapper.appendChild(
+        offerBadge
+      );
+    }
+
     const sources =
       getImageSources(
         product.image
@@ -559,17 +713,27 @@
 
     if (!sources.length) {
 
-      wrapper.innerHTML = `
-        <div class="product-image-placeholder">
-          <span class="placeholder-icon">
-            ${escapeHtml(
-              categoryIcon(
-                product.category
-              )
-            )}
-          </span>
-        </div>
+      const placeholder =
+        document.createElement(
+          "div"
+        );
+
+      placeholder.className =
+        "product-image-placeholder";
+
+      placeholder.innerHTML = `
+        <span class="placeholder-icon">
+          ${escapeHtml(
+            categoryIcon(
+              product.category
+            )
+          )}
+        </span>
       `;
+
+      wrapper.appendChild(
+        placeholder
+      );
 
       return wrapper;
     }
@@ -590,20 +754,10 @@
     img.decoding =
       "async";
 
-    /*
-      الصور الأولى فقط يتم تحميلها فوراً.
-      باقي الصور Lazy.
-    */
-
     if (lazy) {
 
       img.loading =
         "lazy";
-
-      /*
-        إخبار المتصفح أن هذه الصورة
-        ليست أولوية.
-      */
 
       img.fetchPriority =
         "low";
@@ -624,17 +778,33 @@
       "error",
       () => {
 
-        wrapper.innerHTML = `
-          <div class="product-image-placeholder">
-            <span class="placeholder-icon">
-              ${escapeHtml(
-                categoryIcon(
-                  product.category
-                )
-              )}
-            </span>
-          </div>
+        const placeholder =
+          document.createElement(
+            "div"
+          );
+
+        placeholder.className =
+          "product-image-placeholder";
+
+        placeholder.innerHTML = `
+          <span class="placeholder-icon">
+            ${escapeHtml(
+              categoryIcon(
+                product.category
+              )
+            )}
+          </span>
         `;
+
+        wrapper
+          .querySelectorAll("img")
+          .forEach(imgEl =>
+            imgEl.remove()
+          );
+
+        wrapper.appendChild(
+          placeholder
+        );
 
       },
       {
@@ -669,12 +839,14 @@
 
     const homeProducts =
       products.filter(
-        product => product.showHome
+        product =>
+          product.showHome
       );
 
     const offerProducts =
       products.filter(
-        product => product.isOffer
+        product =>
+          product.isOffer
       );
 
     const offersSection =
@@ -890,15 +1062,22 @@
           "article"
         );
 
+      /*
+        إضافة class إضافية للعروض.
+        الـCSS سيستخدمها لتمييز الكارت.
+      */
       article.className =
-        "product";
+        product.isOffer
+          ? "product product-offer"
+          : "product";
 
       article.dataset.id =
         product.id;
 
-      /*
-        أول صورتين فقط أولوية عالية.
-      */
+      article.dataset.offer =
+        product.isOffer
+          ? "true"
+          : "false";
 
       article.appendChild(
         createProductImage(
@@ -916,24 +1095,14 @@
         "product-body";
 
       body.innerHTML = `
+
         ${
           product.isOffer
             ? `
-              <span style="
-                display:inline-flex;
-                align-items:center;
-                gap:5px;
-                width:max-content;
-                margin-bottom:8px;
-                padding:4px 9px;
-                border-radius:999px;
-                background:#fff3cd;
-                color:#8a5a00;
-                font-size:12px;
-                font-weight:800;
-              ">
-                🔥 عرض
-              </span>
+              <div class="product-offer-label">
+                <span>🔥</span>
+                <strong>عرض مميز</strong>
+              </div>
             `
             : ""
         }
@@ -956,7 +1125,9 @@
               <p class="product-description-short">
                 ${escapeHtml(
                   product.description.length > 120
-                    ? product.description.slice(0, 120).trimEnd() + "..."
+                    ? product.description
+                        .slice(0, 120)
+                        .trimEnd() + "..."
                     : product.description
                 )}
               </p>
@@ -977,6 +1148,8 @@
             `
             : ""
         }
+
+        ${renderProductPricing(product)}
 
         <div class="product-footer">
           <a
@@ -1003,21 +1176,34 @@
         "click",
         event => {
 
-          if (event.target.closest("a")) {
+          if (
+            event.target.closest(
+              "a"
+            )
+          ) {
             return;
           }
 
           const detailsButton =
-            event.target.closest(".product-details-trigger");
+            event.target.closest(
+              ".product-details-trigger"
+            );
 
           if (detailsButton) {
+
             event.preventDefault();
             event.stopPropagation();
-            openProductModal(product);
+
+            openProductModal(
+              product
+            );
+
             return;
           }
 
-          openProductModal(product);
+          openProductModal(
+            product
+          );
         }
       );
 
@@ -1085,13 +1271,23 @@
 
     function renderOffers() {
 
-      if (!offersGrid || !offersSection) {
+      if (
+        !offersGrid ||
+        !offersSection
+      ) {
         return;
       }
 
-      if (!offerProducts.length) {
-        offersGrid.innerHTML = "";
-        offersSection.hidden = true;
+      if (
+        !offerProducts.length
+      ) {
+
+        offersGrid.innerHTML =
+          "";
+
+        offersSection.hidden =
+          true;
+
         return;
       }
 
@@ -1100,12 +1296,14 @@
 
       offerProducts.forEach(
         (product, index) => {
+
           fragment.appendChild(
             createProductCard(
               product,
               index
             )
           );
+
         }
       );
 
@@ -1113,7 +1311,8 @@
         fragment
       );
 
-      offersSection.hidden = false;
+      offersSection.hidden =
+        false;
     }
 
 
@@ -1573,6 +1772,14 @@
           <div class="modal-product-info">
 
             <span
+              id="aboModalOffer"
+              class="product-modal-offer"
+              hidden
+            >
+              🔥 عرض مميز
+            </span>
+
+            <span
               id="aboModalCategory"
               class="product-category"
             ></span>
@@ -1580,6 +1787,12 @@
             <h2
               id="aboModalName"
             ></h2>
+
+            <div
+              id="aboModalPricing"
+              class="product-modal-pricing"
+              hidden
+            ></div>
 
             <p
               id="aboModalDescription"
@@ -1644,6 +1857,11 @@
         "aboModalImage"
       );
 
+    const offer =
+      document.getElementById(
+        "aboModalOffer"
+      );
+
     const category =
       document.getElementById(
         "aboModalCategory"
@@ -1652,6 +1870,11 @@
     const name =
       document.getElementById(
         "aboModalName"
+      );
+
+    const pricing =
+      document.getElementById(
+        "aboModalPricing"
       );
 
     const description =
@@ -1699,15 +1922,51 @@
       }
     }
 
+
+    if (offer) {
+
+      offer.hidden =
+        !product.isOffer;
+    }
+
+
     if (category) {
       category.textContent =
         product.category;
     }
 
+
     if (name) {
       name.textContent =
         product.name;
     }
+
+
+    if (pricing) {
+
+      const pricingHtml =
+        renderProductPricing(
+          product
+        );
+
+      if (pricingHtml) {
+
+        pricing.innerHTML =
+          pricingHtml;
+
+        pricing.hidden =
+          false;
+
+      } else {
+
+        pricing.innerHTML =
+          "";
+
+        pricing.hidden =
+          true;
+      }
+    }
+
 
     if (description) {
 
@@ -1716,6 +1975,7 @@
         "للاستفسار عن تفاصيل الصنف، تواصل معنا على واتساب.";
     }
 
+
     if (whatsapp) {
 
       whatsapp.href =
@@ -1723,6 +1983,7 @@
           product
         );
     }
+
 
     modal.classList.add(
       "show"
@@ -1932,18 +2193,9 @@
         cached.products.length
       ) {
 
-        /*
-          عرض الصفحة فوراً.
-        */
-
         initHomepage(
           cached.products
         );
-
-        /*
-          تحديث صامت في الخلفية.
-          المستخدم لا ينتظر Google Apps Script.
-        */
 
         refreshInBackground();
 
@@ -1972,11 +2224,6 @@
         "Abo Tarek Store error:",
         error
       );
-
-      /*
-        لو فشل الطلب ولكن يوجد كاش قديم،
-        نستخدمه بدلاً من إظهار خطأ.
-      */
 
       const fallback =
         readCache();
