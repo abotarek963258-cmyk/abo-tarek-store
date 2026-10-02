@@ -1,4 +1,3 @@
-```html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -41,7 +40,9 @@
       box-shadow: 0 4px 15px rgba(0,0,0,.07);
     }
 
-    h2 { margin-top: 0; }
+    h2 {
+      margin-top: 0;
+    }
 
     label {
       display: block;
@@ -78,12 +79,35 @@
       cursor: not-allowed;
     }
 
-    .primary { background: #14263d; color: white; }
-    .edit { background: #e8eef5; color: #14263d; }
-    .toggle { background: #fff3cd; color: #664d03; }
-    .delete { background: #f8d7da; color: #842029; }
-    .green { background: #d1e7dd; color: #0f5132; }
-    .gray { background: #eef1f4; color: #333; }
+    .primary {
+      background: #14263d;
+      color: white;
+    }
+
+    .edit {
+      background: #e8eef5;
+      color: #14263d;
+    }
+
+    .toggle {
+      background: #fff3cd;
+      color: #664d03;
+    }
+
+    .delete {
+      background: #f8d7da;
+      color: #842029;
+    }
+
+    .green {
+      background: #d1e7dd;
+      color: #0f5132;
+    }
+
+    .gray {
+      background: #eef1f4;
+      color: #333;
+    }
 
     .dashboard {
       display: grid;
@@ -172,9 +196,6 @@
 
     .actions {
       margin-top: 10px;
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
     }
 
     #message {
@@ -260,6 +281,39 @@
       display: none !important;
     }
 
+    .price-box {
+      margin-top: 14px;
+      padding: 14px;
+      border: 1px solid #e2e6ea;
+      border-radius: 12px;
+      background: #fafbfc;
+    }
+
+    .price-box strong {
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .visibility-box {
+      margin-top: 14px;
+      padding: 14px;
+      border: 1px solid #e2e6ea;
+      border-radius: 12px;
+      background: #fafbfc;
+    }
+
+    .check-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 8px 0;
+      cursor: pointer;
+    }
+
+    .check-label input {
+      width: auto;
+    }
+
     @media (max-width: 800px) {
       .dashboard {
         grid-template-columns: repeat(2, 1fr);
@@ -313,14 +367,21 @@
     <h2>دخول الإدارة</h2>
 
     <label>مفتاح الإدارة</label>
-    <input id="key" type="password" placeholder="اكتب مفتاح الإدارة">
+    <input
+      id="key"
+      type="password"
+      placeholder="اكتب مفتاح الإدارة"
+    >
 
-    <button class="primary" onclick="login()">دخول</button>
+    <button class="primary" onclick="login()">
+      دخول
+    </button>
   </section>
 
   <div id="adminArea" class="hidden">
 
     <section class="dashboard">
+
       <div class="stat">
         إجمالي المنتجات
         <strong id="statProducts">0</strong>
@@ -340,138 +401,341 @@
         الأقسام
         <strong id="statSections">0</strong>
       </div>
+
     </section>
 
+
+    <!-- ================= الأقسام ================= -->
+
     <section class="card">
+
       <h2>📁 إدارة الأقسام</h2>
 
       <p class="muted">
         أضف الأقسام أو عدّل أسماءها ورتّبها.
+        عند تغيير اسم القسم يتم تحديث المنتجات المرتبطة به تلقائيًا.
       </p>
 
       <label>اسم القسم</label>
-      <input id="sectionName" type="text" placeholder="مثال: أواني الطهي">
 
-      <input id="sectionId" type="hidden">
+      <input
+        id="sectionName"
+        type="text"
+        placeholder="مثال: أواني الطهي"
+      >
 
-      <button class="primary" id="sectionSaveBtn" onclick="saveSection()">
+      <input
+        id="sectionId"
+        type="hidden"
+      >
+
+      <button
+        class="primary"
+        id="sectionSaveBtn"
+        onclick="saveSection()"
+      >
         إضافة قسم
       </button>
 
-      <button class="gray hidden" id="sectionCancelBtn" onclick="clearSectionForm()">
+      <button
+        class="gray hidden"
+        id="sectionCancelBtn"
+        onclick="clearSectionForm()"
+      >
         إلغاء
       </button>
 
-      <div id="sections" class="section-list" style="margin-top:15px;">
+      <div
+        id="sections"
+        class="section-list"
+        style="margin-top:15px;"
+      >
         جاري تحميل الأقسام...
       </div>
+
     </section>
 
+
+    <!-- ================= الإعدادات ================= -->
+
     <section class="card">
+
       <h2>⚙️ إعدادات الإدارة</h2>
 
       <p class="muted">
-        غيّر مفتاح الإدارة من هنا.
+        غيّر مفتاح الإدارة من هنا بدون تعديل الكود أو إعادة النشر.
+        يجب أن تكون مسجّلًا بالمفتاح الحالي.
       </p>
 
       <label>مفتاح الإدارة الجديد</label>
-      <input id="newAdminKey" type="password" placeholder="اكتب المفتاح الجديد">
+
+      <input
+        id="newAdminKey"
+        type="password"
+        placeholder="اكتب المفتاح الجديد"
+      >
 
       <label>تأكيد المفتاح الجديد</label>
-      <input id="confirmAdminKey" type="password" placeholder="أعد كتابة المفتاح الجديد">
 
-      <button class="primary" onclick="changeAdminKey()">
+      <input
+        id="confirmAdminKey"
+        type="password"
+        placeholder="أعد كتابة المفتاح الجديد"
+      >
+
+      <button
+        class="primary"
+        onclick="changeAdminKey()"
+      >
         حفظ المفتاح الجديد
       </button>
+
     </section>
+
+
+    <!-- ================= المنتج ================= -->
 
     <section class="card" id="formCard">
 
-      <h2 id="formTitle">إضافة منتج جديد</h2>
+      <h2 id="formTitle">
+        إضافة منتج جديد
+      </h2>
 
-      <input type="hidden" id="productId">
+      <input
+        type="hidden"
+        id="productId"
+      >
 
       <label>اسم المنتج</label>
-      <input id="name" type="text" placeholder="مثال: طقم كوبايات">
+
+      <input
+        id="name"
+        type="text"
+        placeholder="مثال: طقم كوبايات"
+      >
 
       <label>القسم</label>
+
       <select id="category">
-        <option value="">اختر القسم</option>
+        <option value="">
+          اختر القسم
+        </option>
       </select>
 
       <label>صورة المنتج</label>
-      <input id="imageFile" type="file" accept="image/*">
+
+      <input
+        id="imageFile"
+        type="file"
+        accept="image/*"
+      >
 
       <div class="upload-note">
         اختار الصورة مباشرة من جهازك.
       </div>
 
-      <div id="imagePreview" class="image-preview">
-        <img id="previewImg" src="" alt="معاينة الصورة">
-        <div id="imageName" class="image-name"></div>
+      <div
+        id="imagePreview"
+        class="image-preview"
+      >
+
+        <img
+          id="previewImg"
+          src=""
+          alt="معاينة الصورة"
+        >
+
+        <div
+          id="imageName"
+          class="image-name"
+        ></div>
+
       </div>
 
-      <label>الوصف</label>
-      <textarea id="description" placeholder="اكتب وصف المنتج"></textarea>
 
-      <div style="margin-top:14px;padding:14px;border:1px solid #e2e6ea;border-radius:12px;background:#fafbfc;">
-        <strong style="display:block;margin-bottom:10px;">
+      <label>الوصف</label>
+
+      <textarea
+        id="description"
+        placeholder="اكتب وصف المنتج"
+      ></textarea>
+
+
+      <!-- ================= الأسعار ================= -->
+
+      <div class="price-box">
+
+        <strong>
+          💰 الأسعار — مجهزة للمستقبل
+        </strong>
+
+        <p class="muted">
+          الأسعار تُحفظ في قاعدة البيانات حاليًا ولن تظهر للعملاء على الموقع.
+        </p>
+
+        <label>
+          السعر الأساسي
+        </label>
+
+        <input
+          id="price"
+          type="number"
+          min="0"
+          step="0.01"
+          placeholder="مثال: 250"
+        >
+
+        <label>
+          السعر القديم
+        </label>
+
+        <input
+          id="oldPrice"
+          type="number"
+          min="0"
+          step="0.01"
+          placeholder="اختياري"
+        >
+
+        <label>
+          سعر العرض
+        </label>
+
+        <input
+          id="offerPrice"
+          type="number"
+          min="0"
+          step="0.01"
+          placeholder="اختياري"
+        >
+
+      </div>
+
+
+      <!-- ================= الظهور ================= -->
+
+      <div class="visibility-box">
+
+        <strong>
           📌 ظهور المنتج
         </strong>
 
-        <label style="display:flex;align-items:center;gap:8px;margin:8px 0;cursor:pointer;">
-          <input id="showHome" type="checkbox" checked style="width:auto;">
-          <span>عرض المنتج في الصفحة الرئيسية</span>
+        <label class="check-label">
+
+          <input
+            id="showHome"
+            type="checkbox"
+            checked
+          >
+
+          <span>
+            عرض المنتج في الصفحة الرئيسية
+          </span>
+
         </label>
 
-        <label style="display:flex;align-items:center;gap:8px;margin:8px 0;cursor:pointer;">
-          <input id="isOffer" type="checkbox" style="width:auto;">
-          <span>إظهار المنتج في قسم العروض</span>
+        <label class="check-label">
+
+          <input
+            id="isOffer"
+            type="checkbox"
+          >
+
+          <span>
+            إظهار المنتج في قسم العروض
+          </span>
+
         </label>
+
       </div>
 
-      <button class="primary" id="saveBtn" onclick="saveProduct()">
+
+      <button
+        class="primary"
+        id="saveBtn"
+        onclick="saveProduct()"
+      >
         حفظ المنتج
       </button>
 
-      <button class="edit" onclick="cancelEdit()" id="cancelBtn" style="display:none">
+      <button
+        class="edit"
+        onclick="cancelEdit()"
+        id="cancelBtn"
+        style="display:none"
+      >
         إلغاء التعديل
       </button>
+
     </section>
 
+
+    <!-- ================= المنتجات ================= -->
+
     <section class="card">
-      <h2>📦 إدارة المنتجات</h2>
+
+      <h2>
+        📦 إدارة المنتجات
+      </h2>
 
       <div class="toolbar">
+
         <div>
-          <label>بحث</label>
+
+          <label>
+            بحث
+          </label>
+
           <input
             id="searchInput"
             type="text"
             placeholder="ابحث باسم المنتج أو الوصف..."
             oninput="renderProducts()"
           >
+
         </div>
 
         <div>
-          <label>القسم</label>
-          <select id="filterCategory" onchange="renderProducts()">
-            <option value="">كل الأقسام</option>
+
+          <label>
+            القسم
+          </label>
+
+          <select
+            id="filterCategory"
+            onchange="renderProducts()"
+          >
+
+            <option value="">
+              كل الأقسام
+            </option>
+
           </select>
+
         </div>
 
-        <button class="gray" onclick="resetFilters()">
+        <button
+          class="gray"
+          onclick="resetFilters()"
+        >
           إعادة ضبط
         </button>
+
       </div>
 
-      <div id="products" class="products">
+      <div
+        id="products"
+        class="products"
+      >
         جاري تحميل المنتجات...
       </div>
+
     </section>
 
   </div>
+
 </main>
+
 
 <script>
 
@@ -484,36 +748,57 @@ let sections = [];
 
 
 function showMessage(text, type) {
-  const el = document.getElementById("message");
-  el.textContent = text;
-  el.className = type;
+
+  const el =
+    document.getElementById("message");
+
+  el.textContent =
+    text || "";
+
+  el.className =
+    type || "";
+
 }
 
 
 async function api(action, extra = {}) {
 
-  const response = await fetch(API_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "text/plain;charset=utf-8"
-    },
-    body: JSON.stringify({
-      key: ADMIN_KEY,
-      action: action,
-      ...extra
-    })
-  });
+  const response =
+    await fetch(
+      API_URL,
+      {
+        method: "POST",
 
-  const raw = await response.text();
+        headers: {
+          "Content-Type":
+            "text/plain;charset=utf-8"
+        },
+
+        body: JSON.stringify({
+          key: ADMIN_KEY,
+          action: action,
+          ...extra
+        })
+      }
+    );
+
+  const raw =
+    await response.text();
 
   let data;
 
   try {
-    data = JSON.parse(raw);
+
+    data =
+      JSON.parse(raw);
+
   } catch (e) {
+
     throw new Error(
-      "رد غير صالح من السيرفر: " + raw.slice(0, 300)
+      "رد غير صالح من السيرفر: " +
+      raw.slice(0, 300)
     );
+
   }
 
   return data;
@@ -523,28 +808,40 @@ async function api(action, extra = {}) {
 async function login() {
 
   const key =
-    document.getElementById("key").value.trim();
+    document
+      .getElementById("key")
+      .value
+      .trim();
 
   if (!key) {
+
     showMessage(
       "اكتب مفتاح الإدارة أولًا.",
       "error"
     );
+
     return;
   }
 
-  ADMIN_KEY = key;
+  ADMIN_KEY =
+    key;
 
   try {
 
-    const data = await api("list");
+    const data =
+      await api("list");
 
-    if (!data || data.ok === false) {
+    if (
+      !data ||
+      data.ok === false
+    ) {
 
-      ADMIN_KEY = "";
+      ADMIN_KEY =
+        "";
 
       showMessage(
-        data && data.error === "unauthorized"
+        data &&
+        data.error === "unauthorized"
           ? "مفتاح الإدارة غير صحيح."
           : "تعذر تحميل بيانات الإدارة.",
         "error"
@@ -553,17 +850,24 @@ async function login() {
       return;
     }
 
-    document.getElementById("loginCard").style.display = "none";
-    document.getElementById("adminArea").classList.remove("hidden");
+    document
+      .getElementById("loginCard")
+      .style.display =
+      "none";
+
+    document
+      .getElementById("adminArea")
+      .classList
+      .remove("hidden");
 
     products =
       Array.isArray(data)
         ? data
         : (
-          Array.isArray(data.products)
-            ? data.products
-            : []
-        );
+            Array.isArray(data.products)
+              ? data.products
+              : []
+          );
 
     await loadSections();
 
@@ -576,7 +880,8 @@ async function login() {
 
   } catch (error) {
 
-    ADMIN_KEY = "";
+    ADMIN_KEY =
+      "";
 
     showMessage(
       "حصل خطأ في الاتصال بالسيرفر.",
@@ -584,45 +889,55 @@ async function login() {
     );
 
     console.error(error);
+
   }
+
 }
 
 
 async function loadSections() {
 
-  const data = await api("listSections");
+  const data =
+    await api("listSections");
 
-  if (!data || data.ok === false) {
+  if (
+    !data ||
+    data.ok === false
+  ) {
+
     throw new Error(
-      data && data.error
-        ? data.error
-        : "تعذر تحميل الأقسام."
+      data &&
+      data.error ||
+      "تعذر تحميل الأقسام."
     );
+
   }
 
   const list =
     Array.isArray(data)
       ? data
       : (
-        Array.isArray(data.sections)
-          ? data.sections
-          : []
-      );
+          Array.isArray(data.sections)
+            ? data.sections
+            : []
+        );
 
-  sections = list.filter(function(section) {
-    return String(section.active).toLowerCase() !== "false";
-  });
+  sections =
+    list;
 
   renderSectionControls();
   renderSections();
+
 }
 
 
 function renderAll() {
+
   renderDashboard();
   renderSectionControls();
   renderSections();
   renderProducts();
+
 }
 
 
@@ -630,20 +945,35 @@ function renderDashboard() {
 
   const active =
     products.filter(function(p) {
-      return String(p.active).toLowerCase() !== "false";
+
+      return (
+        String(p.active)
+          .toLowerCase() !==
+        "false"
+      );
+
     }).length;
 
-  document.getElementById("statProducts").textContent =
+  document
+    .getElementById("statProducts")
+    .textContent =
     products.length;
 
-  document.getElementById("statActive").textContent =
+  document
+    .getElementById("statActive")
+    .textContent =
     active;
 
-  document.getElementById("statInactive").textContent =
+  document
+    .getElementById("statInactive")
+    .textContent =
     products.length - active;
 
-  document.getElementById("statSections").textContent =
+  document
+    .getElementById("statSections")
+    .textContent =
     sections.length;
+
 }
 
 
@@ -661,49 +991,77 @@ function renderSectionControls() {
   const selectedFilter =
     filter.value;
 
-  category.innerHTML =
-    '<option value="">اختر القسم</option>' +
-    sections.map(function(section) {
+  const activeSections =
+    sections.filter(function(section) {
 
       return (
-        '<option value="' +
-        escapeHtml(section.name) +
-        '">' +
-        escapeHtml(section.name) +
-        '</option>'
+        String(section.active)
+          .toLowerCase() !==
+        "false"
       );
 
-    }).join("");
+    });
+
+
+  category.innerHTML =
+    '<option value="">اختر القسم</option>' +
+
+    activeSections
+      .map(function(section) {
+
+        return (
+          '<option value="' +
+          escapeHtml(section.name) +
+          '">' +
+          escapeHtml(section.name) +
+          '</option>'
+        );
+
+      })
+      .join("");
+
 
   filter.innerHTML =
     '<option value="">كل الأقسام</option>' +
-    sections.map(function(section) {
 
-      return (
-        '<option value="' +
-        escapeHtml(section.name) +
-        '">' +
-        escapeHtml(section.name) +
-        '</option>'
-      );
+    activeSections
+      .map(function(section) {
 
-    }).join("");
+        return (
+          '<option value="' +
+          escapeHtml(section.name) +
+          '">' +
+          escapeHtml(section.name) +
+          '</option>'
+        );
 
-  if (
-    sections.some(
-      s => s.name === selectedCategory
-    )
-  ) {
-    category.value = selectedCategory;
-  }
+      })
+      .join("");
+
 
   if (
-    sections.some(
-      s => s.name === selectedFilter
-    )
+    sections.some(function(s) {
+      return s.name === selectedCategory;
+    })
   ) {
-    filter.value = selectedFilter;
+
+    category.value =
+      selectedCategory;
+
   }
+
+
+  if (
+    sections.some(function(s) {
+      return s.name === selectedFilter;
+    })
+  ) {
+
+    filter.value =
+      selectedFilter;
+
+  }
+
 }
 
 
@@ -715,101 +1073,124 @@ function renderSections() {
   if (!sections.length) {
 
     el.innerHTML =
-      "<p>لا توجد أقسام حاليًا.</p>";
+      "<p>لا توجد أقسام حاليًا. أضف أول قسم من الخانة أعلاه.</p>";
 
     return;
   }
 
+
   el.innerHTML =
-    sections.map(function(section, index) {
+    sections
+      .map(function(section, index) {
 
-      const count =
-        products.filter(function(product) {
+        const count =
+          products.filter(function(product) {
 
-          return String(
-            product.category || ""
-          ).trim() ===
-          String(
-            section.name || ""
-          ).trim();
+            return (
+              String(product.category || "")
+                .trim() ===
+              String(section.name || "")
+                .trim()
+            );
 
-        }).length;
+          }).length;
 
-      const active =
-        String(section.active).toLowerCase() !== "false";
+        const active =
+          String(section.active)
+            .toLowerCase() !==
+          "false";
 
-      return `
-        <div class="section-item">
 
-          <div class="order-number">
-            ${index + 1}
-          </div>
+        return `
 
-          <div>
-            <strong>
-              ${escapeHtml(section.name)}
-            </strong>
+          <div class="section-item">
 
-            <div class="muted">
-              ${count} منتج
+            <div class="order-number">
+              ${index + 1}
             </div>
+
+            <div>
+
+              <strong>
+                ${escapeHtml(section.name)}
+              </strong>
+
+              <div class="muted">
+                ${count} منتج
+              </div>
+
+              <span class="status ${active ? "active" : "inactive"}">
+                ${active ? "ظاهر على الموقع" : "مخفي من الموقع"}
+              </span>
+
+            </div>
+
+            <div class="section-actions">
+
+              <button
+                class="edit"
+                onclick="editSection('${escapeJs(section.id)}')"
+              >
+                تعديل
+              </button>
+
+              <button
+                class="gray"
+                onclick="moveSection('${escapeJs(section.id)}', -1)"
+              >
+                ↑
+              </button>
+
+              <button
+                class="gray"
+                onclick="moveSection('${escapeJs(section.id)}', 1)"
+              >
+                ↓
+              </button>
+
+              <button
+                class="toggle"
+                onclick="toggleSection('${escapeJs(section.id)}', ${active})"
+              >
+                ${active ? "إخفاء" : "إظهار"}
+              </button>
+
+              <button
+                class="delete"
+                onclick="deleteSection('${escapeJs(section.id)}')"
+              >
+                حذف
+              </button>
+
+            </div>
+
           </div>
 
-          <div class="section-actions">
+        `;
 
-            <button
-              class="edit"
-              onclick="editSection('${escapeJs(section.id)}')"
-            >
-              تعديل
-            </button>
+      })
+      .join("");
 
-            <button
-              class="gray"
-              onclick="moveSection('${escapeJs(section.id)}', -1)"
-            >
-              ↑
-            </button>
-
-            <button
-              class="gray"
-              onclick="moveSection('${escapeJs(section.id)}', 1)"
-            >
-              ↓
-            </button>
-
-            <button
-              class="toggle"
-              onclick="toggleSection('${escapeJs(section.id)}', ${active})"
-            >
-              ${active ? "إخفاء" : "إظهار"}
-            </button>
-
-            <button
-              class="delete"
-              onclick="deleteSection('${escapeJs(section.id)}')"
-            >
-              حذف
-            </button>
-
-          </div>
-        </div>
-      `;
-
-    }).join("");
 }
 
 
 async function saveSection() {
 
   const id =
-    document.getElementById("sectionId").value;
+    document
+      .getElementById("sectionId")
+      .value;
 
   const name =
-    document.getElementById("sectionName").value.trim();
+    document
+      .getElementById("sectionName")
+      .value
+      .trim();
 
   const btn =
-    document.getElementById("sectionSaveBtn");
+    document
+      .getElementById("sectionSaveBtn");
+
 
   if (!name) {
 
@@ -821,16 +1202,22 @@ async function saveSection() {
     return;
   }
 
+
   try {
 
-    btn.disabled = true;
-    btn.textContent = "جاري الحفظ...";
+    btn.disabled =
+      true;
+
+    btn.textContent =
+      "جاري الحفظ...";
+
 
     const data =
       await api(
         id
           ? "editSection"
           : "addSection",
+
         id
           ? {
               id: id,
@@ -845,42 +1232,62 @@ async function saveSection() {
             }
       );
 
+
     if (!data.ok) {
+
+      if (
+        data.error ===
+        "section_exists"
+      ) {
+
+        throw new Error(
+          "القسم موجود بالفعل."
+        );
+
+      }
 
       throw new Error(
         data.error ||
         "تعذر حفظ القسم."
       );
+
     }
+
 
     showMessage(
       id
-        ? "تم تعديل القسم."
+        ? "تم تعديل القسم والمنتجات المرتبطة به."
         : "تم إضافة القسم.",
       "success"
     );
+
 
     clearSectionForm();
 
     await loadSections();
     await loadProducts();
 
+
   } catch (error) {
 
     showMessage(
-      "حصل خطأ: " + error.message,
+      "حصل خطأ: " +
+      error.message,
       "error"
     );
 
   } finally {
 
-    btn.disabled = false;
+    btn.disabled =
+      false;
 
     btn.textContent =
       id
         ? "تعديل القسم"
         : "إضافة قسم";
+
   }
+
 }
 
 
@@ -888,41 +1295,69 @@ function editSection(id) {
 
   const section =
     sections.find(function(item) {
-      return String(item.id) === String(id);
+
+      return (
+        String(item.id) ===
+        String(id)
+      );
+
     });
 
   if (!section) return;
 
-  document.getElementById("sectionId").value =
+
+  document
+    .getElementById("sectionId")
+    .value =
     section.id;
 
-  document.getElementById("sectionName").value =
+  document
+    .getElementById("sectionName")
+    .value =
     section.name;
 
-  document.getElementById("sectionSaveBtn").textContent =
+
+  document
+    .getElementById("sectionSaveBtn")
+    .textContent =
     "تعديل القسم";
+
 
   document
     .getElementById("sectionCancelBtn")
-    .classList.remove("hidden");
+    .classList
+    .remove("hidden");
+
 
   document
     .getElementById("sectionName")
     .focus();
+
 }
 
 
 function clearSectionForm() {
 
-  document.getElementById("sectionId").value = "";
-  document.getElementById("sectionName").value = "";
+  document
+    .getElementById("sectionId")
+    .value =
+    "";
 
-  document.getElementById("sectionSaveBtn").textContent =
+  document
+    .getElementById("sectionName")
+    .value =
+    "";
+
+  document
+    .getElementById("sectionSaveBtn")
+    .textContent =
     "إضافة قسم";
 
   document
     .getElementById("sectionCancelBtn")
-    .classList.add("hidden");
+    .classList
+    .add("hidden");
+
 }
 
 
@@ -940,10 +1375,12 @@ async function toggleSection(id, active) {
       );
 
     if (!data.ok) {
+
       throw new Error(
         data.error ||
         "تعذر تغيير حالة القسم."
       );
+
     }
 
     await loadSections();
@@ -960,10 +1397,13 @@ async function toggleSection(id, active) {
   } catch (error) {
 
     showMessage(
-      "حصل خطأ: " + error.message,
+      "حصل خطأ: " +
+      error.message,
       "error"
     );
+
   }
+
 }
 
 
@@ -971,32 +1411,44 @@ async function deleteSection(id) {
 
   const section =
     sections.find(function(item) {
-      return String(item.id) === String(id);
+
+      return (
+        String(item.id) ===
+        String(id)
+      );
+
     });
 
   if (!section) return;
 
+
   const count =
     products.filter(function(product) {
-      return String(
-        product.category || ""
-      ).trim() ===
-      String(
-        section.name || ""
-      ).trim();
+
+      return (
+        String(product.category || "")
+          .trim() ===
+        String(section.name || "")
+          .trim()
+      );
+
     }).length;
+
 
   if (count > 0) {
 
     showMessage(
-      "لا يمكن حذف القسم لأنه يحتوي على " +
+      "لا يمكن حذف القسم \"" +
+      section.name +
+      "\" لأنه يحتوي على " +
       count +
-      " منتج.",
+      " منتج. انقل المنتجات لقسم آخر أولًا.",
       "error"
     );
 
     return;
   }
+
 
   if (
     !confirm(
@@ -1005,8 +1457,11 @@ async function deleteSection(id) {
       "\"؟"
     )
   ) {
+
     return;
+
   }
+
 
   try {
 
@@ -1018,12 +1473,21 @@ async function deleteSection(id) {
         }
       );
 
+
     if (!data.ok) {
+
       throw new Error(
-        data.error ||
-        "تعذر حذف القسم."
+        data.error ===
+        "section_has_products"
+          ? "القسم يحتوي على منتجات."
+          : (
+              data.error ||
+              "تعذر حذف القسم."
+            )
       );
+
     }
+
 
     showMessage(
       "تم حذف القسم.",
@@ -1034,13 +1498,17 @@ async function deleteSection(id) {
 
     renderDashboard();
 
+
   } catch (error) {
 
     showMessage(
-      "حصل خطأ: " + error.message,
+      "حصل خطأ: " +
+      error.message,
       "error"
     );
+
   }
+
 }
 
 
@@ -1048,19 +1516,29 @@ async function moveSection(id, direction) {
 
   const index =
     sections.findIndex(function(item) {
-      return String(item.id) === String(id);
+
+      return (
+        String(item.id) ===
+        String(id)
+      );
+
     });
+
 
   const newIndex =
     index + direction;
+
 
   if (
     index < 0 ||
     newIndex < 0 ||
     newIndex >= sections.length
   ) {
+
     return;
+
   }
+
 
   const reordered =
     sections.slice();
@@ -1074,24 +1552,30 @@ async function moveSection(id, direction) {
   reordered[newIndex] =
     temp;
 
+
   try {
 
     const data =
       await api(
         "reorderSections",
         {
-          ids: reordered.map(function(section) {
-            return section.id;
-          })
+          ids:
+            reordered.map(function(section) {
+              return section.id;
+            })
         }
       );
 
+
     if (!data.ok) {
+
       throw new Error(
         data.error ||
         "تعذر ترتيب الأقسام."
       );
+
     }
+
 
     sections =
       reordered;
@@ -1100,6 +1584,7 @@ async function moveSection(id, direction) {
     renderSectionControls();
     renderDashboard();
 
+
   } catch (error) {
 
     showMessage(
@@ -1107,41 +1592,57 @@ async function moveSection(id, direction) {
       error.message,
       "error"
     );
+
   }
+
 }
 
 
 async function changeAdminKey() {
 
   const newKey =
-    document.getElementById("newAdminKey").value;
+    document
+      .getElementById("newAdminKey")
+      .value;
 
   const confirmKey =
-    document.getElementById("confirmAdminKey").value;
+    document
+      .getElementById("confirmAdminKey")
+      .value;
+
 
   if (!newKey.trim()) {
+
     showMessage(
       "اكتب المفتاح الجديد.",
       "error"
     );
+
     return;
   }
 
+
   if (newKey.length < 6) {
+
     showMessage(
       "المفتاح يجب أن يكون 6 أحرف/أرقام على الأقل.",
       "error"
     );
+
     return;
   }
 
+
   if (newKey !== confirmKey) {
+
     showMessage(
       "المفتاحان غير متطابقين.",
       "error"
     );
+
     return;
   }
+
 
   try {
 
@@ -1154,23 +1655,36 @@ async function changeAdminKey() {
         }
       );
 
+
     if (!data.ok) {
+
       throw new Error(
         data.error ||
         "تعذر تغيير المفتاح."
       );
+
     }
+
 
     ADMIN_KEY =
       newKey;
 
-    document.getElementById("newAdminKey").value = "";
-    document.getElementById("confirmAdminKey").value = "";
+    document
+      .getElementById("newAdminKey")
+      .value =
+      "";
+
+    document
+      .getElementById("confirmAdminKey")
+      .value =
+      "";
+
 
     showMessage(
-      "تم تغيير مفتاح الإدارة بنجاح.",
+      "تم تغيير مفتاح الإدارة بنجاح. المفتاح الجديد أصبح فعالًا الآن.",
       "success"
     );
+
 
   } catch (error) {
 
@@ -1179,7 +1693,9 @@ async function changeAdminKey() {
       error.message,
       "error"
     );
+
   }
+
 }
 
 
@@ -1193,24 +1709,36 @@ document
         this.files[0];
 
       const preview =
-        document.getElementById("imagePreview");
+        document.getElementById(
+          "imagePreview"
+        );
 
       const img =
-        document.getElementById("previewImg");
+        document.getElementById(
+          "previewImg"
+        );
 
       const name =
-        document.getElementById("imageName");
+        document.getElementById(
+          "imageName"
+        );
+
 
       if (!file) {
 
         preview.style.display =
           "none";
 
-        img.src = "";
-        name.textContent = "";
+        img.src =
+          "";
+
+        name.textContent =
+          "";
 
         return;
+
       }
+
 
       img.src =
         URL.createObjectURL(file);
@@ -1220,6 +1748,7 @@ document
 
       preview.style.display =
         "block";
+
     }
   );
 
@@ -1232,6 +1761,7 @@ function fileToBase64(file) {
       const reader =
         new FileReader();
 
+
       reader.onload =
         function() {
 
@@ -1239,17 +1769,22 @@ function fileToBase64(file) {
             reader.result;
 
           const base64 =
-            String(result).split(",")[1];
+            String(result)
+              .split(",")[1];
 
           resolve(base64);
+
         };
+
 
       reader.onerror =
         reject;
 
       reader.readAsDataURL(file);
+
     }
   );
+
 }
 
 
@@ -1257,6 +1792,7 @@ async function uploadImage(file) {
 
   const base64 =
     await fileToBase64(file);
+
 
   const data =
     await api(
@@ -1270,55 +1806,97 @@ async function uploadImage(file) {
       }
     );
 
+
   if (!data.ok) {
+
     throw new Error(
       data.error ||
       "فشل رفع الصورة"
     );
+
   }
 
+
   return data.url;
+
 }
 
 
 async function saveProduct() {
 
   const name =
-    document.getElementById("name").value.trim();
+    document
+      .getElementById("name")
+      .value
+      .trim();
 
   const category =
-    document.getElementById("category").value;
+    document
+      .getElementById("category")
+      .value;
 
   const description =
-    document.getElementById("description").value.trim();
+    document
+      .getElementById("description")
+      .value
+      .trim();
+
+  const price =
+    document
+      .getElementById("price")
+      .value
+      .trim();
+
+  const oldPrice =
+    document
+      .getElementById("oldPrice")
+      .value
+      .trim();
+
+  const offerPrice =
+    document
+      .getElementById("offerPrice")
+      .value
+      .trim();
 
   const fileInput =
-    document.getElementById("imageFile");
+    document
+      .getElementById("imageFile");
 
   const file =
     fileInput.files[0];
 
   const id =
-    document.getElementById("productId").value;
+    document
+      .getElementById("productId")
+      .value;
 
   const saveBtn =
-    document.getElementById("saveBtn");
+    document
+      .getElementById("saveBtn");
+
 
   if (!name) {
+
     showMessage(
       "اكتب اسم المنتج.",
       "error"
     );
+
     return;
   }
 
+
   if (!category) {
+
     showMessage(
       "اختر القسم.",
       "error"
     );
+
     return;
   }
+
 
   try {
 
@@ -1328,8 +1906,10 @@ async function saveProduct() {
     saveBtn.textContent =
       "جاري الحفظ...";
 
+
     let imageUrl =
       "";
+
 
     if (file) {
 
@@ -1340,22 +1920,33 @@ async function saveProduct() {
 
       imageUrl =
         await uploadImage(file);
+
     }
+
 
     if (!imageUrl && id) {
 
       const oldProduct =
         products.find(function(p) {
-          return String(p.id) === String(id);
+
+          return (
+            String(p.id) ===
+            String(id)
+          );
+
         });
+
 
       imageUrl =
         oldProduct
           ? (oldProduct.image || "")
           : "";
+
     }
 
+
     let data;
+
 
     const productData = {
 
@@ -1367,12 +1958,24 @@ async function saveProduct() {
 
       description: description,
 
+      price: price,
+
+      oldPrice: oldPrice,
+
+      offerPrice: offerPrice,
+
       showHome:
-        document.getElementById("showHome").checked,
+        document
+          .getElementById("showHome")
+          .checked,
 
       isOffer:
-        document.getElementById("isOffer").checked
+        document
+          .getElementById("isOffer")
+          .checked
+
     };
+
 
     if (id) {
 
@@ -1394,15 +1997,34 @@ async function saveProduct() {
             product: productData
           }
         );
+
     }
+
 
     if (!data.ok) {
 
+      const errors = {
+
+        invalid_category:
+          "القسم غير صالح أو تم إخفاؤه.",
+
+        category_required:
+          "اختر القسم.",
+
+        name_required:
+          "اكتب اسم المنتج."
+
+      };
+
+
       throw new Error(
+        errors[data.error] ||
         data.error ||
         "حدث خطأ أثناء حفظ المنتج"
       );
+
     }
+
 
     showMessage(
       id
@@ -1411,9 +2033,11 @@ async function saveProduct() {
       "success"
     );
 
+
     clearForm();
 
     await loadProducts();
+
 
   } catch (error) {
 
@@ -1425,6 +2049,7 @@ async function saveProduct() {
       "error"
     );
 
+
   } finally {
 
     saveBtn.disabled =
@@ -1432,7 +2057,9 @@ async function saveProduct() {
 
     saveBtn.textContent =
       "حفظ المنتج";
+
   }
+
 }
 
 
@@ -1443,78 +2070,104 @@ async function loadProducts() {
     const data =
       await api("list");
 
+
     if (
       data &&
       data.ok === false
     ) {
+
       throw new Error(
         data.error ||
         "تعذر تحميل المنتجات."
       );
+
     }
+
 
     products =
       Array.isArray(data)
         ? data
         : (
-          Array.isArray(data.products)
-            ? data.products
-            : []
-        );
+            Array.isArray(data.products)
+              ? data.products
+              : []
+          );
+
 
     renderAll();
+
 
   } catch (error) {
 
     console.error(error);
 
     showMessage(
-      "تعذر تحميل المنتجات: " +
-      error.message,
+      "تعذر تحميل المنتجات.",
       "error"
     );
+
   }
+
 }
 
 
 function renderProducts() {
 
   const el =
-    document.getElementById("products");
+    document.getElementById(
+      "products"
+    );
 
   const search =
     document
-      .getElementById("searchInput")
+      .getElementById(
+        "searchInput"
+      )
       .value
       .trim()
       .toLowerCase();
 
   const category =
-    document.getElementById("filterCategory").value;
+    document
+      .getElementById(
+        "filterCategory"
+      )
+      .value;
 
-  let filtered =
+
+  const filtered =
     products.filter(function(p) {
 
       const text =
         (
           String(p.name || "") +
           " " +
-          String(p.description || "")
-        ).toLowerCase();
+          String(p.description || "") +
+          " " +
+          String(p.category || "")
+        )
+        .toLowerCase();
+
 
       const matchesSearch =
         !search ||
         text.includes(search);
 
+
       const matchesCategory =
         !category ||
-        String(p.category || "").trim() === category;
+        String(p.category || "")
+          .trim() ===
+        category;
+
 
       return (
         matchesSearch &&
         matchesCategory
       );
+
     });
+
 
   if (!filtered.length) {
 
@@ -1522,163 +2175,295 @@ function renderProducts() {
       "<p>لا توجد نتائج مطابقة.</p>";
 
     return;
+
   }
 
+
   el.innerHTML =
-    filtered.map(function(p) {
+    filtered
+      .map(function(p) {
 
-      const active =
-        String(p.active).toLowerCase() !== "false";
+        const active =
+          String(p.active)
+            .toLowerCase() !==
+          "false";
 
-      const showHome =
-        p.showHome === undefined ||
-        p.showHome === "" ||
-        (
-          String(p.showHome).toLowerCase() !== "false" &&
-          String(p.showHome) !== "0"
-        );
 
-      const isOffer =
-        p.isOffer === true ||
-        String(p.isOffer).toLowerCase() === "true" ||
-        String(p.isOffer) === "1";
+        const showHome =
+          p.showHome === undefined ||
+          p.showHome === "" ||
+          (
+            String(p.showHome)
+              .toLowerCase() !==
+            "false" &&
+            String(p.showHome) !==
+            "0"
+          );
 
-      return `
-        <article class="product">
 
-          ${
-            p.image
-              ? `
-                <img
-                  src="${escapeHtml(p.image)}"
-                  alt="${escapeHtml(p.name)}"
-                  loading="lazy"
+        const isOffer =
+          p.isOffer === true ||
+          String(p.isOffer)
+            .toLowerCase() ===
+          "true" ||
+          String(p.isOffer) ===
+          "1";
+
+
+        return `
+
+          <article class="product">
+
+            ${
+              p.image
+
+                ? `
+                  <img
+                    src="${escapeHtml(p.image)}"
+                    alt="${escapeHtml(p.name)}"
+                  >
+                `
+
+                : `
+                  <div class="placeholder">
+                    بدون صورة
+                  </div>
+                `
+            }
+
+
+            <div>
+
+              <span
+                class="status ${
+                  active
+                    ? "active"
+                    : "inactive"
+                }"
+              >
+                ${
+                  active
+                    ? "ظاهر على الموقع"
+                    : "مخفي من الموقع"
+                }
+              </span>
+
+
+              <div
+                style="
+                  display:flex;
+                  gap:6px;
+                  flex-wrap:wrap;
+                  margin:7px 0;
+                "
+              >
+
+                <span
+                  class="status ${
+                    showHome
+                      ? "active"
+                      : "inactive"
+                  }"
                 >
-              `
-              : `
-                <div class="placeholder">
-                  بدون صورة
-                </div>
-              `
-          }
+                  ${
+                    showHome
+                      ? "الرئيسية: ظاهر"
+                      : "الرئيسية: مخفي"
+                  }
+                </span>
 
-          <div>
 
-            <span class="status ${active ? "active" : "inactive"}">
-              ${active ? "ظاهر على الموقع" : "مخفي من الموقع"}
-            </span>
+                <span
+                  class="status ${
+                    isOffer
+                      ? "active"
+                      : "inactive"
+                  }"
+                >
+                  ${
+                    isOffer
+                      ? "العروض: نعم"
+                      : "العروض: لا"
+                  }
+                </span>
 
-            <div
-              style="
-                display:flex;
-                gap:6px;
-                flex-wrap:wrap;
-                margin:7px 0;
-              "
-            >
+              </div>
 
-              <span class="status ${showHome ? "active" : "inactive"}">
-                ${showHome ? "الرئيسية: ظاهر" : "الرئيسية: مخفي"}
-              </span>
 
-              <span class="status ${isOffer ? "active" : "inactive"}">
-                ${isOffer ? "العروض: نعم" : "العروض: لا"}
-              </span>
+              <h3>
+                ${escapeHtml(p.name)}
+              </h3>
+
+
+              <p>
+                <strong>
+                  القسم:
+                </strong>
+
+                ${escapeHtml(
+                  p.category || "-"
+                )}
+              </p>
+
+
+              <p>
+                ${escapeHtml(
+                  p.description || ""
+                )}
+              </p>
+
+
+              ${
+                p.price !== undefined &&
+                p.price !== ""
+
+                  ? `
+                    <p>
+                      <strong>
+                        السعر:
+                      </strong>
+
+                      ${escapeHtml(p.price)}
+                    </p>
+                  `
+
+                  : ""
+              }
+
+
+              ${
+                p.oldPrice !== undefined &&
+                p.oldPrice !== ""
+
+                  ? `
+                    <p>
+                      <strong>
+                        السعر القديم:
+                      </strong>
+
+                      ${escapeHtml(p.oldPrice)}
+                    </p>
+                  `
+
+                  : ""
+              }
+
+
+              ${
+                p.offerPrice !== undefined &&
+                p.offerPrice !== ""
+
+                  ? `
+                    <p>
+                      <strong>
+                        سعر العرض:
+                      </strong>
+
+                      ${escapeHtml(p.offerPrice)}
+                    </p>
+                  `
+
+                  : ""
+              }
+
+
+              <div class="actions">
+
+                <button
+                  class="edit"
+                  onclick="editProduct('${escapeJs(p.id)}')"
+                >
+                  تعديل
+                </button>
+
+
+                <button
+                  class="toggle"
+                  onclick="toggleProduct('${escapeJs(p.id)}', ${active})"
+                >
+                  ${
+                    active
+                      ? "إخفاء"
+                      : "إظهار"
+                  }
+                </button>
+
+
+                <button
+                  class="gray"
+                  onclick="toggleHomeProduct('${escapeJs(p.id)}', ${showHome})"
+                >
+                  ${
+                    showHome
+                      ? "إخفاء من الرئيسية"
+                      : "إظهار في الرئيسية"
+                  }
+                </button>
+
+
+                <button
+                  class="primary"
+                  onclick="toggleOfferProduct('${escapeJs(p.id)}', ${isOffer})"
+                >
+                  ${
+                    isOffer
+                      ? "إزالة من العروض"
+                      : "إضافة للعروض"
+                  }
+                </button>
+
+
+                <button
+                  class="delete"
+                  onclick="deleteProduct('${escapeJs(p.id)}')"
+                >
+                  حذف
+                </button>
+
+
+                <button
+                  class="gray"
+                  onclick="moveProduct('${escapeJs(p.id)}', -1)"
+                >
+                  ↑
+                </button>
+
+
+                <button
+                  class="gray"
+                  onclick="moveProduct('${escapeJs(p.id)}', 1)"
+                >
+                  ↓
+                </button>
+
+              </div>
 
             </div>
 
-            <h3>
-              ${escapeHtml(p.name)}
-            </h3>
+          </article>
 
-            <p>
-              <strong>القسم:</strong>
-              ${escapeHtml(p.category || "-")}
-            </p>
+        `;
 
-            <p>
-              ${escapeHtml(p.description || "")}
-            </p>
+      })
+      .join("");
 
-            <div class="actions">
-
-              <button
-                class="edit"
-                onclick="editProduct('${escapeJs(p.id)}')"
-              >
-                تعديل
-              </button>
-
-              <button
-                class="toggle"
-                onclick="toggleProduct('${escapeJs(p.id)}', ${active})"
-              >
-                ${active ? "إخفاء" : "إظهار"}
-              </button>
-
-              <button
-                class="gray"
-                onclick="toggleHomeProduct('${escapeJs(p.id)}', ${showHome})"
-              >
-                ${
-                  showHome
-                    ? "🏠 إخفاء من الرئيسية"
-                    : "🏠 إظهار في الرئيسية"
-                }
-              </button>
-
-              <button
-                class="primary"
-                onclick="toggleOfferProduct('${escapeJs(p.id)}', ${isOffer})"
-              >
-                ${
-                  isOffer
-                    ? "🔥 إزالة من العروض"
-                    : "🔥 إضافة للعروض"
-                }
-              </button>
-
-              <button
-                class="delete"
-                onclick="deleteProduct('${escapeJs(p.id)}')"
-              >
-                حذف
-              </button>
-
-              <button
-                class="gray"
-                onclick="moveProduct('${escapeJs(p.id)}', -1)"
-              >
-                ↑
-              </button>
-
-              <button
-                class="gray"
-                onclick="moveProduct('${escapeJs(p.id)}', 1)"
-              >
-                ↓
-              </button>
-
-            </div>
-
-          </div>
-
-        </article>
-      `;
-
-    }).join("");
 }
 
 
 function resetFilters() {
 
-  document.getElementById("searchInput").value =
+  document
+    .getElementById("searchInput")
+    .value =
     "";
 
-  document.getElementById("filterCategory").value =
+  document
+    .getElementById("filterCategory")
+    .value =
     "";
 
   renderProducts();
+
 }
 
 
@@ -1686,19 +2471,29 @@ async function moveProduct(id, direction) {
 
   const index =
     products.findIndex(function(item) {
-      return String(item.id) === String(id);
+
+      return (
+        String(item.id) ===
+        String(id)
+      );
+
     });
+
 
   const newIndex =
     index + direction;
+
 
   if (
     index < 0 ||
     newIndex < 0 ||
     newIndex >= products.length
   ) {
+
     return;
+
   }
+
 
   const reordered =
     products.slice();
@@ -1711,6 +2506,7 @@ async function moveProduct(id, direction) {
 
   reordered[newIndex] =
     temp;
+
 
   try {
 
@@ -1725,18 +2521,23 @@ async function moveProduct(id, direction) {
         }
       );
 
+
     if (!data.ok) {
+
       throw new Error(
         data.error ||
         "تعذر ترتيب المنتجات."
       );
+
     }
+
 
     products =
       reordered;
 
     renderDashboard();
     renderProducts();
+
 
   } catch (error) {
 
@@ -1745,7 +2546,9 @@ async function moveProduct(id, direction) {
       error.message,
       "error"
     );
+
   }
+
 }
 
 
@@ -1753,53 +2556,118 @@ function editProduct(id) {
 
   const p =
     products.find(function(item) {
-      return String(item.id) === String(id);
+
+      return (
+        String(item.id) ===
+        String(id)
+      );
+
     });
+
 
   if (!p) return;
 
-  document.getElementById("productId").value =
+
+  document
+    .getElementById("productId")
+    .value =
     p.id;
 
-  document.getElementById("name").value =
+
+  document
+    .getElementById("name")
+    .value =
     p.name || "";
 
-  document.getElementById("category").value =
+
+  document
+    .getElementById("category")
+    .value =
     p.category || "";
 
-  document.getElementById("description").value =
+
+  document
+    .getElementById("description")
+    .value =
     p.description || "";
 
-  document.getElementById("showHome").checked =
+
+  document
+    .getElementById("price")
+    .value =
+    p.price ?? "";
+
+
+  document
+    .getElementById("oldPrice")
+    .value =
+    p.oldPrice ?? "";
+
+
+  document
+    .getElementById("offerPrice")
+    .value =
+    p.offerPrice ?? "";
+
+
+  document
+    .getElementById("showHome")
+    .checked =
     p.showHome === undefined ||
     p.showHome === "" ||
     (
-      String(p.showHome).toLowerCase() !== "false" &&
-      String(p.showHome) !== "0"
+      String(p.showHome)
+        .toLowerCase() !==
+      "false" &&
+      String(p.showHome) !==
+      "0"
     );
 
-  document.getElementById("isOffer").checked =
-    p.isOffer === true ||
-    String(p.isOffer).toLowerCase() === "true" ||
-    String(p.isOffer) === "1";
 
-  document.getElementById("imageFile").value =
+  document
+    .getElementById("isOffer")
+    .checked =
+    p.isOffer === true ||
+    String(p.isOffer)
+      .toLowerCase() ===
+    "true" ||
+    String(p.isOffer) ===
+    "1";
+
+
+  document
+    .getElementById("imageFile")
+    .value =
     "";
 
-  document.getElementById("formTitle").textContent =
+
+  document
+    .getElementById("formTitle")
+    .textContent =
     "تعديل المنتج";
 
-  document.getElementById("cancelBtn").style.display =
+
+  document
+    .getElementById("cancelBtn")
+    .style.display =
     "inline-block";
 
+
   const preview =
-    document.getElementById("imagePreview");
+    document.getElementById(
+      "imagePreview"
+    );
 
   const img =
-    document.getElementById("previewImg");
+    document.getElementById(
+      "previewImg"
+    );
 
   const imageName =
-    document.getElementById("imageName");
+    document.getElementById(
+      "imageName"
+    );
+
 
   if (p.image) {
 
@@ -1816,57 +2684,105 @@ function editProduct(id) {
 
     preview.style.display =
       "none";
+
   }
+
 
   window.scrollTo({
     top: 0,
     behavior: "smooth"
   });
+
 }
 
 
 function cancelEdit() {
+
   clearForm();
+
 }
 
 
 function clearForm() {
 
-  document.getElementById("productId").value =
+  document
+    .getElementById("productId")
+    .value =
     "";
 
-  document.getElementById("name").value =
+  document
+    .getElementById("name")
+    .value =
     "";
 
-  document.getElementById("category").value =
+  document
+    .getElementById("category")
+    .value =
     "";
 
-  document.getElementById("description").value =
+  document
+    .getElementById("description")
+    .value =
     "";
 
-  document.getElementById("showHome").checked =
+  document
+    .getElementById("price")
+    .value =
+    "";
+
+  document
+    .getElementById("oldPrice")
+    .value =
+    "";
+
+  document
+    .getElementById("offerPrice")
+    .value =
+    "";
+
+  document
+    .getElementById("showHome")
+    .checked =
     true;
 
-  document.getElementById("isOffer").checked =
+  document
+    .getElementById("isOffer")
+    .checked =
     false;
 
-  document.getElementById("imageFile").value =
+  document
+    .getElementById("imageFile")
+    .value =
     "";
 
-  document.getElementById("formTitle").textContent =
+
+  document
+    .getElementById("formTitle")
+    .textContent =
     "إضافة منتج جديد";
 
-  document.getElementById("cancelBtn").style.display =
+
+  document
+    .getElementById("cancelBtn")
+    .style.display =
     "none";
 
-  document.getElementById("imagePreview").style.display =
+
+  document
+    .getElementById("imagePreview")
+    .style.display =
     "none";
 
-  document.getElementById("previewImg").src =
+  document
+    .getElementById("previewImg")
+    .src =
     "";
 
-  document.getElementById("imageName").textContent =
+  document
+    .getElementById("imageName")
+    .textContent =
     "";
+
 }
 
 
@@ -1874,6 +2790,7 @@ async function toggleProduct(id, active) {
 
   const newStatus =
     !active;
+
 
   try {
 
@@ -1886,12 +2803,16 @@ async function toggleProduct(id, active) {
         }
       );
 
+
     if (!data.ok) {
+
       throw new Error(
         data.error ||
         "حصل خطأ أثناء تغيير حالة المنتج."
       );
+
     }
+
 
     showMessage(
       newStatus
@@ -1900,7 +2821,9 @@ async function toggleProduct(id, active) {
       "success"
     );
 
+
     await loadProducts();
+
 
   } catch (error) {
 
@@ -1911,15 +2834,16 @@ async function toggleProduct(id, active) {
       error.message,
       "error"
     );
+
   }
+
 }
 
 
-/* ================================
-   إظهار / إخفاء من الصفحة الرئيسية
-   ================================ */
-
-async function toggleHomeProduct(id, currentValue) {
+async function toggleHomeProduct(
+  id,
+  currentValue
+) {
 
   try {
 
@@ -1931,42 +2855,47 @@ async function toggleHomeProduct(id, currentValue) {
         }
       );
 
-    if (!data || !data.ok) {
+
+    if (!data.ok) {
 
       throw new Error(
-        data && data.error
-          ? data.error
-          : "تعذر تغيير ظهور المنتج في الرئيسية."
+        data.error ||
+        "تعذر تغيير ظهور المنتج في الرئيسية."
       );
+
     }
+
 
     showMessage(
       data.showHome
-        ? "تم إظهار المنتج في الصفحة الرئيسية."
-        : "تم إخفاء المنتج من الصفحة الرئيسية.",
+        ? "تم إظهار المنتج في الرئيسية."
+        : "تم إخفاء المنتج من الرئيسية.",
       "success"
     );
 
+
     await loadProducts();
+
 
   } catch (error) {
 
     console.error(error);
 
     showMessage(
-      "تعذر تغيير ظهور المنتج في الرئيسية: " +
+      "تعذر تغيير ظهور المنتج: " +
       error.message,
       "error"
     );
+
   }
+
 }
 
 
-/* ================================
-   إضافة / إزالة من العروض
-   ================================ */
-
-async function toggleOfferProduct(id, currentValue) {
+async function toggleOfferProduct(
+  id,
+  currentValue
+) {
 
   try {
 
@@ -1978,14 +2907,16 @@ async function toggleOfferProduct(id, currentValue) {
         }
       );
 
-    if (!data || !data.ok) {
+
+    if (!data.ok) {
 
       throw new Error(
-        data && data.error
-          ? data.error
-          : "تعذر تغيير حالة العرض."
+        data.error ||
+        "تعذر تغيير حالة العرض."
       );
+
     }
+
 
     showMessage(
       data.isOffer
@@ -1994,7 +2925,9 @@ async function toggleOfferProduct(id, currentValue) {
       "success"
     );
 
+
     await loadProducts();
+
 
   } catch (error) {
 
@@ -2005,7 +2938,9 @@ async function toggleOfferProduct(id, currentValue) {
       error.message,
       "error"
     );
+
   }
+
 }
 
 
@@ -2013,13 +2948,20 @@ async function deleteProduct(id) {
 
   const product =
     products.find(function(item) {
-      return String(item.id) === String(id);
+
+      return (
+        String(item.id) ===
+        String(id)
+      );
+
     });
+
 
   const name =
     product
       ? product.name
       : "هذا المنتج";
+
 
   if (
     !confirm(
@@ -2028,8 +2970,11 @@ async function deleteProduct(id) {
       '" نهائيًا؟'
     )
   ) {
+
     return;
+
   }
+
 
   try {
 
@@ -2041,19 +2986,25 @@ async function deleteProduct(id) {
         }
       );
 
+
     if (!data.ok) {
+
       throw new Error(
         data.error ||
         "حصل خطأ أثناء الحذف."
       );
+
     }
+
 
     showMessage(
       "تم حذف المنتج.",
       "success"
     );
 
+
     await loadProducts();
+
 
   } catch (error) {
 
@@ -2064,47 +3015,51 @@ async function deleteProduct(id) {
       error.message,
       "error"
     );
+
   }
+
 }
 
 
 function escapeHtml(value) {
 
-  return String(
-    value ?? ""
-  ).replace(
-    /[&<>"']/g,
-    function(m) {
+  return String(value ?? "")
+    .replace(
+      /[&<>"']/g,
 
-      return {
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#039;"
-      }[m];
-    }
-  );
+      function(m) {
+
+        return {
+
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#039;"
+
+        }[m];
+
+      }
+    );
+
 }
 
 
 function escapeJs(value) {
 
-  return String(
-    value ?? ""
-  )
-  .replace(
-    /\\/g,
-    "\\\\"
-  )
-  .replace(
-    /'/g,
-    "\\'"
-  );
+  return String(value ?? "")
+    .replace(
+      /\\/g,
+      "\\\\"
+    )
+    .replace(
+      /'/g,
+      "\\'"
+    );
+
 }
 
 </script>
 
 </body>
 </html>
-```
