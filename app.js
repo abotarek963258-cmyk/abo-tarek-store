@@ -328,6 +328,10 @@
         false
       );
 
+    const price = cleanText(p.price ?? p.Price ?? "");
+    const oldPrice = cleanText(p.oldPrice ?? p.OldPrice ?? "");
+    const offerPrice = cleanText(p.offerPrice ?? p.OfferPrice ?? "");
+
     return {
       id,
       name,
@@ -337,6 +341,9 @@
       active,
       showHome,
       isOffer,
+      price,
+      oldPrice,
+      offerPrice,
       searchIndex:
         normalizeArabic(
           `${name} ${category} ${description}`
@@ -978,6 +985,17 @@
             : ""
         }
 
+        ${
+          product.price || product.offerPrice
+            ? `
+              <div class="price-box" aria-label="السعر">
+                ${product.oldPrice ? `<span class="old-price">${escapeHtml(product.oldPrice)} ج.م</span>` : ""}
+                <span class="current-price">${escapeHtml(product.offerPrice || product.price)} <small>ج.م</small></span>
+              </div>
+            `
+            : ""
+        }
+
         <div class="product-footer">
           <a
             class="product-whatsapp"
@@ -1584,6 +1602,8 @@
               id="aboModalDescription"
             ></p>
 
+            <div id="aboModalPrice" class="price-box modal-price-box"></div>
+
             <a
               id="aboModalWhatsApp"
               class="product-whatsapp"
@@ -1713,6 +1733,14 @@
       description.textContent =
         product.description ||
         "للاستفسار عن تفاصيل الصنف، تواصل معنا على واتساب.";
+    }
+
+    const modalPrice = document.getElementById("aboModalPrice");
+    if (modalPrice) {
+      modalPrice.innerHTML = (product.price || product.offerPrice)
+        ? `${product.oldPrice ? `<span class="old-price">${escapeHtml(product.oldPrice)} ج.م</span>` : ""}<span class="current-price">${escapeHtml(product.offerPrice || product.price)} <small>ج.م</small></span>`
+        : "";
+      modalPrice.hidden = !(product.price || product.offerPrice);
     }
 
     if (whatsapp) {
