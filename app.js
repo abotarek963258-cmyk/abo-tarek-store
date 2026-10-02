@@ -17,21 +17,10 @@
 
   const WHATSAPP_NUMBER = "201551604163";
 
-  /*
-    الكاش يفضل موجود لفترة أطول.
-    الصفحة تعرضه فوراً، والتحديث يحصل في الخلفية.
-  */
   const CACHE_KEY = "abo_tarek_products_v10";
 
-  /*
-    30 دقيقة بدل 5 دقائق.
-    حتى لا نطلب Google Apps Script مع كل زيارة.
-  */
   const CACHE_TIME = 30 * 60 * 1000;
 
-  /*
-    تحديث البيانات في الخلفية بعد هذه المدة.
-  */
   const BACKGROUND_REFRESH_TIME = 10 * 60 * 1000;
 
   const CATEGORY_ICONS = {
@@ -118,20 +107,53 @@
 
 
   function isFlagEnabled(value, defaultValue) {
-    if (value === undefined || value === null || value === "") {
+    if (
+      value === undefined ||
+      value === null ||
+      value === ""
+    ) {
       return defaultValue;
     }
 
-    if (value === true || value === 1) return true;
-    if (value === false || value === 0) return false;
+    if (
+      value === true ||
+      value === 1
+    ) {
+      return true;
+    }
 
-    const text = normalizeArabic(value);
-
-    if (["false", "0", "no", "off", "مخفي"].includes(text)) {
+    if (
+      value === false ||
+      value === 0
+    ) {
       return false;
     }
 
-    if (["true", "1", "yes", "on", "نعم", "ظاهر"].includes(text)) {
+    const text =
+      normalizeArabic(value);
+
+    if (
+      [
+        "false",
+        "0",
+        "no",
+        "off",
+        "مخفي"
+      ].includes(text)
+    ) {
+      return false;
+    }
+
+    if (
+      [
+        "true",
+        "1",
+        "yes",
+        "on",
+        "نعم",
+        "ظاهر"
+      ].includes(text)
+    ) {
       return true;
     }
 
@@ -144,6 +166,7 @@
      ========================================================= */
 
   function getImageSources(image) {
+
     const original =
       cleanText(image);
 
@@ -191,6 +214,7 @@
 
 
   function whatsappUrl(product) {
+
     const name =
       cleanText(product.name);
 
@@ -212,7 +236,9 @@
      ========================================================= */
 
   function readCache() {
+
     try {
+
       const raw =
         localStorage.getItem(
           CACHE_KEY
@@ -236,13 +262,16 @@
       return data;
 
     } catch (error) {
+
       return null;
     }
   }
 
 
   function writeCache(products) {
+
     try {
+
       localStorage.setItem(
         CACHE_KEY,
         JSON.stringify({
@@ -250,7 +279,9 @@
           products
         })
       );
+
     } catch (error) {
+
       /* تجاهل مشكلة التخزين */
     }
   }
@@ -264,6 +295,7 @@
     product,
     index
   ) {
+
     const p =
       product || {};
 
@@ -328,9 +360,26 @@
         false
       );
 
-    const price = cleanText(p.price ?? p.Price ?? "");
-    const oldPrice = cleanText(p.oldPrice ?? p.OldPrice ?? "");
-    const offerPrice = cleanText(p.offerPrice ?? p.OfferPrice ?? "");
+    const price =
+      cleanText(
+        p.price ??
+        p.Price ??
+        ""
+      );
+
+    const oldPrice =
+      cleanText(
+        p.oldPrice ??
+        p.OldPrice ??
+        ""
+      );
+
+    const offerPrice =
+      cleanText(
+        p.offerPrice ??
+        p.OfferPrice ??
+        ""
+      );
 
     return {
       id,
@@ -361,12 +410,6 @@
 
   async function fetchProducts() {
 
-    /*
-      لا نستخدم Date.now هنا.
-      ذلك يسمح للمتصفح والاتصال بإعادة استخدام الطلب
-      قدر الإمكان.
-    */
-
     const response =
       await fetch(
         DATA_URL,
@@ -378,6 +421,7 @@
       );
 
     if (!response.ok) {
+
       throw new Error(
         `HTTP ${response.status}`
       );
@@ -391,7 +435,9 @@
     if (
       Array.isArray(data)
     ) {
-      rawProducts = data;
+
+      rawProducts =
+        data;
 
     } else if (
       data &&
@@ -399,6 +445,7 @@
         data.products
       )
     ) {
+
       rawProducts =
         data.products;
 
@@ -408,10 +455,12 @@
         data.data
       )
     ) {
+
       rawProducts =
         data.data;
 
     } else {
+
       throw new Error(
         "صيغة البيانات غير صحيحة"
       );
@@ -439,11 +488,6 @@
     const cached =
       readCache();
 
-    /*
-      لو فيه كاش صالح:
-      رجعه فوراً بدون انتظار الشبكة.
-    */
-
     if (
       !forceRefresh &&
       cached &&
@@ -455,12 +499,9 @@
         cached.time <
         CACHE_TIME
     ) {
+
       return cached.products;
     }
-
-    /*
-      منع أكثر من request في نفس الوقت.
-    */
 
     if (!productsPromise) {
 
@@ -473,11 +514,13 @@
             );
 
             return products;
+
           })
           .finally(() => {
 
             productsPromise =
               null;
+
           });
     }
 
@@ -498,10 +541,6 @@
     const cached =
       readCache();
 
-    /*
-      لو البيانات حديثة جداً، لا داعي للطلب.
-    */
-
     if (
       cached &&
       cached.time &&
@@ -509,6 +548,7 @@
         cached.time <
         BACKGROUND_REFRESH_TIME
     ) {
+
       return Promise.resolve(
         cached.products
       );
@@ -535,6 +575,7 @@
 
             productsPromise =
               null;
+
           });
     }
 
@@ -543,117 +584,85 @@
 
 
   /* =========================================================
-     IMAGE ELEMENT
+     PRICE HTML
      ========================================================= */
 
-  function createProductImage(
-    product,
-    lazy = true
+  function getPriceHtml(product) {
+
+    const price =
+      cleanText(
+        product.price
+      );
+
+    const oldPrice =
+      cleanText(
+        product.oldPrice
+      );
+
+    const offerPrice =
+      cleanText(
+        product.offerPrice
+      );
+
+    const current =
+      offerPrice ||
+      price;
+
+    if (!current) {
+      return "";
+    }
+
+    return `
+      <div class="price-box">
+
+        ${
+          oldPrice
+            ? `
+              <span class="old-price">
+                ${escapeHtml(oldPrice)} ج.م
+              </span>
+            `
+            : ""
+        }
+
+        <span class="current-price">
+          ${escapeHtml(current)}
+          <small>ج.م</small>
+        </span>
+
+      </div>
+    `;
+  }
+
+
+  /* =========================================================
+     SHORT DESCRIPTION
+     ========================================================= */
+
+  function shortDescription(
+    description,
+    limit = 90
   ) {
 
-    const wrapper =
-      document.createElement(
-        "div"
-      );
+    const text =
+      cleanText(description);
 
-    wrapper.className =
-      "product-image";
-
-    const sources =
-      getImageSources(
-        product.image
-      );
-
-    if (!sources.length) {
-
-      wrapper.innerHTML = `
-        <div class="product-image-placeholder">
-          <span class="placeholder-icon">
-            ${escapeHtml(
-              categoryIcon(
-                product.category
-              )
-            )}
-          </span>
-        </div>
-      `;
-
-      return wrapper;
+    if (!text) {
+      return "";
     }
 
-    const img =
-      document.createElement(
-        "img"
-      );
-
-    img.alt =
-      product.name
-        ? `صورة ${product.name}`
-        : "صورة المنتج";
-
-    img.width = 600;
-    img.height = 600;
-
-    img.decoding =
-      "async";
-
-    /*
-      الصور الأولى فقط يتم تحميلها فوراً.
-      باقي الصور Lazy.
-    */
-
-    if (lazy) {
-
-      img.loading =
-        "lazy";
-
-      /*
-        إخبار المتصفح أن هذه الصورة
-        ليست أولوية.
-      */
-
-      img.fetchPriority =
-        "low";
-
-    } else {
-
-      img.loading =
-        "eager";
-
-      img.fetchPriority =
-        "high";
+    if (
+      text.length <= limit
+    ) {
+      return escapeHtml(text);
     }
 
-    img.src =
-      sources[0];
-
-    img.addEventListener(
-      "error",
-      () => {
-
-        wrapper.innerHTML = `
-          <div class="product-image-placeholder">
-            <span class="placeholder-icon">
-              ${escapeHtml(
-                categoryIcon(
-                  product.category
-                )
-              )}
-            </span>
-          </div>
-        `;
-
-      },
-      {
-        once: true
-      }
+    return (
+      escapeHtml(
+        text.slice(0, limit)
+      ) +
+      "..."
     );
-
-    wrapper.appendChild(
-      img
-    );
-
-    return wrapper;
   }
 
 
@@ -665,53 +674,9 @@
     products
   ) {
 
-    const grid =
+    const productsGrid =
       document.getElementById(
         "productsGrid"
-      );
-
-    if (!grid) {
-      return;
-    }
-
-    const homeProducts =
-      products.filter(
-        product => product.showHome
-      );
-
-    const offerProducts =
-      products.filter(
-        product => product.isOffer
-      );
-
-    const offersSection =
-      document.getElementById(
-        "offers"
-      );
-
-    const offersGrid =
-      document.getElementById(
-        "offersGrid"
-      );
-
-    const filters =
-      document.getElementById(
-        "filters"
-      );
-
-    const searchInput =
-      document.getElementById(
-        "productSearchInput"
-      );
-
-    const searchClear =
-      document.getElementById(
-        "productSearchClear"
-      );
-
-    const suggestions =
-      document.getElementById(
-        "productSearchSuggestions"
       );
 
     const categoryGrid =
@@ -719,28 +684,63 @@
         "categoryGrid"
       );
 
-    let activeCategory =
+    const filters =
+      document.getElementById(
+        "filters"
+      );
+
+    const offersGrid =
+      document.getElementById(
+        "offersGrid"
+      );
+
+    const offersSection =
+      document.getElementById(
+        "offers"
+      );
+
+    if (
+      !productsGrid &&
+      !categoryGrid
+    ) {
+      return;
+    }
+
+    const homeProducts =
+      products.filter(
+        product =>
+          product.showHome
+      );
+
+    const offerProducts =
+      products.filter(
+        product =>
+          product.isOffer
+      );
+
+    const categories =
+      Array.from(
+        new Set(
+          products
+            .map(
+              product =>
+                cleanText(
+                  product.category
+                )
+            )
+            .filter(Boolean)
+        )
+      );
+
+    let selectedCategory =
       "الكل";
 
-    let searchTerm =
-      "";
+    let searchTerm = "";
 
 
-    const categories = [
-      ...new Set(
-        homeProducts
-          .map(
-            product =>
-              product.category
-          )
-          .filter(Boolean)
-      )
-    ];
-
-
-    /* -----------------------------------------
-       CATEGORIES
-       ----------------------------------------- */
+    /* =======================================================
+       CATEGORY RENDER
+       ======================================================= */
 
     function renderCategories() {
 
@@ -748,66 +748,104 @@
         return;
       }
 
-      if (!categories.length) {
-        categoryGrid.innerHTML =
-          "";
-
-        return;
-      }
+      const categoryItems = [
+        "الكل",
+        ...categories
+      ];
 
       categoryGrid.innerHTML =
-        categories
-          .map(category => {
+        categoryItems
+          .map(
+            category => {
 
-            const count =
-              homeProducts.filter(
-                product =>
-                  product.category ===
-                  category
-              ).length;
+              const count =
+                category === "الكل"
+                  ? products.length
+                  : products.filter(
+                      product =>
+                        product.category ===
+                        category
+                    ).length;
 
-            return `
-              <button
-                class="cat"
-                type="button"
-                data-category="${escapeHtml(category)}"
-              >
-                <span
-                  class="cat-icon"
-                  aria-hidden="true"
+              const active =
+                selectedCategory ===
+                category;
+
+              return `
+                <button
+                  type="button"
+                  class="category-card ${
+                    active
+                      ? "active"
+                      : ""
+                  }"
+                  data-category="${escapeHtml(category)}"
                 >
-                  ${escapeHtml(
-                    categoryIcon(
-                      category
-                    )
-                  )}
-                </span>
 
-                <span>
-                  ${escapeHtml(
-                    category
-                  )}
+                  <span class="category-icon">
+                    ${categoryIcon(category)}
+                  </span>
 
-                  <small style="
-                    display:block;
-                    margin-top:2px;
-                    color:#89939c;
-                    font-size:10px;
-                    font-weight:700;
-                  ">
+                  <span class="category-name">
+                    ${escapeHtml(category)}
+                  </span>
+
+                  <span class="category-count">
                     ${count} صنف
-                  </small>
-                </span>
-              </button>
-            `;
-          })
+                  </span>
+
+                </button>
+              `;
+            }
+          )
           .join("");
+
+      categoryGrid
+        .querySelectorAll(
+          "[data-category]"
+        )
+        .forEach(
+          button => {
+
+            button.addEventListener(
+              "click",
+              () => {
+
+                selectedCategory =
+                  button.dataset.category ||
+                  "الكل";
+
+                renderCategories();
+                renderFilters();
+                renderProducts();
+
+                const productsSection =
+                  document.getElementById(
+                    "products"
+                  );
+
+                if (
+                  productsSection
+                ) {
+
+                  productsSection.scrollIntoView(
+                    {
+                      behavior: "smooth",
+                      block: "start"
+                    }
+                  );
+                }
+              }
+            );
+
+          }
+        );
     }
 
 
-    /* -----------------------------------------
+    /* =======================================================
        FILTERS
-       ----------------------------------------- */
+       ======================================================= */
 
     function renderFilters() {
 
@@ -815,245 +853,252 @@
         return;
       }
 
-      filters.innerHTML = `
-        <button
-          class="filter active"
-          type="button"
-          data-filter="الكل"
-        >
-          🛍️ الكل
-        </button>
-
-        ${categories
+      filters.innerHTML =
+        `
+          <button
+            type="button"
+            class="filter-btn ${
+              selectedCategory === "الكل"
+                ? "active"
+                : ""
+            }"
+            data-filter-category="الكل"
+          >
+            الكل
+          </button>
+        ` +
+        categories
           .map(
             category => `
               <button
-                class="filter"
                 type="button"
-                data-filter="${escapeHtml(category)}"
+                class="filter-btn ${
+                  selectedCategory === category
+                    ? "active"
+                    : ""
+                }"
+                data-filter-category="${escapeHtml(category)}"
               >
-                ${escapeHtml(
-                  categoryIcon(
-                    category
-                  )
-                )}
-                ${escapeHtml(
-                  category
-                )}
+                ${categoryIcon(category)}
+                ${escapeHtml(category)}
               </button>
             `
           )
-          .join("")}
-      `;
+          .join("");
+
+      filters
+        .querySelectorAll(
+          "[data-filter-category]"
+        )
+        .forEach(
+          button => {
+
+            button.addEventListener(
+              "click",
+              () => {
+
+                selectedCategory =
+                  button.dataset.filterCategory ||
+                  "الكل";
+
+                renderFilters();
+                renderCategories();
+                renderProducts();
+              }
+            );
+
+          }
+        );
     }
 
 
-    /* -----------------------------------------
-       FILTER PRODUCTS
-       ----------------------------------------- */
+    /* =======================================================
+       PRODUCT FILTER
+       ======================================================= */
 
     function getFilteredProducts() {
 
-      const q =
-        normalizeArabic(
-          searchTerm
-        );
+      let list =
+        homeProducts.slice();
 
-      return homeProducts.filter(
-        product => {
+      if (
+        selectedCategory !==
+        "الكل"
+      ) {
 
-          const categoryMatch =
-            activeCategory ===
-              "الكل" ||
-            product.category ===
-              activeCategory;
-
-          const searchMatch =
-            !q ||
-            product.searchIndex.includes(
-              q
-            );
-
-          return (
-            categoryMatch &&
-            searchMatch
+        list =
+          list.filter(
+            product =>
+              product.category ===
+              selectedCategory
           );
-        }
-      );
+      }
+
+      if (
+        searchTerm
+      ) {
+
+        const normalizedSearch =
+          normalizeArabic(
+            searchTerm
+          );
+
+        list =
+          list.filter(
+            product =>
+              product.searchIndex.includes(
+                normalizedSearch
+              )
+          );
+      }
+
+      return list;
     }
 
 
-    /* -----------------------------------------
+    /* =======================================================
        PRODUCT CARD
-       ----------------------------------------- */
+       ======================================================= */
 
-    function createProductCard(
-      product,
-      index
+    function productCard(
+      product
     ) {
 
-      const article =
-        document.createElement(
-          "article"
+      const sources =
+        getImageSources(
+          product.image
         );
 
-      article.className =
-        "product";
+      const image =
+        sources.length
+          ? sources[0]
+          : "";
 
-      article.dataset.id =
-        product.id;
-
-      /*
-        أول صورتين فقط أولوية عالية.
-      */
-
-      article.appendChild(
-        createProductImage(
-          product,
-          index > 1
-        )
-      );
-
-      const body =
-        document.createElement(
-          "div"
+      const hasDescription =
+        Boolean(
+          cleanText(
+            product.description
+          )
         );
 
-      body.className =
-        "product-body";
+      return `
+        <article
+          class="product"
+          data-product-id="${escapeHtml(product.id)}"
+        >
 
-      body.innerHTML = `
-        ${
-          product.isOffer
-            ? `
-              <span style="
-                display:inline-flex;
-                align-items:center;
-                gap:5px;
-                width:max-content;
-                margin-bottom:8px;
-                padding:4px 9px;
-                border-radius:999px;
-                background:#fff3cd;
-                color:#8a5a00;
-                font-size:12px;
-                font-weight:800;
-              ">
-                🔥 عرض
-              </span>
-            `
-            : ""
-        }
+          <div class="product-image-wrap">
 
-        <span class="product-category">
-          ${escapeHtml(
-            product.category
-          )}
-        </span>
+            ${
+              image
+                ? `
+                  <img
+                    class="product-image"
+                    src="${escapeHtml(image)}"
+                    alt="${escapeHtml(product.name)}"
+                    loading="lazy"
+                    decoding="async"
+                    width="500"
+                    height="500"
+                  >
+                `
+                : `
+                  <div class="product-image product-image-placeholder">
+                    ${categoryIcon(product.category)}
+                  </div>
+                `
+            }
 
-        <h3>
-          ${escapeHtml(
-            product.name
-          )}
-        </h3>
+            ${
+              product.isOffer
+                ? `
+                  <span class="offer-badge">
+                    🔥 عرض
+                  </span>
+                `
+                : ""
+            }
 
-        ${
-          product.description
-            ? `
-              <p class="product-description-short">
-                ${escapeHtml(
-                  product.description.length > 120
-                    ? product.description.slice(0, 120).trimEnd() + "..."
-                    : product.description
-                )}
-              </p>
+          </div>
 
-              ${
-                product.description.length > 120
-                  ? `
-                    <button
-                      type="button"
-                      class="product-details-trigger"
-                      aria-label="عرض المزيد من التفاصيل عن ${escapeHtml(product.name)}"
-                    >
-                      عرض المزيد من التفاصيل
-                    </button>
-                  `
-                  : ""
-              }
-            `
-            : ""
-        }
+          <div class="product-body">
 
-        ${
-          product.price || product.offerPrice
-            ? `
-              <div class="price-box" aria-label="السعر">
-                ${product.oldPrice ? `<span class="old-price">${escapeHtml(product.oldPrice)} ج.م</span>` : ""}
-                <span class="current-price">${escapeHtml(product.offerPrice || product.price)} <small>ج.م</small></span>
-              </div>
-            `
-            : ""
-        }
+            <span class="product-category">
+              ${escapeHtml(product.category)}
+            </span>
 
-        <div class="product-footer">
-          <a
-            class="product-whatsapp"
-            href="${escapeHtml(
-              whatsappUrl(
-                product
-              )
-            )}"
-            target="_blank"
-            rel="noopener"
-          >
-            💬 اسأل عن الصنف
-          </a>
-        </div>
+            <h3 class="product-name">
+              ${escapeHtml(product.name)}
+            </h3>
+
+            ${
+              hasDescription
+                ? `
+                  <p class="product-description">
+                    ${shortDescription(
+                      product.description
+                    )}
+                  </p>
+
+                  <button
+                    type="button"
+                    class="product-details-btn"
+                    data-details-id="${escapeHtml(product.id)}"
+                  >
+                    عرض المزيد من التفاصيل
+                  </button>
+                `
+                : ""
+            }
+
+            ${getPriceHtml(product)}
+
+            <div class="product-actions">
+
+              <button
+                type="button"
+                class="product-details"
+                data-details-id="${escapeHtml(product.id)}"
+              >
+                👁️ التفاصيل
+              </button>
+
+              <a
+                class="product-whatsapp"
+                href="${escapeHtml(
+                  whatsappUrl(product)
+                )}"
+                target="_blank"
+                rel="noopener"
+              >
+                💬 واتساب
+              </a>
+
+            </div>
+
+          </div>
+
+        </article>
       `;
-
-      article.appendChild(
-        body
-      );
-
-      article.addEventListener(
-        "click",
-        event => {
-
-          if (event.target.closest("a")) {
-            return;
-          }
-
-          const detailsButton =
-            event.target.closest(".product-details-trigger");
-
-          if (detailsButton) {
-            event.preventDefault();
-            event.stopPropagation();
-            openProductModal(product);
-            return;
-          }
-
-          openProductModal(product);
-        }
-      );
-
-      return article;
     }
 
 
-    /* -----------------------------------------
-       RENDER PRODUCTS
-       ----------------------------------------- */
+    /* =======================================================
+       PRODUCTS RENDER
+       ======================================================= */
 
     function renderProducts() {
+
+      if (!productsGrid) {
+        return;
+      }
 
       const list =
         getFilteredProducts();
 
       if (!list.length) {
 
-        grid.innerHTML = `
+        productsGrid.innerHTML = `
           <div class="empty">
 
             <div class="empty-icon">
@@ -1065,8 +1110,16 @@
             </h3>
 
             <p>
-              جرّب اسم صنف تاني أو اختار قسم مختلف.
+              جرّب كلمة بحث مختلفة أو اختار قسم تاني.
             </p>
+
+            <a
+              href="./sections.html"
+              class="primary-btn"
+              style="margin-top:16px;display:inline-flex"
+            >
+              🛍️ تصفح كل الأصناف
+            </a>
 
           </div>
         `;
@@ -1074,178 +1127,163 @@
         return;
       }
 
-      const fragment =
-        document.createDocumentFragment();
+      productsGrid.innerHTML =
+        list
+          .map(
+            productCard
+          )
+          .join("");
 
-      list.forEach(
-        (product, index) => {
+      productsGrid
+        .querySelectorAll(
+          "[data-details-id]"
+        )
+        .forEach(
+          button => {
 
-          fragment.appendChild(
-            createProductCard(
-              product,
-              index
-            )
-          );
+            button.addEventListener(
+              "click",
+              () => {
 
-        }
-      );
+                const product =
+                  products.find(
+                    item =>
+                      item.id ===
+                      button.dataset.detailsId
+                  );
 
-      grid.replaceChildren(
-        fragment
-      );
-    }
-
-
-    /* -----------------------------------------
-       OFFERS
-       ----------------------------------------- */
-
-    function renderOffers() {
-
-      if (!offersGrid || !offersSection) {
-        return;
-      }
-
-      if (!offerProducts.length) {
-        offersGrid.innerHTML = "";
-        offersSection.hidden = true;
-        return;
-      }
-
-      const fragment =
-        document.createDocumentFragment();
-
-      offerProducts.forEach(
-        (product, index) => {
-          fragment.appendChild(
-            createProductCard(
-              product,
-              index
-            )
-          );
-        }
-      );
-
-      offersGrid.replaceChildren(
-        fragment
-      );
-
-      offersSection.hidden = false;
-    }
-
-
-    /* -----------------------------------------
-       FILTER EVENTS
-       ----------------------------------------- */
-
-    if (filters) {
-
-      filters.addEventListener(
-        "click",
-        event => {
-
-          const button =
-            event.target.closest(
-              "[data-filter]"
-            );
-
-          if (!button) {
-            return;
-          }
-
-          activeCategory =
-            button.dataset.filter ||
-            "الكل";
-
-          filters
-            .querySelectorAll(
-              ".filter"
-            )
-            .forEach(
-              item => {
-
-                item.classList.toggle(
-                  "active",
-                  item === button
-                );
-
+                if (
+                  product
+                ) {
+                  openProductModal(
+                    product
+                  );
+                }
               }
             );
 
-          renderProducts();
-        }
-      );
+          }
+        );
+
+      productsGrid
+        .querySelectorAll(
+          ".product-image"
+        )
+        .forEach(
+          image => {
+
+            image.addEventListener(
+              "error",
+              () => {
+
+                image.style.display =
+                  "none";
+              },
+              {
+                once: true
+              }
+            );
+
+          }
+        );
     }
 
 
-    /* -----------------------------------------
-       CATEGORY EVENTS
-       ----------------------------------------- */
+    /* =======================================================
+       OFFERS
+       ======================================================= */
 
-    if (categoryGrid) {
+    function renderOffers() {
 
-      categoryGrid.addEventListener(
-        "click",
-        event => {
+      if (
+        !offersGrid ||
+        !offersSection
+      ) {
+        return;
+      }
 
-          const button =
-            event.target.closest(
-              "[data-category]"
-            );
+      if (
+        !offerProducts.length
+      ) {
 
-          if (!button) {
-            return;
-          }
+        offersSection.hidden =
+          true;
 
-          activeCategory =
-            button.dataset.category ||
-            "الكل";
+        offersSection.style.display =
+          "none";
 
-          if (filters) {
+        return;
+      }
 
-            filters
-              .querySelectorAll(
-                ".filter"
-              )
-              .forEach(
-                item => {
+      offersSection.hidden =
+        false;
 
-                  item.classList.toggle(
-                    "active",
-                    item.dataset.filter ===
-                      activeCategory
+      offersSection.style.display =
+        "";
+
+      offersGrid.innerHTML =
+        offerProducts
+          .map(
+            productCard
+          )
+          .join("");
+
+      offersGrid
+        .querySelectorAll(
+          "[data-details-id]"
+        )
+        .forEach(
+          button => {
+
+            button.addEventListener(
+              "click",
+              () => {
+
+                const product =
+                  products.find(
+                    item =>
+                      item.id ===
+                      button.dataset.detailsId
                   );
 
+                if (
+                  product
+                ) {
+                  openProductModal(
+                    product
+                  );
                 }
-              );
-          }
-
-          renderProducts();
-
-          const section =
-            document.getElementById(
-              "homeProducts"
+              }
             );
 
-          if (section) {
-
-            section.scrollIntoView({
-              behavior:
-                "smooth",
-              block:
-                "start"
-            });
           }
-        }
-      );
+        );
     }
 
 
-    /* -----------------------------------------
+    /* =======================================================
        SEARCH
-       ----------------------------------------- */
+       ======================================================= */
 
-    function updateSuggestions() {
+    const searchInput =
+      document.getElementById(
+        "productSearch"
+      ) ||
+      document.querySelector(
+        "#productSearchBox input"
+      );
+
+    const suggestions =
+      document.getElementById(
+        "searchSuggestions"
+      );
+
+    const searchClear =
+      document.getElementById(
+        "searchClear"
+      );
+
+    function renderSuggestions() {
 
       if (
         !suggestions ||
@@ -1254,12 +1292,12 @@
         return;
       }
 
-      const q =
+      const term =
         normalizeArabic(
           searchInput.value
         );
 
-      if (!q) {
+      if (!term) {
 
         suggestions.hidden =
           true;
@@ -1273,39 +1311,20 @@
       }
 
       const matches =
-        homeProducts
+        products
           .filter(
             product =>
               product.searchIndex.includes(
-                q
+                term
               )
           )
-          .slice(
-            0,
-            8
-          );
+          .slice(0, 8);
 
       if (!matches.length) {
 
         suggestions.innerHTML = `
-          <div class="search-suggestion">
-
-            <span class="search-suggestion-icon">
-              🔎
-            </span>
-
-            <span class="search-suggestion-content">
-
-              <span class="search-suggestion-name">
-                مفيش نتائج
-              </span>
-
-              <span class="search-suggestion-meta">
-                جرّب كلمة بحث مختلفة
-              </span>
-
-            </span>
-
+          <div class="suggestion-empty">
+            لا توجد نتائج مطابقة
           </div>
         `;
 
@@ -1326,31 +1345,23 @@
             product => `
               <button
                 type="button"
-                class="product-search-suggestion search-suggestion"
-                data-id="${escapeHtml(product.id)}"
+                class="search-suggestion"
+                data-suggestion-id="${escapeHtml(product.id)}"
               >
 
-                <span class="search-suggestion-icon">
-                  ${escapeHtml(
-                    categoryIcon(
-                      product.category
-                    )
-                  )}
+                <span class="suggestion-icon">
+                  ${categoryIcon(product.category)}
                 </span>
 
-                <span class="search-suggestion-content">
+                <span class="suggestion-text">
 
-                  <span class="search-suggestion-name">
-                    ${escapeHtml(
-                      product.name
-                    )}
-                  </span>
+                  <strong>
+                    ${escapeHtml(product.name)}
+                  </strong>
 
-                  <span class="search-suggestion-meta">
-                    ${escapeHtml(
-                      product.category
-                    )}
-                  </span>
+                  <small>
+                    ${escapeHtml(product.category)}
+                  </small>
 
                 </span>
 
@@ -1384,34 +1395,19 @@
               !searchInput.value;
           }
 
-          updateSuggestions();
+          renderSuggestions();
           renderProducts();
         }
       );
 
       searchInput.addEventListener(
         "focus",
-        updateSuggestions
-      );
-
-      searchInput.addEventListener(
-        "keydown",
-        event => {
+        () => {
 
           if (
-            event.key ===
-            "Escape"
+            searchInput.value
           ) {
-
-            if (suggestions) {
-              suggestions.hidden =
-                true;
-            }
-
-            searchInput.setAttribute(
-              "aria-expanded",
-              "false"
-            );
+            renderSuggestions();
           }
         }
       );
@@ -1424,8 +1420,13 @@
         "click",
         () => {
 
-          searchInput.value =
-            "";
+          if (searchInput) {
+
+            searchInput.value =
+              "";
+
+            searchInput.focus();
+          }
 
           searchTerm =
             "";
@@ -1434,13 +1435,12 @@
             true;
 
           if (suggestions) {
+
             suggestions.hidden =
               true;
           }
 
           renderProducts();
-
-          searchInput.focus();
         }
       );
     }
@@ -1454,7 +1454,7 @@
 
           const button =
             event.target.closest(
-              "[data-id]"
+              "[data-suggestion-id]"
             );
 
           if (!button) {
@@ -1462,10 +1462,10 @@
           }
 
           const product =
-            homeProducts.find(
+            products.find(
               item =>
                 item.id ===
-                button.dataset.id
+                button.dataset.suggestionId
             );
 
           if (!product) {
@@ -1479,12 +1479,18 @@
             product.name;
 
           if (searchClear) {
+
             searchClear.hidden =
               false;
           }
 
           suggestions.hidden =
             true;
+
+          searchInput.setAttribute(
+            "aria-expanded",
+            "false"
+          );
 
           renderProducts();
         }
@@ -1503,6 +1509,7 @@
         ) {
 
           if (suggestions) {
+
             suggestions.hidden =
               true;
           }
@@ -1602,7 +1609,10 @@
               id="aboModalDescription"
             ></p>
 
-            <div id="aboModalPrice" class="price-box modal-price-box"></div>
+            <div
+              id="aboModalPrice"
+              class="price-box modal-price-box"
+            ></div>
 
             <a
               id="aboModalWhatsApp"
@@ -1690,7 +1700,9 @@
 
     if (image) {
 
-      if (sources.length) {
+      if (
+        sources.length
+      ) {
 
         image.src =
           sources[0];
@@ -1719,11 +1731,13 @@
     }
 
     if (category) {
+
       category.textContent =
         product.category;
     }
 
     if (name) {
+
       name.textContent =
         product.name;
     }
@@ -1735,12 +1749,49 @@
         "للاستفسار عن تفاصيل الصنف، تواصل معنا على واتساب.";
     }
 
-    const modalPrice = document.getElementById("aboModalPrice");
+    const modalPrice =
+      document.getElementById(
+        "aboModalPrice"
+      );
+
     if (modalPrice) {
-      modalPrice.innerHTML = (product.price || product.offerPrice)
-        ? `${product.oldPrice ? `<span class="old-price">${escapeHtml(product.oldPrice)} ج.م</span>` : ""}<span class="current-price">${escapeHtml(product.offerPrice || product.price)} <small>ج.م</small></span>`
-        : "";
-      modalPrice.hidden = !(product.price || product.offerPrice);
+
+      modalPrice.innerHTML =
+        (
+          product.price ||
+          product.offerPrice
+        )
+          ? `
+              ${
+                product.oldPrice
+                  ? `
+                    <span class="old-price">
+                      ${escapeHtml(
+                        product.oldPrice
+                      )} ج.م
+                    </span>
+                  `
+                  : ""
+              }
+
+              <span class="current-price">
+                ${escapeHtml(
+                  product.offerPrice ||
+                  product.price
+                )}
+
+                <small>
+                  ج.م
+                </small>
+              </span>
+            `
+          : "";
+
+      modalPrice.hidden =
+        !(
+          product.price ||
+          product.offerPrice
+        );
     }
 
     if (whatsapp) {
@@ -1828,6 +1879,7 @@
         nav.classList.toggle(
           "open"
         );
+
       }
     );
 
@@ -1845,6 +1897,7 @@
               nav.classList.remove(
                 "open"
               );
+
             }
           );
 
@@ -1912,6 +1965,7 @@
           );
 
           window.location.reload();
+
         }
       );
     }
@@ -1942,12 +1996,6 @@
 
     try {
 
-      /*
-        ======================================================
-        1) نقرأ الكاش أولاً
-        ======================================================
-      */
-
       const cached =
         readCache();
 
@@ -1959,30 +2007,15 @@
         cached.products.length
       ) {
 
-        /*
-          عرض الصفحة فوراً.
-        */
-
         initHomepage(
           cached.products
         );
-
-        /*
-          تحديث صامت في الخلفية.
-          المستخدم لا ينتظر Google Apps Script.
-        */
 
         refreshInBackground();
 
         return;
       }
 
-
-      /*
-        ======================================================
-        2) لا يوجد كاش
-        ======================================================
-      */
 
       const products =
         await getProducts(
@@ -1999,11 +2032,6 @@
         "Abo Tarek Store error:",
         error
       );
-
-      /*
-        لو فشل الطلب ولكن يوجد كاش قديم،
-        نستخدمه بدلاً من إظهار خطأ.
-      */
 
       const fallback =
         readCache();
@@ -2040,7 +2068,9 @@
         event.key ===
         "Escape"
       ) {
+
         closeProductModal();
+
       }
 
     }
@@ -2067,6 +2097,7 @@
   } else {
 
     startApp();
+
   }
 
 })();
