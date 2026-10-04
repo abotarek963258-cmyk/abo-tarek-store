@@ -1,8 +1,6 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
-<link rel="stylesheet" href="./features.css?v=4000">
-<script src="./features.js?v=4000" defer></script>
-<script src="./analytics.js" defer></script>
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -11,16 +9,13 @@
   <title>الكتالوج الكامل | أبو طارق للأدوات المنزلية في الإسكندرية</title>
 
   <meta name="description" content="تصفح الكتالوج الكامل لأبو طارق للأدوات المنزلية في الإسكندرية – أطقم عشاء، أكواب، كاسات، أواني طهي، ميلامين، أدوات مطبخ وسفرة. توصيل لكل مناطق الإسكندرية. اسأل على واتساب 01551604163.">
-
   <meta name="keywords" content="كتالوج أدوات منزلية الإسكندرية, أطقم عشاء الإسكندرية, أكواب وكاسات, أواني طهي, ميلامين, أدوات مطبخ, أدوات سفرة, أبو طارق العوايد, أبو طارق كوبري الناموس, محل أدوات منزلية الإسكندرية">
-
   <meta name="robots" content="index,follow">
   <meta name="author" content="أبو طارق للأدوات المنزلية">
   <meta name="language" content="Arabic">
 
   <link rel="canonical" href="https://abotarek963258-cmyk.github.io/abo-tarek-store/sections.html">
 
-  <!-- Open Graph -->
   <meta property="og:type" content="website">
   <meta property="og:title" content="الكتالوج الكامل | أبو طارق للأدوات المنزلية">
   <meta property="og:description" content="تصفح جميع أقسام وأصناف أبو طارق للأدوات المنزلية في الإسكندرية.">
@@ -40,6 +35,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Playfair+Display:wght@400;700;900&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="./style.css?v=4000">
+  <link rel="stylesheet" href="./features.css?v=4000">
 
   <style>
     /* ستايلات إضافية خاصة بالكتالوج فقط */
@@ -560,26 +556,20 @@
       -webkit-box-orient: vertical;
     }
 
-    .product-card .product-actions {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 6px;
-      margin-top: 13px;
-    }
-
     .product-btn {
       min-height: 37px;
       display: flex;
       align-items: center;
       justify-content: center;
       border-radius: 9px;
-      font-size: 8px;
+      font-size: 9px;
       font-weight: 900;
       transition: 0.22s var(--ease);
       cursor: pointer;
       border: 0;
       font-family: inherit;
       text-decoration: none;
+      gap: 4px;
     }
 
     .details-btn {
@@ -601,6 +591,99 @@
     .whatsapp-btn:hover {
       transform: translateY(-2px);
       box-shadow: 0 8px 20px rgba(37, 211, 102, 0.17);
+    }
+
+    .cart-btn {
+      color: #111;
+      background: linear-gradient(135deg, var(--gold-lighter), var(--gold-primary));
+      border: 0;
+      font-weight: 900;
+    }
+
+    .cart-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(201, 164, 91, 0.3);
+    }
+
+    .product-wishlist-btn {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 3;
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 50%;
+      font-size: 18px;
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+
+    .product-wishlist-btn:hover {
+      transform: scale(1.1);
+      background: rgba(230, 30, 30, 0.8);
+    }
+
+    .product-wishlist-btn.active {
+      background: linear-gradient(135deg, #e91e63, #ad1457);
+      border-color: rgba(255, 255, 255, 0.3);
+      animation: heartBeat 0.4s;
+    }
+
+    @keyframes heartBeat {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.3); }
+      100% { transform: scale(1); }
+    }
+
+    .product-actions-main {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-top: 13px;
+    }
+
+    .product-actions-main .product-btn {
+      min-height: 40px;
+    }
+
+    .product-actions-secondary {
+      margin-top: 6px;
+    }
+
+    .product-actions-secondary .product-btn {
+      width: 100%;
+      min-height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-add-cart {
+      margin-top: 16px;
+      width: 100%;
+      min-height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #f0d99b, #c9a45b);
+      color: #111;
+      border: 0;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 900;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .modal-add-cart:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(201, 164, 91, 0.3);
     }
 
     .state {
@@ -830,6 +913,8 @@
 
   <!-- SCRIPTS -->
   <script src="./config.js?v=4000"></script>
+  <script src="./features.js?v=4000" defer></script>
+  <script src="./analytics.js" defer></script>
 
   <script>
     "use strict";
@@ -965,6 +1050,43 @@
         return "https://wa.me/" + CFG.WHATSAPP_NUMBER + "?text=" + encodeURIComponent(msg);
       }
 
+      /* ====== CART HELPER ====== */
+
+      function addProductToCart(product) {
+        if (!product) return;
+        if (window.ABO_TAREK && window.ABO_TAREK.addToCart) {
+          window.ABO_TAREK.addToCart(product);
+        } else if (window.addToCart) {
+          window.addToCart(product);
+        } else {
+          console.warn("addToCart not available");
+        }
+      }
+
+      /* ====== WISHLIST HELPER ====== */
+
+      function toggleProductWishlist(product, btn) {
+        if (!product) return;
+        if (!window.ABO_TAREK || !window.ABO_TAREK.Wishlist) {
+          console.warn("Wishlist not available");
+          return;
+        }
+
+        const added = window.ABO_TAREK.Wishlist.toggle(product);
+
+        if (btn) {
+          if (added) {
+            btn.classList.add("active");
+            btn.innerHTML = "❤️";
+            btn.setAttribute("aria-label", "إزالة من المفضلة");
+          } else {
+            btn.classList.remove("active");
+            btn.innerHTML = "🤍";
+            btn.setAttribute("aria-label", "إضافة للمفضلة");
+          }
+        }
+      }
+
       /* ====== CATEGORIES ====== */
 
       function buildCategories() {
@@ -1064,6 +1186,7 @@
 
         productsGrid.innerHTML = visibleProducts.map(renderProductCard).join("");
 
+        // Event: فتح تفاصيل المنتج (بالضغط على الكارت)
         productsGrid.querySelectorAll("[data-product-id]").forEach(card => {
           card.addEventListener("click", event => {
             if (event.target.closest("[data-action]")) return;
@@ -1071,10 +1194,31 @@
           });
         });
 
+        // Event: زر التفاصيل
         productsGrid.querySelectorAll('[data-action="details"]').forEach(btn => {
           btn.addEventListener("click", event => {
             event.stopPropagation();
             openProduct(btn.dataset.id);
+          });
+        });
+
+        // Event: زر أضف للسلة
+        productsGrid.querySelectorAll('[data-action="add-cart"]').forEach(btn => {
+          btn.addEventListener("click", event => {
+            event.stopPropagation();
+            const id = btn.dataset.id;
+            const product = allProducts.find(p => String(p.id) === String(id));
+            addProductToCart(product);
+          });
+        });
+
+        // Event: زر المفضلة
+        productsGrid.querySelectorAll('[data-action="wishlist"]').forEach(btn => {
+          btn.addEventListener("click", event => {
+            event.stopPropagation();
+            const id = btn.dataset.id;
+            const product = allProducts.find(p => String(p.id) === String(id));
+            toggleProductWishlist(product, btn);
           });
         });
       }
@@ -1082,11 +1226,20 @@
       function renderProductCard(product) {
         const image = U.cleanText(product.image);
         const offer = product.isOffer;
+        const hasCartPrice = hasPrice(product);
+        const inWishlist = (window.ABO_TAREK && window.ABO_TAREK.Wishlist) ? window.ABO_TAREK.Wishlist.isIn(product.id) : false;
 
         return `
           <article class="product-card" data-product-id="${U.escapeAttribute(product.id)}">
             <div class="product-image">
               ${offer ? `<span class="offer-badge">🔥 عرض</span>` : ""}
+              <button
+                type="button"
+                class="product-wishlist-btn ${inWishlist ? "active" : ""}"
+                data-action="wishlist"
+                data-id="${U.escapeAttribute(product.id)}"
+                aria-label="${inWishlist ? "إزالة من المفضلة" : "إضافة للمفضلة"}"
+              >${inWishlist ? "❤️" : "🤍"}</button>
               ${image
                 ? `<img src="${U.escapeAttribute(image)}" alt="${U.escapeAttribute(product.name)}" loading="lazy" data-fallback>`
                 : `<div class="product-image-placeholder"><span class="placeholder-icon">🛍️</span></div>`
@@ -1097,9 +1250,22 @@
               <h3 class="product-name">${U.escapeHtml(product.name)}</h3>
               ${product.description ? `<p class="product-description">${U.escapeHtml(product.description)}</p>` : ""}
               ${hasPrice(product) ? renderPrice(product) : ""}
-              <div class="product-actions">
-                <button type="button" class="product-btn details-btn" data-action="details" data-id="${U.escapeAttribute(product.id)}">عرض التفاصيل</button>
-                <a class="product-btn whatsapp-btn" href="${U.escapeAttribute(whatsappUrl(product))}" target="_blank" rel="noopener" data-action="whatsapp">💬 واتساب</a>
+
+              <div class="product-actions-main">
+                <button type="button" class="product-btn details-btn" data-action="details" data-id="${U.escapeAttribute(product.id)}">
+                  📋 التفاصيل
+                </button>
+                ${hasCartPrice ? `
+                  <button type="button" class="product-btn cart-btn" data-action="add-cart" data-id="${U.escapeAttribute(product.id)}">
+                    🛒 أضف للسلة
+                  </button>
+                ` : ""}
+              </div>
+
+              <div class="product-actions-secondary">
+                <a class="product-btn whatsapp-btn" href="${U.escapeAttribute(whatsappUrl(product))}" target="_blank" rel="noopener" data-action="whatsapp">
+                  💬 واتساب
+                </a>
               </div>
             </div>
           </article>
@@ -1173,6 +1339,7 @@
               <h2 id="aboModalName"></h2>
               <p id="aboModalDescription" class="product-modal-description"></p>
               <div id="aboModalPrice" class="modal-price-box"></div>
+              <button type="button" id="aboModalAddCart" class="modal-add-cart">🛒 أضف للسلة</button>
               <a id="aboModalWhatsApp" class="modal-whatsapp" target="_blank" rel="noopener">💬 اسأل عن المنتج على واتساب</a>
             </div>
           </div>
@@ -1202,6 +1369,18 @@
         document.getElementById("aboModalDescription").textContent = product.description || "لا يوجد وصف إضافي.";
         document.getElementById("aboModalPrice").innerHTML = hasPrice(product) ? renderPrice(product) : "";
         document.getElementById("aboModalWhatsApp").href = whatsappUrl(product);
+
+        const addBtn = document.getElementById("aboModalAddCart");
+        if (addBtn) {
+          if (hasPrice(product)) {
+            addBtn.style.display = "flex";
+            addBtn.onclick = () => {
+              addProductToCart(product);
+            };
+          } else {
+            addBtn.style.display = "none";
+          }
+        }
 
         modal.classList.add("open");
         modal.setAttribute("aria-hidden", "false");
