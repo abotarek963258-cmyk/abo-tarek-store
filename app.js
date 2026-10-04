@@ -935,4 +935,32 @@
       const cached = readCache(CFG.CACHE_KEYS.PRODUCTS, CFG.CACHE_TIME);
       if (cached && cached.value && cached.value.length) {
         allProducts = cached.value;
-        const cachedSettings = readCache(CFG.CACHE_KEYS.SETTINGS
+      const cachedSettings = readCache(CFG.CACHE_KEYS.SETTINGS, CFG.SETTINGS_CACHE_TIME);
+        if (cachedSettings) settings = { ...CFG.DEFAULT_SETTINGS, ...cachedSettings.value };
+        applySettings();
+        initHomepage();
+        return;
+      }
+      showError();
+    }
+  }
+
+  window.openProductModal = openProductModal;
+  window.closeProductModal = closeProductModal;
+  window.openAboTarekCart = openCart;
+  window.closeAboTarekCart = closeCart;
+
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape") {
+      closeProductModal();
+      closeCart();
+    }
+  });
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", startApp, { once: true });
+  } else {
+    startApp();
+  }
+
+})();
