@@ -12,1264 +12,1389 @@
 
   <style>
     :root {
-      --bg: #050a11;
-      --bg-2: #071321;
-      --panel: #0b1726;
-      --border: rgba(255, 255, 255, 0.08);
-      --border-strong: rgba(255, 255, 255, 0.14);
-      --text: #f7f9fc;
-      --text-2: #d5deea;
-      --muted: #8fa0b4;
-      --gold: #c9a45b;
-      --gold-2: #d9b970;
-      --gold-3: #f0d99b;
-      --gold-soft: rgba(201, 164, 91, 0.13);
-      --green: #25d366;
-      --green-dark: #087747;
-      --green-soft: rgba(37, 211, 102, 0.12);
+      --bg: #f5f7fa;
+      --white: #ffffff;
+      --navy: #0a1f33;
+      --navy-2: #15304d;
+      --orange: #e67b20;
+      --orange-2: #f19a42;
+      --orange-soft: #fff5e6;
+      --green: #10b981;
+      --green-soft: #e6f9f2;
       --red: #ef4444;
-      --red-soft: rgba(239, 68, 68, 0.12);
-      --blue: #5da9ff;
-      --blue-soft: rgba(93, 169, 255, 0.12);
-      --yellow: #f4c95d;
-      --shadow: 0 20px 60px rgba(0, 0, 0, 0.28);
-      --radius: 20px;
+      --red-soft: #fee2e2;
+      --blue: #3b82f6;
+      --blue-soft: #dbeafe;
+      --yellow: #f59e0b;
+      --yellow-soft: #fef3c7;
+
+      --text: #1a1a1a;
+      --text-2: #4a5568;
+      --text-3: #718096;
+      --text-4: #a0aec0;
+
+      --border: #e2e8f0;
+      --border-2: #cbd5e0;
+
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+      --shadow: 0 4px 12px rgba(0,0,0,0.08);
+      --shadow-lg: 0 10px 30px rgba(0,0,0,0.12);
+
+      --radius-sm: 8px;
+      --radius: 12px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
     }
 
-    * { box-sizing: border-box; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     html { scroll-behavior: smooth; }
 
     body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: "Cairo", Arial, sans-serif;
+      font-family: "Cairo", Tahoma, sans-serif;
+      background: var(--bg);
       color: var(--text);
-      background:
-        radial-gradient(circle at 10% 0%, rgba(201, 164, 91, 0.08), transparent 28%),
-        radial-gradient(circle at 90% 10%, rgba(40, 100, 160, 0.10), transparent 30%),
-        linear-gradient(145deg, #03070c 0%, #071321 45%, #050a11 100%);
+      line-height: 1.6;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
     }
 
-    button, input, textarea, select { font: inherit; }
-    button { cursor: pointer; }
+    button { font: inherit; cursor: pointer; border: none; background: none; }
+    input, textarea, select { font: inherit; }
     a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; }
+
     .hidden { display: none !important; }
 
-    /* LOGIN */
+    /* =========================================================
+       LOGIN
+       ========================================================= */
+
     #loginScreen {
       min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: grid;
+      place-items: center;
       padding: 24px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    #loginScreen::before {
-      content: "";
-      position: absolute;
-      width: 500px;
-      height: 500px;
-      border-radius: 50%;
-      background: rgba(201, 164, 91, 0.08);
-      filter: blur(90px);
-      top: -220px;
-      right: -150px;
-      pointer-events: none;
+      background: linear-gradient(135deg, #f5f7fa 0%, #e2e8f0 100%);
     }
 
     .login-card {
-      width: min(470px, 100%);
-      padding: 34px;
-      border: 1px solid var(--border-strong);
-      border-radius: 28px;
-      background: linear-gradient(145deg, rgba(15, 31, 49, 0.95), rgba(7, 17, 29, 0.96));
-      box-shadow: var(--shadow), 0 0 70px rgba(201, 164, 91, 0.06);
-      position: relative;
-      z-index: 1;
-      backdrop-filter: blur(18px);
+      width: 100%;
+      max-width: 440px;
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 40px;
+      box-shadow: var(--shadow-lg);
     }
 
     .login-logo {
-      width: 100px;
-      height: 100px;
+      width: 80px;
+      height: 80px;
       object-fit: contain;
-      display: block;
       margin: 0 auto 20px;
-      filter: drop-shadow(0 12px 25px rgba(201, 164, 91, 0.20));
     }
 
-    .login-title {
-      margin: 0;
-      text-align: center;
-      font-size: 27px;
+    .login-card h1 {
+      font-size: 24px;
       font-weight: 900;
-    }
-
-    .login-subtitle {
-      margin: 8px 0 28px;
       text-align: center;
-      color: var(--muted);
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+
+    .login-card p {
+      text-align: center;
+      color: var(--text-3);
       font-size: 14px;
-      line-height: 1.8;
+      margin-bottom: 28px;
     }
 
-    .login-form { display: grid; gap: 14px; }
+    .field { margin-bottom: 16px; }
 
-    .login-error {
-      padding: 12px 14px;
-      border-radius: 12px;
-      background: var(--red-soft);
-      border: 1px solid rgba(239, 68, 68, 0.22);
-      color: #ffb0b5;
+    .field label {
+      display: block;
       font-size: 13px;
-      line-height: 1.7;
-    }
-
-    /* APP SHELL */
-    #app { min-height: 100vh; }
-
-    .topbar {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      height: 76px;
-      display: flex;
-      align-items: center;
-      border-bottom: 1px solid var(--border);
-      background: rgba(5, 10, 17, 0.84);
-      backdrop-filter: blur(20px);
-    }
-
-    .topbar-inner {
-      width: min(1500px, calc(100% - 32px));
-      margin: auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 18px;
-    }
-
-    .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
-    .brand-logo { width: 46px; height: 46px; object-fit: contain; flex: none; }
-    .brand-text { min-width: 0; }
-    .brand-title { font-size: 16px; font-weight: 900; white-space: nowrap; }
-    .brand-subtitle { color: var(--muted); font-size: 11px; white-space: nowrap; }
-
-    .top-actions { display: flex; align-items: center; gap: 9px; }
-
-    .status-pill {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      padding: 8px 12px;
-      border-radius: 999px;
-      border: 1px solid rgba(37, 211, 102, 0.18);
-      background: var(--green-soft);
-      color: #7ce8bd;
-      font-size: 12px;
       font-weight: 700;
-    }
-
-    .status-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--green);
-      box-shadow: 0 0 10px rgba(37, 211, 102, 0.7);
-    }
-
-    .top-button {
-      min-height: 40px;
-      border: 1px solid var(--border);
-      border-radius: 11px;
-      background: rgba(255, 255, 255, 0.04);
       color: var(--text-2);
-      padding: 0 13px;
-      transition: 0.2s ease;
+      margin-bottom: 8px;
     }
 
-    .top-button:hover { border-color: var(--border-strong); background: rgba(255, 255, 255, 0.07); }
-    .top-button.danger { color: #ffadb2; }
-
-    /* LAYOUT */
-    .layout {
-      width: min(1500px, calc(100% - 32px));
-      margin: 24px auto 50px;
-      display: grid;
-      grid-template-columns: 240px minmax(0, 1fr);
-      gap: 22px;
-      direction: ltr;
-    }
-
-    .sidebar, .main-content { direction: rtl; }
-
-    .sidebar {
-      position: sticky;
-      top: 100px;
-      align-self: start;
-      border: 1px solid var(--border);
-      border-radius: 22px;
-      padding: 12px;
-      background: rgba(8, 19, 32, 0.82);
-      box-shadow: var(--shadow);
-    }
-
-    .sidebar-label {
-      color: #6f8298;
-      font-size: 10px;
-      font-weight: 800;
-      padding: 9px 11px 7px;
-      letter-spacing: 0.5px;
-    }
-
-    .nav-item {
+    .input {
       width: 100%;
-      border: 1px solid transparent;
-      background: transparent;
-      color: var(--text-2);
-      border-radius: 13px;
-      padding: 12px 13px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      text-align: right;
-      transition: 0.2s ease;
-      margin-bottom: 4px;
-    }
-
-    .nav-item:hover { background: rgba(255, 255, 255, 0.04); border-color: var(--border); }
-
-    .nav-item.active {
-      color: #fff;
-      background: var(--gold-soft);
-      border-color: rgba(201, 164, 91, 0.25);
-    }
-
-    .nav-icon { width: 28px; text-align: center; font-size: 17px; }
-
-    .sidebar-footer {
-      margin-top: 14px;
-      padding: 12px;
-      border-top: 1px solid var(--border);
-      color: var(--muted);
-      font-size: 11px;
-      line-height: 1.8;
-    }
-
-    .page { display: none; }
-    .page.active { display: block; animation: pageIn 0.25s ease; }
-
-    @keyframes pageIn {
-      from { opacity: 0; transform: translateY(5px); }
-      to { opacity: 1; transform: none; }
-    }
-
-    .page-head {
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: 18px;
-      margin-bottom: 20px;
-    }
-
-    .page-title { margin: 0; font-size: 27px; font-weight: 900; }
-    .page-description { margin: 6px 0 0; color: var(--muted); font-size: 13px; line-height: 1.8; }
-    .page-actions { display: flex; gap: 9px; flex-wrap: wrap; }
-
-    /* BUTTONS */
-    .btn {
-      min-height: 43px;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 0 15px;
-      background: rgba(255, 255, 255, 0.045);
+      min-height: 48px;
+      padding: 12px 16px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--white);
       color: var(--text);
+      font-size: 14px;
+      transition: all 0.2s;
+      outline: none;
+    }
+
+    .input:focus {
+      border-color: var(--orange);
+      box-shadow: 0 0 0 4px rgba(230, 123, 32, 0.1);
+    }
+
+    .btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 7px;
-      transition: 0.2s ease;
-      font-weight: 700;
+      gap: 8px;
+      min-height: 48px;
+      padding: 0 24px;
+      border-radius: var(--radius);
+      font-size: 14px;
+      font-weight: 800;
+      transition: all 0.2s;
       white-space: nowrap;
       cursor: pointer;
     }
 
-    .btn:hover { transform: translateY(-1px); border-color: var(--border-strong); background: rgba(255, 255, 255, 0.075); }
-
     .btn-primary {
-      border-color: rgba(201, 164, 91, 0.4);
-      background: linear-gradient(135deg, var(--gold), #a37f30);
-      color: #fff;
-      box-shadow: 0 9px 25px rgba(201, 164, 91, 0.16);
+      background: var(--orange);
+      color: var(--white);
+      width: 100%;
+      box-shadow: 0 4px 12px rgba(230, 123, 32, 0.3);
     }
 
-    .btn-primary:hover { background: linear-gradient(135deg, var(--gold-2), var(--gold)); }
-
-    .btn-success { color: #8af0c5; background: var(--green-soft); border-color: rgba(37, 211, 102, 0.18); }
-    .btn-danger { color: #ffabb1; background: var(--red-soft); border-color: rgba(239, 68, 68, 0.18); }
-    .btn-blue { color: #a9d4ff; background: var(--blue-soft); border-color: rgba(93, 169, 255, 0.18); }
-
-    .btn-small {
-      min-height: 34px;
-      padding: 0 10px;
-      border-radius: 9px;
-      font-size: 12px;
+    .btn-primary:hover {
+      background: #d16a15;
+      transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(230, 123, 32, 0.4);
     }
 
-    .btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
-
-    /* PANELS */
-    .panel {
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      background: linear-gradient(145deg, rgba(13, 28, 45, 0.92), rgba(7, 17, 29, 0.92));
-      box-shadow: 0 15px 45px rgba(0, 0, 0, 0.17);
-      overflow: hidden;
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
     }
 
-    .panel-head {
-      padding: 17px 18px;
+    .login-error {
+      background: var(--red-soft);
+      color: #991b1b;
+      padding: 12px 16px;
+      border-radius: var(--radius);
+      font-size: 13px;
+      margin-bottom: 16px;
+      border: 1px solid #fecaca;
+    }
+
+    /* =========================================================
+       APP LAYOUT
+       ========================================================= */
+
+    #app { min-height: 100vh; display: flex; flex-direction: column; }
+
+    /* TOP BAR */
+    .topbar {
+      background: var(--navy);
+      color: var(--white);
+      padding: 0 24px;
+      height: 72px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
-      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.15);
     }
 
-    .panel-title { margin: 0; font-size: 15px; font-weight: 900; }
-    .panel-subtitle { color: var(--muted); font-size: 11px; margin-top: 3px; }
-    .panel-body { padding: 18px; }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-logo {
+      width: 42px;
+      height: 42px;
+      object-fit: contain;
+      background: var(--white);
+      border-radius: var(--radius-sm);
+      padding: 4px;
+    }
+
+    .brand-text strong {
+      display: block;
+      font-size: 15px;
+      font-weight: 900;
+      color: var(--white);
+      line-height: 1.2;
+    }
+
+    .brand-text span {
+      display: block;
+      font-size: 11px;
+      color: var(--orange-2);
+      font-weight: 600;
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .topbar-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 40px;
+      padding: 0 16px;
+      border-radius: var(--radius-sm);
+      background: rgba(255,255,255,0.1);
+      color: var(--white);
+      font-size: 13px;
+      font-weight: 700;
+      transition: all 0.2s;
+    }
+
+    .topbar-btn:hover {
+      background: rgba(255,255,255,0.2);
+    }
+
+    .topbar-btn.danger {
+      background: rgba(239, 68, 68, 0.2);
+      color: #fca5a5;
+    }
+
+    .topbar-btn.danger:hover {
+      background: rgba(239, 68, 68, 0.3);
+    }
+
+    /* NAV TABS */
+    .nav-tabs {
+      background: var(--white);
+      border-bottom: 2px solid var(--border);
+      padding: 0 24px;
+      display: flex;
+      gap: 4px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      position: sticky;
+      top: 72px;
+      z-index: 99;
+    }
+
+    .nav-tabs::-webkit-scrollbar { display: none; }
+
+    .nav-tab {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 16px 24px;
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text-3);
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s;
+      white-space: nowrap;
+      cursor: pointer;
+      background: none;
+      margin-bottom: -2px;
+    }
+
+    .nav-tab:hover {
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    .nav-tab.active {
+      color: var(--orange);
+      border-bottom-color: var(--orange);
+    }
+
+    .nav-tab .icon { font-size: 18px; }
+
+    /* CONTENT */
+    .content {
+      flex: 1;
+      padding: 24px;
+      max-width: 1400px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .page { display: none; }
+    .page.active { display: block; animation: fadeIn 0.3s; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .page-title {
+      font-size: 28px;
+      font-weight: 900;
+      color: var(--navy);
+      margin: 0;
+    }
+
+    .page-subtitle {
+      color: var(--text-3);
+      font-size: 14px;
+      margin-top: 4px;
+    }
+
+    /* =========================================================
+       STATS CARDS
+       ========================================================= */
 
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 13px;
-      margin-bottom: 18px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
     }
 
     .stat-card {
-      padding: 19px;
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
       border: 1px solid var(--border);
-      border-radius: 18px;
-      background: linear-gradient(145deg, rgba(13, 29, 47, 0.9), rgba(8, 18, 30, 0.9));
+      transition: all 0.2s;
       position: relative;
       overflow: hidden;
     }
 
-    .stat-icon { font-size: 21px; margin-bottom: 9px; }
-    .stat-number { font-size: 28px; line-height: 1; font-weight: 900; }
-    .stat-label { color: var(--muted); font-size: 11px; margin-top: 7px; }
+    .stat-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow);
+    }
 
-    .dashboard-grid {
+    .stat-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: var(--radius);
       display: grid;
-      grid-template-columns: 1.25fr 0.75fr;
-      gap: 18px;
+      place-items: center;
+      font-size: 26px;
+      margin-bottom: 16px;
     }
 
-    .quick-list { display: grid; gap: 8px; }
+    .stat-icon.orange { background: var(--orange-soft); color: var(--orange); }
+    .stat-icon.green { background: var(--green-soft); color: var(--green); }
+    .stat-icon.blue { background: var(--blue-soft); color: var(--blue); }
+    .stat-icon.yellow { background: var(--yellow-soft); color: var(--yellow); }
 
-    .quick-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      padding: 12px;
-      border-radius: 12px;
-      background: rgba(255, 255, 255, 0.025);
-      border: 1px solid rgba(255, 255, 255, 0.045);
+    .stat-number {
+      font-size: 32px;
+      font-weight: 900;
+      color: var(--navy);
+      line-height: 1;
+      margin-bottom: 4px;
     }
 
-    .quick-item-label { color: var(--text-2); font-size: 12px; }
-    .quick-item-value { color: var(--gold-2); font-weight: 900; font-size: 13px; }
+    .stat-label {
+      font-size: 13px;
+      color: var(--text-3);
+      font-weight: 600;
+    }
 
-    /* TOOLBAR */
-    .toolbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      flex-wrap: wrap;
-      padding: 14px;
+    /* =========================================================
+       QUICK ACTIONS
+       ========================================================= */
+
+    .quick-actions {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
       border: 1px solid var(--border);
-      border-radius: 17px;
-      background: rgba(8, 19, 32, 0.7);
-      margin-bottom: 15px;
+      margin-bottom: 24px;
     }
 
-    .toolbar-left, .toolbar-right {
+    .quick-actions h2 {
+      font-size: 16px;
+      font-weight: 900;
+      color: var(--navy);
+      margin-bottom: 16px;
       display: flex;
       align-items: center;
       gap: 8px;
-      flex-wrap: wrap;
     }
 
-    .search-wrap { position: relative; }
+    .quick-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+    }
 
-    .search-input {
-      width: min(330px, 100%);
-      min-height: 42px;
+    .quick-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px;
+      background: var(--bg);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      font-weight: 800;
+      font-size: 13px;
+      color: var(--text-2);
+      transition: all 0.2s;
+      text-align: right;
+    }
+
+    .quick-btn:hover {
+      border-color: var(--orange);
+      background: var(--orange-soft);
+      color: var(--orange);
+      transform: translateY(-2px);
+    }
+
+    .quick-btn .icon {
+      font-size: 22px;
+    }
+
+    /* =========================================================
+       TOOLBAR
+       ========================================================= */
+
+    .toolbar {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: var(--shadow-sm);
       border: 1px solid var(--border);
-      border-radius: 11px;
-      background: #071321;
-      color: #fff;
-      padding: 0 40px 0 12px;
+      margin-bottom: 20px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .toolbar-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .search-box {
+      position: relative;
+      flex: 1;
+      min-width: 240px;
+      max-width: 400px;
+    }
+
+    .search-box input {
+      width: 100%;
+      min-height: 44px;
+      padding: 0 44px 0 16px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--bg);
+      font-size: 14px;
+      transition: all 0.2s;
       outline: none;
     }
 
-    .search-input:focus {
-      border-color: rgba(201, 164, 91, 0.45);
-      box-shadow: 0 0 0 3px rgba(201, 164, 91, 0.08);
+    .search-box input:focus {
+      border-color: var(--orange);
+      background: var(--white);
     }
 
-    .search-icon {
+    .search-box::before {
+      content: "🔎";
       position: absolute;
-      right: 13px;
+      right: 14px;
       top: 50%;
       transform: translateY(-50%);
-      color: #72869d;
+      font-size: 16px;
       pointer-events: none;
     }
 
-    .select {
-      min-height: 42px;
-      min-width: 145px;
-      border: 1px solid var(--border);
-      border-radius: 11px;
-      background: #071321;
+    .filter-btn {
+      min-height: 44px;
+      padding: 0 16px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--white);
       color: var(--text-2);
-      padding: 0 11px;
-      outline: none;
-    }
-
-    /* SECTIONS */
-    .sections-grid { display: grid; gap: 10px; }
-
-    .section-row {
-      display: grid;
-      grid-template-columns: 45px minmax(0, 1fr) auto;
-      align-items: center;
-      gap: 12px;
-      padding: 13px;
-      border: 1px solid var(--border);
-      border-radius: 15px;
-      background: rgba(255, 255, 255, 0.025);
-      transition: 0.2s ease;
-    }
-
-    .section-row:hover { border-color: var(--border-strong); background: rgba(255, 255, 255, 0.04); }
-
-    .section-order {
-      width: 38px;
-      height: 38px;
-      display: grid;
-      place-items: center;
-      border-radius: 11px;
-      background: var(--gold-soft);
-      color: var(--gold-2);
-      font-size: 12px;
-      font-weight: 900;
-    }
-
-    .section-main { min-width: 0; }
-    .section-name { font-weight: 800; font-size: 14px; }
-
-    .section-meta {
-      margin-top: 4px;
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      flex-wrap: wrap;
-      color: var(--muted);
-      font-size: 10px;
-    }
-
-    .section-actions {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-    }
-
-    .status-badge {
+      font-size: 13px;
+      font-weight: 700;
+      transition: all 0.2s;
       display: inline-flex;
       align-items: center;
-      justify-content: center;
-      padding: 4px 8px;
-      border-radius: 999px;
-      font-size: 10px;
-      font-weight: 800;
+      gap: 6px;
     }
 
-    .status-active { color: #82eabe; background: var(--green-soft); }
-    .status-hidden { color: #a9b4c0; background: rgba(255, 255, 255, 0.06); }
-    .status-offer { color: #ffd98a; background: rgba(244, 201, 93, 0.12); }
-    .status-home { color: #a9d4ff; background: var(--blue-soft); }
+    .filter-btn:hover {
+      border-color: var(--orange);
+      color: var(--orange);
+    }
 
-    /* PRODUCTS */
-    .products-list { display: grid; gap: 10px; }
+    .filter-btn.active {
+      background: var(--orange);
+      color: var(--white);
+      border-color: var(--orange);
+    }
 
-    .product-row {
-      display: grid;
-      grid-template-columns: 76px minmax(0, 1fr) auto;
-      align-items: center;
-      gap: 14px;
-      padding: 12px;
+    /* =========================================================
+       PRODUCTS LIST
+       ========================================================= */
+
+    .products-table {
+      background: var(--white);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
       border: 1px solid var(--border);
-      border-radius: 16px;
-      background: rgba(255, 255, 255, 0.025);
-      transition: 0.2s ease;
     }
 
-    .product-row:hover { border-color: var(--border-strong); background: rgba(255, 255, 255, 0.04); }
+    .product-item {
+      display: grid;
+      grid-template-columns: 80px 1fr auto;
+      gap: 16px;
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+      align-items: center;
+      transition: background 0.2s;
+    }
+
+    .product-item:last-child { border-bottom: none; }
+    .product-item:hover { background: var(--bg); }
 
     .product-thumb {
-      width: 76px;
-      height: 76px;
-      border-radius: 12px;
+      width: 80px;
+      height: 80px;
+      border-radius: var(--radius-sm);
       object-fit: cover;
-      background: #091421;
-      border: 1px solid var(--border);
+      border: 2px solid var(--border);
+      background: var(--bg);
     }
 
     .product-info { min-width: 0; }
 
     .product-name {
-      font-size: 14px;
-      font-weight: 900;
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--navy);
       margin-bottom: 4px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .product-description {
-      color: var(--muted);
-      font-size: 11px;
-      line-height: 1.65;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
     }
 
     .product-meta {
       display: flex;
+      gap: 8px;
       flex-wrap: wrap;
       align-items: center;
-      gap: 6px;
+      font-size: 12px;
+      color: var(--text-3);
     }
 
-    .meta-chip {
-      padding: 4px 7px;
-      border-radius: 7px;
-      background: rgba(255, 255, 255, 0.045);
-      color: #9aabc0;
-      font-size: 9px;
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      font-size: 11px;
+      font-weight: 800;
     }
 
-    .product-price { color: var(--gold-2); font-weight: 900; }
-
-    .product-old-price {
-      color: #75869a;
-      text-decoration: line-through;
-      font-size: 10px;
-      margin-right: 4px;
-    }
+    .badge.cat { background: var(--bg); color: var(--text-3); }
+    .badge.price { background: var(--orange-soft); color: var(--orange); }
+    .badge.old { background: var(--bg); color: var(--text-4); text-decoration: line-through; }
+    .badge.active { background: var(--green-soft); color: var(--green); }
+    .badge.hidden { background: var(--red-soft); color: var(--red); }
+    .badge.home { background: var(--blue-soft); color: var(--blue); }
+    .badge.offer { background: var(--yellow-soft); color: var(--yellow); }
 
     .product-actions {
       display: flex;
-      align-items: center;
-      gap: 5px;
+      gap: 6px;
       flex-wrap: wrap;
       justify-content: flex-end;
-      max-width: 280px;
     }
 
-    /* FORMS */
-    .form-grid {
+    .action-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-sm);
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 15px;
+      place-items: center;
+      font-size: 18px;
+      transition: all 0.2s;
+      border: 2px solid transparent;
     }
 
-    .field { display: grid; gap: 7px; }
-    .field.full { grid-column: 1 / -1; }
+    .action-btn.edit { background: var(--blue-soft); color: var(--blue); }
+    .action-btn.edit:hover { background: var(--blue); color: var(--white); }
 
-    .label { color: #b8c5d4; font-size: 11px; font-weight: 800; }
+    .action-btn.toggle { background: var(--yellow-soft); color: var(--yellow); }
+    .action-btn.toggle:hover { background: var(--yellow); color: var(--white); }
 
-    .input, .textarea, .field-select {
-      width: 100%;
-      border: 1px solid var(--border);
-      border-radius: 11px;
-      background: #071321;
-      color: #fff;
-      padding: 11px 12px;
-      outline: none;
+    .action-btn.toggle-on { background: var(--green-soft); color: var(--green); }
+    .action-btn.toggle-on:hover { background: var(--green); color: var(--white); }
+
+    .action-btn.delete { background: var(--red-soft); color: var(--red); }
+    .action-btn.delete:hover { background: var(--red); color: var(--white); }
+
+    /* =========================================================
+       STATE BOXES
+       ========================================================= */
+
+    .state-box {
+      padding: 60px 24px;
+      text-align: center;
+      color: var(--text-3);
     }
 
-    .input { min-height: 43px; }
-
-    .textarea {
-      min-height: 110px;
-      resize: vertical;
-      line-height: 1.8;
+    .state-box .icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+      opacity: 0.5;
     }
 
-    .input:focus, .textarea:focus, .field-select:focus {
-      border-color: rgba(201, 164, 91, 0.45);
-      box-shadow: 0 0 0 3px rgba(201, 164, 91, 0.07);
+    .state-box h3 {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 8px;
     }
 
-    .field-help { color: #687c92; font-size: 10px; line-height: 1.7; }
-
-    .check-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 9px;
+    .state-box p {
+      font-size: 14px;
+      max-width: 400px;
+      margin: 0 auto 20px;
     }
 
-    .check-box {
-      min-height: 49px;
-      padding: 9px 10px;
-      border: 1px solid var(--border);
-      border-radius: 11px;
-      background: rgba(255, 255, 255, 0.025);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      cursor: pointer;
-      transition: 0.2s ease;
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid var(--border);
+      border-top-color: var(--orange);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 16px;
     }
 
-    .check-box:hover { background: rgba(255, 255, 255, 0.045); }
-    .check-box input { accent-color: var(--gold); width: 16px; height: 16px; }
-    .check-text { font-size: 11px; color: var(--text-2); }
-
-    .image-upload {
-      display: grid;
-      grid-template-columns: 130px minmax(0, 1fr);
-      gap: 14px;
-      align-items: start;
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
 
-    .image-preview {
-      width: 130px;
-      height: 130px;
-      object-fit: cover;
-      border-radius: 15px;
-      border: 1px solid var(--border);
-      background: #071321;
-    }
+    /* =========================================================
+       MODAL
+       ========================================================= */
 
-    .upload-box {
-      min-height: 130px;
-      border: 1px dashed rgba(201, 164, 91, 0.28);
-      border-radius: 15px;
-      padding: 15px;
-      background: rgba(201, 164, 91, 0.035);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      gap: 8px;
-    }
-
-    .upload-box input[type=file] {
-      width: 100%;
-      color: var(--muted);
-      font-size: 11px;
-    }
-
-    .upload-status { min-height: 18px; color: var(--muted); font-size: 10px; }
-
-    .form-footer {
-      display: flex;
-      justify-content: flex-start;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-top: 20px;
-      padding-top: 16px;
-      border-top: 1px solid var(--border);
-    }
-
-    /* MODAL */
     .modal-backdrop {
       position: fixed;
       inset: 0;
+      background: rgba(10, 31, 51, 0.6);
+      backdrop-filter: blur(4px);
       z-index: 1000;
-      background: rgba(0, 0, 0, 0.72);
-      backdrop-filter: blur(9px);
       display: none;
       align-items: center;
       justify-content: center;
-      padding: 18px;
+      padding: 20px;
+      overflow-y: auto;
     }
 
     .modal-backdrop.open { display: flex; }
 
     .modal {
-      width: min(720px, 100%);
-      max-height: min(900px, calc(100vh - 36px));
-      overflow: auto;
-      border: 1px solid var(--border-strong);
-      border-radius: 22px;
-      background: linear-gradient(145deg, #0d1d2f, #071321);
-      box-shadow: 0 30px 100px rgba(0, 0, 0, 0.5);
-      animation: modalIn 0.2s ease;
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 720px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-lg);
+      animation: modalIn 0.25s;
     }
 
-    .modal.large { width: min(880px, 100%); }
+    .modal.large { max-width: 900px; }
 
     @keyframes modalIn {
-      from { opacity: 0; transform: translateY(12px) scale(0.985); }
-      to { opacity: 1; transform: none; }
+      from { opacity: 0; transform: translateY(20px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
-    .modal-head {
-      padding: 17px 19px;
+    .modal-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
-      border-bottom: 1px solid var(--border);
-      position: sticky;
-      top: 0;
-      background: rgba(13, 29, 47, 0.96);
-      backdrop-filter: blur(15px);
-      z-index: 2;
+      gap: 16px;
     }
 
-    .modal-title { margin: 0; font-size: 16px; font-weight: 900; }
-
-    .close-btn {
-      width: 36px;
-      height: 36px;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      background: rgba(255, 255, 255, 0.04);
-      color: #dbe4ef;
+    .modal-title {
       font-size: 18px;
+      font-weight: 900;
+      color: var(--navy);
+      margin: 0;
+    }
+
+    .modal-close {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-sm);
+      background: var(--bg);
+      color: var(--text-2);
+      font-size: 20px;
+      display: grid;
+      place-items: center;
+      transition: all 0.2s;
+    }
+
+    .modal-close:hover {
+      background: var(--red-soft);
+      color: var(--red);
+    }
+
+    .modal-body {
+      padding: 24px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .modal-footer {
+      padding: 20px 24px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 12px;
+      justify-content: flex-start;
+      background: var(--bg);
+      border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    }
+
+    /* FORM */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .form-grid .full { grid-column: 1 / -1; }
+
+    .form-field label {
+      display: block;
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--text-2);
+      margin-bottom: 6px;
+    }
+
+    .form-field .hint {
+      font-size: 11px;
+      color: var(--text-4);
+      margin-top: 4px;
+    }
+
+    .textarea {
+      width: 100%;
+      min-height: 100px;
+      padding: 12px 16px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--white);
+      color: var(--text);
+      font-size: 14px;
+      font-family: inherit;
+      line-height: 1.7;
+      resize: vertical;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .textarea:focus {
+      border-color: var(--orange);
+      box-shadow: 0 0 0 4px rgba(230, 123, 32, 0.1);
+    }
+
+    .switch-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .switch-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all 0.2s;
+      background: var(--white);
+    }
+
+    .switch-box:hover { border-color: var(--orange); }
+
+    .switch-box input { display: none; }
+
+    .switch-box .check {
+      width: 22px;
+      height: 22px;
+      border: 2px solid var(--border-2);
+      border-radius: 6px;
+      display: grid;
+      place-items: center;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+
+    .switch-box input:checked + .check {
+      background: var(--orange);
+      border-color: var(--orange);
+      color: var(--white);
+    }
+
+    .switch-box input:checked + .check::after {
+      content: "✓";
+      font-weight: 900;
+      font-size: 14px;
+    }
+
+    .switch-box span {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-2);
+    }
+
+    /* IMAGE UPLOAD */
+    .image-upload {
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .image-preview {
+      width: 160px;
+      height: 160px;
+      border-radius: var(--radius);
+      object-fit: cover;
+      border: 2px dashed var(--border-2);
+      background: var(--bg);
+      padding: 4px;
+    }
+
+    .upload-area {
+      border: 2px dashed var(--border-2);
+      border-radius: var(--radius);
+      padding: 20px;
+      text-align: center;
+      transition: all 0.2s;
       cursor: pointer;
     }
 
-    .modal-body { padding: 19px; }
-
-    /* STATE */
-    .state-box {
-      min-height: 180px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      gap: 9px;
-      text-align: center;
-      color: var(--muted);
+    .upload-area:hover {
+      border-color: var(--orange);
+      background: var(--orange-soft);
     }
 
-    .state-icon { font-size: 30px; opacity: 0.75; }
-    .state-title { color: var(--text-2); font-weight: 800; font-size: 13px; }
-    .state-text { max-width: 420px; font-size: 11px; line-height: 1.8; }
+    .upload-area input[type=file] { display: none; }
 
-    .spinner {
-      width: 25px;
-      height: 25px;
-      border: 3px solid rgba(255, 255, 255, 0.10);
-      border-top-color: var(--gold);
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
+    .upload-area .icon { font-size: 32px; margin-bottom: 8px; }
+    .upload-area strong { display: block; font-size: 14px; color: var(--navy); margin-bottom: 4px; }
+    .upload-area span { font-size: 12px; color: var(--text-3); }
+
+    .upload-status {
+      margin-top: 12px;
+      font-size: 12px;
+      color: var(--text-3);
+      min-height: 18px;
     }
 
-    @keyframes spin { to { transform: rotate(360deg); } }
+    /* BUTTONS */
+    .btn-outline {
+      background: var(--white);
+      color: var(--text-2);
+      border: 2px solid var(--border);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--text-2);
+      color: var(--text);
+    }
+
+    .btn-danger {
+      background: var(--red);
+      color: var(--white);
+    }
+
+    .btn-danger:hover { background: #dc2626; }
 
     /* TOAST */
     #toastContainer {
       position: fixed;
-      left: 18px;
-      bottom: 18px;
+      bottom: 20px;
+      left: 20px;
       z-index: 3000;
-      display: grid;
-      gap: 8px;
-      width: min(380px, calc(100% - 36px));
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-width: 400px;
     }
 
     .toast {
-      padding: 13px 15px;
-      border: 1px solid var(--border-strong);
-      border-radius: 13px;
-      background: rgba(9, 20, 33, 0.96);
-      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
-      color: var(--text-2);
-      font-size: 12px;
-      line-height: 1.7;
-      animation: toastIn 0.22s ease;
+      padding: 16px 20px;
+      background: var(--navy);
+      color: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-lg);
+      font-size: 14px;
+      font-weight: 700;
+      animation: toastIn 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
-    .toast.success { border-color: rgba(37, 211, 102, 0.25); }
-    .toast.error { border-color: rgba(239, 68, 68, 0.25); color: #ffb2b7; }
-    .toast.warning { border-color: rgba(244, 201, 93, 0.25); }
+    .toast.success { background: var(--green); }
+    .toast.error { background: var(--red); }
+    .toast.warning { background: var(--yellow); }
 
     @keyframes toastIn {
-      from { opacity: 0; transform: translateY(8px); }
-      to { opacity: 1; transform: none; }
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
     }
 
-    @media (max-width: 1050px) {
-      .layout { grid-template-columns: 1fr; }
-      .sidebar {
-        position: static;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        overflow-x: auto;
-        padding: 7px;
-      }
-      .sidebar-label, .sidebar-footer { display: none; }
-      .nav-item { width: auto; flex: none; margin: 0; padding: 10px 13px; }
-      .nav-item span:last-child { white-space: nowrap; }
-      .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .dashboard-grid { grid-template-columns: 1fr; }
-    }
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
 
-    @media (max-width: 720px) {
-      .topbar { height: 68px; }
-      .topbar-inner, .layout { width: min(100% - 20px, 1500px); }
-      .brand-subtitle, .status-pill { display: none; }
-      .top-button { min-height: 37px; padding: 0 10px; font-size: 11px; }
-      .layout { margin-top: 12px; }
-      .page-head { align-items: flex-start; flex-direction: column; }
-      .page-title { font-size: 23px; }
-      .page-actions { width: 100%; }
-      .page-actions .btn { flex: 1; }
-      .stats-grid { gap: 9px; }
-      .stat-card { padding: 14px; }
-      .stat-number { font-size: 23px; }
-      .toolbar { align-items: stretch; }
-      .toolbar-left, .toolbar-right { width: 100%; }
-      .search-wrap, .search-input { width: 100%; }
-      .select { flex: 1; min-width: 0; }
-      .section-row { grid-template-columns: 40px minmax(0, 1fr); }
-      .section-actions {
-        grid-column: 1 / -1;
-        justify-content: flex-start;
-        padding-top: 4px;
-        border-top: 1px solid rgba(255, 255, 255, 0.05);
+    @media (max-width: 768px) {
+      .topbar { padding: 0 16px; height: 64px; }
+      .brand-text span { display: none; }
+      .brand-text strong { font-size: 13px; }
+      .brand-logo { width: 36px; height: 36px; }
+
+      .topbar-btn .label { display: none; }
+      .topbar-btn { padding: 0 12px; }
+
+      .nav-tabs { top: 64px; padding: 0 16px; }
+      .nav-tab { padding: 14px 16px; font-size: 13px; }
+      .nav-tab .label { display: none; }
+      .nav-tab .icon { font-size: 20px; }
+
+      .content { padding: 16px; }
+      .page-title { font-size: 22px; }
+
+      .stats-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+      .stat-card { padding: 16px; }
+      .stat-number { font-size: 24px; }
+
+      .quick-grid { grid-template-columns: 1fr 1fr; }
+
+      .product-item {
+        grid-template-columns: 64px 1fr;
+        gap: 12px;
       }
-      .product-row { grid-template-columns: 62px minmax(0, 1fr); }
-      .product-thumb { width: 62px; height: 62px; }
+
+      .product-thumb { width: 64px; height: 64px; }
+
       .product-actions {
         grid-column: 1 / -1;
-        max-width: none;
         justify-content: flex-start;
-        padding-top: 7px;
-        border-top: 1px solid rgba(255, 255, 255, 0.05);
+        padding-top: 12px;
+        border-top: 1px solid var(--border);
       }
-      .form-grid, .check-grid, .image-upload { grid-template-columns: 1fr; }
-      .field.full { grid-column: auto; }
-      .image-preview { width: 120px; height: 120px; }
-      .login-card { padding: 25px 19px; }
+
+      .action-btn { width: 44px; height: 44px; }
+
+      .form-grid { grid-template-columns: 1fr; }
+      .switch-grid { grid-template-columns: 1fr; }
+
+      .image-upload { grid-template-columns: 1fr; }
+      .image-preview { width: 100%; height: 200px; }
+
+      .modal { max-height: 95vh; }
+      .modal-header, .modal-body, .modal-footer { padding: 16px; }
     }
 
-    @media (max-width: 430px) {
-      .brand-title { font-size: 13px; }
-      .brand-logo { width: 40px; height: 40px; }
-      .top-button.logout-text { font-size: 0; width: 38px; padding: 0; }
-      .top-button.logout-text::before { content: "↪"; font-size: 18px; }
-      .stats-grid { grid-template-columns: 1fr 1fr; }
-      .stat-card { padding: 12px; }
-      .stat-icon { font-size: 18px; }
-      .stat-number { font-size: 21px; }
-      .btn { font-size: 11px; }
+    @media (max-width: 480px) {
+      .stats-grid { grid-template-columns: 1fr; }
+      .quick-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
-
 <body>
+  
+  <!-- =========================================================
+       LOGIN SCREEN
+       ========================================================= -->
 
-  <!-- LOGIN -->
-  <section id="loginScreen">
+  <div id="loginScreen">
     <div class="login-card">
       <img src="./assets/logo.png" alt="أبو طارق" class="login-logo">
-      <h1 class="login-title">لوحة إدارة أبو طارق</h1>
-      <p class="login-subtitle">إدارة الأقسام والمنتجات والإعدادات من مكان واحد.</p>
+      <h1>لوحة إدارة أبو طارق</h1>
+      <p>إدارة المنتجات والأقسام بسهولة</p>
 
-      <form id="loginForm" class="login-form">
+      <form id="loginForm">
         <div class="field">
-          <label class="label" for="adminKey">مفتاح الإدارة</label>
-          <input id="adminKey" class="input" type="password" autocomplete="current-password" placeholder="اكتب مفتاح الإدارة" required>
+          <label for="adminKey">مفتاح الإدارة</label>
+          <input id="adminKey" class="input" type="password" placeholder="اكتب مفتاح الإدارة" required>
         </div>
 
         <div id="loginError" class="login-error hidden"></div>
 
-        <button id="loginBtn" class="btn btn-primary" type="submit">🔐 دخول لوحة الإدارة</button>
+        <button id="loginBtn" type="submit" class="btn btn-primary">
+          🔐 دخول
+        </button>
       </form>
     </div>
-  </section>
+  </div>
 
-  <!-- APP -->
+  <!-- =========================================================
+       APP
+       ========================================================= -->
+
   <div id="app" class="hidden">
-    <header class="topbar">
-      <div class="topbar-inner">
-        <div class="brand">
-          <img src="./assets/logo.png" alt="أبو طارق" class="brand-logo">
-          <div class="brand-text">
-            <div class="brand-title">أبو طارق للأدوات المنزلية</div>
-            <div class="brand-subtitle">لوحة التحكم الرئيسية</div>
-          </div>
-        </div>
 
-        <div class="top-actions">
-          <div class="status-pill">
-            <span class="status-dot"></span>
-            متصل بالخادم
-          </div>
-          <a class="top-button" href="./" target="_blank">🌐 الموقع</a>
-          <button id="logoutBtn" class="top-button danger logout-text" type="button">تسجيل الخروج</button>
+    <!-- TOP BAR -->
+    <header class="topbar">
+      <div class="brand">
+        <img src="./assets/logo.png" alt="أبو طارق" class="brand-logo">
+        <div class="brand-text">
+          <strong>أبو طارق</strong>
+          <span>لوحة التحكم</span>
         </div>
+      </div>
+
+      <div class="topbar-actions">
+        <a href="./" target="_blank" class="topbar-btn">
+          <span>🌐</span>
+          <span class="label">الموقع</span>
+        </a>
+        <button id="logoutBtn" class="topbar-btn danger">
+          <span>↪</span>
+          <span class="label">خروج</span>
+        </button>
       </div>
     </header>
 
-    <div class="layout">
-      <aside class="sidebar">
-        <div class="sidebar-label">الإدارة</div>
+    <!-- NAV TABS -->
+    <nav class="nav-tabs">
+      <button class="nav-tab active" data-page="dashboardPage">
+        <span class="icon">📊</span>
+        <span class="label">الرئيسية</span>
+      </button>
+      <button class="nav-tab" data-page="productsPage">
+        <span class="icon">🛍️</span>
+        <span class="label">المنتجات</span>
+      </button>
+      <button class="nav-tab" data-page="sectionsPage">
+        <span class="icon">🗂️</span>
+        <span class="label">الأقسام</span>
+      </button>
+      <button class="nav-tab" data-page="settingsPage">
+        <span class="icon">⚙️</span>
+        <span class="label">الإعدادات</span>
+      </button>
+    </nav>
 
-        <button class="nav-item active" data-page="dashboardPage" type="button">
-          <span class="nav-icon">📊</span><span>الرئيسية</span>
-        </button>
+    <!-- CONTENT -->
+    <main class="content">
 
-        <button class="nav-item" data-page="sectionsPage" type="button">
-          <span class="nav-icon">🗂️</span><span>الأقسام</span>
-        </button>
-
-        <button class="nav-item" data-page="productsPage" type="button">
-          <span class="nav-icon">🛍️</span><span>المنتجات</span>
-        </button>
-
-        <button class="nav-item" data-page="settingsPage" type="button">
-          <span class="nav-icon">⚙️</span><span>الإعدادات</span>
-        </button>
-
-        <div class="sidebar-footer">
-          <strong>Abu Tarek Store</strong><br>
-          نظام إدارة المحتوى
+      <!-- DASHBOARD -->
+      <section id="dashboardPage" class="page active">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">لوحة التحكم</h1>
+            <p class="page-subtitle">نظرة عامة على كل حاجة</p>
+          </div>
+          <button id="refreshAllBtn" class="btn btn-outline">
+            <span>↻</span>
+            تحديث
+          </button>
         </div>
-      </aside>
 
-      <main class="main-content">
+        <!-- STATS -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon orange">🛍️</div>
+            <div class="stat-number" id="statTotalProducts">0</div>
+            <div class="stat-label">إجمالي المنتجات</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon green">✓</div>
+            <div class="stat-number" id="statActiveProducts">0</div>
+            <div class="stat-label">منتجات نشطة</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon blue">🏠</div>
+            <div class="stat-number" id="statHomeProducts">0</div>
+            <div class="stat-label">ظاهرة في الرئيسية</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon yellow">🔥</div>
+            <div class="stat-number" id="statOffers">0</div>
+            <div class="stat-label">عروض نشطة</div>
+          </div>
+        </div>
 
-        <!-- DASHBOARD -->
-        <section id="dashboardPage" class="page active">
-          <div class="page-head">
-            <div>
-              <h1 class="page-title">لوحة التحكم</h1>
-              <p class="page-description">نظرة سريعة على الأقسام والمنتجات والمحتوى الظاهر على الموقع.</p>
-            </div>
-            <div class="page-actions">
-              <button id="dashboardRefreshBtn" class="btn btn-primary" type="button">↻ تحديث البيانات</button>
+        <!-- QUICK ACTIONS -->
+        <div class="quick-actions">
+          <h2>⚡ إجراءات سريعة</h2>
+          <div class="quick-grid">
+            <button class="quick-btn" id="quickAddProduct">
+              <span class="icon">➕</span>
+              <span>إضافة منتج</span>
+            </button>
+            <button class="quick-btn" id="quickAddSection">
+              <span class="icon">📁</span>
+              <span>إضافة قسم</span>
+            </button>
+            <button class="quick-btn" id="quickViewProducts">
+              <span class="icon">🛍️</span>
+              <span>عرض المنتجات</span>
+            </button>
+            <button class="quick-btn" id="quickViewSettings">
+              <span class="icon">⚙️</span>
+              <span>الإعدادات</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- PRODUCTS -->
+      <section id="productsPage" class="page">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">المنتجات</h1>
+            <p class="page-subtitle">إدارة كاملة لكل المنتجات</p>
+          </div>
+          <button id="addProductBtn" class="btn btn-primary">
+            <span>➕</span>
+            إضافة منتج
+          </button>
+        </div>
+
+        <!-- TOOLBAR -->
+        <div class="toolbar">
+          <div class="toolbar-group" style="flex: 1;">
+            <div class="search-box">
+              <input id="productSearch" type="search" placeholder="ابحث بالاسم أو الوصف...">
             </div>
           </div>
-
-          <div class="stats-grid">
-            <div class="stat-card">
-              <div class="stat-icon">🗂️</div>
-              <div id="statSections" class="stat-number">0</div>
-              <div class="stat-label">إجمالي الأقسام</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-icon">🛍️</div>
-              <div id="statProducts" class="stat-number">0</div>
-              <div class="stat-label">إجمالي المنتجات</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-icon">🏠</div>
-              <div id="statHome" class="stat-number">0</div>
-              <div class="stat-label">منتجات ظاهرة بالرئيسية</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-icon">🔥</div>
-              <div id="statOffers" class="stat-number">0</div>
-              <div class="stat-label">منتجات عليها عروض</div>
-            </div>
+          <div class="toolbar-group">
+            <button class="filter-btn active" data-filter="all">الكل</button>
+            <button class="filter-btn" data-filter="active">نشط</button>
+            <button class="filter-btn" data-filter="hidden">مخفي</button>
+            <button class="filter-btn" data-filter="home">🏠 الرئيسية</button>
+            <button class="filter-btn" data-filter="offers">🔥 العروض</button>
           </div>
+        </div>
 
-          <div class="dashboard-grid">
-            <div class="panel">
-              <div class="panel-head">
-                <div>
-                  <h2 class="panel-title">ملخص المحتوى</h2>
-                  <div class="panel-subtitle">حالة البيانات الحالية</div>
-                </div>
-              </div>
-              <div class="panel-body">
-                <div class="quick-list">
-                  <div class="quick-item">
-                    <span class="quick-item-label">الأقسام النشطة</span>
-                    <span id="dashActiveSections" class="quick-item-value">0</span>
-                  </div>
-                  <div class="quick-item">
-                    <span class="quick-item-label">الأقسام المخفية</span>
-                    <span id="dashHiddenSections" class="quick-item-value">0</span>
-                  </div>
-                  <div class="quick-item">
-                    <span class="quick-item-label">المنتجات النشطة</span>
-                    <span id="dashActiveProducts" class="quick-item-value">0</span>
-                  </div>
-                  <div class="quick-item">
-                    <span class="quick-item-label">المنتجات المخفية</span>
-                    <span id="dashHiddenProducts" class="quick-item-value">0</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="panel">
-              <div class="panel-head">
-                <div>
-                  <h2 class="panel-title">اختصارات سريعة</h2>
-                  <div class="panel-subtitle">أكثر العمليات استخدامًا</div>
-                </div>
-              </div>
-              <div class="panel-body">
-                <div class="quick-list" style="gap:9px">
-                  <button id="quickAddProduct" class="btn btn-primary" type="button">＋ إضافة منتج</button>
-                  <button id="quickAddSection" class="btn" type="button">＋ إضافة قسم</button>
-                  <button id="quickViewProducts" class="btn btn-blue" type="button">🛍️ إدارة المنتجات</button>
-                  <button id="quickViewSettings" class="btn" type="button">⚙️ الإعدادات</button>
-                </div>
-              </div>
-            </div>
+        <!-- PRODUCTS LIST -->
+        <div id="productsList" class="products-table">
+          <div class="state-box">
+            <div class="spinner"></div>
+            <p>جاري تحميل المنتجات...</p>
           </div>
-        </section>
-                <!-- SECTIONS PAGE -->
-        <section id="sectionsPage" class="page">
-          <div class="page-head">
-            <div>
-              <h1 class="page-title">إدارة الأقسام</h1>
-              <p class="page-description">أضف الأقسام وعدّل أسماءها وأظهرها أو أخفِها وتحكم في ترتيبها.</p>
-            </div>
-            <div class="page-actions">
-              <button id="addSectionBtn" class="btn btn-primary" type="button">＋ إضافة قسم</button>
-              <button id="refreshSectionsBtn" class="btn" type="button">↻ تحديث</button>
-            </div>
-          </div>
+        </div>
+      </section>
 
-          <div class="toolbar">
-            <div class="toolbar-left">
-              <div class="search-wrap">
-                <span class="search-icon">🔎</span>
-                <input id="sectionSearch" class="search-input" type="search" placeholder="ابحث عن قسم...">
-              </div>
-            </div>
-            <div class="toolbar-right">
-              <span id="sectionCountLabel" style="color:var(--muted);font-size:11px">0 قسم</span>
-            </div>
+      <!-- SECTIONS -->
+      <section id="sectionsPage" class="page">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">الأقسام</h1>
+            <p class="page-subtitle">إدارة أقسام الموقع</p>
           </div>
+          <button id="addSectionBtn" class="btn btn-primary">
+            <span>➕</span>
+            إضافة قسم
+          </button>
+        </div>
 
-          <div class="panel">
-            <div id="sectionsList" class="panel-body">
-              <div class="state-box">
-                <div class="spinner"></div>
-                <div class="state-title">جاري تحميل الأقسام</div>
-              </div>
-            </div>
+        <div id="sectionsList" class="products-table">
+          <div class="state-box">
+            <div class="spinner"></div>
+            <p>جاري تحميل الأقسام...</p>
           </div>
-        </section>
+        </div>
+      </section>
 
-        <!-- PRODUCTS PAGE -->
-        <section id="productsPage" class="page">
-          <div class="page-head">
-            <div>
-              <h1 class="page-title">إدارة المنتجات</h1>
-              <p class="page-description">إدارة المنتجات والصور والوصف والأسعار والعروض وظهور المنتج في الرئيسية.</p>
-            </div>
-            <div class="page-actions">
-              <button id="addProductBtn" class="btn btn-primary" type="button">＋ إضافة منتج</button>
-              <button id="refreshProductsBtn" class="btn" type="button">↻ تحديث</button>
-            </div>
+      <!-- SETTINGS -->
+      <section id="settingsPage" class="page">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">الإعدادات</h1>
+            <p class="page-subtitle">تحكم في إعدادات الموقع</p>
           </div>
+          <button id="saveSettingsBtn" class="btn btn-primary">
+            <span>💾</span>
+            حفظ
+          </button>
+        </div>
 
-          <div class="toolbar">
-            <div class="toolbar-left">
-              <div class="search-wrap">
-                <span class="search-icon">🔎</span>
-                <input id="productSearch" class="search-input" type="search" placeholder="ابحث باسم المنتج أو الوصف...">
-              </div>
-              <select id="productCategoryFilter" class="select">
-                <option value="">كل الأقسام</option>
-              </select>
-            </div>
-            <div class="toolbar-right">
-              <select id="productStatusFilter" class="select">
-                <option value="all">كل الحالات</option>
-                <option value="active">النشطة</option>
-                <option value="hidden">المخفية</option>
-                <option value="home">ظاهرة بالرئيسية</option>
-                <option value="offers">العروض</option>
-              </select>
-              <span id="productCountLabel" style="color:var(--muted);font-size:11px">0 منتج</span>
-            </div>
+        <div id="settingsContainer">
+          <div class="state-box">
+            <div class="spinner"></div>
+            <p>جاري تحميل الإعدادات...</p>
           </div>
+        </div>
+      </section>
 
-          <div class="panel">
-            <div id="productsList" class="panel-body">
-              <div class="state-box">
-                <div class="spinner"></div>
-                <div class="state-title">جاري تحميل المنتجات</div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- SETTINGS PAGE -->
-        <section id="settingsPage" class="page">
-          <div class="page-head">
-            <div>
-              <h1 class="page-title">إعدادات الموقع</h1>
-              <p class="page-description">تحكم كامل في كل نصوص وصور ومعلومات الموقع.</p>
-            </div>
-            <div class="page-actions">
-              <button id="saveAllSettingsBtn" class="btn btn-primary" type="button">💾 حفظ كل الإعدادات</button>
-              <button id="refreshSettingsBtn" class="btn" type="button">↻ تحديث</button>
-            </div>
-          </div>
-
-          <div id="settingsContainer">
-            <!-- سيتم تعبئتها بالجافاسكريبت -->
-          </div>
-        </section>
-
-      </main>
-    </div>
+    </main>
   </div>
 
-  <!-- SECTION MODAL -->
-  <div id="sectionModal" class="modal-backdrop" aria-hidden="true">
-    <div class="modal">
-      <div class="modal-head">
-        <h2 id="sectionModalTitle" class="modal-title">إضافة قسم</h2>
-        <button class="close-btn" type="button" data-close-modal="sectionModal">×</button>
-      </div>
-      <div class="modal-body">
-        <form id="sectionForm">
-          <input id="sectionId" type="hidden">
-          <div class="field">
-            <label class="label" for="sectionName">اسم القسم</label>
-            <input id="sectionName" class="input" type="text" placeholder="مثال: أطقم العشاء" autocomplete="off" required>
-            <div class="field-help">اسم القسم سيظهر للزائر في صفحة الأقسام والمنتجات.</div>
-          </div>
-          <div class="form-footer">
-            <button id="saveSectionBtn" class="btn btn-primary" type="submit">💾 حفظ القسم</button>
-            <button class="btn" type="button" data-close-modal="sectionModal">إلغاء</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
+  <!-- =========================================================
+       MODAL - PRODUCT
+       ========================================================= -->
 
-  <!-- PRODUCT MODAL -->
-  <div id="productModal" class="modal-backdrop" aria-hidden="true">
+  <div id="productModal" class="modal-backdrop">
     <div class="modal large">
-      <div class="modal-head">
+      <div class="modal-header">
         <h2 id="productModalTitle" class="modal-title">إضافة منتج</h2>
-        <button class="close-btn" type="button" data-close-modal="productModal">×</button>
+        <button type="button" class="modal-close" data-close="productModal">×</button>
       </div>
       <div class="modal-body">
         <form id="productForm">
-          <input id="productId" type="hidden">
+          <input type="hidden" id="productId">
 
           <div class="form-grid">
-            <div class="field">
-              <label class="label" for="productName">اسم المنتج *</label>
-              <input id="productName" class="input" type="text" placeholder="اسم المنتج" required>
+            <div class="form-field full">
+              <label for="productName">اسم المنتج *</label>
+              <input class="input" id="productName" type="text" placeholder="مثال: طقم عشاء صيني فاخر" required>
             </div>
 
-            <div class="field">
-              <label class="label" for="productCategory">القسم *</label>
-              <select id="productCategory" class="field-select" required>
+            <div class="form-field">
+              <label for="productCategory">القسم *</label>
+              <select class="input" id="productCategory" required>
                 <option value="">اختر القسم</option>
               </select>
             </div>
 
-            <div class="field full">
-              <label class="label" for="productImage">رابط الصورة</label>
-              <input id="productImage" class="input" type="url" placeholder="https://...">
-              <div class="field-help">يمكنك وضع رابط الصورة مباشرة أو رفع صورة من جهازك بالأسفل.</div>
+            <div class="form-field">
+              <label for="productSortOrder">الترتيب</label>
+              <input class="input" id="productSortOrder" type="number" min="0" placeholder="0">
             </div>
 
-            <div class="field full">
-              <label class="label">صورة المنتج</label>
+            <div class="form-field full">
+              <label>صورة المنتج</label>
               <div class="image-upload">
                 <img id="productImagePreview" class="image-preview" src="./assets/logo.png" alt="معاينة">
-                <div class="upload-box">
-                  <strong style="font-size:12px">📷 رفع صورة جديدة</strong>
-                  <div style="color:var(--muted);font-size:10px;line-height:1.7">
-                    اختر صورة المنتج من جهازك وسيتم تجهيزها ورفعها إلى GitHub.
-                  </div>
-                  <input id="productImageFile" type="file" accept="image/*">
+                <div>
+                  <label class="upload-area" for="productImageFile">
+                    <div class="icon">📷</div>
+                    <strong>ارفع صورة</strong>
+                    <span>PNG, JPG - الحد الأقصى 5MB</span>
+                    <input id="productImageFile" type="file" accept="image/*">
+                  </label>
                   <div id="uploadStatus" class="upload-status"></div>
                 </div>
               </div>
             </div>
 
-            <div class="field full">
-              <label class="label" for="productDescription">وصف المنتج</label>
-              <textarea id="productDescription" class="textarea" placeholder="اكتب وصف المنتج بالتفصيل..."></textarea>
+            <div class="form-field full">
+              <label for="productImage">أو رابط الصورة</label>
+              <input class="input" id="productImage" type="url" placeholder="https://...">
             </div>
 
-            <div class="field">
-              <label class="label" for="productPrice">السعر</label>
-              <input id="productPrice" class="input" type="text" inputmode="decimal" placeholder="مثال: 250">
+            <div class="form-field full">
+              <label for="productDescription">الوصف</label>
+              <textarea class="textarea" id="productDescription" placeholder="اكتب وصف المنتج..."></textarea>
             </div>
 
-            <div class="field">
-              <label class="label" for="productOldPrice">السعر القديم</label>
-              <input id="productOldPrice" class="input" type="text" inputmode="decimal" placeholder="مثال: 300">
+            <div class="form-field">
+              <label for="productPrice">السعر (ج.م)</label>
+              <input class="input" id="productPrice" type="text" inputmode="decimal" placeholder="250">
             </div>
 
-            <div class="field">
-              <label class="label" for="productOfferPrice">سعر العرض</label>
-              <input id="productOfferPrice" class="input" type="text" inputmode="decimal" placeholder="مثال: 220">
+            <div class="form-field">
+              <label for="productOldPrice">السعر القديم</label>
+              <input class="input" id="productOldPrice" type="text" inputmode="decimal" placeholder="300">
             </div>
 
-            <div class="field">
-              <label class="label" for="productSortOrder">ترتيب المنتج</label>
-              <input id="productSortOrder" class="input" type="number" min="0" step="1" placeholder="0">
+            <div class="form-field">
+              <label for="productOfferPrice">سعر العرض</label>
+              <input class="input" id="productOfferPrice" type="text" inputmode="decimal" placeholder="220">
             </div>
 
-            <div class="field full">
-              <label class="label">ظهور المنتج</label>
-              <div class="check-grid">
-                <label class="check-box">
-                  <input id="productActive" type="checkbox" checked>
-                  <span class="check-text">المنتج نشط</span>
+            <div class="form-field"></div>
+
+            <div class="form-field full">
+              <label>حالة المنتج</label>
+              <div class="switch-grid">
+                <label class="switch-box">
+                  <input type="checkbox" id="productActive" checked>
+                  <span class="check"></span>
+                  <span>نشط</span>
                 </label>
-                <label class="check-box">
-                  <input id="productShowHome" type="checkbox">
-                  <span class="check-text">إظهار في الرئيسية</span>
+                <label class="switch-box">
+                  <input type="checkbox" id="productShowHome">
+                  <span class="check"></span>
+                  <span>في الرئيسية</span>
                 </label>
-                <label class="check-box">
-                  <input id="productIsOffer" type="checkbox">
-                  <span class="check-text">وضع علامة عرض 🔥</span>
+                <label class="switch-box">
+                  <input type="checkbox" id="productIsOffer">
+                  <span class="check"></span>
+                  <span>عرض 🔥</span>
                 </label>
               </div>
             </div>
           </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button id="saveProductBtn" class="btn btn-primary" type="button">
+          <span>💾</span>
+          حفظ المنتج
+        </button>
+        <button class="btn btn-outline" type="button" data-close="productModal">إلغاء</button>
+      </div>
+    </div>
+  </div>
 
-          <div class="form-footer">
-            <button id="saveProductBtn" class="btn btn-primary" type="submit">💾 حفظ المنتج</button>
-            <button class="btn" type="button" data-close-modal="productModal">إلغاء</button>
+  <!-- =========================================================
+       MODAL - SECTION
+       ========================================================= -->
+
+  <div id="sectionModal" class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="sectionModalTitle" class="modal-title">إضافة قسم</h2>
+        <button type="button" class="modal-close" data-close="sectionModal">×</button>
+      </div>
+      <div class="modal-body">
+        <form id="sectionForm">
+          <input type="hidden" id="sectionId">
+          <div class="form-field">
+            <label for="sectionName">اسم القسم *</label>
+            <input class="input" id="sectionName" type="text" placeholder="مثال: أطقم عشاء" required>
           </div>
         </form>
+      </div>
+      <div class="modal-footer">
+        <button id="saveSectionBtn" class="btn btn-primary" type="button">
+          <span>💾</span>
+          حفظ
+        </button>
+        <button class="btn btn-outline" type="button" data-close="sectionModal">إلغاء</button>
       </div>
     </div>
   </div>
 
   <!-- TOAST -->
   <div id="toastContainer"></div>
-    <script src="./config.js?v=4000"></script>
+
+  <!-- SCRIPT -->
+  <script src="./config.js?v=4000"></script>
 
   <script>
     "use strict";
@@ -1279,119 +1404,110 @@
       const CFG = window.ABO_TAREK.CONFIG;
       const U = window.ABO_TAREK.UTILS;
 
-      const DATA_URL = CFG.DATA_URL;
       const SESSION_KEY = CFG.CACHE_KEYS.ADMIN_SESSION;
 
+      /* ===== STATE ===== */
       const state = {
         adminKey: sessionStorage.getItem(SESSION_KEY) || "",
-        sections: [],
         products: [],
+        sections: [],
         settings: {},
-        filteredSections: [],
         filteredProducts: [],
-        editingSectionId: "",
-        editingProductId: ""
+        currentFilter: "all",
+        searchTerm: ""
       };
 
-      const $ = (s) => document.querySelector(s);
-      const $$ = (s) => Array.from(document.querySelectorAll(s));
+      const $ = s => document.querySelector(s);
+      const $$ = s => Array.from(document.querySelectorAll(s));
 
       /* =========================================================
          HELPERS
          ========================================================= */
 
-      function showToast(message, type = "success", duration = 3200) {
+      function showToast(msg, type = "success", duration = 3000) {
         const container = $("#toastContainer");
         const toast = document.createElement("div");
         toast.className = `toast ${type}`;
-        toast.textContent = message;
+        const icon = type === "success" ? "✓" : type === "error" ? "⚠" : "ℹ";
+        toast.innerHTML = `<span>${icon}</span><span>${U.escapeHtml(msg)}</span>`;
         container.appendChild(toast);
         setTimeout(() => {
           toast.style.opacity = "0";
-          toast.style.transform = "translateY(8px)";
-          setTimeout(() => toast.remove(), 220);
+          toast.style.transform = "translateX(-20px)";
+          setTimeout(() => toast.remove(), 300);
         }, duration);
       }
 
-      function setLoginError(message) {
+      function showLoginError(msg) {
         const box = $("#loginError");
-        if (!message) {
+        if (!msg) {
           box.classList.add("hidden");
-          box.textContent = "";
           return;
         }
-        box.textContent = message;
+        box.textContent = msg;
         box.classList.remove("hidden");
       }
 
-      function setButtonLoading(button, loading) {
-        if (!button) return;
+      function setLoading(btn, loading, text) {
+        if (!btn) return;
         if (loading) {
-          button.disabled = true;
-          button.dataset.originalText = button.innerHTML;
-          button.innerHTML = '<span class="spinner" style="width:16px;height:16px;border-width:2px"></span> جاري التنفيذ...';
+          btn.disabled = true;
+          btn.dataset.orig = btn.innerHTML;
+          btn.innerHTML = `<span class="spinner" style="width:16px;height:16px;border-width:2px;margin:0"></span> ${text || "جاري..."}`;
         } else {
-          button.disabled = false;
-          button.innerHTML = button.dataset.originalText || button.innerHTML;
+          btn.disabled = false;
+          btn.innerHTML = btn.dataset.orig || btn.innerHTML;
         }
       }
 
-      function translateServerError(error) {
-        const key = String(error || "").toLowerCase();
+      function translateError(err) {
+        const key = String(err || "").toLowerCase();
         const map = {
-          "invalid_admin_key": "مفتاح الإدارة غير صحيح.",
-          "unauthorized": "غير مصرح. تأكد من مفتاح الإدارة.",
-          "missing_admin_key": "اكتب مفتاح الإدارة.",
-          "missing_section_name": "اكتب اسم القسم أولًا.",
-          "missing_product_name": "اكتب اسم المنتج أولًا.",
-          "missing_product_category": "اختر القسم.",
-          "missing_id": "معرّف العنصر غير موجود.",
-          "unknown_action": "الخادم لا يتعرف على العملية. تأكد من نشر آخر نسخة من Code.gs.",
-          "section_not_found": "القسم غير موجود.",
-          "product_not_found": "المنتج غير موجود.",
-          "section_already_exists": "هذا القسم موجود بالفعل.",
-          "section_has_products": "لا يمكن حذف القسم لأنه يحتوي على منتجات.",
-          "missing_github_token": "لم يتم تكوين GITHUB_TOKEN في Script Properties.",
-          "image_too_large": "حجم الصورة كبير جدًا. الحد الأقصى 5MB.",
-          "invalid_filename": "اسم الملف غير صالح.",
-          "missing_image_data": "لم يتم استلام بيانات الصورة.",
-          "invalid_image_data": "بيانات الصورة غير صالحة.",
-          "github_upload_failed": "فشل رفع الصورة إلى GitHub.",
-          "too_many_requests": "عدد كبير من الطلبات. انتظر دقيقة.",
-          "missing_admin_key_config": "مفتاح الإدارة غير مُعَد في Script Properties."
+          "invalid_admin_key": "مفتاح الإدارة غير صحيح",
+          "unauthorized": "غير مصرح",
+          "missing_admin_key": "اكتب مفتاح الإدارة",
+          "missing_section_name": "اكتب اسم القسم",
+          "missing_product_name": "اكتب اسم المنتج",
+          "missing_product_category": "اختر القسم",
+          "unknown_action": "الخادم لا يتعرف على العملية",
+          "section_not_found": "القسم غير موجود",
+          "product_not_found": "المنتج غير موجود",
+          "section_already_exists": "هذا القسم موجود بالفعل",
+          "section_has_products": "لا يمكن حذف القسم لاحتوائه على منتجات",
+          "missing_github_token": "لم يتم تكوين GITHUB_TOKEN",
+          "image_too_large": "حجم الصورة كبير جدًا (5MB كحد أقصى)",
+          "invalid_filename": "اسم الملف غير صالح",
+          "github_upload_failed": "فشل رفع الصورة",
+          "missing_image_data": "لم يتم استلام الصورة",
+          "too_many_requests": "عدد كبير من الطلبات، انتظر قليلاً"
         };
-        return map[key] || String(error || "حدث خطأ غير معروف.");
+        return map[key] || String(err || "حدث خطأ");
       }
 
       /* =========================================================
          API
          ========================================================= */
 
-      async function postAction(action, payload = {}) {
+      async function api(action, payload = {}) {
         const body = { action, adminKey: state.adminKey, ...payload };
 
-        let response;
-        try {
-          response = await fetch(DATA_URL, {
-            method: "POST",
-            headers: { "Content-Type": "text/plain;charset=utf-8" },
-            body: JSON.stringify(body),
-            cache: "no-store"
-          });
-        } catch (err) {
-          throw new Error("تعذر الاتصال بالخادم. تأكد من الإنترنت.");
-        }
+        const res = await fetch(CFG.DATA_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(body),
+          cache: "no-store"
+        });
 
-        const text = await response.text();
+        const text = await res.text();
         let data;
         try {
           data = JSON.parse(text);
         } catch (err) {
-          throw new Error("الخادم أعاد استجابة غير مفهومة.");
+          throw new Error("استجابة غير صالحة من الخادم");
         }
 
-        if (!response.ok || data.ok === false) {
-          throw new Error(translateServerError(data.error || data.message));
+        if (!res.ok || data.ok === false) {
+          throw new Error(translateError(data.error || data.message));
         }
 
         return data;
@@ -1403,31 +1519,31 @@
 
       async function login() {
         const input = $("#adminKey");
-        const button = $("#loginBtn");
+        const btn = $("#loginBtn");
         const key = input.value.trim();
 
         if (!key) {
-          setLoginError("اكتب مفتاح الإدارة.");
+          showLoginError("اكتب مفتاح الإدارة");
           input.focus();
           return;
         }
 
-        setLoginError("");
-        setButtonLoading(button, true);
+        showLoginError("");
+        setLoading(btn, true, "جاري التحقق...");
         state.adminKey = key;
 
         try {
-          await postAction("listSections");
+          await api("listSections");
           sessionStorage.setItem(SESSION_KEY, key);
           showApp();
           await loadAll();
-          showToast("تم تسجيل الدخول بنجاح.", "success");
+          showToast("تم الدخول بنجاح", "success");
         } catch (err) {
           state.adminKey = "";
           sessionStorage.removeItem(SESSION_KEY);
-          setLoginError(err.message);
+          showLoginError(err.message);
         } finally {
-          setButtonLoading(button, false);
+          setLoading(btn, false);
         }
       }
 
@@ -1450,54 +1566,31 @@
       }
 
       /* =========================================================
+         NAVIGATION
+         ========================================================= */
+
+      function openPage(id) {
+        $$(".page").forEach(p => p.classList.toggle("active", p.id === id));
+        $$(".nav-tab").forEach(t => t.classList.toggle("active", t.dataset.page === id));
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      /* =========================================================
          LOAD DATA
          ========================================================= */
 
       async function loadAll() {
-        await Promise.all([loadSections(), loadProducts(), loadSettings()]);
-        updateDashboard();
-      }
-
-      async function loadSections() {
-        const container = $("#sectionsList");
-        container.innerHTML = `<div class="state-box"><div class="spinner"></div><div class="state-title">جاري تحميل الأقسام</div></div>`;
-
-        try {
-          const data = await postAction("listSections");
-          const sections = Array.isArray(data.sections) ? data.sections : [];
-
-          state.sections = sections.map((s, i) => ({
-            id: s.id || "",
-            name: s.name || "",
-            sortOrder: Number(s.sortOrder ?? i) || 0,
-            active: s.active === true || s.active === "true" || s.active === 1
-          }))
-          .filter(s => s.name)
-          .sort((a, b) => a.sortOrder - b.sortOrder);
-
-          state.filteredSections = [...state.sections];
-          renderSections();
-          populateCategorySelects();
-        } catch (err) {
-          container.innerHTML = `
-            <div class="state-box">
-              <div class="state-icon">⚠️</div>
-              <div class="state-title">تعذر تحميل الأقسام</div>
-              <div class="state-text">${U.escapeHtml(err.message)}</div>
-            </div>
-          `;
-          throw err;
-        }
+        await Promise.all([loadProducts(), loadSections(), loadSettings()]);
+        updateStats();
       }
 
       async function loadProducts() {
         const container = $("#productsList");
-        container.innerHTML = `<div class="state-box"><div class="spinner"></div><div class="state-title">جاري تحميل المنتجات</div></div>`;
+        container.innerHTML = `<div class="state-box"><div class="spinner"></div><p>جاري تحميل المنتجات...</p></div>`;
 
         try {
-          const data = await postAction("list");
+          const data = await api("list");
           const products = Array.isArray(data.products) ? data.products : [];
-
           state.products = products.map((p, i) => ({
             id: p.id || "",
             name: p.name || "",
@@ -1511,490 +1604,455 @@
             price: p.price ?? "",
             oldPrice: p.oldPrice ?? "",
             offerPrice: p.offerPrice ?? ""
-          }));
+          })).sort((a, b) => a.sortOrder - b.sortOrder);
 
-          state.products.sort((a, b) => a.sortOrder - b.sortOrder);
           state.filteredProducts = [...state.products];
           renderProducts();
-          populateCategorySelects();
         } catch (err) {
           container.innerHTML = `
             <div class="state-box">
-              <div class="state-icon">⚠️</div>
-              <div class="state-title">تعذر تحميل المنتجات</div>
-              <div class="state-text">${U.escapeHtml(err.message)}</div>
+              <div class="icon">⚠️</div>
+              <h3>تعذر تحميل المنتجات</h3>
+              <p>${U.escapeHtml(err.message)}</p>
+              <button class="btn btn-primary" onclick="location.reload()">🔄 إعادة المحاولة</button>
             </div>
           `;
-          throw err;
+        }
+      }
+
+      async function loadSections() {
+        const container = $("#sectionsList");
+
+        try {
+          const data = await api("listSections");
+          const sections = Array.isArray(data.sections) ? data.sections : [];
+          state.sections = sections.map((s, i) => ({
+            id: s.id || "",
+            name: s.name || "",
+            sortOrder: Number(s.sortOrder ?? i) || 0,
+            active: s.active === true || s.active === "true" || s.active === 1
+          })).filter(s => s.name).sort((a, b) => a.sortOrder - b.sortOrder);
+
+          renderSections();
+          populateCategorySelect();
+        } catch (err) {
+          container.innerHTML = `
+            <div class="state-box">
+              <div class="icon">⚠️</div>
+              <h3>تعذر تحميل الأقسام</h3>
+              <p>${U.escapeHtml(err.message)}</p>
+            </div>
+          `;
         }
       }
 
       async function loadSettings() {
         try {
-          const data = await postAction("getSettings");
+          const data = await api("getSettings");
           state.settings = data.settings || {};
           renderSettings();
         } catch (err) {
           $("#settingsContainer").innerHTML = `
-            <div class="panel">
-              <div class="panel-body">
-                <div class="state-box">
-                  <div class="state-icon">⚠️</div>
-                  <div class="state-title">تعذر تحميل الإعدادات</div>
-                  <div class="state-text">${U.escapeHtml(err.message)}</div>
-                </div>
-              </div>
-            </div>
-          `;
-        }
-      }
-
-      /* =========================================================
-         DASHBOARD
-         ========================================================= */
-
-      function updateDashboard() {
-        const activeSections = state.sections.filter(s => s.active).length;
-        const hiddenSections = state.sections.length - activeSections;
-        const activeProducts = state.products.filter(p => p.active).length;
-        const hiddenProducts = state.products.length - activeProducts;
-        const homeProducts = state.products.filter(p => p.showHome).length;
-        const offers = state.products.filter(p => p.isOffer).length;
-
-        $("#statSections").textContent = state.sections.length;
-        $("#statProducts").textContent = state.products.length;
-        $("#statHome").textContent = homeProducts;
-        $("#statOffers").textContent = offers;
-
-        $("#dashActiveSections").textContent = activeSections;
-        $("#dashHiddenSections").textContent = hiddenSections;
-        $("#dashActiveProducts").textContent = activeProducts;
-        $("#dashHiddenProducts").textContent = hiddenProducts;
-      }
-
-      /* =========================================================
-         NAVIGATION
-         ========================================================= */
-
-      function openPage(pageId) {
-        $$(".page").forEach(p => p.classList.toggle("active", p.id === pageId));
-        $$(".nav-item").forEach(i => i.classList.toggle("active", i.dataset.page === pageId));
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }
-
-      /* =========================================================
-         SECTIONS RENDER
-         ========================================================= */
-
-      function renderSections() {
-        const container = $("#sectionsList");
-        const search = U.normalizeArabic($("#sectionSearch").value);
-
-        state.filteredSections = state.sections.filter(s => {
-          if (!search) return true;
-          return U.normalizeArabic(s.name).includes(search);
-        });
-
-        $("#sectionCountLabel").textContent = `${state.filteredSections.length} قسم`;
-
-        if (!state.filteredSections.length) {
-          container.innerHTML = `
             <div class="state-box">
-              <div class="state-icon">🗂️</div>
-              <div class="state-title">لا توجد أقسام</div>
-              <div class="state-text">أضف قسمًا جديدًا أو غيّر كلمة البحث.</div>
+              <div class="icon">⚠️</div>
+              <h3>تعذر تحميل الإعدادات</h3>
+              <p>${U.escapeHtml(err.message)}</p>
             </div>
           `;
-          return;
-        }
-
-        container.innerHTML = `
-          <div class="sections-grid">
-            ${state.filteredSections.map(renderSectionRow).join("")}
-          </div>
-        `;
-      }
-
-      function renderSectionRow(section) {
-        const originalIndex = state.sections.findIndex(s => String(s.id) === String(section.id));
-        const active = section.active;
-
-        return `
-          <div class="section-row" data-section-id="${U.escapeAttribute(section.id)}">
-            <div class="section-order">${originalIndex + 1}</div>
-            <div class="section-main">
-              <div class="section-name">${U.escapeHtml(section.name)}</div>
-              <div class="section-meta">
-                <span>ID: ${U.escapeHtml(section.id)}</span>
-                ${active ? `<span class="status-badge status-active">ظاهر</span>` : `<span class="status-badge status-hidden">مخفي</span>`}
-              </div>
-            </div>
-            <div class="section-actions">
-              <button class="btn btn-small" type="button" data-action="section-up" data-id="${U.escapeAttribute(section.id)}" ${originalIndex === 0 ? "disabled" : ""}>↑</button>
-              <button class="btn btn-small" type="button" data-action="section-down" data-id="${U.escapeAttribute(section.id)}" ${originalIndex === state.sections.length - 1 ? "disabled" : ""}>↓</button>
-              <button class="btn btn-small btn-blue" type="button" data-action="section-edit" data-id="${U.escapeAttribute(section.id)}">✏️ تعديل</button>
-              <button class="btn btn-small ${active ? "btn-danger" : "btn-success"}" type="button" data-action="section-toggle" data-id="${U.escapeAttribute(section.id)}">${active ? "إخفاء" : "إظهار"}</button>
-              <button class="btn btn-small btn-danger" type="button" data-action="section-delete" data-id="${U.escapeAttribute(section.id)}">🗑️</button>
-            </div>
-          </div>
-        `;
-      }
-
-      /* =========================================================
-         SECTION CRUD
-         ========================================================= */
-
-      function openAddSection() {
-        state.editingSectionId = "";
-        $("#sectionModalTitle").textContent = "إضافة قسم";
-        $("#sectionId").value = "";
-        $("#sectionName").value = "";
-        openModal("sectionModal");
-        setTimeout(() => $("#sectionName").focus(), 100);
-      }
-
-      function openEditSection(id) {
-        const section = state.sections.find(s => String(s.id) === String(id));
-        if (!section) return showToast("القسم غير موجود.", "error");
-
-        state.editingSectionId = String(section.id);
-        $("#sectionModalTitle").textContent = "تعديل القسم";
-        $("#sectionId").value = section.id;
-        $("#sectionName").value = section.name;
-        openModal("sectionModal");
-      }
-
-      async function saveSection() {
-        const button = $("#saveSectionBtn");
-        const name = $("#sectionName").value.trim();
-
-        if (!name) {
-          showToast("اكتب اسم القسم أولًا.", "warning");
-          $("#sectionName").focus();
-          return;
-        }
-
-        setButtonLoading(button, true);
-
-        try {
-          if (state.editingSectionId) {
-            await postAction("editSection", {
-              id: state.editingSectionId,
-              name,
-              section: { id: state.editingSectionId, name }
-            });
-            showToast("تم تعديل القسم بنجاح.");
-          } else {
-            await postAction("addSection", {
-              name,
-              section: { name }
-            });
-            showToast("تم إضافة القسم بنجاح.");
-          }
-
-          closeModal("sectionModal");
-          await loadSections();
-          await loadProducts();
-          updateDashboard();
-        } catch (err) {
-          showToast(err.message, "error", 5000);
-        } finally {
-          setButtonLoading(button, false);
-        }
-      }
-
-      async function toggleSection(id) {
-        const section = state.sections.find(s => String(s.id) === String(id));
-        if (!section) return;
-
-        const nextActive = !section.active;
-
-        try {
-          await postAction("toggleSection", {
-            id,
-            field: "active",
-            value: nextActive,
-            active: nextActive
-          });
-
-          showToast(nextActive ? "تم إظهار القسم." : "تم إخفاء القسم.");
-          await loadSections();
-          updateDashboard();
-        } catch (err) {
-          showToast(err.message, "error", 5000);
-        }
-      }
-
-      async function deleteSection(id) {
-        const section = state.sections.find(s => String(s.id) === String(id));
-        if (!section) return;
-
-        if (!confirm(`هل تريد حذف القسم "${section.name}"؟`)) return;
-
-        try {
-          await postAction("deleteSection", { id });
-          showToast("تم حذف القسم.");
-          await loadSections();
-          await loadProducts();
-          updateDashboard();
-        } catch (err) {
-          showToast(err.message, "error", 6000);
-        }
-      }
-
-      async function moveSection(id, direction) {
-        const index = state.sections.findIndex(s => String(s.id) === String(id));
-        if (index < 0) return;
-
-        const target = index + direction;
-        if (target < 0 || target >= state.sections.length) return;
-
-        const temp = state.sections[index];
-        state.sections[index] = state.sections[target];
-        state.sections[target] = temp;
-
-        state.sections = state.sections.map((s, i) => ({ ...s, sortOrder: i }));
-
-        renderSections();
-
-        try {
-          await postAction("reorderSections", {
-            ids: state.sections.map(s => s.id)
-          });
-          showToast("تم تحديث ترتيب الأقسام.");
-        } catch (err) {
-          showToast(err.message, "error", 5000);
-          await loadSections();
         }
       }
 
       /* =========================================================
-         PRODUCTS RENDER
+         STATS
          ========================================================= */
 
-      function filterProducts() {
-        const search = U.normalizeArabic($("#productSearch").value);
-        const category = $("#productCategoryFilter").value;
-        const status = $("#productStatusFilter").value;
+      function updateStats() {
+        $("#statTotalProducts").textContent = state.products.length;
+        $("#statActiveProducts").textContent = state.products.filter(p => p.active).length;
+        $("#statHomeProducts").textContent = state.products.filter(p => p.showHome).length;
+        $("#statOffers").textContent = state.products.filter(p => p.isOffer).length;
+      }
 
+      /* =========================================================
+         RENDER PRODUCTS
+         ========================================================= */
+
+      function applyProductFilters() {
+        const q = U.normalizeArabic(state.searchTerm);
         state.filteredProducts = state.products.filter(p => {
-          const text = U.normalizeArabic([p.name, p.description, p.category].join(" "));
-          if (search && !text.includes(search)) return false;
-          if (category && String(p.category) !== String(category)) return false;
-          if (status === "active" && !p.active) return false;
-          if (status === "hidden" && p.active) return false;
-          if (status === "home" && !p.showHome) return false;
-          if (status === "offers" && !p.isOffer) return false;
+          if (q) {
+            const text = U.normalizeArabic(`${p.name} ${p.description} ${p.category}`);
+            if (!text.includes(q)) return false;
+          }
+          if (state.currentFilter === "active" && !p.active) return false;
+          if (state.currentFilter === "hidden" && p.active) return false;
+          if (state.currentFilter === "home" && !p.showHome) return false;
+          if (state.currentFilter === "offers" && !p.isOffer) return false;
           return true;
         });
-
         renderProducts();
       }
 
       function renderProducts() {
         const container = $("#productsList");
-        $("#productCountLabel").textContent = `${state.filteredProducts.length} منتج`;
 
         if (!state.filteredProducts.length) {
           container.innerHTML = `
             <div class="state-box">
-              <div class="state-icon">🛍️</div>
-              <div class="state-title">لا توجد منتجات</div>
-              <div class="state-text">جرّب تغيير البحث أو الفلاتر، أو أضف منتجًا جديدًا.</div>
+              <div class="icon">📦</div>
+              <h3>لا توجد منتجات</h3>
+              <p>${state.searchTerm ? "جرّب كلمة بحث أخرى" : "ابدأ بإضافة منتج جديد"}</p>
+              <button class="btn btn-primary" id="emptyAddBtn">➕ إضافة منتج</button>
             </div>
           `;
+          document.getElementById("emptyAddBtn")?.addEventListener("click", openAddProduct);
           return;
         }
 
-        container.innerHTML = `
-          <div class="products-list">
-            ${state.filteredProducts.map(renderProductRow).join("")}
-          </div>
-        `;
-      }
+        container.innerHTML = state.filteredProducts.map(p => {
+          const price = p.offerPrice || p.price || "";
+          const img = p.image || "./assets/logo.png";
 
-      function renderProductRow(product) {
-        const image = product.image || "./assets/logo.png";
-        const price = product.offerPrice || product.price || "";
-        const oldPrice = product.oldPrice || "";
+          return `
+            <div class="product-item" data-id="${U.escapeAttribute(p.id)}">
+              <img class="product-thumb" src="${U.escapeAttribute(img)}" alt="" loading="lazy" onerror="this.src='./assets/logo.png'">
 
-        return `
-          <div class="product-row" data-product-id="${U.escapeAttribute(product.id)}">
-            <img class="product-thumb" src="${U.escapeAttribute(image)}" alt="" loading="lazy">
+              <div class="product-info">
+                <div class="product-name">
+                  ${U.escapeHtml(p.name)}
+                  ${p.isOffer ? `<span class="badge offer">🔥 عرض</span>` : ""}
+                </div>
+                <div class="product-meta">
+                  ${p.category ? `<span class="badge cat">🗂️ ${U.escapeHtml(p.category)}</span>` : ""}
+                  ${price ? `<span class="badge price">${U.escapeHtml(price)} ج.م</span>` : ""}
+                  ${p.oldPrice ? `<span class="badge old">${U.escapeHtml(p.oldPrice)} ج.م</span>` : ""}
+                  <span class="badge ${p.active ? "active" : "hidden"}">${p.active ? "✓ نشط" : "✕ مخفي"}</span>
+                  ${p.showHome ? `<span class="badge home">🏠 الرئيسية</span>` : ""}
+                </div>
+              </div>
 
-            <div class="product-info">
-              <div class="product-name">${U.escapeHtml(product.name)}</div>
-              <div class="product-description">${U.escapeHtml(product.description || "بدون وصف")}</div>
-              <div class="product-meta">
-                ${product.category ? `<span class="meta-chip">🗂️ ${U.escapeHtml(product.category)}</span>` : ""}
-                ${price ? `<span class="meta-chip product-price">${U.escapeHtml(price)} ج.م</span>` : ""}
-                ${oldPrice ? `<span class="meta-chip product-old-price">${U.escapeHtml(oldPrice)} ج.م</span>` : ""}
-                ${product.active ? `<span class="status-badge status-active">نشط</span>` : `<span class="status-badge status-hidden">مخفي</span>`}
-                ${product.showHome ? `<span class="status-badge status-home">الرئيسية</span>` : ""}
-                ${product.isOffer ? `<span class="status-badge status-offer">🔥 عرض</span>` : ""}
+              <div class="product-actions">
+                <button class="action-btn edit" data-action="edit" title="تعديل">✏️</button>
+                <button class="action-btn toggle ${p.active ? "toggle-on" : ""}" data-action="toggle-active" title="${p.active ? "إخفاء" : "إظهار"}">
+                  ${p.active ? "👁️" : "🚫"}
+                </button>
+                <button class="action-btn toggle ${p.showHome ? "toggle-on" : ""}" data-action="toggle-home" title="${p.showHome ? "إزالة من الرئيسية" : "إظهار في الرئيسية"}">
+                  🏠
+                </button>
+                <button class="action-btn toggle ${p.isOffer ? "toggle-on" : ""}" data-action="toggle-offer" title="${p.isOffer ? "إلغاء العرض" : "تفعيل العرض"}">
+                  🔥
+                </button>
+                <button class="action-btn delete" data-action="delete" title="حذف">🗑️</button>
               </div>
             </div>
-
-            <div class="product-actions">
-              <button class="btn btn-small btn-blue" type="button" data-action="product-edit" data-id="${U.escapeAttribute(product.id)}">✏️ تعديل</button>
-              <button class="btn btn-small ${product.active ? "btn-danger" : "btn-success"}" type="button" data-action="product-toggle-active" data-id="${U.escapeAttribute(product.id)}">${product.active ? "إخفاء" : "إظهار"}</button>
-              <button class="btn btn-small ${product.showHome ? "btn-blue" : ""}" type="button" data-action="product-toggle-home" data-id="${U.escapeAttribute(product.id)}">${product.showHome ? "✓ الرئيسية" : "＋ الرئيسية"}</button>
-              <button class="btn btn-small ${product.isOffer ? "btn-success" : ""}" type="button" data-action="product-toggle-offer" data-id="${U.escapeAttribute(product.id)}">${product.isOffer ? "🔥 عرض" : "＋ عرض"}</button>
-              <button class="btn btn-small btn-danger" type="button" data-action="product-delete" data-id="${U.escapeAttribute(product.id)}">🗑️</button>
-            </div>
-          </div>
-        `;
+          `;
+        }).join("");
       }
 
       /* =========================================================
-         SELECTS
+         RENDER SECTIONS
          ========================================================= */
 
-      function populateCategorySelects() {
-        const filter = $("#productCategoryFilter");
-        const form = $("#productCategory");
+      function renderSections() {
+        const container = $("#sectionsList");
 
-        const currentFilter = filter.value;
-        const currentForm = form.value;
+        if (!state.sections.length) {
+          container.innerHTML = `
+            <div class="state-box">
+              <div class="icon">🗂️</div>
+              <h3>لا توجد أقسام</h3>
+              <p>ابدأ بإضافة قسم جديد</p>
+              <button class="btn btn-primary" id="emptyAddSectionBtn">➕ إضافة قسم</button>
+            </div>
+          `;
+          document.getElementById("emptyAddSectionBtn")?.addEventListener("click", openAddSection);
+          return;
+        }
 
-        const categories = [...new Set(state.sections.map(s => String(s.name || "").trim()).filter(Boolean))];
+        container.innerHTML = state.sections.map(s => {
+          const productsInCat = state.products.filter(p => p.category === s.name).length;
+          return `
+            <div class="product-item" data-id="${U.escapeAttribute(s.id)}">
+              <div class="product-thumb" style="display:grid;place-items:center;font-size:32px;background:var(--orange-soft);color:var(--orange)">
+                ${U.categoryIcon(s.name)}
+              </div>
 
-        filter.innerHTML = `<option value="">كل الأقسام</option>` +
-          categories.map(c => `<option value="${U.escapeAttribute(c)}">${U.escapeHtml(c)}</option>`).join("");
+              <div class="product-info">
+                <div class="product-name">${U.escapeHtml(s.name)}</div>
+                <div class="product-meta">
+                  <span class="badge cat">${productsInCat} منتج</span>
+                  <span class="badge ${s.active ? "active" : "hidden"}">${s.active ? "✓ نشط" : "✕ مخفي"}</span>
+                </div>
+              </div>
 
-        form.innerHTML = `<option value="">اختر القسم</option>` +
-          categories.map(c => `<option value="${U.escapeAttribute(c)}">${U.escapeHtml(c)}</option>`).join("");
-
-        if (categories.includes(currentFilter)) filter.value = currentFilter;
-        if (categories.includes(currentForm)) form.value = currentForm;
+              <div class="product-actions">
+                <button class="action-btn edit" data-section-action="edit" title="تعديل">✏️</button>
+                <button class="action-btn toggle ${s.active ? "toggle-on" : ""}" data-section-action="toggle" title="${s.active ? "إخفاء" : "إظهار"}">
+                  ${s.active ? "👁️" : "🚫"}
+                </button>
+                <button class="action-btn delete" data-section-action="delete" title="حذف">🗑️</button>
+              </div>
+            </div>
+          `;
+        }).join("");
       }
 
       /* =========================================================
-         PRODUCT MODAL
+         PRODUCT ACTIONS
          ========================================================= */
 
       function openAddProduct() {
-        state.editingProductId = "";
         $("#productModalTitle").textContent = "إضافة منتج";
-        clearProductForm();
-        openModal("productModal");
-      }
-
-      function clearProductForm() {
         $("#productId").value = "";
-        $("#productName").value = "";
-        $("#productCategory").value = "";
-        $("#productImage").value = "";
-        $("#productDescription").value = "";
-        $("#productPrice").value = "";
-        $("#productOldPrice").value = "";
-        $("#productOfferPrice").value = "";
-        $("#productSortOrder").value = "0";
+        $("#productForm").reset();
         $("#productActive").checked = true;
         $("#productShowHome").checked = false;
         $("#productIsOffer").checked = false;
-        $("#productImageFile").value = "";
         $("#productImagePreview").src = "./assets/logo.png";
         $("#uploadStatus").textContent = "";
+        $("#productSortOrder").value = state.products.length + 1;
+        openModal("productModal");
+        setTimeout(() => $("#productName").focus(), 200);
       }
 
       function openEditProduct(id) {
-        const product = state.products.find(p => String(p.id) === String(id));
-        if (!product) return showToast("المنتج غير موجود.", "error");
+        const p = state.products.find(x => String(x.id) === String(id));
+        if (!p) return showToast("المنتج غير موجود", "error");
 
-        state.editingProductId = String(product.id);
         $("#productModalTitle").textContent = "تعديل المنتج";
-        $("#productId").value = product.id;
-        $("#productName").value = product.name || "";
-        $("#productCategory").value = product.category || "";
-        $("#productImage").value = product.image || "";
-        $("#productDescription").value = product.description || "";
-        $("#productPrice").value = product.price || "";
-        $("#productOldPrice").value = product.oldPrice || "";
-        $("#productOfferPrice").value = product.offerPrice || "";
-        $("#productSortOrder").value = product.sortOrder || 0;
-        $("#productActive").checked = product.active;
-        $("#productShowHome").checked = product.showHome;
-        $("#productIsOffer").checked = product.isOffer;
-        $("#productImagePreview").src = product.image || "./assets/logo.png";
+        $("#productId").value = p.id;
+        $("#productName").value = p.name || "";
+        $("#productCategory").value = p.category || "";
+        $("#productImage").value = p.image || "";
+        $("#productDescription").value = p.description || "";
+        $("#productPrice").value = p.price || "";
+        $("#productOldPrice").value = p.oldPrice || "";
+        $("#productOfferPrice").value = p.offerPrice || "";
+        $("#productSortOrder").value = p.sortOrder || 0;
+        $("#productActive").checked = p.active;
+        $("#productShowHome").checked = p.showHome;
+        $("#productIsOffer").checked = p.isOffer;
+        $("#productImagePreview").src = p.image || "./assets/logo.png";
         $("#uploadStatus").textContent = "";
         openModal("productModal");
       }
 
       async function saveProduct() {
-        const button = $("#saveProductBtn");
-
+        const btn = $("#saveProductBtn");
         const id = $("#productId").value.trim();
         const name = $("#productName").value.trim();
         const category = $("#productCategory").value.trim();
-        const image = $("#productImage").value.trim();
-        const description = $("#productDescription").value.trim();
-        const price = $("#productPrice").value.trim();
-        const oldPrice = $("#productOldPrice").value.trim();
-        const offerPrice = $("#productOfferPrice").value.trim();
-        const sortOrder = Number($("#productSortOrder").value) || 0;
-        const active = $("#productActive").checked;
-        const showHome = $("#productShowHome").checked;
-        const isOffer = $("#productIsOffer").checked;
 
-        if (!name) { showToast("اكتب اسم المنتج.", "warning"); $("#productName").focus(); return; }
-        if (!category) { showToast("اختر القسم.", "warning"); $("#productCategory").focus(); return; }
+        if (!name) return showToast("اكتب اسم المنتج", "warning");
+        if (!category) return showToast("اختر القسم", "warning");
 
         const product = {
           ...(id ? { id } : {}),
-          name, category, image, description,
-          active, showHome, isOffer, sortOrder,
-          price, oldPrice, offerPrice
+          name,
+          category,
+          image: $("#productImage").value.trim(),
+          description: $("#productDescription").value.trim(),
+          price: $("#productPrice").value.trim(),
+          oldPrice: $("#productOldPrice").value.trim(),
+          offerPrice: $("#productOfferPrice").value.trim(),
+          sortOrder: Number($("#productSortOrder").value) || 0,
+          active: $("#productActive").checked,
+          showHome: $("#productShowHome").checked,
+          isOffer: $("#productIsOffer").checked
         };
 
-        setButtonLoading(button, true);
+        setLoading(btn, true, "جاري الحفظ...");
 
         try {
-          await postAction(id ? "edit" : "add", { id, product, ...product });
+          await api(id ? "edit" : "add", { id, product, ...product });
           closeModal("productModal");
-          showToast(id ? "تم تعديل المنتج بنجاح." : "تم إضافة المنتج بنجاح.");
+          showToast(id ? "تم تعديل المنتج" : "تمت إضافة المنتج", "success");
           await loadProducts();
-          updateDashboard();
+          updateStats();
         } catch (err) {
-          showToast(err.message, "error", 6000);
+          showToast(err.message, "error", 5000);
         } finally {
-          setButtonLoading(button, false);
+          setLoading(btn, false);
         }
       }
 
       async function toggleProductField(id, field) {
-        const product = state.products.find(p => String(p.id) === String(id));
-        if (!product) return;
-
-        const next = !product[field];
+        const p = state.products.find(x => String(x.id) === String(id));
+        if (!p) return;
+        const newValue = !p[field];
 
         try {
-          await postAction("toggle", { id, field, value: next });
-
-          if (field === "active") showToast(next ? "تم إظهار المنتج." : "تم إخفاء المنتج.");
-          else if (field === "showHome") showToast(next ? "تم إظهار المنتج في الرئيسية." : "تم إزالة المنتج من الرئيسية.");
-          else if (field === "isOffer") showToast(next ? "تم تفعيل العرض." : "تم إلغاء العرض.");
-
+          await api("toggle", { id, field, value: newValue });
+          const labels = {
+            active: newValue ? "تم إظهار المنتج" : "تم إخفاء المنتج",
+            showHome: newValue ? "تم الإظهار في الرئيسية" : "تم الإزالة من الرئيسية",
+            isOffer: newValue ? "تم تفعيل العرض" : "تم إلغاء العرض"
+          };
+          showToast(labels[field] || "تم التحديث", "success");
           await loadProducts();
-          updateDashboard();
+          updateStats();
         } catch (err) {
           showToast(err.message, "error", 5000);
         }
       }
 
       async function deleteProduct(id) {
-        const product = state.products.find(p => String(p.id) === String(id));
-        if (!product) return;
-
-        if (!confirm(`هل تريد حذف المنتج "${product.name}" نهائيًا؟`)) return;
+        const p = state.products.find(x => String(x.id) === String(id));
+        if (!p) return;
+        if (!confirm(`حذف "${p.name}" نهائيًا؟`)) return;
 
         try {
-          await postAction("delete", { id, productId: id });
-          showToast("تم حذف المنتج.");
+          await api("delete", { id });
+          showToast("تم حذف المنتج", "success");
           await loadProducts();
-          updateDashboard();
+          updateStats();
         } catch (err) {
           showToast(err.message, "error", 5000);
+        }
+      }
+
+      /* =========================================================
+         SECTION ACTIONS
+         ========================================================= */
+
+      function openAddSection() {
+        $("#sectionModalTitle").textContent = "إضافة قسم";
+        $("#sectionId").value = "";
+        $("#sectionName").value = "";
+        openModal("sectionModal");
+        setTimeout(() => $("#sectionName").focus(), 200);
+      }
+
+      function openEditSection(id) {
+        const s = state.sections.find(x => String(x.id) === String(id));
+        if (!s) return showToast("القسم غير موجود", "error");
+
+        $("#sectionModalTitle").textContent = "تعديل القسم";
+        $("#sectionId").value = s.id;
+        $("#sectionName").value = s.name;
+        openModal("sectionModal");
+      }
+
+      async function saveSection() {
+        const btn = $("#saveSectionBtn");
+        const id = $("#sectionId").value.trim();
+        const name = $("#sectionName").value.trim();
+
+        if (!name) return showToast("اكتب اسم القسم", "warning");
+
+        setLoading(btn, true, "جاري الحفظ...");
+
+        try {
+          await api(id ? "editSection" : "addSection", {
+            id,
+            name,
+            section: { id, name }
+          });
+          closeModal("sectionModal");
+          showToast(id ? "تم تعديل القسم" : "تمت إضافة القسم", "success");
+          await loadSections();
+          await loadProducts();
+          updateStats();
+        } catch (err) {
+          showToast(err.message, "error", 5000);
+        } finally {
+          setLoading(btn, false);
+        }
+      }
+
+      async function toggleSection(id) {
+        const s = state.sections.find(x => String(x.id) === String(id));
+        if (!s) return;
+        const newValue = !s.active;
+
+        try {
+          await api("toggleSection", { id, value: newValue });
+          showToast(newValue ? "تم إظهار القسم" : "تم إخفاء القسم", "success");
+          await loadSections();
+        } catch (err) {
+          showToast(err.message, "error", 5000);
+        }
+      }
+
+      async function deleteSection(id) {
+        const s = state.sections.find(x => String(x.id) === String(id));
+        if (!s) return;
+        if (!confirm(`حذف القسم "${s.name}"؟`)) return;
+
+        try {
+          await api("deleteSection", { id });
+          showToast("تم حذف القسم", "success");
+          await loadSections();
+          await loadProducts();
+          updateStats();
+        } catch (err) {
+          showToast(err.message, "error", 5000);
+        }
+      }
+
+      /* =========================================================
+         SETTINGS
+         ========================================================= */
+
+      function renderSettings() {
+        const s = state.settings;
+
+        const fields = [
+          { key: "siteName", label: "اسم الموقع", type: "text" },
+          { key: "siteTagline", label: "الشعار الفرعي", type: "text" },
+          { key: "heroTitle", label: "عنوان الهيرو", type: "text" },
+          { key: "heroSubtitle", label: "وصف الهيرو", type: "textarea" },
+          { key: "topStripText", label: "الشريط العلوي", type: "text" },
+          { key: "whatsappNumber", label: "رقم واتساب", type: "text" },
+          { key: "phone1", label: "هاتف 1", type: "text" },
+          { key: "phone2", label: "هاتف 2", type: "text" },
+          { key: "phone3", label: "هاتف 3", type: "text" },
+          { key: "phone4", label: "هاتف 4", type: "text" },
+          { key: "address1", label: "الفرع الأول", type: "text" },
+          { key: "address2", label: "الفرع الثاني", type: "text" },
+          { key: "facebookUrl", label: "رابط فيسبوك", type: "url" },
+          { key: "instagramUrl", label: "رابط إنستجرام", type: "url" },
+          { key: "tiktokUrl", label: "رابط تيك توك", type: "url" }
+        ];
+
+        const fieldsHtml = fields.map(f => `
+          <div class="form-field ${f.type === "textarea" ? "full" : ""}">
+            <label>${U.escapeHtml(f.label)}</label>
+            ${f.type === "textarea"
+              ? `<textarea class="textarea" data-key="${f.key}">${U.escapeHtml(s[f.key] || "")}</textarea>`
+              : `<input class="input" type="${f.type}" data-key="${f.key}" value="${U.escapeAttribute(s[f.key] || "")}">`
+            }
+          </div>
+        `).join("");
+
+        $("#settingsContainer").innerHTML = `
+          <div class="products-table" style="padding: 24px;">
+            <div class="form-grid">
+              ${fieldsHtml}
+            </div>
+          </div>
+        `;
+      }
+
+      async function saveSettings() {
+        const btn = $("#saveSettingsBtn");
+        const inputs = $$("[data-key]");
+        const newSettings = { ...state.settings };
+
+        inputs.forEach(input => {
+          newSettings[input.dataset.key] = input.value.trim();
+        });
+
+        setLoading(btn, true, "جاري الحفظ...");
+
+        try {
+          await api("updateSettings", { settings: newSettings });
+          state.settings = newSettings;
+          showToast("تم حفظ الإعدادات", "success");
+        } catch (err) {
+          showToast(err.message, "error", 5000);
+        } finally {
+          setLoading(btn, false);
         }
       }
 
@@ -2002,73 +2060,65 @@
          IMAGE UPLOAD
          ========================================================= */
 
-      async function handleImageUpload(event) {
-        const file = event.target.files?.[0];
+      async function handleImageUpload(e) {
+        const file = e.target.files?.[0];
         if (!file) return;
 
         if (!file.type.startsWith("image/")) {
-          showToast("الملف ليس صورة.", "warning");
-          event.target.value = "";
+          showToast("الملف ليس صورة", "warning");
           return;
         }
 
         if (file.size > 8 * 1024 * 1024) {
-          showToast("حجم الصورة كبير جدًا. الحد الأقصى 8MB.", "warning");
-          event.target.value = "";
+          showToast("حجم الصورة كبير جدًا (5MB)", "warning");
           return;
         }
 
-        const previewUrl = URL.createObjectURL(file);
-        $("#productImagePreview").src = previewUrl;
-        $("#uploadStatus").textContent = "جاري تجهيز الصورة...";
+        $("#productImagePreview").src = URL.createObjectURL(file);
+        $("#uploadStatus").textContent = "جاري الرفع...";
 
         try {
           const prepared = await prepareImage(file);
-          $("#uploadStatus").textContent = "جاري الرفع إلى GitHub...";
-
-          const data = await postAction("uploadImage", {
+          const data = await api("uploadImage", {
             fileName: prepared.fileName,
             mimeType: prepared.mimeType,
             base64: prepared.base64
           });
 
-          const url = data.url || data.imageUrl || data.rawUrl || "";
-          if (!url) throw new Error("تم الرفع لكن الخادم لم يعطِ رابط.");
+          const url = data.url || data.imageUrl || data.rawUrl;
+          if (!url) throw new Error("لم يتم استلام رابط الصورة");
 
           $("#productImage").value = url;
           $("#productImagePreview").src = url;
-          $("#uploadStatus").textContent = "✓ تم رفع الصورة بنجاح.";
-          showToast("تم رفع الصورة بنجاح.");
+          $("#uploadStatus").textContent = "✓ تم الرفع";
+          showToast("تم رفع الصورة", "success");
         } catch (err) {
           $("#uploadStatus").textContent = err.message;
-          showToast(err.message, "error", 6000);
+          showToast(err.message, "error", 5000);
         }
       }
 
       async function prepareImage(file) {
         if (file.size <= 2 * 1024 * 1024) {
           const base64 = await fileToBase64(file);
-          return { fileName: safeFileName(file.name), mimeType: file.type, base64 };
+          return { fileName: safeName(file.name), mimeType: file.type, base64 };
         }
 
         const bitmap = await createImageBitmap(file);
-        const maxWidth = 1800;
-        const scale = Math.min(1, maxWidth / bitmap.width);
-        const width = Math.max(1, Math.round(bitmap.width * scale));
-        const height = Math.max(1, Math.round(bitmap.height * scale));
-
+        const scale = Math.min(1, 1800 / bitmap.width);
         const canvas = document.createElement("canvas");
-        canvas.width = width;
-        canvas.height = height;
-        canvas.getContext("2d").drawImage(bitmap, 0, 0, width, height);
+        canvas.width = Math.round(bitmap.width * scale);
+        canvas.height = Math.round(bitmap.height * scale);
+        canvas.getContext("2d").drawImage(bitmap, 0, 0, canvas.width, canvas.height);
 
-        const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/jpeg", 0.84));
-        if (!blob) throw new Error("تعذر ضغط الصورة.");
-
+        const blob = await new Promise(r => canvas.toBlob(r, "image/jpeg", 0.84));
         const base64 = await fileToBase64(blob);
-        const baseName = safeFileName(file.name).replace(/\.[^.]+$/, "");
 
-        return { fileName: `${baseName}.jpg`, mimeType: "image/jpeg", base64 };
+        return {
+          fileName: safeName(file.name).replace(/\.[^.]+$/, "") + ".jpg",
+          mimeType: "image/jpeg",
+          base64
+        };
       }
 
       function fileToBase64(file) {
@@ -2076,289 +2126,138 @@
           const reader = new FileReader();
           reader.onload = () => {
             const result = String(reader.result || "");
-            const comma = result.indexOf(",");
-            resolve(comma >= 0 ? result.slice(comma + 1) : result);
+            resolve(result.split(",")[1] || result);
           };
-          reader.onerror = () => reject(new Error("تعذر قراءة الصورة."));
+          reader.onerror = reject;
           reader.readAsDataURL(file);
         });
       }
 
-      function safeFileName(name) {
-        return String(name || "product.jpg")
-          .replace(/[^a-zA-Z0-9._-]+/g, "-")
-          .replace(/-+/g, "-")
-          .replace(/^[-.]+|[-.]+$/g, "") || "product.jpg";
+      function safeName(name) {
+        return String(name || "image.jpg").replace(/[^a-zA-Z0-9._-]+/g, "-").replace(/-+/g, "-");
       }
 
       /* =========================================================
-         SETTINGS RENDER
-         ========================================================= */
-
-      function renderSettings() {
-        const s = state.settings;
-
-        const container = $("#settingsContainer");
-
-        const fields = [
-          { key: "siteName", label: "اسم الموقع", type: "text" },
-          { key: "siteTagline", label: "الشعار الفرعي", type: "text" },
-          { key: "heroTitle", label: "عنوان الهيرو الرئيسي", type: "text" },
-          { key: "heroSubtitle", label: "وصف الهيرو", type: "textarea" },
-          { key: "topStripText", label: "نص الشريط العلوي", type: "text" },
-          { key: "whatsappNumber", label: "رقم واتساب (بصيغة دولية)", type: "text" },
-          { key: "phone1", label: "هاتف 1", type: "text" },
-          { key: "phone2", label: "هاتف 2", type: "text" },
-          { key: "phone3", label: "هاتف 3", type: "text" },
-          { key: "phone4", label: "هاتف 4", type: "text" },
-          { key: "address1", label: "الفرع 1", type: "text" },
-          { key: "address2", label: "الفرع 2", type: "text" },
-          { key: "facebookUrl", label: "رابط فيسبوك", type: "url" },
-          { key: "instagramUrl", label: "رابط إنستجرام", type: "url" },
-          { key: "tiktokUrl", label: "رابط تيك توك", type: "url" },
-          { key: "primaryColor", label: "اللون الأساسي (HEX)", type: "text" }
-        ];
-
-        const fieldsHtml = fields.map(f => `
-          <div class="field ${f.type === "textarea" ? "full" : ""}">
-            <label class="label">${U.escapeHtml(f.label)}</label>
-            ${f.type === "textarea"
-              ? `<textarea class="textarea" data-setting-input="${f.key}">${U.escapeHtml(s[f.key] || "")}</textarea>`
-              : `<input class="input" type="${f.type}" data-setting-input="${f.key}" value="${U.escapeAttribute(s[f.key] || "")}">`
-            }
-          </div>
-        `).join("");
-
-        container.innerHTML = `
-          <div class="panel">
-            <div class="panel-head">
-              <div>
-                <h2 class="panel-title">📷 الصور الرئيسية</h2>
-                <div class="panel-subtitle">تحكم في صورة الهيرو والشعار</div>
-              </div>
-            </div>
-            <div class="panel-body">
-              <div class="form-grid">
-                <div class="field full">
-                  <label class="label">صورة الهيرو (الصورة الكبيرة في الرئيسية)</label>
-                  <div class="image-upload">
-                    <img id="heroImagePreview" class="image-preview" src="${U.escapeAttribute(s.heroImage || './assets/storefront.jpg')}" alt="الهيرو" onerror="this.src='./assets/logo.png'">
-                    <div class="upload-box">
-                      <strong style="font-size:12px">📷 رفع صورة هيرو جديدة</strong>
-                      <input id="heroImageFile" type="file" accept="image/*">
-                      <div id="heroImageStatus" class="upload-status"></div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="field full">
-                  <label class="label">الشعار (اللوجو)</label>
-                  <div class="image-upload">
-                    <img id="logoImagePreview" class="image-preview" src="${U.escapeAttribute(s.logoImage || './assets/logo.png')}" alt="اللوجو" onerror="this.src='./assets/logo.png'">
-                    <div class="upload-box">
-                      <strong style="font-size:12px">📷 رفع شعار جديد</strong>
-                      <input id="logoImageFile" type="file" accept="image/*">
-                      <div id="logoImageStatus" class="upload-status"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="panel" style="margin-top:18px">
-            <div class="panel-head">
-              <div>
-                <h2 class="panel-title">✍️ النصوص والمعلومات</h2>
-                <div class="panel-subtitle">تحكم في كل نص يظهر على الموقع</div>
-              </div>
-            </div>
-            <div class="panel-body">
-              <div class="form-grid">
-                ${fieldsHtml}
-              </div>
-            </div>
-          </div>
-        `;
-
-        // ربط رفع صور الهيرو واللوجو
-        $("#heroImageFile").addEventListener("change", (e) => handleSpecialImageUpload(e, "heroImage", "heroImagePreview", "heroImageStatus", "uploadHeroImage"));
-        $("#logoImageFile").addEventListener("change", (e) => handleSpecialImageUpload(e, "logoImage", "logoImagePreview", "logoImageStatus", "uploadLogoImage"));
-      }
-
-      async function handleSpecialImageUpload(event, settingKey, previewId, statusId, action) {
-        const file = event.target.files?.[0];
-        if (!file) return;
-
-        if (!file.type.startsWith("image/")) {
-          showToast("الملف ليس صورة.", "warning");
-          return;
-        }
-
-        if (file.size > 8 * 1024 * 1024) {
-          showToast("حجم الصورة كبير جدًا. الحد الأقصى 8MB.", "warning");
-          return;
-        }
-
-        const preview = document.getElementById(previewId);
-        const status = document.getElementById(statusId);
-
-        preview.src = URL.createObjectURL(file);
-        status.textContent = "جاري تجهيز الصورة...";
-
-        try {
-          const prepared = await prepareImage(file);
-          status.textContent = "جاري الرفع...";
-
-          const data = await postAction(action, {
-            fileName: prepared.fileName,
-            mimeType: prepared.mimeType,
-            base64: prepared.base64
-          });
-
-          const url = data.url || data.imageUrl || data.rawUrl || "";
-          if (!url) throw new Error("لم يتم استلام رابط الصورة.");
-
-          preview.src = url;
-          state.settings[settingKey] = url;
-          status.textContent = "✓ تم الرفع بنجاح.";
-          showToast("تم رفع الصورة بنجاح.");
-        } catch (err) {
-          status.textContent = err.message;
-          showToast(err.message, "error", 6000);
-        }
-      }
-
-      async function saveAllSettings() {
-        const button = $("#saveAllSettingsBtn");
-        const inputs = $$("[data-setting-input]");
-        const newSettings = { ...state.settings };
-
-        inputs.forEach(input => {
-          newSettings[input.dataset.settingInput] = input.value.trim();
-        });
-
-        setButtonLoading(button, true);
-
-        try {
-          await postAction("updateSettings", { settings: newSettings });
-          state.settings = newSettings;
-          showToast("تم حفظ الإعدادات بنجاح.");
-        } catch (err) {
-          showToast(err.message, "error", 5000);
-        } finally {
-          setButtonLoading(button, false);
-        }
-      }
-
-      /* =========================================================
-         MODAL
+         MODALS
          ========================================================= */
 
       function openModal(id) {
-        const modal = document.getElementById(id);
-        if (!modal) return;
-        modal.classList.add("open");
-        modal.setAttribute("aria-hidden", "false");
+        const m = document.getElementById(id);
+        if (!m) return;
+        m.classList.add("open");
         document.body.style.overflow = "hidden";
       }
 
       function closeModal(id) {
-        const modal = document.getElementById(id);
-        if (!modal) return;
-        modal.classList.remove("open");
-        modal.setAttribute("aria-hidden", "true");
+        const m = document.getElementById(id);
+        if (!m) return;
+        m.classList.remove("open");
         document.body.style.overflow = "";
+      }
+
+      /* =========================================================
+         CATEGORY SELECT
+         ========================================================= */
+
+      function populateCategorySelect() {
+        const sel = $("#productCategory");
+        const current = sel.value;
+        const cats = state.sections.map(s => s.name).filter(Boolean);
+        sel.innerHTML = `<option value="">اختر القسم</option>` +
+          cats.map(c => `<option value="${U.escapeAttribute(c)}">${U.escapeHtml(c)}</option>`).join("");
+        if (cats.includes(current)) sel.value = current;
       }
 
       /* =========================================================
          EVENT DELEGATION
          ========================================================= */
 
-      document.addEventListener("click", async event => {
-        const actionBtn = event.target.closest("[data-action]");
-
-        if (actionBtn) {
-          const action = actionBtn.dataset.action;
-          const id = actionBtn.dataset.id;
-
-          if (action === "section-edit") openEditSection(id);
-          else if (action === "section-toggle") await toggleSection(id);
-          else if (action === "section-delete") await deleteSection(id);
-          else if (action === "section-up") await moveSection(id, -1);
-          else if (action === "section-down") await moveSection(id, 1);
-          else if (action === "product-edit") openEditProduct(id);
-          else if (action === "product-toggle-active") await toggleProductField(id, "active");
-          else if (action === "product-toggle-home") await toggleProductField(id, "showHome");
-          else if (action === "product-toggle-offer") await toggleProductField(id, "isOffer");
-          else if (action === "product-delete") await deleteProduct(id);
-
+      document.addEventListener("click", async e => {
+        /* Toggle Buttons */
+        const filterBtn = e.target.closest(".filter-btn");
+        if (filterBtn) {
+          $$(".filter-btn").forEach(b => b.classList.toggle("active", b === filterBtn));
+          state.currentFilter = filterBtn.dataset.filter;
+          applyProductFilters();
           return;
         }
 
-        const closeBtn = event.target.closest("[data-close-modal]");
+        const navTab = e.target.closest(".nav-tab");
+        if (navTab) {
+          openPage(navTab.dataset.page);
+          return;
+        }
+
+        const closeBtn = e.target.closest("[data-close]");
         if (closeBtn) {
-          closeModal(closeBtn.dataset.closeModal);
+          closeModal(closeBtn.dataset.close);
           return;
         }
 
-        if (event.target.classList.contains("modal-backdrop")) {
-          closeModal(event.target.id);
+        if (e.target.classList.contains("modal-backdrop")) {
+          closeModal(e.target.id);
+        }
+
+        /* Product Actions */
+        const productAction = e.target.closest("[data-action]");
+        if (productAction) {
+          const item = productAction.closest(".product-item");
+          const id = item?.dataset.id;
+          const action = productAction.dataset.action;
+
+          if (action === "edit") openEditProduct(id);
+          else if (action === "toggle-active") await toggleProductField(id, "active");
+          else if (action === "toggle-home") await toggleProductField(id, "showHome");
+          else if (action === "toggle-offer") await toggleProductField(id, "isOffer");
+          else if (action === "delete") await deleteProduct(id);
+          return;
+        }
+
+        /* Section Actions */
+        const sectionAction = e.target.closest("[data-section-action]");
+        if (sectionAction) {
+          const item = sectionAction.closest(".product-item");
+          const id = item?.dataset.id;
+          const action = sectionAction.dataset.sectionAction;
+
+          if (action === "edit") openEditSection(id);
+          else if (action === "toggle") await toggleSection(id);
+          else if (action === "delete") await deleteSection(id);
+          return;
         }
       });
 
       /* =========================================================
-         FORMS & BUTTONS
+         BINDINGS
          ========================================================= */
 
       $("#loginForm").addEventListener("submit", e => { e.preventDefault(); login(); });
-      $("#sectionForm").addEventListener("submit", e => { e.preventDefault(); saveSection(); });
-      $("#productForm").addEventListener("submit", e => { e.preventDefault(); saveProduct(); });
-
-      $$(".nav-item").forEach(item => {
-        item.addEventListener("click", () => openPage(item.dataset.page));
-      });
-
       $("#logoutBtn").addEventListener("click", logout);
-      $("#addSectionBtn").addEventListener("click", openAddSection);
       $("#addProductBtn").addEventListener("click", openAddProduct);
-      $("#quickAddSection").addEventListener("click", () => { openPage("sectionsPage"); openAddSection(); });
+      $("#addSectionBtn").addEventListener("click", openAddSection);
+      $("#saveProductBtn").addEventListener("click", saveProduct);
+      $("#saveSectionBtn").addEventListener("click", saveSection);
+      $("#saveSettingsBtn").addEventListener("click", saveSettings);
+
       $("#quickAddProduct").addEventListener("click", () => { openPage("productsPage"); openAddProduct(); });
+      $("#quickAddSection").addEventListener("click", () => { openPage("sectionsPage"); openAddSection(); });
       $("#quickViewProducts").addEventListener("click", () => openPage("productsPage"));
       $("#quickViewSettings").addEventListener("click", () => openPage("settingsPage"));
 
-      $("#refreshSectionsBtn").addEventListener("click", async () => {
-        try { await loadSections(); updateDashboard(); showToast("تم تحديث الأقسام."); }
-        catch (err) { showToast(err.message, "error"); }
+      $("#refreshAllBtn").addEventListener("click", async () => {
+        await loadAll();
+        showToast("تم التحديث", "success");
       });
 
-      $("#refreshProductsBtn").addEventListener("click", async () => {
-        try { await loadProducts(); updateDashboard(); showToast("تم تحديث المنتجات."); }
-        catch (err) { showToast(err.message, "error"); }
+      $("#productSearch").addEventListener("input", e => {
+        state.searchTerm = e.target.value;
+        applyProductFilters();
       });
-
-      $("#dashboardRefreshBtn").addEventListener("click", async () => {
-        try { await loadAll(); showToast("تم تحديث لوحة التحكم."); }
-        catch (err) { showToast(err.message, "error"); }
-      });
-
-      $("#refreshSettingsBtn").addEventListener("click", async () => {
-        try { await loadSettings(); showToast("تم تحديث الإعدادات."); }
-        catch (err) { showToast(err.message, "error"); }
-      });
-
-      $("#saveAllSettingsBtn").addEventListener("click", saveAllSettings);
-
-      $("#sectionSearch").addEventListener("input", renderSections);
-      $("#productSearch").addEventListener("input", filterProducts);
-      $("#productCategoryFilter").addEventListener("change", filterProducts);
-      $("#productStatusFilter").addEventListener("change", filterProducts);
 
       $("#productImageFile").addEventListener("change", handleImageUpload);
 
       $("#productImage").addEventListener("input", e => {
-        const value = e.target.value.trim();
-        if (value) $("#productImagePreview").src = value;
+        if (e.target.value) $("#productImagePreview").src = e.target.value;
       });
 
       document.addEventListener("keydown", e => {
@@ -2368,7 +2267,7 @@
       });
 
       /* =========================================================
-         STARTUP
+         BOOT
          ========================================================= */
 
       async function boot() {
@@ -2380,7 +2279,7 @@
             state.adminKey = "";
             sessionStorage.removeItem(SESSION_KEY);
             showLogin();
-            setLoginError(err.message);
+            showLoginError(err.message);
           }
         } else {
           showLogin();
