@@ -1,6 +1,6 @@
 /* =========================================================
    ABO TAREK STORE
-   APP.JS - PREMIUM EDITION
+   APP.JS - PREMIUM EDITION WITH WISHLIST + ANALYTICS
    ========================================================= */
 
 (() => {
@@ -36,6 +36,18 @@
   function writeCache(key, value) {
     try {
       localStorage.setItem(key, JSON.stringify({ time: Date.now(), value }));
+    } catch (err) {}
+  }
+
+  /* =========================================================
+     ANALYTICS HELPER
+     ========================================================= */
+
+  function track(eventName, data) {
+    try {
+      if (typeof window.aboTrack === "function") {
+        window.aboTrack(eventName, data || {});
+      }
     } catch (err) {}
   }
 
@@ -135,7 +147,6 @@
   function applySettings() {
     const s = settings;
 
-    // Site Name
     document.querySelectorAll("[data-setting='siteName']").forEach(el => el.textContent = s.siteName);
     document.querySelectorAll("[data-setting='siteTagline']").forEach(el => el.textContent = s.siteTagline);
     document.querySelectorAll("[data-setting='heroTitle']").forEach(el => el.textContent = s.heroTitle);
@@ -144,7 +155,6 @@
     document.querySelectorAll("[data-setting='address1']").forEach(el => el.textContent = s.address1);
     document.querySelectorAll("[data-setting='address2']").forEach(el => el.textContent = s.address2);
 
-    // Images
     document.querySelectorAll("[data-setting='heroImage']").forEach(el => {
       if (el.tagName === "IMG") el.src = s.heroImage;
     });
@@ -152,13 +162,11 @@
       if (el.tagName === "IMG") el.src = s.logoImage;
     });
 
-    // WhatsApp Links
     const waUrl = "https://wa.me/" + s.whatsappNumber;
     document.querySelectorAll("[data-setting='whatsapp']").forEach(el => {
       el.href = waUrl;
     });
 
-    // Phones
     const phones = [s.phone1, s.phone2, s.phone3, s.phone4].filter(Boolean);
     document.querySelectorAll("[data-setting='phones']").forEach(el => {
       el.innerHTML = phones.map(p =>
@@ -166,12 +174,10 @@
       ).join("");
     });
 
-    // Social
     document.querySelectorAll("[data-setting='facebook']").forEach(el => el.href = s.facebookUrl);
     document.querySelectorAll("[data-setting='instagram']").forEach(el => el.href = s.instagramUrl);
     document.querySelectorAll("[data-setting='tiktok']").forEach(el => el.href = s.tiktokUrl);
 
-    // Color
     if (s.primaryColor) {
       document.documentElement.style.setProperty("--gold-primary", s.primaryColor);
     }
@@ -214,6 +220,29 @@
       ? `السلام عليكم، عايز أعرف تفاصيل عن صنف: ${name}\n${productUrl}`
       : `السلام عليكم، عايز أعرف تفاصيل عن أحد الأصناف.\n${productUrl}`;
     return "https://wa.me/" + (settings.whatsappNumber || CFG.WHATSAPP_NUMBER) + "?text=" + encodeURIComponent(message);
+  }
+
+  /* =========================================================
+     WISHLIST HELPERS
+     ========================================================= */
+
+  function isInWishlist(productId) {
+    if (!window.ABO_TAREK || !window.ABO_TAREK.Wishlist) return false;
+    return window.ABO_TAREK.Wishlist.isIn(productId);
+  }
+
+  function toggleWishlist(product) {
+    if (!window.ABO_TAREK || !window.ABO_TAREK.Wishlist) return false;
+    return window.ABO_TAREK.Wishlist.toggle(product);
+  }
+
+  /* =========================================================
+     RECENTLY VIEWED HELPER
+     ========================================================= */
+
+  function addToRecent(product) {
+    if (!window.ABO_TAREK || !window.ABO_TAREK.Recent) return;
+    window.ABO_TAREK.Recent.add(product);
   }
 
   /* =========================================================
@@ -271,6 +300,15 @@
     saveCart();
     openCart();
     showAddedState(product.id);
+
+    // Analytics: AddToCart
+    track("add_to_cart", {
+      content_ids: [product.id],
+      content_name: product.name,
+      content_category: product.category,
+      value: price,
+      currency: "EGP"
+    });
   }
 
   function changeCartQuantity(id, delta) {
@@ -361,6 +399,15 @@
 
     drawer.querySelector(".abo-cart-close").addEventListener("click", closeCart);
     drawer.querySelector(".abo-cart-clear").addEventListener("click", clearCart);
+
+    // WhatsApp Button - Analytics
+    drawer.querySelector(".abo-cart-whatsapp").addEventListener("click", () => {
+      track("begin_checkout", {
+        value: cartTotal(),
+        currency: "EGP",
+        num_items: cartCount()
+      });
+    });
 
     drawer.addEventListener("click", event => {
       if (event.target.matches("[data-close-cart]")) { closeCart(); return; }
@@ -499,8 +546,16 @@
       : "";
 
     const hasCartPrice = getProductPrice(product) > 0;
+    const inWishlist = isInWishlist(product.id);
 
     body.innerHTML = `
+      <button
+        type="button"
+        class="product-wishlist-btn ${inWishlist ? "active" : ""}"
+        data-wishlist-id="${U.escapeAttribute(product.id)}"
+        aria-label="${inWishlist ? "إزالة من المفضلة" : "إضافة للمفضلة"}"
+      >${inWishlist ? "❤️" : "🤍"}</button>
+
       <div class="product-meta">
         <span class="product-category">${U.escapeHtml(product.category)}</span>
         ${product.isOffer ? `<span class="offer-badge">🔥 عرض</span>` : ""}
@@ -518,8 +573,31 @@
     article.appendChild(body);
 
     article.addEventListener("click", event => {
+
+      // ===== Wishlist Button =====
+      const wishBtn = event.target.closest("[data-wishlist-id]");
+      if (wishBtn) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const added = toggleWishlist(product);
+
+        if (added) {
+          wishBtn.classList.add("active");
+          wishBtn.innerHTML = "❤️";
+          wishBtn.setAttribute("aria-label", "إزالة من المفضلة");
+        } else {
+          wishBtn.classList.remove("active");
+          wishBtn.innerHTML = "🤍";
+          wishBtn.setAttribute("aria-label", "إضافة للمفضلة");
+        }
+        return;
+      }
+
+      // ===== Links (WhatsApp, etc.) =====
       if (event.target.closest("a")) return;
 
+      // ===== Add to Cart =====
       const addBtn = event.target.closest(".abo-add-cart");
       if (addBtn) {
         event.preventDefault();
@@ -528,6 +606,7 @@
         return;
       }
 
+      // ===== Details =====
       if (event.target.closest(".product-details-trigger")) {
         event.preventDefault();
         event.stopPropagation();
@@ -535,6 +614,7 @@
         return;
       }
 
+      // ===== Open Modal (click anywhere on card) =====
       openProductModal(product);
     });
 
@@ -700,6 +780,18 @@
   }
 
   function openProductModal(product) {
+    // ===== Recently Viewed =====
+    addToRecent(product);
+
+    // ===== Analytics: View Content =====
+    track("view_product", {
+      content_ids: [product.id],
+      content_name: product.name,
+      content_category: product.category,
+      value: getProductPrice(product),
+      currency: "EGP"
+    });
+
     const modal = ensureModal();
 
     const image = document.getElementById("aboModalImage");
@@ -727,7 +819,16 @@
     if (name) name.textContent = product.name;
     if (description) description.textContent = product.description || "للاستفسار عن تفاصيل الصنف، تواصل معنا على واتساب.";
     if (price) price.innerHTML = renderPrice(product);
-    if (whatsapp) whatsapp.href = whatsappUrl(product);
+
+    if (whatsapp) {
+      whatsapp.href = whatsappUrl(product);
+      whatsapp.onclick = () => {
+        track("contact", {
+          content_ids: [product.id],
+          content_name: product.name
+        });
+      };
+    }
 
     if (addBtn) {
       if (getProductPrice(product) > 0) {
@@ -834,36 +935,4 @@
       const cached = readCache(CFG.CACHE_KEYS.PRODUCTS, CFG.CACHE_TIME);
       if (cached && cached.value && cached.value.length) {
         allProducts = cached.value;
-        const cachedSettings = readCache(CFG.CACHE_KEYS.SETTINGS, CFG.SETTINGS_CACHE_TIME);
-        if (cachedSettings) settings = { ...CFG.DEFAULT_SETTINGS, ...cachedSettings.value };
-        applySettings();
-        initHomepage();
-        return;
-      }
-      showError();
-    }
-  }
-
-  /* =========================================================
-     GLOBAL
-     ========================================================= */
-
-  window.openProductModal = openProductModal;
-  window.closeProductModal = closeProductModal;
-  window.openAboTarekCart = openCart;
-  window.closeAboTarekCart = closeCart;
-
-  document.addEventListener("keydown", event => {
-    if (event.key === "Escape") {
-      closeProductModal();
-      closeCart();
-    }
-  });
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", startApp, { once: true });
-  } else {
-    startApp();
-  }
-
-})();
+        const cachedSettings = readCache(CFG.CACHE_KEYS.SETTINGS
