@@ -1,0 +1,1013 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0a1f33">
+
+  <title>جاري التحميل... | أبو طارق للأدوات المنزلية</title>
+  <meta name="description" id="metaDescription" content="تفاصيل المنتج من أبو طارق للأدوات المنزلية في الإسكندرية">
+
+  <link rel="canonical" id="canonicalLink" href="https://abotarek963258-cmyk.github.io/abo-tarek-store/">
+
+  <meta property="og:type" content="product">
+  <meta property="og:title" id="ogTitle" content="منتج | أبو طارق">
+  <meta property="og:description" id="ogDescription" content="">
+  <meta property="og:image" id="ogImage" content="https://abotarek963258-cmyk.github.io/abo-tarek-store/assets/logo.png">
+  <meta property="og:url" id="ogUrl" content="">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" id="twTitle" content="منتج | أبو طارق">
+  <meta name="twitter:description" id="twDescription" content="">
+  <meta name="twitter:image" id="twImage" content="">
+
+  <link rel="icon" href="./assets/logo.png">
+  <link rel="apple-touch-icon" href="./assets/logo.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="./style.css?v=5000">
+  <link rel="stylesheet" href="./features.css?v=5000">
+
+  <style>
+    /* ===== Breadcrumb ===== */
+    .breadcrumb {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 0;
+      font-size: 13px;
+    }
+    .breadcrumb-inner {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      color: var(--text-3);
+    }
+    .breadcrumb a { color: var(--orange); font-weight: 700; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb .sep { color: var(--text-4); }
+
+    /* ===== Product Layout ===== */
+    .product-main {
+      padding: 40px 0;
+      background: var(--bg);
+    }
+    .product-layout {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 48px;
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 40px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .product-gallery {
+      position: relative;
+    }
+    .product-main-image {
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      border-radius: var(--radius-md);
+      background: var(--gray-light);
+      cursor: zoom-in;
+    }
+
+    .product-details {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .product-details .product-category-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      background: var(--orange-soft);
+      color: var(--orange);
+      border-radius: var(--radius-full);
+      font-size: 12px;
+      font-weight: 800;
+      width: fit-content;
+    }
+    .product-details h1 {
+      margin: 0;
+      font-size: clamp(22px, 3vw, 32px);
+      font-weight: 900;
+      color: var(--navy);
+      line-height: 1.3;
+    }
+
+    .product-rating {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text-3);
+    }
+    .product-rating .stars { color: #f59e0b; font-size: 16px; letter-spacing: 2px; }
+
+    .product-price-block {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      flex-wrap: wrap;
+      padding: 16px 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .product-price-block .price-current {
+      font-size: 34px;
+      font-weight: 900;
+      color: var(--orange);
+      direction: ltr;
+    }
+    .product-price-block .price-old {
+      font-size: 18px;
+      color: var(--text-4);
+      text-decoration: line-through;
+      direction: ltr;
+    }
+    .product-price-block .price-discount {
+      padding: 4px 10px;
+      background: var(--red-soft);
+      color: var(--red);
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .product-description-full {
+      font-size: 14px;
+      line-height: 2;
+      color: var(--text-2);
+      white-space: pre-line;
+    }
+
+    .product-cta {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .btn-add-cart {
+      min-height: 56px;
+      padding: 0 32px;
+      background: var(--orange);
+      color: #fff;
+      border-radius: var(--radius);
+      font-size: 15px;
+      font-weight: 900;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: var(--shadow-orange);
+      transition: all 0.25s;
+    }
+    .btn-add-cart:hover {
+      background: var(--orange-2);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(230, 123, 32, 0.4);
+    }
+    .btn-add-cart.added { background: var(--green); }
+
+    .btn-icon-lg {
+      width: 56px;
+      height: 56px;
+      display: grid;
+      place-items: center;
+      border-radius: var(--radius);
+      font-size: 22px;
+      transition: all 0.25s;
+      cursor: pointer;
+      border: none;
+    }
+    .btn-wishlist-lg {
+      background: var(--bg);
+      color: var(--text-2);
+      border: 2px solid var(--border);
+    }
+    .btn-wishlist-lg:hover { color: var(--red); border-color: var(--red); }
+    .btn-wishlist-lg.active {
+      background: linear-gradient(135deg, #e91e63, #ad1457);
+      color: #fff;
+      border-color: transparent;
+    }
+    .btn-share-lg {
+      background: var(--green);
+      color: #fff;
+    }
+    .btn-share-lg:hover { background: var(--green-dark); transform: translateY(-2px); }
+
+    .product-info-boxes {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 16px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+    .info-box-mini {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+      background: var(--bg);
+      border-radius: var(--radius);
+      font-size: 12px;
+    }
+    .info-box-mini .ic { font-size: 20px; color: var(--orange); }
+    .info-box-mini strong { display: block; color: var(--navy); font-weight: 900; font-size: 12px; }
+    .info-box-mini span { display: block; color: var(--text-3); font-size: 11px; }
+
+    /* ===== Related Products ===== */
+    .related-section {
+      padding: 60px 0;
+    }
+    .related-section .products-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    /* ===== Loading / Error ===== */
+    .page-state {
+      min-height: 60vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      text-align: center;
+      padding: 60px 20px;
+    }
+    .page-state .icon { font-size: 80px; opacity: 0.4; }
+    .page-state h1 { color: var(--navy); font-size: 24px; font-weight: 900; }
+    .page-state p { color: var(--text-3); max-width: 400px; }
+
+    /* ===== Share Menu ===== */
+    .share-menu {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 31, 51, 0.7);
+      backdrop-filter: blur(6px);
+      z-index: 3000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .share-menu.open { display: flex; }
+    .share-menu-panel {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      max-width: 380px;
+      width: 100%;
+      text-align: center;
+    }
+    .share-menu-panel h3 {
+      margin: 0 0 20px;
+      color: var(--navy);
+      font-size: 18px;
+      font-weight: 900;
+    }
+    .share-buttons {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    .share-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 16px;
+      border-radius: var(--radius);
+      font-size: 13px;
+      font-weight: 800;
+      transition: all 0.2s;
+      cursor: pointer;
+      border: none;
+    }
+    .share-btn .sh-ic { font-size: 28px; }
+    .share-btn.whatsapp { background: #25d366; color: #fff; }
+    .share-btn.facebook { background: #1877f2; color: #fff; }
+    .share-btn.twitter { background: #000; color: #fff; }
+    .share-btn.copy { background: var(--bg); color: var(--text-2); border: 2px solid var(--border); }
+    .share-btn:hover { transform: translateY(-3px); }
+    .share-close {
+      margin-top: 16px;
+      padding: 10px;
+      color: var(--text-3);
+      font-weight: 700;
+      cursor: pointer;
+      background: none;
+      border: none;
+      width: 100%;
+    }
+
+    @media (max-width: 900px) {
+      .product-layout {
+        grid-template-columns: 1fr;
+        gap: 24px;
+        padding: 24px;
+      }
+      .product-info-boxes { grid-template-columns: 1fr; }
+      .product-cta { grid-template-columns: 1fr auto auto; }
+      .btn-add-cart { padding: 0 20px; font-size: 14px; }
+      .related-section .products-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 500px) {
+      .product-main { padding: 20px 0; }
+      .product-layout { padding: 16px; border-radius: var(--radius); }
+      .product-price-block .price-current { font-size: 26px; }
+      .btn-add-cart { min-height: 50px; padding: 0 14px; font-size: 13px; }
+      .btn-icon-lg { width: 50px; height: 50px; font-size: 20px; }
+      .share-buttons { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- TOP STRIP -->
+  <div class="top-strip">
+    <div class="top-strip-inner">
+      <span>🚚 توصيل لكل مناطق الإسكندرية</span>
+      <span>📞 01551604163</span>
+      <span>✨ جودة عالية وأسعار منافسة</span>
+    </div>
+  </div>
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="nav">
+      <a href="./" class="brand">
+        <img src="./assets/logo.png" alt="أبو طارق" data-setting="logoImage">
+        <span class="brand-text">
+          <strong data-setting="siteName">أبو طارق</strong>
+          <span>للأدوات المنزلية</span>
+        </span>
+      </a>
+
+      <div class="header-search">
+        <input type="search" id="headerSearchInput" placeholder="ابحث عن منتج..." autocomplete="off">
+        <button class="search-btn" type="button" id="headerSearchBtn">🔎</button>
+      </div>
+
+      <div class="header-actions">
+        <a href="https://wa.me/201551604163" target="_blank" rel="noopener" class="header-btn whatsapp-btn" data-setting="whatsapp">
+          <span class="icon">💬</span>
+          <span class="label">واتساب</span>
+        </a>
+        <a href="./sections.html" class="header-btn">
+          <span class="icon">🛍️</span>
+          <span class="label">الأصناف</span>
+        </a>
+        <button class="menu-btn" id="menuBtn" type="button" aria-label="القائمة">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN NAV -->
+  <nav class="main-nav" id="mainNav">
+    <div class="nav-inner">
+      <a href="./">🏠 الرئيسية</a>
+      <a href="./sections.html" class="active">🛍️ كل الأصناف</a>
+      <a href="./#categories">🗂️ الأقسام</a>
+      <a href="./#offers">🔥 العروض</a>
+      <a href="./#branches">📍 الفروع</a>
+      <a href="./#contact">💬 تواصل معنا</a>
+    </div>
+  </nav>
+
+  <!-- BREADCRUMB -->
+  <div class="breadcrumb" id="breadcrumb" style="display:none">
+    <div class="container breadcrumb-inner" id="breadcrumbInner">
+      <a href="./">الرئيسية</a>
+      <span class="sep">›</span>
+      <a href="./sections.html" id="breadcrumbCat">كل الأصناف</a>
+      <span class="sep">›</span>
+      <span id="breadcrumbName">...</span>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <main id="productContainer">
+    <!-- Loading State -->
+    <div class="page-state" id="loadingState">
+      <div class="spinner" style="width:50px;height:50px;border-width:4px"></div>
+      <p style="font-weight: 800; color: var(--text-2)">جاري تحميل المنتج...</p>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <strong data-setting="siteName">أبو طارق للأدوات المنزلية</strong>
+          <p data-setting="siteTagline">كل احتياجات البيت في مكان واحد. الإسكندرية.</p>
+        </div>
+        <div class="footer-col">
+          <h4>روابط سريعة</h4>
+          <a href="./">الرئيسية</a>
+          <a href="./sections.html">كل الأصناف</a>
+          <a href="./#branches">الفروع</a>
+        </div>
+        <div class="footer-col">
+          <h4>تواصل</h4>
+          <a href="https://wa.me/201551604163" target="_blank" rel="noopener" data-setting="whatsapp">واتساب</a>
+          <a href="#" data-setting="facebook">فيسبوك</a>
+          <a href="#" data-setting="instagram">إنستجرام</a>
+        </div>
+        <div class="footer-col">
+          <h4>معلومات</h4>
+          <a href="#" data-setting="address1">كوبري الناموس</a>
+          <a href="#" data-setting="address2">العوايد</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 <span data-setting="siteName">أبو طارق</span></span>
+      </div>
+    </div>
+  </footer>
+
+  <a class="floating-wa" href="https://wa.me/201551604163" target="_blank" rel="noopener" aria-label="واتساب" data-setting="whatsapp">💬</a>
+
+  <!-- SHARE MENU -->
+  <div class="share-menu" id="shareMenu">
+    <div class="share-menu-panel">
+      <h3>شارك المنتج مع أصحابك</h3>
+      <div class="share-buttons">
+        <button class="share-btn whatsapp" data-share="whatsapp">
+          <span class="sh-ic">💬</span>
+          واتساب
+        </button>
+        <button class="share-btn facebook" data-share="facebook">
+          <span class="sh-ic">f</span>
+          فيسبوك
+        </button>
+        <button class="share-btn twitter" data-share="twitter">
+          <span class="sh-ic">𝕏</span>
+          تويتر
+        </button>
+        <button class="share-btn copy" data-share="copy">
+          <span class="sh-ic">📋</span>
+          نسخ الرابط
+        </button>
+      </div>
+      <button class="share-close" id="shareClose">إغلاق</button>
+    </div>
+  </div>
+
+  <script src="./config.js?v=5000"></script>
+  <script src="./features.js?v=5000"></script>
+  <script src="./analytics.js" defer></script>
+
+  <script>
+    "use strict";
+
+    (function () {
+      const CFG = window.ABO_TAREK.CONFIG;
+      const U = window.ABO_TAREK.UTILS;
+
+      let currentProduct = null;
+      let allProducts = [];
+      let settings = { ...CFG.DEFAULT_SETTINGS };
+
+      const container = document.getElementById("productContainer");
+      const loadingState = document.getElementById("loadingState");
+
+      /* ============ GET PRODUCT ID FROM URL ============ */
+      function getProductId() {
+        const params = new URLSearchParams(window.location.search);
+        return U.cleanText(params.get("id") || params.get("product") || "");
+      }
+
+      /* ============ NORMALIZE PRODUCT ============ */
+      function normalizeProduct(raw, index) {
+        const p = raw || {};
+        return {
+          id: U.cleanText(p.id ?? p.ID) || `product-${index + 1}`,
+          name: U.cleanText(p.name ?? p.Name) || "منتج بدون اسم",
+          category: U.cleanText(p.category ?? p.Category) || "أخرى",
+          image: U.cleanText(p.image ?? p.Image),
+          description: U.cleanText(p.description ?? p.Description),
+          active: U.isActive(p.active ?? true),
+          isOffer: U.isFlagEnabled(p.isOffer, false),
+          price: U.cleanText(p.price),
+          oldPrice: U.cleanText(p.oldPrice),
+          offerPrice: U.cleanText(p.offerPrice),
+          sortOrder: Number(p.sortOrder) || 0
+        };
+      }
+
+      /* ============ FETCH ============ */
+      async function fetchData() {
+        // Try cache first
+        const cached = readCache(CFG.CACHE_KEYS.PRODUCTS, CFG.CACHE_TIME);
+        if (cached && cached.value) {
+          allProducts = cached.value;
+          const cachedSettings = readCache(CFG.CACHE_KEYS.SETTINGS, CFG.SETTINGS_CACHE_TIME);
+          if (cachedSettings) settings = { ...CFG.DEFAULT_SETTINGS, ...cachedSettings.value };
+        }
+
+        try {
+          const res = await fetch(CFG.DATA_URL + "?t=" + Date.now(), { cache: "no-store" });
+          const data = await res.json();
+
+          let list = [];
+          if (Array.isArray(data)) list = data;
+          else if (data && Array.isArray(data.products)) list = data.products;
+
+          const fresh = list.map(normalizeProduct).filter(p => p.active).sort((a, b) => a.sortOrder - b.sortOrder);
+          if (fresh.length) {
+            allProducts = fresh;
+            writeCache(CFG.CACHE_KEYS.PRODUCTS, fresh);
+          }
+
+          if (data && data.settings) {
+            settings = { ...CFG.DEFAULT_SETTINGS, ...data.settings };
+            writeCache(CFG.CACHE_KEYS.SETTINGS, settings);
+          }
+        } catch (err) {
+          console.error("Fetch error:", err);
+          if (!allProducts.length) throw err;
+        }
+      }
+
+      function readCache(key, maxAge) {
+        try {
+          const raw = localStorage.getItem(key);
+          if (!raw) return null;
+          const data = JSON.parse(raw);
+          if (!data || !data.time) return null;
+          if (maxAge && Date.now() - data.time > maxAge) return null;
+          return data;
+        } catch (err) { return null; }
+      }
+
+      function writeCache(key, value) {
+        try { localStorage.setItem(key, JSON.stringify({ time: Date.now(), value })); } catch (err) {}
+      }
+
+      /* ============ HELPERS ============ */
+      function hasPrice(p) {
+        return U.parsePrice(p.offerPrice) > 0 || U.parsePrice(p.price) > 0;
+      }
+
+      function getProductPrice(p) {
+        return U.parsePrice(p.offerPrice || p.price);
+      }
+
+      function formatPrice(v) {
+        return U.formatPrice(v);
+      }
+
+      function renderPriceHtml(p) {
+        const price = U.cleanText(p.price);
+        const oldPrice = U.cleanText(p.oldPrice);
+        const offerPrice = U.cleanText(p.offerPrice);
+        const current = offerPrice || price;
+
+        if (!current && !oldPrice) return "";
+
+        let discountPercent = 0;
+        if (oldPrice && current) {
+          const oldNum = U.parsePrice(oldPrice);
+          const currNum = U.parsePrice(current);
+          if (oldNum > currNum) {
+            discountPercent = Math.round(((oldNum - currNum) / oldNum) * 100);
+          }
+        }
+
+        return `
+          <div class="product-price-block">
+            ${current ? `<span class="price-current">${U.escapeHtml(formatPrice(current))}</span>` : ""}
+            ${oldPrice && discountPercent > 0 ? `<span class="price-old">${U.escapeHtml(formatPrice(oldPrice))}</span>` : ""}
+            ${discountPercent > 0 ? `<span class="price-discount">وفّر ${discountPercent}%</span>` : ""}
+          </div>
+        `;
+      }
+
+      function whatsappUrl(product) {
+        const name = U.cleanText(product.name);
+        const price = formatPrice(product.offerPrice || product.price);
+        const msg = `السلام عليكم، عايز أستفسر عن:\n${name}\n${price ? "السعر: " + price : ""}\n${window.location.href}`;
+        return "https://wa.me/" + settings.whatsappNumber + "?text=" + encodeURIComponent(msg);
+      }
+
+      /* ============ APPLY SETTINGS ============ */
+      function applySettings() {
+        const s = settings;
+        document.querySelectorAll("[data-setting='siteName']").forEach(el => el.textContent = s.siteName);
+        document.querySelectorAll("[data-setting='siteTagline']").forEach(el => el.textContent = s.siteTagline);
+        document.querySelectorAll("[data-setting='address1']").forEach(el => el.textContent = s.address1);
+        document.querySelectorAll("[data-setting='address2']").forEach(el => el.textContent = s.address2);
+        document.querySelectorAll("[data-setting='logoImage']").forEach(el => { if (el.tagName === "IMG") el.src = s.logoImage; });
+        const waUrl = "https://wa.me/" + s.whatsappNumber;
+        document.querySelectorAll("[data-setting='whatsapp']").forEach(el => el.href = waUrl);
+        document.querySelectorAll("[data-setting='facebook']").forEach(el => el.href = s.facebookUrl);
+        document.querySelectorAll("[data-setting='instagram']").forEach(el => el.href = s.instagramUrl);
+      }
+
+      /* ============ UPDATE META TAGS ============ */
+      function updateMeta(product) {
+        const title = `${product.name} | أبو طارق للأدوات المنزلية`;
+        const desc = product.description || `${product.name} من أبو طارق للأدوات المنزلية في الإسكندرية. اطلب على واتساب.`;
+        const image = U.getImageSources(product.image)[0] || "https://abotarek963258-cmyk.github.io/abo-tarek-store/assets/logo.png";
+        const url = window.location.href;
+
+        document.title = title;
+        setMeta("metaDescription", desc);
+        setMeta("ogTitle", product.name);
+        setMeta("ogDescription", desc);
+        setMeta("ogImage", image);
+        setMeta("ogUrl", url);
+        setMeta("twTitle", product.name);
+        setMeta("twDescription", desc);
+        setMeta("twImage", image);
+        document.getElementById("canonicalLink").href = url;
+
+        // Add Product Schema
+        const schema = {
+          "@context": "https://schema.org",
+          "@type": "Product",
+          "name": product.name,
+          "image": image,
+          "description": desc,
+          "sku": product.id,
+          "brand": { "@type": "Brand", "name": "أبو طارق للأدوات المنزلية" },
+          "category": product.category
+        };
+        if (hasPrice(product)) {
+          schema.offers = {
+            "@type": "Offer",
+            "url": url,
+            "priceCurrency": "EGP",
+            "price": getProductPrice(product),
+            "availability": "https://schema.org/InStock",
+            "seller": { "@type": "Organization", "name": "أبو طارق للأدوات المنزلية" }
+          };
+        }
+
+        const schemaScript = document.createElement("script");
+        schemaScript.type = "application/ld+json";
+        schemaScript.textContent = JSON.stringify(schema);
+        document.head.appendChild(schemaScript);
+      }
+
+      function setMeta(id, value) {
+        const el = document.getElementById(id);
+        if (el) el.setAttribute("content", value);
+      }
+
+      /* ============ RENDER PRODUCT ============ */
+      function renderProduct(product) {
+        const image = U.getImageSources(product.image)[0] || "./assets/logo.png";
+        const inWishlist = window.ABO_TAREK?.Wishlist?.isIn(product.id) || false;
+        const hasCartPrice = getProductPrice(product) > 0;
+
+        container.innerHTML = `
+          <section class="product-main">
+            <div class="container">
+              <div class="product-layout">
+
+                <!-- Gallery -->
+                <div class="product-gallery">
+                  <img
+                    class="product-main-image"
+                    src="${U.escapeAttribute(image)}"
+                    alt="${U.escapeAttribute(product.name)}"
+                    onerror="this.src='./assets/logo.png'"
+                  >
+                </div>
+
+                <!-- Details -->
+                <div class="product-details">
+                  <span class="product-category-tag">${U.categoryIcon(product.category)} ${U.escapeHtml(product.category)}</span>
+
+                  <h1>${U.escapeHtml(product.name)}</h1>
+
+                  <div class="product-rating">
+                    <span class="stars">★★★★★</span>
+                    <span>منتج أصلي مضمون</span>
+                  </div>
+
+                  ${hasPrice(product) ? renderPriceHtml(product) : ""}
+
+                  ${product.description ? `
+                    <div class="product-description-full">${U.escapeHtml(product.description)}</div>
+                  ` : `
+                    <p class="product-description-full">منتج من تشكيلة أبو طارق للأدوات المنزلية. للاستفسار عن التفاصيل، تواصل معنا على واتساب.</p>
+                  `}
+
+                  <div class="product-cta">
+                    ${hasCartPrice ? `
+                      <button type="button" class="btn-add-cart" id="addCartBtn">
+                        🛒 أضف للسلة
+                      </button>
+                    ` : `
+                      <a href="${U.escapeAttribute(whatsappUrl(product))}" target="_blank" rel="noopener" class="btn-add-cart" style="text-decoration:none">
+                        💬 استفسر على واتساب
+                      </a>
+                    `}
+                    <button type="button" class="btn-icon-lg btn-wishlist-lg ${inWishlist ? "active" : ""}" id="wishlistBtn" aria-label="المفضلة">
+                      ${inWishlist ? "❤️" : "🤍"}
+                    </button>
+                    <button type="button" class="btn-icon-lg btn-share-lg" id="shareBtn" aria-label="مشاركة">📤</button>
+                  </div>
+
+                  <div class="product-info-boxes">
+                    <div class="info-box-mini">
+                      <span class="ic">🚚</span>
+                      <div>
+                        <strong>توصيل سريع</strong>
+                        <span>لكل الإسكندرية</span>
+                      </div>
+                    </div>
+                    <div class="info-box-mini">
+                      <span class="ic">💎</span>
+                      <div>
+                        <strong>جودة عالية</strong>
+                        <span>منتجات أصلية</span>
+                      </div>
+                    </div>
+                    <div class="info-box-mini">
+                      <span class="ic">💬</span>
+                      <div>
+                        <strong>دعم فوري</strong>
+                        <span>على واتساب</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </section>
+
+          <!-- Related Products -->
+          ${renderRelated(product)}
+        `;
+
+        // Bind events
+        bindEvents(product);
+      }
+
+      /* ============ RELATED PRODUCTS ============ */
+      function renderRelated(product) {
+        const related = allProducts
+          .filter(p => p.id !== product.id && p.category === product.category)
+          .slice(0, 4);
+
+        if (related.length < 2) {
+          const others = allProducts.filter(p => p.id !== product.id).slice(0, 4);
+          if (others.length < 2) return "";
+          return renderRelatedGrid(others);
+        }
+        return renderRelatedGrid(related);
+      }
+
+      function renderRelatedGrid(products) {
+        return `
+          <section class="related-section">
+            <div class="container">
+              <div class="section-header">
+                <div>
+                  <span class="section-kicker">✦ شوف كمان</span>
+                  <h2 class="section-title">منتجات مشابهة</h2>
+                </div>
+                <a href="./sections.html" class="see-all">كل الأصناف ←</a>
+              </div>
+              <div class="products-grid">
+                ${products.map(p => relatedCardHtml(p)).join("")}
+              </div>
+            </div>
+          </section>
+        `;
+      }
+
+      function relatedCardHtml(product) {
+        const image = U.getImageSources(product.image)[0] || "./assets/logo.png";
+        const price = product.offerPrice || product.price || "";
+        return `
+          <article class="product" onclick="location.href='./product.html?id=${encodeURIComponent(product.id)}'">
+            <div class="product-image">
+              ${product.isOffer ? `<span class="offer-badge">🔥 عرض</span>` : ""}
+              <img src="${U.escapeAttribute(image)}" alt="${U.escapeAttribute(product.name)}" loading="lazy" onerror="this.src='./assets/logo.png'">
+            </div>
+            <div class="product-body">
+              <div class="product-meta">
+                <span class="product-category">${U.categoryIcon(product.category)} ${U.escapeHtml(product.category)}</span>
+              </div>
+              <h3 class="product-name">${U.escapeHtml(product.name)}</h3>
+              ${price ? `<div class="price-box"><span class="current-price">${U.escapeHtml(U.formatPrice(price))}</span></div>` : ""}
+            </div>
+          </article>
+        `;
+      }
+
+      /* ============ EVENTS ============ */
+      function bindEvents(product) {
+        // Add to Cart
+        const addBtn = document.getElementById("addCartBtn");
+        if (addBtn) {
+          addBtn.addEventListener("click", () => {
+            if (window.ABO_TAREK?.addToCart) {
+              window.ABO_TAREK.addToCart(product);
+              addBtn.classList.add("added");
+              addBtn.textContent = "✓ تمت الإضافة";
+              setTimeout(() => {
+                addBtn.classList.remove("added");
+                addBtn.innerHTML = "🛒 أضف للسلة";
+              }, 1500);
+            }
+          });
+        }
+
+        // Wishlist
+        const wishBtn = document.getElementById("wishlistBtn");
+        if (wishBtn) {
+          wishBtn.addEventListener("click", () => {
+            const added = window.ABO_TAREK?.Wishlist?.toggle(product);
+            if (added) {
+              wishBtn.classList.add("active");
+              wishBtn.textContent = "❤️";
+            } else {
+              wishBtn.classList.remove("active");
+              wishBtn.textContent = "🤍";
+            }
+          });
+        }
+
+        // Share
+        const shareBtn = document.getElementById("shareBtn");
+        if (shareBtn) {
+          shareBtn.addEventListener("click", () => {
+            document.getElementById("shareMenu").classList.add("open");
+          });
+        }
+      }
+
+      /* ============ SHARE MENU ============ */
+      function initShareMenu() {
+        const menu = document.getElementById("shareMenu");
+        const closeBtn = document.getElementById("shareClose");
+
+        closeBtn.addEventListener("click", () => menu.classList.remove("open"));
+        menu.addEventListener("click", e => {
+          if (e.target === menu) menu.classList.remove("open");
+        });
+
+        menu.querySelectorAll("[data-share]").forEach(btn => {
+          btn.addEventListener("click", async () => {
+            const type = btn.dataset.share;
+            const url = window.location.href;
+            const title = currentProduct ? currentProduct.name : "منتج من أبو طارق";
+
+            if (type === "whatsapp") {
+              window.open("https://wa.me/?text=" + encodeURIComponent(title + "\n" + url), "_blank");
+            } else if (type === "facebook") {
+              window.open("https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(url), "_blank");
+            } else if (type === "twitter") {
+              window.open("https://twitter.com/intent/tweet?text=" + encodeURIComponent(title) + "&url=" + encodeURIComponent(url), "_blank");
+            } else if (type === "copy") {
+              try {
+                await navigator.clipboard.writeText(url);
+                btn.querySelector("span:nth-child(2)") && (btn.lastChild.textContent = "تم النسخ ✓");
+                setTimeout(() => menu.classList.remove("open"), 800);
+              } catch (err) {
+                alert("الرابط: " + url);
+              }
+            }
+          });
+        });
+      }
+
+      /* ============ BREADCRUMB ============ */
+      function renderBreadcrumb(product) {
+        const bc = document.getElementById("breadcrumb");
+        if (!bc) return;
+        bc.style.display = "block";
+
+        const catLink = document.getElementById("breadcrumbCat");
+        catLink.textContent = product.category;
+        catLink.href = "./sections.html?category=" + encodeURIComponent(product.category);
+
+        document.getElementById("breadcrumbName").textContent = product.name;
+      }
+
+      /* ============ ERROR STATE ============ */
+      function showError(message) {
+        container.innerHTML = `
+          <div class="page-state">
+            <div class="icon">🔎</div>
+            <h1>المنتج غير موجود</h1>
+            <p>${U.escapeHtml(message || "لم نتمكن من العثور على هذا المنتج.")}</p>
+            <a href="./sections.html" class="btn-primary" style="text-decoration:none;margin-top:8px">
+              🛍️ تصفح كل الأصناف
+            </a>
+          </div>
+        `;
+      }
+
+      /* ============ MOBILE NAV ============ */
+      function initMobileNav() {
+        const menuBtn = document.getElementById("menuBtn");
+        const mainNav = document.getElementById("mainNav");
+        if (!menuBtn || !mainNav) return;
+
+        menuBtn.addEventListener("click", e => {
+          e.stopPropagation();
+          mainNav.classList.toggle("open");
+        });
+        document.addEventListener("click", e => {
+          if (!mainNav.contains(e.target) && !menuBtn.contains(e.target)) mainNav.classList.remove("open");
+        });
+      }
+
+      /* ============ HEADER SEARCH ============ */
+      function initHeaderSearch() {
+        const input = document.getElementById("headerSearchInput");
+        const btn = document.getElementById("headerSearchBtn");
+        if (!input) return;
+
+        function goSearch() {
+          const val = input.value.trim();
+          if (!val) return;
+          window.location.href = "./sections.html?q=" + encodeURIComponent(val);
+        }
+
+        if (btn) btn.addEventListener("click", goSearch);
+        input.addEventListener("keydown", e => {
+          if (e.key === "Enter") goSearch();
+        });
+      }
+
+      /* ============ START ============ */
+      async function start() {
+        initMobileNav();
+        initHeaderSearch();
+        initShareMenu();
+
+        const productId = getProductId();
+        if (!productId) {
+          showError("لم يتم تحديد منتج.");
+          return;
+        }
+
+        try {
+          await fetchData();
+          applySettings();
+
+          currentProduct = allProducts.find(p => String(p.id) === String(productId));
+
+          if (!currentProduct) {
+            showError("المنتج غير موجود أو تم حذفه.");
+            return;
+          }
+
+          updateMeta(currentProduct);
+          renderBreadcrumb(currentProduct);
+          renderProduct(currentProduct);
+
+          // Track page view
+          if (typeof window.aboTrack === "function") {
+            window.aboTrack("view_product", {
+              content_ids: [currentProduct.id],
+              content_name: currentProduct.name,
+              content_category: currentProduct.category,
+              value: getProductPrice(currentProduct),
+              currency: "EGP"
+            });
+          }
+
+          // Add to recent
+          if (window.ABO_TAREK?.Recent) {
+            window.ABO_TAREK.Recent.add(currentProduct);
+          }
+
+        } catch (err) {
+          console.error(err);
+          showError("تعذر تحميل المنتج. حاول مرة أخرى.");
+        }
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", start);
+      } else {
+        start();
+      }
+
+    })();
+  </script>
+
+</body>
+</html>
