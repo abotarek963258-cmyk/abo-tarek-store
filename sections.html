@@ -9,9 +9,7 @@
   <title>كل الأصناف | أبو طارق للأدوات المنزلية في الإسكندرية</title>
 
   <meta name="description" content="تصفح كل أصناف أبو طارق للأدوات المنزلية في الإسكندرية – أطقم عشاء، أكواب، كاسات، أدوات مطبخ، أواني طهي، ميلامين، شاي وقهوة. أسعار منافسة وتوصيل لكل مناطق الإسكندرية.">
-
   <meta name="keywords" content="كتالوج أدوات منزلية الإسكندرية, أطقم عشاء, أكواب وكاسات, أواني طهي, ميلامين, أدوات مطبخ, أدوات سفرة, أبو طارق العوايد, أبو طارق كوبري الناموس">
-
   <meta name="robots" content="index, follow, max-image-preview:large">
   <meta name="author" content="أبو طارق للأدوات المنزلية">
   <meta name="language" content="Arabic">
@@ -32,6 +30,12 @@
 
   <link rel="icon" href="./assets/logo.png">
   <link rel="apple-touch-icon" href="./assets/logo.png">
+  <link rel="manifest" href="./manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="أبو طارق">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="application-name" content="أبو طارق">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -60,11 +64,36 @@
     ]
   }
   </script>
+
+  <style>
+    .category-btn-filter {
+      min-height: 44px;
+      padding: 0 18px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--white);
+      color: var(--text-2);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 13px;
+      font-weight: 800;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .category-btn-filter:hover { border-color: var(--orange); color: var(--orange); }
+    .category-btn-filter.active {
+      background: var(--orange);
+      color: #fff;
+      border-color: var(--orange);
+      box-shadow: var(--shadow-orange);
+    }
+  </style>
 </head>
 
 <body>
 
-  <!-- TOP STRIP -->
   <div class="top-strip">
     <div class="top-strip-inner">
       <span>🚚 توصيل لكل مناطق الإسكندرية</span>
@@ -73,7 +102,6 @@
     </div>
   </div>
 
-  <!-- HEADER -->
   <header class="site-header">
     <div class="nav">
       <a href="./" class="brand">
@@ -103,7 +131,6 @@
     </div>
   </header>
 
-  <!-- MAIN NAV -->
   <nav class="main-nav" id="mainNav">
     <div class="nav-inner">
       <a href="./">🏠 الرئيسية</a>
@@ -117,7 +144,6 @@
 
   <main>
 
-    <!-- BREADCRUMB -->
     <section style="background: var(--white); padding: 16px 0; border-bottom: 1px solid var(--border);">
       <div class="container">
         <nav style="display: flex; gap: 8px; font-size: 13px; color: var(--text-3);">
@@ -128,7 +154,6 @@
       </div>
     </section>
 
-    <!-- SEARCH & FILTER -->
     <section style="padding: 32px 0; background: var(--white); border-bottom: 1px solid var(--border);">
       <div class="container">
         <h1 class="section-title" style="margin-bottom: 8px;">كل أصناف أبو طارق</h1>
@@ -148,7 +173,6 @@
       </div>
     </section>
 
-    <!-- CATEGORIES BAR -->
     <section id="categories-section" style="padding: 24px 0; background: var(--bg); border-bottom: 1px solid var(--border);">
       <div class="container">
         <div id="categoryList" style="display: flex; gap: 10px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: none;">
@@ -157,7 +181,6 @@
       </div>
     </section>
 
-    <!-- PRODUCTS -->
     <section id="products-section" class="section">
       <div class="container">
         <div id="productsGrid" class="products-grid">
@@ -171,7 +194,6 @@
 
   </main>
 
-  <!-- FOOTER -->
   <footer class="site-footer">
     <div class="container">
       <div class="footer-inner">
@@ -205,35 +227,11 @@
 
   <a class="floating-wa" href="https://wa.me/201551604163" target="_blank" rel="noopener" aria-label="واتساب" data-setting="whatsapp">💬</a>
 
-  <style>
-    .category-btn-filter {
-      min-height: 44px;
-      padding: 0 18px;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: var(--white);
-      color: var(--text-2);
-      border: 2px solid var(--border);
-      border-radius: var(--radius);
-      font-size: 13px;
-      font-weight: 800;
-      white-space: nowrap;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .category-btn-filter:hover { border-color: var(--orange); color: var(--orange); }
-    .category-btn-filter.active {
-      background: var(--orange);
-      color: #fff;
-      border-color: var(--orange);
-      box-shadow: var(--shadow-orange);
-    }
-  </style>
-
   <script src="./config.js?v=5000"></script>
   <script src="./features.js?v=5000"></script>
   <script src="./app.js?v=5000"></script>
+  <script src="./analytics.js" defer></script>
+  <script src="./pwa.js" defer></script>
 
   <script>
     "use strict";
@@ -287,7 +285,8 @@
 
       function whatsappUrl(product) {
         const name = U.cleanText(product.name);
-        const msg = `أهلاً أبو طارق، عايز أعرف تفاصيل: ${name}`;
+        const productUrl = window.location.origin + "/abo-tarek-store/product.html?id=" + encodeURIComponent(product.id);
+        const msg = `أهلاً أبو طارق، عايز أعرف تفاصيل: ${name}\n${productUrl}`;
         return "https://wa.me/" + settings.whatsappNumber + "?text=" + encodeURIComponent(msg);
       }
 
@@ -296,6 +295,7 @@
         const article = document.createElement("article");
         article.className = "product";
         article.dataset.id = product.id;
+        article.style.cursor = "pointer";
 
         const image = U.cleanText(product.image);
         const inWishlist = window.ABO_TAREK?.Wishlist?.isIn(product.id) || false;
@@ -346,13 +346,9 @@
             return;
           }
 
-          if (event.target.closest("[data-details]")) {
-            event.preventDefault(); event.stopPropagation();
-            window.openProductModal(product);
-            return;
-          }
-
-          window.openProductModal(product);
+          event.preventDefault();
+          event.stopPropagation();
+          window.location.href = "./product.html?id=" + encodeURIComponent(product.id);
         });
 
         return article;
@@ -410,7 +406,6 @@
         renderProducts();
       });
 
-      // Nav toggle
       if (menuBtn && mainNav) {
         menuBtn.addEventListener("click", e => {
           e.stopPropagation();
@@ -421,7 +416,6 @@
         });
       }
 
-      // Header search
       const headerSearch = document.getElementById("headerSearchInput");
       if (headerSearch) {
         headerSearch.addEventListener("input", e => {
@@ -431,7 +425,6 @@
         });
       }
 
-      // URL params
       const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.get("category")) selectedCategory = urlParams.get("category");
       if (urlParams.get("q")) { searchTerm = urlParams.get("q"); catalogSearch.value = searchTerm; }
