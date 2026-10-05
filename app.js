@@ -1,6 +1,7 @@
 /* =========================================================
    ABO TAREK STORE
    APP.JS - PREMIUM EDITION WITH WISHLIST + ANALYTICS
+   Product Page Navigation Edition
    ========================================================= */
 
 (() => {
@@ -214,8 +215,7 @@
 
   function whatsappUrl(product) {
     const name = U.cleanText(product.name);
-    const baseUrl = window.location.origin + window.location.pathname;
-    const productUrl = `${baseUrl}?product=${encodeURIComponent(product.id)}`;
+    const productUrl = window.location.origin + "/abo-tarek-store/product.html?id=" + encodeURIComponent(product.id);
     const message = name
       ? `السلام عليكم، عايز أعرف تفاصيل عن صنف: ${name}\n${productUrl}`
       : `السلام عليكم، عايز أعرف تفاصيل عن أحد الأصناف.\n${productUrl}`;
@@ -284,7 +284,11 @@
 
   function addToCart(product) {
     const price = getProductPrice(product);
-    if (price <= 0) { openProductModal(product); return; }
+    if (price <= 0) {
+      // لا يوجد سعر → انتقل لصفحة المنتج
+      window.location.href = "./product.html?id=" + encodeURIComponent(product.id);
+      return;
+    }
 
     const existing = cart.find(i => i.id === product.id);
     if (existing) existing.quantity += 1;
@@ -502,7 +506,7 @@
   }
 
   /* =========================================================
-     PRODUCT CARD
+     PRODUCT CARD - UPDATED (Navigate to product.html)
      ========================================================= */
 
   function createProductImage(product, lazy = true) {
@@ -536,6 +540,7 @@
     const article = document.createElement("article");
     article.className = "product";
     article.dataset.id = product.id;
+    article.style.cursor = "pointer";
     article.appendChild(createProductImage(product, index > 1));
 
     const body = document.createElement("div");
@@ -564,7 +569,7 @@
       ${shortDesc ? `<p class="product-description">${U.escapeHtml(shortDesc)}</p>` : ""}
       ${renderPrice(product)}
       <div class="product-actions">
-        <button type="button" class="product-details-trigger product-details-main">تفاصيل الصنف <span>←</span></button>
+        <button type="button" class="product-details-trigger product-details-main" data-details-id="${U.escapeAttribute(product.id)}">تفاصيل الصنف <span>←</span></button>
         <a class="product-whatsapp" href="${U.escapeAttribute(whatsappUrl(product))}" target="_blank" rel="noopener">💬 واتساب</a>
       </div>
       ${hasCartPrice ? `<button type="button" class="abo-add-cart" data-cart-id="${U.escapeAttribute(product.id)}">🛒 أضف للسلة</button>` : ""}
@@ -572,9 +577,10 @@
 
     article.appendChild(body);
 
+    // ====== CLICK HANDLING ======
     article.addEventListener("click", event => {
 
-      // ===== Wishlist Button =====
+      // 1. Wishlist Button
       const wishBtn = event.target.closest("[data-wishlist-id]");
       if (wishBtn) {
         event.preventDefault();
@@ -594,10 +600,10 @@
         return;
       }
 
-      // ===== Links (WhatsApp, etc.) =====
+      // 2. Links (WhatsApp, etc.)
       if (event.target.closest("a")) return;
 
-      // ===== Add to Cart =====
+      // 3. Add to Cart Button
       const addBtn = event.target.closest(".abo-add-cart");
       if (addBtn) {
         event.preventDefault();
@@ -606,16 +612,24 @@
         return;
       }
 
-      // ===== Details =====
-      if (event.target.closest(".product-details-trigger")) {
-        event.preventDefault();
-        event.stopPropagation();
-        openProductModal(product);
-        return;
-      }
+      // 4. Details Button OR Clicking Anywhere on Card → Navigate to product.html
+      event.preventDefault();
+      event.stopPropagation();
 
-      // ===== Open Modal (click anywhere on card) =====
-      openProductModal(product);
+      // Track click
+      track("view_product", {
+        content_ids: [product.id],
+        content_name: product.name,
+        content_category: product.category,
+        value: getProductPrice(product),
+        currency: "EGP"
+      });
+
+      // Add to recent
+      addToRecent(product);
+
+      // Navigate to product page
+      window.location.href = "./product.html?id=" + encodeURIComponent(product.id);
     });
 
     return article;
@@ -741,7 +755,7 @@
   }
 
   /* =========================================================
-     PRODUCT MODAL
+     LEGACY MODAL (kept for backwards compatibility)
      ========================================================= */
 
   function ensureModal() {
@@ -780,10 +794,14 @@
   }
 
   function openProductModal(product) {
-    // ===== Recently Viewed =====
-    addToRecent(product);
+    // Redirect to product page instead
+    if (product && product.id) {
+      window.location.href = "./product.html?id=" + encodeURIComponent(product.id);
+      return;
+    }
 
-    // ===== Analytics: View Content =====
+    // Fallback: show modal
+    addToRecent(product);
     track("view_product", {
       content_ids: [product.id],
       content_name: product.name,
@@ -793,7 +811,6 @@
     });
 
     const modal = ensureModal();
-
     const image = document.getElementById("aboModalImage");
     const category = document.getElementById("aboModalCategory");
     const name = document.getElementById("aboModalName");
@@ -935,7 +952,7 @@
       const cached = readCache(CFG.CACHE_KEYS.PRODUCTS, CFG.CACHE_TIME);
       if (cached && cached.value && cached.value.length) {
         allProducts = cached.value;
-      const cachedSettings = readCache(CFG.CACHE_KEYS.SETTINGS, CFG.SETTINGS_CACHE_TIME);
+        const cachedSettings = readCache(CFG.CACHE_KEYS.SETTINGS, CFG.SETTINGS_CACHE_TIME);
         if (cachedSettings) settings = { ...CFG.DEFAULT_SETTINGS, ...cachedSettings.value };
         applySettings();
         initHomepage();
