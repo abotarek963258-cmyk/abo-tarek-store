@@ -29,6 +29,12 @@
 
   <link rel="icon" href="./assets/logo.png">
   <link rel="apple-touch-icon" href="./assets/logo.png">
+  <link rel="manifest" href="./manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="أبو طارق">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="application-name" content="أبو طارق">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -64,7 +70,6 @@
 
 <body>
 
-  <!-- TOP STRIP -->
   <div class="top-strip">
     <div class="top-strip-inner">
       <span>🚚 توصيل لكل مناطق الإسكندرية</span>
@@ -73,7 +78,6 @@
     </div>
   </div>
 
-  <!-- HEADER -->
   <header class="site-header">
     <div class="nav">
       <a href="./" class="brand">
@@ -103,7 +107,6 @@
     </div>
   </header>
 
-  <!-- MAIN NAV -->
   <nav class="main-nav" id="mainNav">
     <div class="nav-inner">
       <a href="./" class="active">🏠 الرئيسية</a>
@@ -117,7 +120,6 @@
 
   <main>
 
-    <!-- HERO -->
     <section class="hero">
       <div class="container hero-inner">
         <div class="hero-copy">
@@ -145,7 +147,6 @@
       </div>
     </section>
 
-    <!-- FEATURES BAR -->
     <section class="features-bar">
       <div class="container features-grid">
         <div class="feature-item">
@@ -179,7 +180,6 @@
       </div>
     </section>
 
-    <!-- CATEGORIES -->
     <section id="categories" class="section categories-section">
       <div class="container">
         <div class="section-header">
@@ -199,7 +199,6 @@
       </div>
     </section>
 
-    <!-- OFFERS -->
     <section id="offers" class="section" hidden>
       <div class="container">
         <div class="section-header">
@@ -213,7 +212,6 @@
       </div>
     </section>
 
-    <!-- PRODUCTS -->
     <section id="products" class="section products-section">
       <div class="container">
         <div class="section-header">
@@ -233,7 +231,6 @@
       </div>
     </section>
 
-    <!-- RECENTLY VIEWED -->
     <section id="recentlyViewed" class="section" hidden style="background: var(--white); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
       <div class="container">
         <div class="section-header">
@@ -247,7 +244,6 @@
       </div>
     </section>
 
-    <!-- BRANCHES -->
     <section id="branches" class="section">
       <div class="container">
         <div class="section-header centered">
@@ -273,7 +269,6 @@
       </div>
     </section>
 
-    <!-- CONTACT -->
     <section id="contact" class="section" style="background: var(--navy); color: #fff;">
       <div class="container centered">
         <span class="section-kicker" style="color: var(--orange-2);">💬 تواصل معنا</span>
@@ -295,7 +290,6 @@
 
   </main>
 
-  <!-- FOOTER -->
   <footer class="site-footer">
     <div class="container">
       <div class="footer-inner">
@@ -334,14 +328,13 @@
     </div>
   </footer>
 
-  <!-- FLOATING WHATSAPP -->
   <a class="floating-wa" href="https://wa.me/201551604163" target="_blank" rel="noopener" aria-label="واتساب" data-setting="whatsapp">💬</a>
 
-  <!-- SCRIPTS -->
   <script src="./config.js?v=5000"></script>
   <script src="./features.js?v=5000"></script>
   <script src="./app.js?v=5000" defer></script>
   <script src="./analytics.js" defer></script>
+  <script src="./pwa.js" defer></script>
 
 </body>
 </html>
