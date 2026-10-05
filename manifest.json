@@ -37,12 +37,6 @@
       "short_name": "الكتالوج",
       "url": "/abo-tarek-store/sections.html",
       "icons": [{ "src": "assets/logo.png", "sizes": "192x192" }]
-    },
-    {
-      "name": "واتساب",
-      "short_name": "واتساب",
-      "url": "https://wa.me/201551604163",
-      "icons": [{ "src": "assets/logo.png", "sizes": "192x192" }]
     }
   ]
 }
