@@ -1185,7 +1185,7 @@
   <script src="./features.js?v=5000"></script>
 
   <script>
-    "use strict";
+   "use strict";
     (function () {
 
       const CFG = window.ABO_TAREK.CONFIG;
@@ -1199,8 +1199,7 @@
         settings: {},
         filteredProducts: [],
         currentFilter: "all",
-        searchTerm: "",
-        selectedCategory: ""
+        searchTerm: ""
       };
 
       const $ = s => document.querySelector(s);
@@ -1217,7 +1216,7 @@
           t.style.opacity = "0";
           t.style.transform = "translateX(-20px)";
           setTimeout(() => t.remove(), 300);
-        }, 3000);
+        }, 2500);
       }
 
       function showLoginError(msg) {
@@ -1261,36 +1260,26 @@
         return map[key] || String(err || "حدث خطأ");
       }
 
-      /* ============ API (with retry) ============ */
+      /* ============ API ============ */
       async function api(action, payload = {}) {
         const body = { action, adminKey: state.adminKey, ...payload };
-        const maxRetries = 2;
-        let lastErr;
 
-        for (let i = 0; i < maxRetries; i++) {
-          try {
-            const res = await fetch(CFG.DATA_URL, {
-              method: "POST",
-              headers: { "Content-Type": "text/plain;charset=utf-8" },
-              body: JSON.stringify(body),
-              cache: "no-store"
-            });
+        const res = await fetch(CFG.DATA_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(body),
+          cache: "no-store"
+        });
 
-            const text = await res.text();
-            let data;
-            try { data = JSON.parse(text); }
-            catch (err) { throw new Error("استجابة غير صالحة"); }
+        const text = await res.text();
+        let data;
+        try { data = JSON.parse(text); }
+        catch (err) { throw new Error("استجابة غير صالحة"); }
 
-            if (!res.ok || data.ok === false) {
-              throw new Error(translateError(data.error || data.message));
-            }
-            return data;
-          } catch (err) {
-            lastErr = err;
-            if (i < maxRetries - 1) await new Promise(r => setTimeout(r, 1000));
-          }
+        if (!res.ok || data.ok === false) {
+          throw new Error(translateError(data.error || data.message));
         }
-        throw lastErr;
+        return data;
       }
 
       /* ============ LOGIN ============ */
@@ -1343,63 +1332,79 @@
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
 
-      /* ============ LOAD ============ */
+      /* ============ LOAD (مرة واحدة فقط) ============ */
       async function loadAll() {
-        const results = await Promise.allSettled([loadProducts(), loadSections(), loadSettings()]);
-        results.forEach((r, i) => {
-          if (r.status === "rejected") console.error(["products","sections","settings"][i], r.reason);
-        });
-        updateStats();
+        // تحميل أولي فقط - بعد كده نستخدم البيانات المرتجعة من كل عملية
+        try {
+          const [prodData, secData, setData] = await Promise.all([
+            api("list"),
+            api("listSections"),
+            api("getSettings")
+          ]);
+
+          // المنتجات
+          const products = Array.isArray(prodData.products) ? prodData.products : [];
+          state.products = products.map((p, i) => ({
+            id: p.id || "", name: p.name || "", category: p.category || "",
+            image: p.image || "", description: p.description || "",
+            active: p.active === true || p.active === "true" || p.active === 1,
+            showHome: p.showHome === true || p.showHome === "true" || p.showHome === 1,
+            isOffer: p.isOffer === true || p.isOffer === "true" || p.isOffer === 1,
+            sortOrder: Number(p.sortOrder) || 0,
+            price: p.price ?? "", oldPrice: p.oldPrice ?? "", offerPrice: p.offerPrice ?? ""
+          })).sort((a, b) => a.sortOrder - b.sortOrder);
+
+          // الأقسام
+          const sections = Array.isArray(secData.sections) ? secData.sections : [];
+          state.sections = sections.map((s, i) => ({
+            id: s.id || "", name: s.name || "",
+            sortOrder: Number(s.sortOrder ?? i) || 0,
+            active: s.active === true || s.active === "true" || s.active === 1
+          })).filter(s => s.name).sort((a, b) => a.sortOrder - b.sortOrder);
+
+          // الإعدادات
+          state.settings = setData.settings || {};
+
+          state.filteredProducts = [...state.products];
+          renderProducts();
+          renderSections();
+          renderSettings();
+          populateCategorySelect();
+          updateStats();
+
+        } catch (err) {
+          console.error(err);
+          showToast("تعذر تحميل البيانات: " + err.message, "error");
+        }
       }
 
-      async function loadProducts() {
-        const c = $("#productsList");
-        c.innerHTML = `<div class="state-box"><div class="spinner"></div><p>جاري التحميل...</p></div>`;
-
-        const data = await api("list");
-        const products = Array.isArray(data.products) ? data.products : [];
-
-        state.products = products.map((p, i) => ({
-          id: p.id || "",
-          name: p.name || "",
-          category: p.category || "",
-          image: p.image || "",
-          description: p.description || "",
+      // تحديث البيانات من الرد مباشرة (بدون طلب جديد)
+      function applyProductsFromResponse(data) {
+        if (!data || !Array.isArray(data.products)) return;
+        state.products = data.products.map((p, i) => ({
+          id: p.id || "", name: p.name || "", category: p.category || "",
+          image: p.image || "", description: p.description || "",
           active: p.active === true || p.active === "true" || p.active === 1,
           showHome: p.showHome === true || p.showHome === "true" || p.showHome === 1,
           isOffer: p.isOffer === true || p.isOffer === "true" || p.isOffer === 1,
           sortOrder: Number(p.sortOrder) || 0,
-          price: p.price ?? "",
-          oldPrice: p.oldPrice ?? "",
-          offerPrice: p.offerPrice ?? ""
+          price: p.price ?? "", oldPrice: p.oldPrice ?? "", offerPrice: p.offerPrice ?? ""
         })).sort((a, b) => a.sortOrder - b.sortOrder);
 
-        state.filteredProducts = [...state.products];
-        renderProducts();
+        filterProducts();
+        updateStats();
       }
 
-      async function loadSections() {
-        const c = $("#sectionsList");
-        c.innerHTML = `<div class="state-box"><div class="spinner"></div><p>جاري التحميل...</p></div>`;
-
-        const data = await api("listSections");
-        const sections = Array.isArray(data.sections) ? data.sections : [];
-
-        state.sections = sections.map((s, i) => ({
-          id: s.id || "",
-          name: s.name || "",
+      function applySectionsFromResponse(data) {
+        if (!data || !Array.isArray(data.sections)) return;
+        state.sections = data.sections.map((s, i) => ({
+          id: s.id || "", name: s.name || "",
           sortOrder: Number(s.sortOrder ?? i) || 0,
           active: s.active === true || s.active === "true" || s.active === 1
         })).filter(s => s.name).sort((a, b) => a.sortOrder - b.sortOrder);
 
         renderSections();
         populateCategorySelect();
-      }
-
-      async function loadSettings() {
-        const data = await api("getSettings");
-        state.settings = data.settings || {};
-        renderSettings();
       }
 
       /* ============ STATS ============ */
@@ -1449,7 +1454,6 @@
           return `
             <div class="item-row" data-id="${U.escapeAttribute(p.id)}">
               <img class="item-thumb" src="${U.escapeAttribute(img)}" alt="" loading="lazy" onerror="this.src='./assets/logo.png'">
-
               <div class="item-info">
                 <div class="item-name">
                   ${U.escapeHtml(p.name)}
@@ -1463,7 +1467,6 @@
                   ${p.showHome ? `<span class="badge home">🏠 الرئيسية</span>` : ""}
                 </div>
               </div>
-
               <div class="item-actions">
                 <button class="action-btn edit" data-action="edit" title="تعديل">✏️</button>
                 <button class="action-btn ${p.active ? "toggle-on" : "toggle-off"}" data-action="toggle-active" title="${p.active ? "إخفاء" : "إظهار"}">
@@ -1581,11 +1584,14 @@
 
         setLoading(btn, true, "جاري الحفظ...");
         try {
-          await api(id ? "edit" : "add", { id, product, ...product });
+          const data = await api(id ? "edit" : "add", { id, product, ...product });
           closeModal("productModal");
-          showToast(id ? "تم التعديل" : "تمت الإضافة");
-          await loadProducts();
-          updateStats();
+          showToast(id ? "✓ تم التعديل" : "✓ تمت الإضافة");
+
+          // ← استخدام البيانات المرتجعة مباشرة (بدون طلب جديد)
+          if (data.products) {
+            applyProductsFromResponse(data);
+          }
         } catch (err) {
           showToast(err.message, "error");
         } finally {
@@ -1596,12 +1602,25 @@
       async function toggleProductField(id, field) {
         const p = state.products.find(x => String(x.id) === String(id));
         if (!p) return;
+
+        // تحديث متفائل (Optimistic UI) - يظهر فوراً
+        p[field] = !p[field];
+        filterProducts();
+        updateStats();
+
         try {
-          await api("toggle", { id, field, value: !p[field] });
-          showToast("تم التحديث");
-          await loadProducts();
-          updateStats();
+          const data = await api("toggle", { id, field, value: p[field] });
+
+          // استخدام البيانات المرتجعة
+          if (data.products) {
+            applyProductsFromResponse(data);
+          }
+          showToast("✓ تم التحديث");
         } catch (err) {
+          // رجع الحالة القديمة لو فشل
+          p[field] = !p[field];
+          filterProducts();
+          updateStats();
           showToast(err.message, "error");
         }
       }
@@ -1609,12 +1628,23 @@
       async function deleteProduct(id) {
         const p = state.products.find(x => String(x.id) === String(id));
         if (!p || !confirm(`حذف "${p.name}"؟`)) return;
+
+        // حذف متفائل
+        const backup = [...state.products];
+        state.products = state.products.filter(x => String(x.id) !== String(id));
+        filterProducts();
+        updateStats();
+
         try {
-          await api("delete", { id });
-          showToast("تم الحذف");
-          await loadProducts();
-          updateStats();
+          const data = await api("delete", { id });
+          if (data.products) {
+            applyProductsFromResponse(data);
+          }
+          showToast("✓ تم الحذف");
         } catch (err) {
+          state.products = backup;
+          filterProducts();
+          updateStats();
           showToast(err.message, "error");
         }
       }
@@ -1645,12 +1675,12 @@
 
         setLoading(btn, true, "جاري الحفظ...");
         try {
-          await api(id ? "editSection" : "addSection", { id, name, section: { id, name } });
+          const data = await api(id ? "editSection" : "addSection", { id, name, section: { id, name } });
           closeModal("sectionModal");
-          showToast(id ? "تم التعديل" : "تمت الإضافة");
-          await loadSections();
-          await loadProducts();
-          updateStats();
+          showToast(id ? "✓ تم التعديل" : "✓ تمت الإضافة");
+
+          if (data.sections) applySectionsFromResponse(data);
+          if (data.products) applyProductsFromResponse(data);
         } catch (err) {
           showToast(err.message, "error");
         } finally {
@@ -1661,11 +1691,17 @@
       async function toggleSection(id) {
         const s = state.sections.find(x => String(x.id) === String(id));
         if (!s) return;
+
+        s.active = !s.active;
+        renderSections();
+
         try {
-          await api("toggleSection", { id, value: !s.active });
-          showToast("تم التحديث");
-          await loadSections();
+          const data = await api("toggleSection", { id, value: s.active });
+          if (data.sections) applySectionsFromResponse(data);
+          showToast("✓ تم التحديث");
         } catch (err) {
+          s.active = !s.active;
+          renderSections();
           showToast(err.message, "error");
         }
       }
@@ -1673,13 +1709,18 @@
       async function deleteSection(id) {
         const s = state.sections.find(x => String(x.id) === String(id));
         if (!s || !confirm(`حذف القسم "${s.name}"؟`)) return;
+
+        const backup = [...state.sections];
+        state.sections = state.sections.filter(x => String(x.id) !== String(id));
+        renderSections();
+
         try {
-          await api("deleteSection", { id });
-          showToast("تم الحذف");
-          await loadSections();
-          await loadProducts();
-          updateStats();
+          const data = await api("deleteSection", { id });
+          if (data.sections) applySectionsFromResponse(data);
+          showToast("✓ تم الحذف");
         } catch (err) {
+          state.sections = backup;
+          renderSections();
           showToast(err.message, "error");
         }
       }
@@ -1731,7 +1772,7 @@
         try {
           await api("updateSettings", { settings: newSettings });
           state.settings = newSettings;
-          showToast("تم الحفظ");
+          showToast("✓ تم الحفظ");
         } catch (err) {
           showToast(err.message, "error");
         } finally {
@@ -1761,7 +1802,7 @@
           $("#productImage").value = url;
           $("#productImagePreview").src = url;
           $("#uploadStatus").textContent = "✓ تم الرفع";
-          showToast("تم رفع الصورة");
+          showToast("✓ تم رفع الصورة");
         } catch (err) {
           $("#uploadStatus").textContent = err.message;
           showToast(err.message, "error");
@@ -1889,7 +1930,7 @@
 
       $("#refreshAllBtn").addEventListener("click", async () => {
         await loadAll();
-        showToast("تم التحديث");
+        showToast("✓ تم التحديث");
       });
 
       $("#productSearch").addEventListener("input", e => {
