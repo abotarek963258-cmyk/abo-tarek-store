@@ -157,12 +157,6 @@
       border: 2px solid var(--border);
     }
     .btn-outline:hover { border-color: var(--text-3); color: var(--text); }
-    .btn-small {
-      min-height: 36px;
-      padding: 0 14px;
-      font-size: 12px;
-      border-radius: var(--radius-sm);
-    }
     .btn-danger {
       background: var(--red-soft);
       color: var(--red);
@@ -240,18 +234,15 @@
       background: rgba(245, 158, 11, 0.2);
       color: #fcd34d;
     }
-    .sync-badge.syncing::before {
-      content: "";
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: var(--yellow);
-      animation: pulse 1s infinite;
-    }
     .sync-badge::before {
       content: "";
       width: 6px; height: 6px;
       border-radius: 50%;
       background: var(--green);
+    }
+    .sync-badge.syncing::before {
+      background: var(--yellow);
+      animation: pulse 1s infinite;
     }
     @keyframes pulse {
       0%, 100% { opacity: 1; }
@@ -643,7 +634,7 @@
     }
     .switch-box span:last-child { font-size: 13px; font-weight: 800; color: var(--text-2); }
 
-    /* ============ IMAGE UPLOAD - MULTIPLE ============ */
+    /* ============ IMAGE UPLOAD ============ */
     .image-main {
       display: grid;
       grid-template-columns: 200px 1fr;
@@ -671,6 +662,7 @@
       transition: all 0.2s;
       cursor: pointer;
       background: var(--white);
+      display: block;
     }
     .upload-area:hover { border-color: var(--orange); background: var(--orange-soft); }
     .upload-area input[type=file] { display: none; }
@@ -686,9 +678,7 @@
       font-weight: 700;
     }
 
-    .additional-images {
-      margin-top: 16px;
-    }
+    .additional-images { margin-top: 16px; }
     .additional-header {
       display: flex;
       align-items: center;
@@ -704,11 +694,12 @@
     .additional-header small {
       color: var(--text-3);
       font-size: 11px;
+      display: block;
     }
 
     .images-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(5, 1fr);
       gap: 12px;
     }
 
@@ -740,6 +731,7 @@
     .image-slot .add-icon {
       font-size: 28px;
       color: var(--text-3);
+      pointer-events: none;
     }
     .image-slot .remove-btn {
       position: absolute;
@@ -757,7 +749,8 @@
       border: none;
       box-shadow: 0 2px 8px rgba(0,0,0,0.2);
       transition: all 0.2s;
-      z-index: 2;
+      z-index: 3;
+      line-height: 1;
     }
     .image-slot .remove-btn:hover {
       background: var(--red);
@@ -769,7 +762,7 @@
       background: rgba(255, 255, 255, 0.9);
       display: grid;
       place-items: center;
-      z-index: 3;
+      z-index: 4;
     }
     .image-slot .loading-overlay .spinner {
       width: 24px;
@@ -784,11 +777,9 @@
       cursor: pointer;
       width: 100%;
       height: 100%;
-      z-index: 1;
+      z-index: 2;
     }
-    .image-slot.filled input[type=file] {
-      display: none;
-    }
+    .image-slot.filled input[type=file] { display: none; }
 
     /* ============ TOAST ============ */
     #toastContainer {
@@ -1081,7 +1072,6 @@
               <input class="input" id="productSortOrder" type="number" min="0" placeholder="0">
             </div>
 
-            <!-- MAIN IMAGE -->
             <div class="field full">
               <label>الصورة الرئيسية *</label>
               <div class="image-main">
@@ -1102,26 +1092,23 @@
               </div>
             </div>
 
-            <!-- ADDITIONAL IMAGES -->
             <div class="field full">
               <div class="additional-images">
                 <div class="additional-header">
                   <div>
                     <strong>صور إضافية</strong>
-                    <small style="display:block">يمكنك رفع حتى 5 صور إضافية (اختياري)</small>
+                    <small>يمكنك رفع حتى 5 صور إضافية (اختياري)</small>
                   </div>
                 </div>
                 <div id="imagesGrid" class="images-grid"></div>
               </div>
             </div>
 
-            <!-- DESCRIPTION -->
             <div class="field full">
               <label for="productDescription">الوصف</label>
               <textarea class="textarea" id="productDescription" placeholder="اكتب وصف المنتج..."></textarea>
             </div>
 
-            <!-- PRICES -->
             <div class="field">
               <label for="productPrice">السعر (ج.م)</label>
               <input class="input" id="productPrice" type="text" inputmode="decimal" placeholder="250">
@@ -1194,8 +1181,8 @@
 
   <div id="toastContainer"></div>
 
-  <script src="./config.js?v=5000"></script>
-  <script src="./features.js?v=5000"></script>
+  <script src="./config.js?v=6000"></script>
+  <script src="./features.js?v=6000"></script>
 
   <script>
     "use strict";
@@ -1205,7 +1192,7 @@
       const CFG = window.ABO_TAREK.CONFIG;
       const U = window.ABO_TAREK.UTILS;
       const SESSION_KEY = CFG.CACHE_KEYS.ADMIN_SESSION;
-      const LOCAL_CACHE_KEY = "abo_tarek_admin_cache_v1";
+      const LOCAL_CACHE_KEY = "abo_tarek_admin_cache_v2";
       const CACHE_MAX_AGE = 5 * 60 * 1000;
       const MAX_ADDITIONAL_IMAGES = 5;
 
@@ -1260,7 +1247,8 @@
         const c = $("#toastContainer");
         const t = document.createElement("div");
         t.className = `toast ${type}`;
-        t.innerHTML = `<span>${type === "success" ? "✓" : type === "error" ? "⚠" : "ℹ"}</span><span>${U.escapeHtml(msg)}</span>`;
+        const icon = type === "success" ? "✓" : type === "error" ? "⚠" : "ℹ";
+        t.innerHTML = `<span>${icon}</span><span>${U.escapeHtml(msg)}</span>`;
         c.appendChild(t);
         setTimeout(() => {
           t.style.opacity = "0";
@@ -1362,7 +1350,7 @@
       }
 
       function normalizeProducts(products) {
-        return products.map((p, i) => ({
+        return products.map((p) => ({
           id: p.id || "",
           name: p.name || "",
           category: p.category || "",
@@ -1778,7 +1766,7 @@
         setSyncing(true);
 
         try {
-          const data = await api(id ? "edit" : "add", { id, product, ...product });
+          const data = await api(id ? "edit" : "add", { id, product });
           closeModal("productModal");
           showToast(id ? "✓ تم التعديل" : "✓ تمت الإضافة");
 
