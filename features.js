@@ -1,6 +1,6 @@
 /* =========================================================
-   ABO TAREK STORE - Premium Features
-   Wishlist + Recently Viewed
+   ABO TAREK STORE - FEATURES.JS
+   Wishlist + Recently Viewed + Cart + Global API
    ========================================================= */
 
 (function () {
@@ -8,6 +8,62 @@
 
   const CFG = window.ABO_TAREK.CONFIG;
   const U = window.ABO_TAREK.UTILS;
+
+  /* =========================================================
+     CART (Global)
+     ========================================================= */
+
+  function readCart() {
+    try {
+      const raw = localStorage.getItem(CFG.CACHE_KEYS.CART);
+      if (!raw) return [];
+      const data = JSON.parse(raw);
+      if (!Array.isArray(data)) return [];
+      return data.filter(i => i && i.id && Number(i.quantity) > 0).map(i => ({
+        id: String(i.id), name: U.cleanText(i.name), category: U.cleanText(i.category),
+        image: U.cleanText(i.image), price: Number(i.price) || 0,
+        quantity: Math.max(1, Number(i.quantity) || 1)
+      }));
+    } catch (err) { return []; }
+  }
+
+  function saveCart(cart) {
+    try { localStorage.setItem(CFG.CACHE_KEYS.CART, JSON.stringify(cart)); } catch (err) {}
+    window.dispatchEvent(new CustomEvent("aboTarekCartUpdated"));
+  }
+
+  function getProductPrice(product) {
+    return U.parsePrice(product.offerPrice || product.price);
+  }
+
+  function addToCart(product) {
+    if (!product) return;
+    const price = getProductPrice(product);
+    if (price <= 0) {
+      if (window.openProductModal) window.openProductModal(product);
+      return;
+    }
+
+    const cart = readCart();
+    const existing = cart.find(i => i.id === product.id);
+
+    if (existing) existing.quantity += 1;
+    else cart.push({
+      id: product.id, name: product.name, category: product.category,
+      image: product.image, price, quantity: 1
+    });
+
+    saveCart(cart);
+
+    if (window.openAboTarekCart) window.openAboTarekCart();
+
+    document.querySelectorAll(`.abo-add-cart[data-cart-id="${CSS.escape(product.id)}"]`).forEach(btn => {
+      btn.classList.add("added");
+      const old = btn.innerHTML;
+      btn.innerHTML = "✓ تمت الإضافة";
+      setTimeout(() => { btn.classList.remove("added"); btn.innerHTML = old; }, 1400);
+    });
+  }
 
   /* =========================================================
      WISHLIST
@@ -23,10 +79,9 @@
   }
 
   function saveWishlist(list) {
-    try {
-      localStorage.setItem(CFG.CACHE_KEYS.WISHLIST, JSON.stringify(list));
-    } catch (err) {}
+    try { localStorage.setItem(CFG.CACHE_KEYS.WISHLIST, JSON.stringify(list)); } catch (err) {}
     updateWishlistUI();
+    window.dispatchEvent(new CustomEvent("aboTarekWishlistUpdated"));
   }
 
   function isInWishlist(id) {
@@ -34,8 +89,9 @@
   }
 
   function toggleWishlist(product) {
+    if (!product || !product.id) return false;
     const list = readWishlist();
-    const existingIndex = list.findIndex(item => String(item.id) === String(product.id));
+    const existingIndex = list.findIndex(i => String(i.id) === String(product.id));
 
     if (existingIndex >= 0) {
       list.splice(existingIndex, 1);
@@ -43,22 +99,16 @@
       return false;
     } else {
       list.push({
-        id: product.id,
-        name: product.name,
-        category: product.category,
-        image: product.image,
-        price: product.price,
-        offerPrice: product.offerPrice,
-        oldPrice: product.oldPrice
+        id: product.id, name: product.name, category: product.category,
+        image: product.image, price: product.price,
+        offerPrice: product.offerPrice, oldPrice: product.oldPrice
       });
       saveWishlist(list);
       return true;
     }
   }
 
-  function wishlistCount() {
-    return readWishlist().length;
-  }
+  function wishlistCount() { return readWishlist().length; }
 
   /* =========================================================
      WISHLIST UI
@@ -73,13 +123,9 @@
     btn.className = "abo-wishlist-button";
     btn.type = "button";
     btn.setAttribute("aria-label", "المفضلة");
-    btn.innerHTML = `
-      ❤️
-      <span class="abo-wishlist-count">0</span>
-    `;
+    btn.innerHTML = `❤️ <span class="abo-wishlist-count">0</span>`;
     document.body.appendChild(btn);
     btn.addEventListener("click", openWishlistDrawer);
-
     return btn;
   }
 
@@ -107,14 +153,19 @@
 
     drawer.querySelector(".abo-wishlist-close").addEventListener("click", closeWishlistDrawer);
     drawer.addEventListener("click", event => {
-      if (event.target.matches("[data-close-wishlist]")) {
-        closeWishlistDrawer();
-      }
+      if (event.target.matches("[data-close-wishlist]")) closeWishlistDrawer();
+
       const remove = event.target.closest("[data-wishlist-remove]");
       if (remove) {
         const id = remove.dataset.wishlistRemove;
-        const list = readWishlist().filter(i => String(i.id) !== String(id));
-        saveWishlist(list);
+        saveWishlist(readWishlist().filter(i => String(i.id) !== String(id)));
+      }
+
+      const addBtn = event.target.closest("[data-wishlist-add-cart]");
+      if (addBtn) {
+        const id = addBtn.dataset.wishlistAddCart;
+        const item = readWishlist().find(i => String(i.id) === String(id));
+        if (item) addToCart(item);
       }
     });
 
@@ -145,32 +196,19 @@
           <div class="abo-wishlist-item-image">
             ${sources.length
               ? `<img src="${U.escapeAttribute(sources[0])}" alt="" loading="lazy">`
-              : U.categoryIcon(item.category)
-            }
+              : U.categoryIcon(item.category)}
           </div>
           <div class="abo-wishlist-item-info">
             <h4>${U.escapeHtml(item.name)}</h4>
             <div class="abo-wishlist-item-price">${U.escapeHtml(U.formatPrice(price))}</div>
             <div class="abo-wishlist-item-actions">
-              <button type="button" class="abo-wishlist-add-cart" data-wishlist-add="${U.escapeAttribute(item.id)}">🛒 أضف للسلة</button>
+              <button type="button" class="abo-wishlist-add-cart" data-wishlist-add-cart="${U.escapeAttribute(item.id)}">🛒 أضف للسلة</button>
               <button type="button" class="abo-wishlist-remove" data-wishlist-remove="${U.escapeAttribute(item.id)}" aria-label="حذف">🗑</button>
             </div>
           </div>
         </div>
       `;
     }).join("");
-
-    items.querySelectorAll("[data-wishlist-add]").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const id = btn.dataset.wishlistAdd;
-        const item = list.find(i => String(i.id) === String(id));
-        if (item && window.addToCart) {
-          window.addToCart(item);
-        } else if (item && window.ABO_TAREK && window.ABO_TAREK.addToCart) {
-          window.ABO_TAREK.addToCart(item);
-        }
-      });
-    });
   }
 
   function updateWishlistUI() {
@@ -208,9 +246,7 @@
   }
 
   function saveRecent(list) {
-    try {
-      localStorage.setItem(CFG.CACHE_KEYS.RECENT, JSON.stringify(list));
-    } catch (err) {}
+    try { localStorage.setItem(CFG.CACHE_KEYS.RECENT, JSON.stringify(list)); } catch (err) {}
   }
 
   function addToRecent(product) {
@@ -218,13 +254,9 @@
     let list = readRecent();
     list = list.filter(item => String(item.id) !== String(product.id));
     list.unshift({
-      id: product.id,
-      name: product.name,
-      category: product.category,
-      image: product.image,
-      price: product.price,
-      offerPrice: product.offerPrice,
-      oldPrice: product.oldPrice
+      id: product.id, name: product.name, category: product.category,
+      image: product.image, price: product.price,
+      offerPrice: product.offerPrice, oldPrice: product.oldPrice
     });
     list = list.slice(0, 8);
     saveRecent(list);
@@ -235,16 +267,16 @@
      ========================================================= */
 
   window.ABO_TAREK = window.ABO_TAREK || {};
+  window.ABO_TAREK.addToCart = addToCart;
+  window.ABO_TAREK.readCart = readCart;
   window.ABO_TAREK.Wishlist = {
-    read: readWishlist,
-    toggle: toggleWishlist,
-    isIn: isInWishlist,
-    count: wishlistCount
+    read: readWishlist, toggle: toggleWishlist, isIn: isInWishlist,
+    count: wishlistCount, open: openWishlistDrawer, close: closeWishlistDrawer
   };
-  window.ABO_TAREK.Recent = {
-    read: readRecent,
-    add: addToRecent
-  };
+  window.ABO_TAREK.Recent = { read: readRecent, add: addToRecent };
+
+  // Also expose globally for backwards compat
+  window.addToCart = addToCart;
 
   /* =========================================================
      INIT
@@ -259,5 +291,7 @@
   } else {
     init();
   }
+
+  console.log("✅ features.js loaded");
 
 })();
