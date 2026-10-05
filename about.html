@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0a1f33">
+
+  <title>من نحن | أبو طارق للأدوات المنزلية في الإسكندرية</title>
+  <meta name="description" content="تعرف على أبو طارق للأدوات المنزلية - من نحن، قصتنا، وقيمنا. متجر أدوات منزلية في الإسكندرية بفرعين: كوبري الناموس والعوايد.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://abotarek963258-cmyk.github.io/abo-tarek-store/about.html">
+
+  <link rel="icon" href="./assets/logo.png">
+  <link rel="apple-touch-icon" href="./assets/logo.png">
+  <link rel="manifest" href="./manifest.json">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="./style.css?v=5000">
+  <link rel="stylesheet" href="./features.css?v=5000">
+
+  <style>
+    .page-hero {
+      padding: 60px 0;
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-2) 100%);
+      color: #fff;
+      text-align: center;
+    }
+    .page-hero h1 {
+      font-size: clamp(28px, 4vw, 44px);
+      font-weight: 900;
+      margin: 12px 0;
+      color: #fff;
+    }
+    .page-hero p {
+      color: rgba(255, 255, 255, 0.75);
+      max-width: 620px;
+      margin: 0 auto;
+      font-size: 15px;
+      line-height: 1.9;
+    }
+    .page-hero .section-kicker {
+      color: var(--orange-2);
+      justify-content: center;
+    }
+
+    .about-content {
+      padding: 60px 0;
+    }
+
+    .about-section-block {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: center;
+      margin-bottom: 80px;
+    }
+    .about-section-block.reverse {
+      direction: ltr;
+    }
+    .about-section-block.reverse > * {
+      direction: rtl;
+    }
+
+    .about-section-block img {
+      width: 100%;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+    }
+
+    .about-section-text h2 {
+      font-size: 28px;
+      font-weight: 900;
+      color: var(--navy);
+      margin: 0 0 16px;
+    }
+    .about-section-text p {
+      color: var(--text-2);
+      font-size: 15px;
+      line-height: 2;
+      margin: 0 0 14px;
+    }
+
+    .values-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 60px;
+    }
+    .value-card {
+      padding: 28px 24px;
+      background: var(--white);
+      border: 2px solid var(--border);
+      border-radius: var(--radius-md);
+      text-align: center;
+      transition: all 0.3s;
+    }
+    .value-card:hover {
+      border-color: var(--orange);
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-md);
+    }
+    .value-icon {
+      width: 72px;
+      height: 72px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 16px;
+      background: var(--orange-soft);
+      color: var(--orange);
+      border-radius: 50%;
+      font-size: 32px;
+    }
+    .value-card h3 {
+      font-size: 17px;
+      font-weight: 900;
+      color: var(--navy);
+      margin: 0 0 8px;
+    }
+    .value-card p {
+      color: var(--text-3);
+      font-size: 13px;
+      line-height: 1.8;
+      margin: 0;
+    }
+
+    .stats-band {
+      padding: 50px 0;
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .stats-band-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      text-align: center;
+    }
+    .stats-band-item .num {
+      font-size: 42px;
+      font-weight: 900;
+      color: var(--orange);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .stats-band-item .lbl {
+      color: var(--text-3);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .cta-about {
+      padding: 60px 0;
+      text-align: center;
+    }
+    .cta-about h2 {
+      font-size: 32px;
+      font-weight: 900;
+      color: var(--navy);
+      margin: 0 0 12px;
+    }
+    .cta-about p {
+      color: var(--text-3);
+      margin: 0 0 28px;
+      font-size: 15px;
+    }
+    .cta-about-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 900px) {
+      .about-section-block {
+        grid-template-columns: 1fr;
+        gap: 24px;
+        margin-bottom: 50px;
+      }
+      .about-section-block.reverse {
+        direction: rtl;
+      }
+      .values-grid {
+        grid-template-columns: 1fr;
+      }
+      .stats-band-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 32px;
+      }
+      .stats-band-item .num {
+        font-size: 32px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="top-strip">
+    <div class="top-strip-inner">
+      <span>🚚 توصيل لكل مناطق الإسكندرية</span>
+      <span>📞 01551604163</span>
+      <span>✨ جودة عالية وأسعار منافسة</span>
+    </div>
+  </div>
+
+  <header class="site-header">
+    <div class="nav">
+      <a href="./" class="brand">
+        <img src="./assets/logo.png" alt="أبو طارق" data-setting="logoImage">
+        <span class="brand-text">
+          <strong data-setting="siteName">أبو طارق</strong>
+          <span>للأدوات المنزلية</span>
+        </span>
+      </a>
+
+      <div class="header-search">
+        <input type="search" id="headerSearchInput" placeholder="ابحث عن منتج..." autocomplete="off">
+        <button class="search-btn" type="button" id="headerSearchBtn">🔎</button>
+      </div>
+
+      <div class="header-actions">
+        <a href="https://wa.me/201551604163" target="_blank" rel="noopener" class="header-btn whatsapp-btn" data-setting="whatsapp">
+          <span class="icon">💬</span>
+          <span class="label">واتساب</span>
+        </a>
+        <a href="./sections.html" class="header-btn">
+          <span class="icon">🛍️</span>
+          <span class="label">الأصناف</span>
+        </a>
+        <button class="menu-btn" id="menuBtn" type="button" aria-label="القائمة">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="main-nav" id="mainNav">
+    <div class="nav-inner">
+      <a href="./">🏠 الرئيسية</a>
+      <a href="./sections.html">🛍️ كل الأصناف</a>
+      <a href="./about.html" class="active">ℹ️ من نحن</a>
+      <a href="./contact.html">💬 تواصل معنا</a>
+      <a href="./#branches">📍 الفروع</a>
+    </div>
+  </nav>
+
+  <main>
+
+    <section class="page-hero">
+      <div class="container">
+        <span class="section-kicker">✦ من نحن</span>
+        <h1>قصة أبو طارق</h1>
+        <p>أكثر من مجرد متجر أدوات منزلية — إحنا شريكك في تجهيز بيتك بأجود المنتجات وأفضل الأسعار.</p>
+      </div>
+    </section>
+
+    <section class="about-content">
+      <div class="container">
+
+        <div class="about-section-block">
+          <div class="about-section-text">
+            <h2>قصتنا</h2>
+            <p>
+              بدأت رحلة أبو طارق للأدوات المنزلية من حلم بسيط: إننا نوفر لكل بيت مصري كل احتياجاته من أدوات المطبخ والسفرة والمستلزمات المنزلية في مكان واحد، بجودة عالية وأسعار في متناول الجميع.
+            </p>
+            <p>
+              من يوم ما فتحنا أول فرع في كوبري الناموس، وإحنا بنكبر ونتطور كل يوم، وبنضيف أصناف جديدة تناسب كل الأذواق والاحتياجات.
+            </p>
+            <p>
+              والنهاردة، عندنا فرعين في الإسكندرية — كوبري الناموس والعوايد — وبنخدم آلاف العملاء اللي بيثقوا فينا.
+            </p>
+          </div>
+          <img src="./assets/storefront.jpg" alt="محل أبو طارق" loading="lazy">
+        </div>
+
+        <div class="about-section-block reverse">
+          <img src="./assets/logo.png" alt="شعار أبو طارق" loading="lazy" style="object-fit:contain;background:var(--white);padding:40px">
+          <div class="about-section-text">
+            <h2>إيه اللي يميزنا؟</h2>
+            <p>
+              في أبو طارق، إحنا مش بس بنبيع منتجات — إحنا بنهتم بأدق التفاصيل عشان نضمن إن كل عميل يخرج من عندنا راضي 100%.
+            </p>
+            <p>
+              بنختار منتجاتنا بعناية من أفضل الموردين، وبنراجعها بنفسنا قبل ما نعرضها للبيع. وكمان بنوفر تشكيلة واسعة من الأصناف عشان تناسب كل الاحتياجات والميزانيات.
+            </p>
+            <p>
+              وفوق كل ده، إحنا دايماً موجودين على واتساب — أي استفسار أو طلب، إحنا في خدمتك.
+            </p>
+          </div>
+        </div>
+
+        <div class="values-grid">
+          <div class="value-card">
+            <div class="value-icon">💎</div>
+            <h3>جودة عالية</h3>
+            <p>منتجات مختارة بعناية من أفضل الموردين</p>
+          </div>
+          <div class="value-card">
+            <div class="value-icon">💰</div>
+            <h3>أسعار منافسة</h3>
+            <p>أفضل الأسعار في السوق بدون ما تتنازل عن الجودة</p>
+          </div>
+          <div class="value-card">
+            <div class="value-icon">🚚</div>
+            <h3>توصيل سريع</h3>
+            <p>خدمة توصيل لكل مناطق الإسكندرية</p>
+          </div>
+          <div class="value-card">
+            <div class="value-icon">💬</div>
+            <h3>دعم فوري</h3>
+            <p>فريق دعم على واتساب 24/7</p>
+          </div>
+          <div class="value-card">
+            <div class="value-icon">🎁</div>
+            <h3>عروض مستمرة</h3>
+            <p>خصومات وعروض جديدة كل فترة</p>
+          </div>
+          <div class="value-card">
+            <div class="value-icon">🤝</div>
+            <h3>ثقة العملاء</h3>
+            <p>آلاف العملاء اللي بيثقوا فينا</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="stats-band">
+      <div class="container stats-band-grid">
+        <div class="stats-band-item">
+          <div class="num">+1000</div>
+          <div class="lbl">عميل سعيد</div>
+        </div>
+        <div class="stats-band-item">
+          <div class="num">+500</div>
+          <div class="lbl">صنف متنوع</div>
+        </div>
+        <div class="stats-band-item">
+          <div class="num">2</div>
+          <div class="lbl">فرع في الإسكندرية</div>
+        </div>
+        <div class="stats-band-item">
+          <div class="num">24/7</div>
+          <div class="lbl">دعم على واتساب</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta-about">
+      <div class="container">
+        <h2>جاهز تتصفح منتجاتنا؟</h2>
+        <p>اكتشف تشكيلتنا الواسعة من الأدوات المنزلية</p>
+        <div class="cta-about-buttons">
+          <a href="./sections.html" class="btn-primary">🛍️ تصفح كل الأصناف</a>
+          <a href="https://wa.me/201551604163" target="_blank" rel="noopener" class="btn-whatsapp">💬 اطلب على واتساب</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <strong data-setting="siteName">أبو طارق للأدوات المنزلية</strong>
+          <p data-setting="siteTagline">كل احتياجات البيت في مكان واحد. الإسكندرية.</p>
+        </div>
+
+        <div class="footer-col">
+          <h4>روابط سريعة</h4>
+          <a href="./">الرئيسية</a>
+          <a href="./sections.html">كل الأصناف</a>
+          <a href="./about.html">من نحن</a>
+          <a href="./contact.html">تواصل معنا</a>
+        </div>
+
+        <div class="footer-col">
+          <h4>تواصل</h4>
+          <a href="https://wa.me/201551604163" target="_blank" rel="noopener" data-setting="whatsapp">واتساب</a>
+          <a href="#" data-setting="facebook">فيسبوك</a>
+          <a href="#" data-setting="instagram">إنستجرام</a>
+          <a href="#" data-setting="tiktok">تيك توك</a>
+        </div>
+
+        <div class="footer-col">
+          <h4>معلومات</h4>
+          <a href="./privacy.html">سياسة الخصوصية</a>
+          <a href="./terms.html">الشروط والأحكام</a>
+          <a href="#" data-setting="address1">كوبري الناموس</a>
+          <a href="#" data-setting="address2">العوايد</a>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>© 2026 <span data-setting="siteName">أبو طارق</span> — جميع الحقوق محفوظة</span>
+      </div>
+    </div>
+  </footer>
+
+  <a class="floating-wa" href="https://wa.me/201551604163" target="_blank" rel="noopener" aria-label="واتساب" data-setting="whatsapp">💬</a>
+
+  <script src="./config.js?v=5000"></script>
+  <script src="./features.js?v=5000"></script>
+  <script src="./analytics.js" defer></script>
+  <script src="./pwa.js" defer></script>
+
+  <script>
+    "use strict";
+    (function () {
+      const CFG = window.ABO_TAREK.CONFIG;
+      const U = window.ABO_TAREK.UTILS;
+      let settings = { ...CFG.DEFAULT_SETTINGS };
+
+      function applySettings() {
+        const s = settings;
+        document.querySelectorAll("[data-setting='siteName']").forEach(el => el.textContent = s.siteName);
+        document.querySelectorAll("[data-setting='siteTagline']").forEach(el => el.textContent = s.siteTagline);
+        document.querySelectorAll("[data-setting='address1']").forEach(el => el.textContent = s.address1);
+        document.querySelectorAll("[data-setting='address2']").forEach(el => el.textContent = s.address2);
+        document.querySelectorAll("[data-setting='logoImage']").forEach(el => { if (el.tagName === "IMG") el.src = s.logoImage; });
+        const waUrl = "https://wa.me/" + s.whatsappNumber;
+        document.querySelectorAll("[data-setting='whatsapp']").forEach(el => el.href = waUrl);
+        document.querySelectorAll("[data-setting='facebook']").forEach(el => el.href = s.facebookUrl);
+        document.querySelectorAll("[data-setting='instagram']").forEach(el => el.href = s.instagramUrl);
+        document.querySelectorAll("[data-setting='tiktok']").forEach(el => el.href = s.tiktokUrl);
+      }
+
+      function initMobileNav() {
+        const menuBtn = document.getElementById("menuBtn");
+        const mainNav = document.getElementById("mainNav");
+        if (!menuBtn || !mainNav) return;
+        menuBtn.addEventListener("click", e => { e.stopPropagation(); mainNav.classList.toggle("open"); });
+        document.addEventListener("click", e => {
+          if (!mainNav.contains(e.target) && !menuBtn.contains(e.target)) mainNav.classList.remove("open");
+        });
+      }
+
+      function initHeaderSearch() {
+        const input = document.getElementById("headerSearchInput");
+        const btn = document.getElementById("headerSearchBtn");
+        if (!input) return;
+        function goSearch() {
+          const val = input.value.trim();
+          if (!val) return;
+          window.location.href = "./sections.html?q=" + encodeURIComponent(val);
+        }
+        if (btn) btn.addEventListener("click", goSearch);
+        input.addEventListener("keydown", e => { if (e.key === "Enter") goSearch(); });
+      }
+
+      async function loadSettings() {
+        try {
+          const cachedS = JSON.parse(localStorage.getItem(CFG.CACHE_KEYS.SETTINGS) || "{}");
+          if (cachedS.value) settings = { ...CFG.DEFAULT_SETTINGS, ...cachedS.value };
+          applySettings();
+        } catch (err) {}
+      }
+
+      initMobileNav();
+      initHeaderSearch();
+      loadSettings();
+    })();
+  </script>
+
+</body>
+</html>
