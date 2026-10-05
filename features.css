@@ -714,6 +714,135 @@
 
   .abo-toast {
     right: 12px;
+     /* =========================================================
+   PWA INSTALL BANNER
+   ========================================================= */
+
+.pwa-install-banner {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  z-index: 2500;
+  padding: 16px;
+  transform: translateY(100%);
+  transition: transform 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
+  pointer-events: none;
+}
+
+.pwa-install-banner.show {
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.pwa-install-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--white);
+  border: 2px solid var(--orange);
+  border-radius: var(--radius-md);
+  box-shadow: 0 10px 40px rgba(10, 31, 51, 0.2);
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.pwa-install-logo {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+  background: var(--orange-soft);
+  padding: 4px;
+  flex-shrink: 0;
+}
+
+.pwa-install-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.pwa-install-text strong {
+  display: block;
+  color: var(--navy);
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.pwa-install-text span {
+  display: block;
+  color: var(--text-3);
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.pwa-install-btn {
+  min-height: 40px;
+  padding: 0 20px;
+  background: var(--orange);
+  color: #fff;
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-weight: 900;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.pwa-install-btn:hover {
+  background: var(--orange-2);
+  transform: translateY(-1px);
+}
+
+.pwa-install-close {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  background: transparent;
+  color: var(--text-3);
+  border-radius: var(--radius-sm);
+  font-size: 20px;
+  cursor: pointer;
+  border: none;
+  flex-shrink: 0;
+}
+
+.pwa-install-close:hover {
+  background: var(--red-soft);
+  color: var(--red);
+}
+
+@media (max-width: 500px) {
+  .pwa-install-banner {
+    padding: 12px;
+  }
+
+  .pwa-install-content {
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .pwa-install-logo {
+    width: 40px;
+    height: 40px;
+  }
+
+  .pwa-install-text strong {
+    font-size: 12px;
+  }
+
+  .pwa-install-text span {
+    font-size: 10px;
+  }
+
+  .pwa-install-btn {
+    padding: 0 14px;
+    font-size: 12px;
+  }
+}
     left: 12px;
     bottom: 12px;
     min-width: auto;
