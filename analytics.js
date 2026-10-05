@@ -1,21 +1,28 @@
 /* =========================================================
-   ABO TAREK STORE - Analytics
+   ABO TAREK STORE - ANALYTICS
    Google Analytics 4 + Facebook Pixel
    ========================================================= */
 
 (function () {
   "use strict";
 
-  /* ============ إعداداتك - عدّلها ============ */
-  const GA4_ID = "G-XXXXXXXXXX";        // ← غيّر ده
-  const FB_PIXEL_ID = "XXXXXXXXXXXXXXX"; // ← غيّر ده
+  /* =========================================================
+     املأ الـ IDs هنا (اختياري)
+     لو مش عندك IDs، سيبهم فاضيين
+     ========================================================= */
 
-  /* ============ Google Analytics 4 ============ */
-  if (GA4_ID && GA4_ID !== "G-XXXXXXXXXX") {
-    const ga = document.createElement("script");
-    ga.async = true;
-    ga.src = "https://www.googletagmanager.com/gtag/js?id=" + GA4_ID;
-    document.head.appendChild(ga);
+  const GA4_ID = "";
+  const FB_PIXEL_ID = "";
+
+  /* =========================================================
+     Google Analytics 4
+     ========================================================= */
+
+  if (GA4_ID && GA4_ID.trim()) {
+    const script = document.createElement("script");
+    script.async = true;
+    script.src = "https://www.googletagmanager.com/gtag/js?id=" + GA4_ID;
+    document.head.appendChild(script);
 
     window.dataLayer = window.dataLayer || [];
     window.gtag = function () { window.dataLayer.push(arguments); };
@@ -28,8 +35,11 @@
     });
   }
 
-  /* ============ Facebook Pixel ============ */
-  if (FB_PIXEL_ID && FB_PIXEL_ID !== "XXXXXXXXXXXXXXX") {
+  /* =========================================================
+     Facebook Pixel
+     ========================================================= */
+
+  if (FB_PIXEL_ID && FB_PIXEL_ID.trim()) {
     !function (f, b, e, v, n, t, s) {
       if (f.fbq) return;
       n = f.fbq = function () {
@@ -51,20 +61,25 @@
     window.fbq("track", "PageView");
   }
 
-  /* ============ تتبع الأحداث المهمة ============ */
+  /* =========================================================
+     Track Function - Universal
+     ========================================================= */
 
   window.aboTrack = function (eventName, data = {}) {
     try {
       if (window.gtag) {
         window.gtag("event", eventName, data);
       }
+
       if (window.fbq) {
         const fbEvents = {
-          view_product: "ViewContent",
-          add_to_cart: "AddToCart",
-          begin_checkout: "InitiateCheckout",
-          contact: "Contact",
-          search: "Search"
+          "view_product": "ViewContent",
+          "add_to_cart": "AddToCart",
+          "begin_checkout": "InitiateCheckout",
+          "purchase": "Purchase",
+          "contact": "Contact",
+          "search": "Search",
+          "view_category": "ViewContent"
         };
         const fbEvent = fbEvents[eventName] || eventName;
         window.fbq("track", fbEvent, data);
@@ -73,5 +88,7 @@
       console.warn("Track error:", err);
     }
   };
+
+  console.log("✅ analytics.js loaded");
 
 })();
