@@ -686,7 +686,6 @@
       font-weight: 700;
     }
 
-    /* ===== ADDITIONAL IMAGES GRID ===== */
     .additional-images {
       margin-top: 16px;
     }
@@ -778,7 +777,6 @@
       border-width: 3px;
       margin: 0;
     }
-
     .image-slot input[type=file] {
       position: absolute;
       inset: 0;
@@ -788,7 +786,6 @@
       height: 100%;
       z-index: 1;
     }
-
     .image-slot.filled input[type=file] {
       display: none;
     }
@@ -1226,7 +1223,6 @@
       const $ = s => document.querySelector(s);
       const $$ = s => Array.from(document.querySelectorAll(s));
 
-      /* ============ SYNC BADGE ============ */
       function setSyncing(on) {
         const badge = $("#syncBadge");
         if (!badge) return;
@@ -1234,7 +1230,6 @@
         badge.textContent = on ? "جاري المزامنة..." : "متزامن";
       }
 
-      /* ============ LOCAL CACHE ============ */
       function readLocalCache() {
         try {
           const raw = localStorage.getItem(LOCAL_CACHE_KEY);
@@ -1261,7 +1256,6 @@
         try { localStorage.removeItem(LOCAL_CACHE_KEY); } catch (err) {}
       }
 
-      /* ============ TOAST ============ */
       function showToast(msg, type = "success") {
         const c = $("#toastContainer");
         const t = document.createElement("div");
@@ -1316,7 +1310,6 @@
         return map[key] || String(err || "حدث خطأ");
       }
 
-      /* ============ FETCH WITH TIMEOUT ============ */
       async function fetchWithTimeout(url, options, timeout = 30000) {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), timeout);
@@ -1331,7 +1324,6 @@
         }
       }
 
-      /* ============ API ============ */
       async function api(action, payload = {}) {
         const body = { action, adminKey: state.adminKey, ...payload };
         const res = await fetchWithTimeout(CFG.DATA_URL, {
@@ -1369,7 +1361,6 @@
         };
       }
 
-      /* ============ NORMALIZE ============ */
       function normalizeProducts(products) {
         return products.map((p, i) => ({
           id: p.id || "",
@@ -1397,7 +1388,6 @@
         })).filter(s => s.name).sort((a, b) => a.sortOrder - b.sortOrder);
       }
 
-      /* ============ APPLY DATA ============ */
       function applyProducts(data) {
         if (!data || !Array.isArray(data)) return;
         state.products = normalizeProducts(data);
@@ -1422,7 +1412,6 @@
         }
       }
 
-      /* ============ LOGIN ============ */
       async function login() {
         const key = $("#adminKey").value.trim();
         if (!key) { showLoginError("اكتب مفتاح الإدارة"); return; }
@@ -1465,14 +1454,12 @@
         showLogin();
       }
 
-      /* ============ NAV ============ */
       function openPage(id) {
         $$(".page").forEach(p => p.classList.toggle("active", p.id === id));
         $$(".nav-tab").forEach(t => t.classList.toggle("active", t.dataset.page === id));
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
 
-      /* ============ LOAD ============ */
       async function loadAll() {
         const cached = readLocalCache();
         if (cached) {
@@ -1506,7 +1493,6 @@
         }
       }
 
-      /* ============ STATS ============ */
       function updateStats() {
         $("#statTotal").textContent = state.products.length;
         $("#statActive").textContent = state.products.filter(p => p.active).length;
@@ -1514,7 +1500,6 @@
         $("#statOffers").textContent = state.products.filter(p => p.isOffer).length;
       }
 
-      /* ============ RENDER PRODUCTS ============ */
       let searchDebounce;
       function onSearchInput(value) {
         state.searchTerm = value;
@@ -1592,7 +1577,6 @@
         }).join("");
       }
 
-      /* ============ RENDER SECTIONS ============ */
       function renderSections() {
         const c = $("#sectionsList");
 
@@ -1633,7 +1617,6 @@
         }).join("");
       }
 
-      /* ============ IMAGE GRID ============ */
       function renderImagesGrid() {
         const grid = $("#imagesGrid");
         if (!grid) return;
@@ -1641,7 +1624,6 @@
         const images = state.currentImages || [];
         const slots = [];
 
-        // Slots for existing images
         images.forEach((url, index) => {
           slots.push(`
             <div class="image-slot filled" data-index="${index}">
@@ -1651,7 +1633,6 @@
           `);
         });
 
-        // Empty slots for adding new images
         const remaining = MAX_ADDITIONAL_IMAGES - images.length;
         for (let i = 0; i < remaining; i++) {
           slots.push(`
@@ -1664,7 +1645,6 @@
 
         grid.innerHTML = slots.join("");
 
-        // Bind remove buttons
         grid.querySelectorAll("[data-remove-index]").forEach(btn => {
           btn.addEventListener("click", e => {
             e.preventDefault();
@@ -1675,13 +1655,11 @@
           });
         });
 
-        // Bind add inputs
         grid.querySelectorAll("[data-add-file]").forEach(input => {
           input.addEventListener("change", handleAdditionalImageUpload);
         });
       }
 
-      /* ============ ADDITIONAL IMAGE UPLOAD ============ */
       async function handleAdditionalImageUpload(e) {
         const file = e.target.files?.[0];
         if (!file) return;
@@ -1701,7 +1679,6 @@
           return;
         }
 
-        // Show loading state
         const slot = e.target.closest(".image-slot");
         if (slot) {
           const overlay = document.createElement("div");
@@ -1730,7 +1707,6 @@
         }
       }
 
-      /* ============ PRODUCT CRUD ============ */
       function openAddProduct() {
         $("#productModalTitle").textContent = "إضافة منتج";
         $("#productForm").reset();
@@ -1862,7 +1838,6 @@
         }
       }
 
-      /* ============ SECTION CRUD ============ */
       function openAddSection() {
         $("#sectionModalTitle").textContent = "إضافة قسم";
         $("#sectionId").value = "";
@@ -1947,7 +1922,6 @@
         }
       }
 
-      /* ============ SETTINGS ============ */
       function renderSettings() {
         const s = state.settings;
         const fields = [
@@ -2006,7 +1980,6 @@
         }
       }
 
-      /* ============ MAIN IMAGE UPLOAD ============ */
       async function handleMainImageUpload(e) {
         const file = e.target.files?.[0];
         if (!file) return;
@@ -2077,7 +2050,6 @@
         return String(name || "image.jpg").replace(/[^a-zA-Z0-9._-]+/g, "-").replace(/-+/g, "-");
       }
 
-      /* ============ MODAL ============ */
       function openModal(id) {
         const m = document.getElementById(id);
         if (!m) return;
@@ -2101,7 +2073,6 @@
         if (cats.includes(current)) sel.value = current;
       }
 
-      /* ============ EVENTS ============ */
       document.addEventListener("click", async e => {
         const filterBtn = e.target.closest(".filter-btn");
         if (filterBtn) {
@@ -2164,7 +2135,6 @@
       });
 
       $("#productSearch").addEventListener("input", e => onSearchInput(e.target.value));
-
       $("#productImageFile").addEventListener("change", handleMainImageUpload);
 
       $("#productImage").addEventListener("input", e => {
@@ -2175,7 +2145,6 @@
         if (e.key === "Escape") $$(".modal-backdrop.open").forEach(m => closeModal(m.id));
       });
 
-      /* ============ BOOT ============ */
       async function boot() {
         if (state.adminKey) {
           showApp();
