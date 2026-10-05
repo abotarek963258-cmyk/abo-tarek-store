@@ -1,0 +1,452 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0a1f33">
+
+  <title>تواصل معنا | أبو طارق للأدوات المنزلية في الإسكندرية</title>
+  <meta name="description" content="تواصل مع أبو طارق للأدوات المنزلية - واتساب، تليفون، وعناوين الفروع في الإسكندرية. كوبري الناموس والعوايد.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://abotarek963258-cmyk.github.io/abo-tarek-store/contact.html">
+
+  <link rel="icon" href="./assets/logo.png">
+  <link rel="apple-touch-icon" href="./assets/logo.png">
+  <link rel="manifest" href="./manifest.json">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="./style.css?v=5000">
+  <link rel="stylesheet" href="./features.css?v=5000">
+
+  <style>
+    .page-hero {
+      padding: 60px 0;
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-2) 100%);
+      color: #fff;
+      text-align: center;
+    }
+    .page-hero h1 {
+      font-size: clamp(28px, 4vw, 44px);
+      font-weight: 900;
+      margin: 12px 0;
+      color: #fff;
+    }
+    .page-hero p {
+      color: rgba(255, 255, 255, 0.75);
+      max-width: 620px;
+      margin: 0 auto;
+      font-size: 15px;
+      line-height: 1.9;
+    }
+    .page-hero .section-kicker {
+      color: var(--orange-2);
+      justify-content: center;
+    }
+
+    .contact-grid {
+      padding: 60px 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+    }
+
+    .contact-method {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 24px;
+      background: var(--white);
+      border: 2px solid var(--border);
+      border-radius: var(--radius-md);
+      text-decoration: none;
+      transition: all 0.3s;
+      margin-bottom: 16px;
+    }
+    .contact-method:hover {
+      border-color: var(--orange);
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+    }
+    .contact-method-icon {
+      width: 60px;
+      height: 60px;
+      flex-shrink: 0;
+      display: grid;
+      place-items: center;
+      border-radius: var(--radius);
+      font-size: 26px;
+    }
+    .contact-method-icon.whatsapp { background: #25d366; color: #fff; }
+    .contact-method-icon.phone { background: var(--orange-soft); color: var(--orange); }
+    .contact-method-icon.location { background: var(--blue-soft); color: var(--blue); }
+    .contact-method-icon.email { background: #dbeafe; color: #3b82f6; }
+
+    .contact-method-info { flex: 1; min-width: 0; }
+    .contact-method-info strong {
+      display: block;
+      color: var(--navy);
+      font-size: 16px;
+      font-weight: 900;
+      margin-bottom: 4px;
+    }
+    .contact-method-info span {
+      color: var(--text-3);
+      font-size: 13px;
+      display: block;
+      direction: ltr;
+      unicode-bidi: plaintext;
+    }
+
+    .contact-map {
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      border: 2px solid var(--border);
+      min-height: 400px;
+      background: var(--bg);
+      display: grid;
+      place-items: center;
+      color: var(--text-3);
+      text-align: center;
+      padding: 40px;
+    }
+    .contact-map p { margin: 0 0 16px; font-size: 14px; }
+
+    .branches-contact {
+      padding: 60px 0;
+      background: var(--bg);
+    }
+    .branches-contact h2 {
+      text-align: center;
+      font-size: 28px;
+      font-weight: 900;
+      color: var(--navy);
+      margin: 0 0 32px;
+    }
+    .branches-contact-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .branch-contact-card {
+      padding: 32px;
+      background: var(--white);
+      border: 2px solid var(--border);
+      border-radius: var(--radius-md);
+      text-align: center;
+      transition: all 0.3s;
+    }
+    .branch-contact-card:hover {
+      border-color: var(--orange);
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+    }
+    .branch-contact-card .icon {
+      width: 72px;
+      height: 72px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 16px;
+      background: var(--orange);
+      color: #fff;
+      border-radius: 50%;
+      font-size: 32px;
+    }
+    .branch-contact-card h3 {
+      font-size: 20px;
+      font-weight: 900;
+      color: var(--navy);
+      margin: 0 0 8px;
+    }
+    .branch-contact-card p {
+      color: var(--text-3);
+      font-size: 13px;
+      margin: 0 0 20px;
+    }
+    .branch-contact-card a {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 20px;
+      background: var(--orange);
+      color: #fff;
+      border-radius: var(--radius);
+      font-size: 13px;
+      font-weight: 900;
+      transition: all 0.2s;
+    }
+    .branch-contact-card a:hover {
+      background: var(--orange-2);
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 900px) {
+      .contact-grid { grid-template-columns: 1fr; }
+      .branches-contact-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="top-strip">
+    <div class="top-strip-inner">
+      <span>🚚 توصيل لكل مناطق الإسكندرية</span>
+      <span>📞 01551604163</span>
+      <span>✨ جودة عالية وأسعار منافسة</span>
+    </div>
+  </div>
+
+  <header class="site-header">
+    <div class="nav">
+      <a href="./" class="brand">
+        <img src="./assets/logo.png" alt="أبو طارق" data-setting="logoImage">
+        <span class="brand-text">
+          <strong data-setting="siteName">أبو طارق</strong>
+          <span>للأدوات المنزلية</span>
+        </span>
+      </a>
+
+      <div class="header-search">
+        <input type="search" id="headerSearchInput" placeholder="ابحث عن منتج..." autocomplete="off">
+        <button class="search-btn" type="button" id="headerSearchBtn">🔎</button>
+      </div>
+
+      <div class="header-actions">
+        <a href="https://wa.me/201551604163" target="_blank" rel="noopener" class="header-btn whatsapp-btn" data-setting="whatsapp">
+          <span class="icon">💬</span>
+          <span class="label">واتساب</span>
+        </a>
+        <a href="./sections.html" class="header-btn">
+          <span class="icon">🛍️</span>
+          <span class="label">الأصناف</span>
+        </a>
+        <button class="menu-btn" id="menuBtn" type="button" aria-label="القائمة">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="main-nav" id="mainNav">
+    <div class="nav-inner">
+      <a href="./">🏠 الرئيسية</a>
+      <a href="./sections.html">🛍️ كل الأصناف</a>
+      <a href="./about.html">ℹ️ من نحن</a>
+      <a href="./contact.html" class="active">💬 تواصل معنا</a>
+      <a href="./#branches">📍 الفروع</a>
+    </div>
+  </nav>
+
+  <main>
+
+    <section class="page-hero">
+      <div class="container">
+        <span class="section-kicker">💬 تواصل معنا</span>
+        <h1>إحنا في خدمتك</h1>
+        <p>كلمنا على واتساب، اتصل بينا، أو زورنا في أي فرع من فروعنا في الإسكندرية.</p>
+      </div>
+    </section>
+
+    <section class="container contact-grid">
+
+      <div>
+        <h2 style="font-size:24px;font-weight:900;color:var(--navy);margin-bottom:20px;">طرق التواصل</h2>
+
+        <a href="https://wa.me/201551604163" target="_blank" rel="noopener" class="contact-method" data-setting="whatsapp">
+          <div class="contact-method-icon whatsapp">💬</div>
+          <div class="contact-method-info">
+            <strong>واتساب</strong>
+            <span>201551604163+</span>
+          </div>
+        </a>
+
+        <a href="tel:01223599165" class="contact-method">
+          <div class="contact-method-icon phone">📞</div>
+          <div class="contact-method-info">
+            <strong>اتصل بينا</strong>
+            <span>01223599165</span>
+          </div>
+        </a>
+
+        <a href="tel:01222474380" class="contact-method">
+          <div class="contact-method-icon phone">📞</div>
+          <div class="contact-method-info">
+            <strong>فرع العوايد</strong>
+            <span>01222474380</span>
+          </div>
+        </a>
+
+        <a href="tel:035133602" class="contact-method">
+          <div class="contact-method-icon phone">☎️</div>
+          <div class="contact-method-info">
+            <strong>أرضي</strong>
+            <span>035133602</span>
+          </div>
+        </a>
+      </div>
+
+      <div>
+        <h2 style="font-size:24px;font-weight:900;color:var(--navy);margin-bottom:20px;">ساعات العمل</h2>
+
+        <div style="padding:24px;background:var(--white);border:2px solid var(--border);border-radius:var(--radius-md);">
+          <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);">
+            <strong style="color:var(--navy);font-weight:900;">السبت - الخميس</strong>
+            <span style="color:var(--orange);font-weight:800;">10:00 ص - 11:00 م</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:12px 0;">
+            <strong style="color:var(--navy);font-weight:900;">الجمعة</strong>
+            <span style="color:var(--orange);font-weight:800;">2:00 م - 11:00 م</span>
+          </div>
+        </div>
+
+        <div style="margin-top:24px;padding:24px;background:var(--orange-soft);border:2px solid var(--orange);border-radius:var(--radius-md);text-align:center;">
+          <div style="font-size:40px;margin-bottom:12px;">💬</div>
+          <strong style="display:block;color:var(--navy);font-size:16px;font-weight:900;margin-bottom:6px;">تواصل فوري</strong>
+          <p style="color:var(--text-2);font-size:13px;margin:0 0 16px;">فريق خدمة العملاء متاح 24/7 على واتساب</p>
+          <a href="https://wa.me/201551604163" target="_blank" rel="noopener" class="btn-whatsapp" style="width:100%" data-setting="whatsapp">
+            💬 ابدأ محادثة على واتساب
+          </a>
+        </div>
+      </div>
+
+    </section>
+
+    <section class="branches-contact">
+      <div class="container">
+        <h2>📍 فروعنا في الإسكندرية</h2>
+
+        <div class="branches-contact-grid">
+
+          <div class="branch-contact-card">
+            <div class="icon">📍</div>
+            <h3 data-setting="address1">فرع كوبري الناموس</h3>
+            <p>الإسكندرية</p>
+            <a href="https://maps.app.goo.gl/eSGccYFsFV8KmgCF7" target="_blank" rel="noopener">
+              🗺️ افتح على الخريطة
+            </a>
+          </div>
+
+          <div class="branch-contact-card">
+            <div class="icon">📍</div>
+            <h3 data-setting="address2">فرع العوايد</h3>
+            <p>الإسكندرية</p>
+            <a href="https://maps.app.goo.gl/UuSj8ifqPBFMFxDY6" target="_blank" rel="noopener">
+              🗺️ افتح على الخريطة
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <strong data-setting="siteName">أبو طارق للأدوات المنزلية</strong>
+          <p data-setting="siteTagline">كل احتياجات البيت في مكان واحد. الإسكندرية.</p>
+        </div>
+
+        <div class="footer-col">
+          <h4>روابط سريعة</h4>
+          <a href="./">الرئيسية</a>
+          <a href="./sections.html">كل الأصناف</a>
+          <a href="./about.html">من نحن</a>
+          <a href="./contact.html">تواصل معنا</a>
+        </div>
+
+        <div class="footer-col">
+          <h4>تواصل</h4>
+          <a href="https://wa.me/201551604163" target="_blank" rel="noopener" data-setting="whatsapp">واتساب</a>
+          <a href="#" data-setting="facebook">فيسبوك</a>
+          <a href="#" data-setting="instagram">إنستجرام</a>
+          <a href="#" data-setting="tiktok">تيك توك</a>
+        </div>
+
+        <div class="footer-col">
+          <h4>معلومات</h4>
+          <a href="./privacy.html">سياسة الخصوصية</a>
+          <a href="./terms.html">الشروط والأحكام</a>
+          <a href="#" data-setting="address1">كوبري الناموس</a>
+          <a href="#" data-setting="address2">العوايد</a>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>© 2026 <span data-setting="siteName">أبو طارق</span> — جميع الحقوق محفوظة</span>
+      </div>
+    </div>
+  </footer>
+
+  <a class="floating-wa" href="https://wa.me/201551604163" target="_blank" rel="noopener" aria-label="واتساب" data-setting="whatsapp">💬</a>
+
+  <script src="./config.js?v=5000"></script>
+  <script src="./features.js?v=5000"></script>
+  <script src="./analytics.js" defer></script>
+  <script src="./pwa.js" defer></script>
+
+  <script>
+    "use strict";
+    (function () {
+      const CFG = window.ABO_TAREK.CONFIG;
+      let settings = { ...CFG.DEFAULT_SETTINGS };
+
+      function applySettings() {
+        const s = settings;
+        document.querySelectorAll("[data-setting='siteName']").forEach(el => el.textContent = s.siteName);
+        document.querySelectorAll("[data-setting='siteTagline']").forEach(el => el.textContent = s.siteTagline);
+        document.querySelectorAll("[data-setting='address1']").forEach(el => el.textContent = s.address1);
+        document.querySelectorAll("[data-setting='address2']").forEach(el => el.textContent = s.address2);
+        document.querySelectorAll("[data-setting='logoImage']").forEach(el => { if (el.tagName === "IMG") el.src = s.logoImage; });
+        const waUrl = "https://wa.me/" + s.whatsappNumber;
+        document.querySelectorAll("[data-setting='whatsapp']").forEach(el => el.href = waUrl);
+        document.querySelectorAll("[data-setting='facebook']").forEach(el => el.href = s.facebookUrl);
+        document.querySelectorAll("[data-setting='instagram']").forEach(el => el.href = s.instagramUrl);
+        document.querySelectorAll("[data-setting='tiktok']").forEach(el => el.href = s.tiktokUrl);
+      }
+
+      function initMobileNav() {
+        const menuBtn = document.getElementById("menuBtn");
+        const mainNav = document.getElementById("mainNav");
+        if (!menuBtn || !mainNav) return;
+        menuBtn.addEventListener("click", e => { e.stopPropagation(); mainNav.classList.toggle("open"); });
+        document.addEventListener("click", e => {
+          if (!mainNav.contains(e.target) && !menuBtn.contains(e.target)) mainNav.classList.remove("open");
+        });
+      }
+
+      function initHeaderSearch() {
+        const input = document.getElementById("headerSearchInput");
+        const btn = document.getElementById("headerSearchBtn");
+        if (!input) return;
+        function goSearch() {
+          const val = input.value.trim();
+          if (!val) return;
+          window.location.href = "./sections.html?q=" + encodeURIComponent(val);
+        }
+        if (btn) btn.addEventListener("click", goSearch);
+        input.addEventListener("keydown", e => { if (e.key === "Enter") goSearch(); });
+      }
+
+      function loadSettings() {
+        try {
+          const cachedS = JSON.parse(localStorage.getItem(CFG.CACHE_KEYS.SETTINGS) || "{}");
+          if (cachedS.value) settings = { ...CFG.DEFAULT_SETTINGS, ...cachedS.value };
+          applySettings();
+        } catch (err) {}
+      }
+
+      initMobileNav();
+      initHeaderSearch();
+      loadSettings();
+    })();
+  </script>
+
+</body>
+</html>
