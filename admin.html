@@ -47,9 +47,7 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
     html { scroll-behavior: smooth; }
-
     body {
       font-family: "Cairo", Tahoma, sans-serif;
       background: var(--bg);
@@ -63,7 +61,6 @@
     input, textarea, select { font: inherit; }
     a { color: inherit; text-decoration: none; }
     img { display: block; max-width: 100%; }
-
     .hidden { display: none !important; }
 
     /* ============ LOGIN ============ */
@@ -109,7 +106,6 @@
     }
 
     .field { margin-bottom: 16px; }
-
     .field label {
       display: block;
       font-size: 13px;
@@ -163,7 +159,6 @@
     .btn-primary:hover {
       background: var(--orange-2);
       transform: translateY(-1px);
-      box-shadow: 0 8px 20px rgba(230, 123, 32, 0.4);
     }
 
     .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
@@ -205,12 +200,7 @@
       box-shadow: 0 2px 12px rgba(10, 31, 51, 0.15);
     }
 
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
+    .brand { display: flex; align-items: center; gap: 12px; }
     .brand-logo {
       width: 42px; height: 42px;
       object-fit: contain;
@@ -218,20 +208,8 @@
       border-radius: var(--radius-sm);
       padding: 4px;
     }
-
-    .brand-text strong {
-      display: block;
-      font-size: 15px;
-      font-weight: 900;
-      color: #fff;
-    }
-
-    .brand-text span {
-      display: block;
-      font-size: 11px;
-      color: var(--orange-2);
-      margin-top: 2px;
-    }
+    .brand-text strong { display: block; font-size: 15px; font-weight: 900; color: #fff; }
+    .brand-text span { display: block; font-size: 11px; color: var(--orange-2); margin-top: 2px; }
 
     .topbar-actions { display: flex; gap: 8px; }
 
@@ -248,7 +226,6 @@
       font-weight: 800;
       transition: all 0.2s;
     }
-
     .topbar-btn:hover { background: rgba(255, 255, 255, 0.2); }
     .topbar-btn.danger { background: rgba(239, 68, 68, 0.25); color: #fca5a5; }
     .topbar-btn.danger:hover { background: rgba(239, 68, 68, 0.4); }
@@ -266,7 +243,6 @@
       overflow-x: auto;
       scrollbar-width: none;
     }
-
     .nav-tabs::-webkit-scrollbar { display: none; }
 
     .nav-tab {
@@ -282,10 +258,8 @@
       white-space: nowrap;
       margin-bottom: -2px;
     }
-
     .nav-tab:hover { color: var(--text); background: var(--bg); }
     .nav-tab.active { color: var(--orange); border-bottom-color: var(--orange); }
-
     .nav-tab .icon { font-size: 18px; }
 
     /* ============ CONTENT ============ */
@@ -298,10 +272,10 @@
     }
 
     .page { display: none; }
-    .page.active { display: block; animation: fadeIn 0.3s; }
+    .page.active { display: block; animation: fadeIn 0.25s; }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(8px); }
+      from { opacity: 0; transform: translateY(6px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
@@ -314,17 +288,8 @@
       flex-wrap: wrap;
     }
 
-    .page-title {
-      font-size: 26px;
-      font-weight: 900;
-      color: var(--navy);
-    }
-
-    .page-subtitle {
-      color: var(--text-3);
-      font-size: 13px;
-      margin-top: 4px;
-    }
+    .page-title { font-size: 26px; font-weight: 900; color: var(--navy); }
+    .page-subtitle { color: var(--text-3); font-size: 13px; margin-top: 4px; }
 
     /* ============ STATS ============ */
     .stats-grid {
@@ -342,7 +307,6 @@
       border: 1px solid var(--border);
       transition: all 0.2s;
     }
-
     .stat-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
 
     .stat-icon {
@@ -353,25 +317,13 @@
       font-size: 24px;
       margin-bottom: 14px;
     }
-
     .stat-icon.orange { background: var(--orange-soft); color: var(--orange); }
     .stat-icon.green { background: var(--green-soft); color: var(--green); }
     .stat-icon.blue { background: var(--blue-soft); color: var(--blue); }
     .stat-icon.yellow { background: var(--yellow-soft); color: var(--yellow); }
 
-    .stat-number {
-      font-size: 32px;
-      font-weight: 900;
-      color: var(--navy);
-      line-height: 1;
-      margin-bottom: 4px;
-    }
-
-    .stat-label {
-      color: var(--text-3);
-      font-size: 13px;
-      font-weight: 600;
-    }
+    .stat-number { font-size: 32px; font-weight: 900; color: var(--navy); line-height: 1; margin-bottom: 4px; }
+    .stat-label { color: var(--text-3); font-size: 13px; font-weight: 600; }
 
     /* ============ QUICK ACTIONS ============ */
     .quick-actions {
@@ -409,14 +361,12 @@
       transition: all 0.2s;
       text-align: right;
     }
-
     .quick-btn:hover {
       border-color: var(--orange);
       background: var(--orange-soft);
       color: var(--orange);
       transform: translateY(-2px);
     }
-
     .quick-btn .icon { font-size: 22px; }
 
     /* ============ TOOLBAR ============ */
@@ -454,7 +404,6 @@
       outline: none;
       transition: all 0.2s;
     }
-
     .search-box input:focus { border-color: var(--orange); background: var(--white); }
 
     .search-box::before {
@@ -478,7 +427,6 @@
       font-weight: 800;
       transition: all 0.2s;
     }
-
     .filter-btn:hover { border-color: var(--orange); color: var(--orange); }
     .filter-btn.active { background: var(--orange); color: #fff; border-color: var(--orange); }
 
@@ -500,7 +448,6 @@
       align-items: center;
       transition: background 0.2s;
     }
-
     .item-row:last-child { border-bottom: none; }
     .item-row:hover { background: var(--bg); }
 
@@ -535,12 +482,7 @@
       flex-wrap: wrap;
     }
 
-    .item-meta {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
+    .item-meta { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
 
     .badge {
       display: inline-flex;
@@ -551,7 +493,6 @@
       font-size: 11px;
       font-weight: 800;
     }
-
     .badge.cat { background: var(--bg); color: var(--text-3); }
     .badge.price { background: var(--orange-soft); color: var(--orange); }
     .badge.old { background: var(--bg); color: var(--text-4); text-decoration: line-through; }
@@ -573,8 +514,9 @@
       display: grid;
       place-items: center;
       font-size: 18px;
-      transition: all 0.2s;
+      transition: all 0.15s;
     }
+    .action-btn:disabled { opacity: 0.4; cursor: wait; }
 
     .action-btn.edit { background: var(--blue-soft); color: var(--blue); }
     .action-btn.edit:hover { background: var(--blue); color: #fff; }
@@ -589,12 +531,7 @@
     .action-btn.delete:hover { background: var(--red); color: #fff; }
 
     /* ============ STATE BOXES ============ */
-    .state-box {
-      padding: 60px 24px;
-      text-align: center;
-      color: var(--text-3);
-    }
-
+    .state-box { padding: 60px 24px; text-align: center; color: var(--text-3); }
     .state-box .icon { font-size: 64px; margin-bottom: 16px; opacity: 0.5; }
     .state-box h3 { font-size: 18px; font-weight: 900; color: var(--text); margin-bottom: 8px; }
     .state-box p { font-size: 14px; max-width: 400px; margin: 0 auto 20px; }
@@ -607,7 +544,6 @@
       animation: spin 0.8s linear infinite;
       margin: 0 auto 16px;
     }
-
     @keyframes spin { to { transform: rotate(360deg); } }
 
     /* ============ MODAL ============ */
@@ -623,7 +559,6 @@
       padding: 20px;
       overflow-y: auto;
     }
-
     .modal-backdrop.open { display: flex; }
 
     .modal {
@@ -635,13 +570,12 @@
       display: flex;
       flex-direction: column;
       box-shadow: var(--shadow-lg);
-      animation: modalIn 0.25s;
+      animation: modalIn 0.2s;
     }
-
     .modal.large { max-width: 900px; }
 
     @keyframes modalIn {
-      from { opacity: 0; transform: translateY(20px) scale(0.95); }
+      from { opacity: 0; transform: translateY(15px) scale(0.97); }
       to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
@@ -666,7 +600,6 @@
       place-items: center;
       transition: all 0.2s;
     }
-
     .modal-close:hover { background: var(--red-soft); color: var(--red); }
 
     .modal-body { padding: 24px; overflow-y: auto; flex: 1; }
@@ -681,19 +614,10 @@
       border-radius: 0 0 var(--radius-lg) var(--radius-lg);
     }
 
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 16px;
-    }
-
+    .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
     .form-grid .full { grid-column: 1 / -1; }
 
-    .switch-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-    }
+    .switch-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
 
     .switch-box {
       display: flex;
@@ -706,7 +630,6 @@
       transition: all 0.2s;
       background: var(--white);
     }
-
     .switch-box:hover { border-color: var(--orange); }
     .switch-box input { display: none; }
 
@@ -719,19 +642,16 @@
       transition: all 0.2s;
       flex-shrink: 0;
     }
-
     .switch-box input:checked + .check {
       background: var(--orange);
       border-color: var(--orange);
       color: #fff;
     }
-
     .switch-box input:checked + .check::after {
       content: "✓";
       font-weight: 900;
       font-size: 14px;
     }
-
     .switch-box span:last-child { font-size: 13px; font-weight: 800; color: var(--text-2); }
 
     .image-upload {
@@ -758,7 +678,6 @@
       cursor: pointer;
       background: var(--bg);
     }
-
     .upload-area:hover { border-color: var(--orange); background: var(--orange-soft); }
     .upload-area input[type=file] { display: none; }
     .upload-area .icon { font-size: 32px; margin-bottom: 8px; }
@@ -786,19 +705,18 @@
     }
 
     .toast {
-      padding: 16px 20px;
+      padding: 14px 18px;
       background: var(--navy);
       color: #fff;
       border-radius: var(--radius);
       box-shadow: var(--shadow-lg);
       font-size: 14px;
       font-weight: 800;
-      animation: toastIn 0.3s;
+      animation: toastIn 0.25s;
       display: flex;
       align-items: center;
       gap: 10px;
     }
-
     .toast.success { background: var(--green); }
     .toast.error { background: var(--red); }
     .toast.warning { background: var(--yellow); }
@@ -806,6 +724,41 @@
     @keyframes toastIn {
       from { opacity: 0; transform: translateX(-20px); }
       to { opacity: 1; transform: translateX(0); }
+    }
+
+    /* ============ SYNC BADGE ============ */
+    .sync-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: var(--radius-full);
+      font-size: 11px;
+      font-weight: 800;
+      background: var(--green-soft);
+      color: #047857;
+    }
+    .sync-badge.syncing {
+      background: var(--yellow-soft);
+      color: #b45309;
+    }
+    .sync-badge.syncing::before {
+      content: "";
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--yellow);
+      animation: pulse 1s infinite;
+    }
+    .sync-badge::before {
+      content: "";
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
     }
 
     /* ============ RESPONSIVE ============ */
@@ -894,6 +847,7 @@
       </div>
 
       <div class="topbar-actions">
+        <span id="syncBadge" class="sync-badge">متزامن</span>
         <a href="./" target="_blank" class="topbar-btn">
           <span class="icon">🌐</span>
           <span>الموقع</span>
@@ -926,7 +880,6 @@
 
     <main class="content">
 
-      <!-- DASHBOARD -->
       <section id="dashboardPage" class="page active">
         <div class="page-header">
           <div>
@@ -982,7 +935,6 @@
         </div>
       </section>
 
-      <!-- PRODUCTS -->
       <section id="productsPage" class="page">
         <div class="page-header">
           <div>
@@ -1015,7 +967,6 @@
         </div>
       </section>
 
-      <!-- SECTIONS -->
       <section id="sectionsPage" class="page">
         <div class="page-header">
           <div>
@@ -1033,7 +984,6 @@
         </div>
       </section>
 
-      <!-- SETTINGS -->
       <section id="settingsPage" class="page">
         <div class="page-header">
           <div>
@@ -1185,12 +1135,15 @@
   <script src="./features.js?v=5000"></script>
 
   <script>
-   "use strict";
+    "use strict";
+
     (function () {
 
       const CFG = window.ABO_TAREK.CONFIG;
       const U = window.ABO_TAREK.UTILS;
       const SESSION_KEY = CFG.CACHE_KEYS.ADMIN_SESSION;
+      const LOCAL_CACHE_KEY = "abo_tarek_admin_cache_v1";
+      const CACHE_MAX_AGE = 5 * 60 * 1000; // 5 دقائق
 
       const state = {
         adminKey: sessionStorage.getItem(SESSION_KEY) || "",
@@ -1205,7 +1158,48 @@
       const $ = s => document.querySelector(s);
       const $$ = s => Array.from(document.querySelectorAll(s));
 
-      /* ============ TOAST ============ */
+      /* =========================================================
+         SYNC BADGE
+         ========================================================= */
+      function setSyncing(on) {
+        const badge = $("#syncBadge");
+        if (!badge) return;
+        badge.classList.toggle("syncing", on);
+        badge.textContent = on ? "جاري المزامنة..." : "متزامن";
+      }
+
+      /* =========================================================
+         LOCAL CACHE (instant load)
+         ========================================================= */
+      function readLocalCache() {
+        try {
+          const raw = localStorage.getItem(LOCAL_CACHE_KEY);
+          if (!raw) return null;
+          const data = JSON.parse(raw);
+          if (!data || !data.time) return null;
+          if (Date.now() - data.time > CACHE_MAX_AGE) return null;
+          return data;
+        } catch (err) { return null; }
+      }
+
+      function writeLocalCache() {
+        try {
+          localStorage.setItem(LOCAL_CACHE_KEY, JSON.stringify({
+            time: Date.now(),
+            products: state.products,
+            sections: state.sections,
+            settings: state.settings
+          }));
+        } catch (err) {}
+      }
+
+      function clearLocalCache() {
+        try { localStorage.removeItem(LOCAL_CACHE_KEY); } catch (err) {}
+      }
+
+      /* =========================================================
+         TOAST
+         ========================================================= */
       function showToast(msg, type = "success") {
         const c = $("#toastContainer");
         const t = document.createElement("div");
@@ -1215,8 +1209,8 @@
         setTimeout(() => {
           t.style.opacity = "0";
           t.style.transform = "translateX(-20px)";
-          setTimeout(() => t.remove(), 300);
-        }, 2500);
+          setTimeout(() => t.remove(), 200);
+        }, 2200);
       }
 
       function showLoginError(msg) {
@@ -1260,21 +1254,41 @@
         return map[key] || String(err || "حدث خطأ");
       }
 
-      /* ============ API ============ */
+      /* =========================================================
+         FETCH WITH TIMEOUT
+         ========================================================= */
+      async function fetchWithTimeout(url, options, timeout = 30000) {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), timeout);
+
+        try {
+          const res = await fetch(url, { ...options, signal: controller.signal });
+          clearTimeout(timeoutId);
+          return res;
+        } catch (err) {
+          clearTimeout(timeoutId);
+          if (err.name === "AbortError") throw new Error("انتهت مهلة الاتصال");
+          throw err;
+        }
+      }
+
+      /* =========================================================
+         API - POST (للعمليات)
+         ========================================================= */
       async function api(action, payload = {}) {
         const body = { action, adminKey: state.adminKey, ...payload };
 
-        const res = await fetch(CFG.DATA_URL, {
+        const res = await fetchWithTimeout(CFG.DATA_URL, {
           method: "POST",
           headers: { "Content-Type": "text/plain;charset=utf-8" },
           body: JSON.stringify(body),
           cache: "no-store"
-        });
+        }, 45000);
 
         const text = await res.text();
         let data;
         try { data = JSON.parse(text); }
-        catch (err) { throw new Error("استجابة غير صالحة"); }
+        catch (err) { throw new Error("استجابة غير صالحة من الخادم"); }
 
         if (!res.ok || data.ok === false) {
           throw new Error(translateError(data.error || data.message));
@@ -1282,7 +1296,88 @@
         return data;
       }
 
-      /* ============ LOGIN ============ */
+      /* =========================================================
+         API - GET ALL (طلب واحد لكل البيانات)
+         ========================================================= */
+      async function fetchAll() {
+        const res = await fetchWithTimeout(CFG.DATA_URL + "?t=" + Date.now(), {
+          method: "GET",
+          cache: "no-store"
+        }, 30000);
+
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        const data = await res.json();
+
+        if (data && data.ok === false) {
+          throw new Error(translateError(data.error));
+        }
+
+        return {
+          products: Array.isArray(data.products) ? data.products : [],
+          sections: Array.isArray(data.sections) ? data.sections : [],
+          settings: (data.settings && typeof data.settings === "object") ? data.settings : {}
+        };
+      }
+
+      /* =========================================================
+         NORMALIZE DATA
+         ========================================================= */
+      function normalizeProducts(products) {
+        return products.map((p, i) => ({
+          id: p.id || "",
+          name: p.name || "",
+          category: p.category || "",
+          image: p.image || "",
+          description: p.description || "",
+          active: p.active === true || p.active === "true" || p.active === 1,
+          showHome: p.showHome === true || p.showHome === "true" || p.showHome === 1,
+          isOffer: p.isOffer === true || p.isOffer === "true" || p.isOffer === 1,
+          sortOrder: Number(p.sortOrder) || 0,
+          price: p.price ?? "",
+          oldPrice: p.oldPrice ?? "",
+          offerPrice: p.offerPrice ?? ""
+        })).sort((a, b) => a.sortOrder - b.sortOrder);
+      }
+
+      function normalizeSections(sections) {
+        return sections.map((s, i) => ({
+          id: s.id || "",
+          name: s.name || "",
+          sortOrder: Number(s.sortOrder ?? i) || 0,
+          active: s.active === true || s.active === "true" || s.active === 1
+        })).filter(s => s.name).sort((a, b) => a.sortOrder - b.sortOrder);
+      }
+
+      /* =========================================================
+         APPLY DATA
+         ========================================================= */
+      function applyProducts(data) {
+        if (!data || !Array.isArray(data)) return;
+        state.products = normalizeProducts(data);
+        state.filteredProducts = [...state.products];
+        filterProducts();
+        updateStats();
+      }
+
+      function applySections(data) {
+        if (!data || !Array.isArray(data)) return;
+        state.sections = normalizeSections(data);
+        renderSections();
+        populateCategorySelect();
+      }
+
+      function applyAllData(data) {
+        if (data.products) applyProducts(data.products);
+        if (data.sections) applySections(data.sections);
+        if (data.settings) {
+          state.settings = data.settings;
+          renderSettings();
+        }
+      }
+
+      /* =========================================================
+         LOGIN
+         ========================================================= */
       async function login() {
         const key = $("#adminKey").value.trim();
         if (!key) { showLoginError("اكتب مفتاح الإدارة"); return; }
@@ -1293,6 +1388,7 @@
         state.adminKey = key;
 
         try {
+          // تحقق سريع من صلاحية المفتاح
           await api("listSections");
           sessionStorage.setItem(SESSION_KEY, key);
           showApp();
@@ -1325,89 +1421,58 @@
         showLogin();
       }
 
-      /* ============ NAV ============ */
+      /* =========================================================
+         NAV
+         ========================================================= */
       function openPage(id) {
         $$(".page").forEach(p => p.classList.toggle("active", p.id === id));
         $$(".nav-tab").forEach(t => t.classList.toggle("active", t.dataset.page === id));
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
 
-      /* ============ LOAD (مرة واحدة فقط) ============ */
+      /* =========================================================
+         LOAD ALL - OPTIMIZED
+         1) اعرض من الكاش فوراً
+         2) جيب البيانات في الخلفية (طلب GET واحد)
+         ========================================================= */
       async function loadAll() {
-        // تحميل أولي فقط - بعد كده نستخدم البيانات المرتجعة من كل عملية
-        try {
-          const [prodData, secData, setData] = await Promise.all([
-            api("list"),
-            api("listSections"),
-            api("getSettings")
-          ]);
-
-          // المنتجات
-          const products = Array.isArray(prodData.products) ? prodData.products : [];
-          state.products = products.map((p, i) => ({
-            id: p.id || "", name: p.name || "", category: p.category || "",
-            image: p.image || "", description: p.description || "",
-            active: p.active === true || p.active === "true" || p.active === 1,
-            showHome: p.showHome === true || p.showHome === "true" || p.showHome === 1,
-            isOffer: p.isOffer === true || p.isOffer === "true" || p.isOffer === 1,
-            sortOrder: Number(p.sortOrder) || 0,
-            price: p.price ?? "", oldPrice: p.oldPrice ?? "", offerPrice: p.offerPrice ?? ""
-          })).sort((a, b) => a.sortOrder - b.sortOrder);
-
-          // الأقسام
-          const sections = Array.isArray(secData.sections) ? secData.sections : [];
-          state.sections = sections.map((s, i) => ({
-            id: s.id || "", name: s.name || "",
-            sortOrder: Number(s.sortOrder ?? i) || 0,
-            active: s.active === true || s.active === "true" || s.active === 1
-          })).filter(s => s.name).sort((a, b) => a.sortOrder - b.sortOrder);
-
-          // الإعدادات
-          state.settings = setData.settings || {};
-
-          state.filteredProducts = [...state.products];
-          renderProducts();
-          renderSections();
+        // 1) اعرض الكاش فوراً
+        const cached = readLocalCache();
+        if (cached) {
+          applyProducts(cached.products || []);
+          applySections(cached.sections || []);
+          state.settings = cached.settings || {};
           renderSettings();
-          populateCategorySelect();
-          updateStats();
+          setSyncing(true);
+        } else {
+          setSyncing(true);
+        }
 
+        // 2) اجلب من الخادم (طلب GET واحد فقط)
+        try {
+          const data = await fetchAll();
+          applyAllData(data);
+          writeLocalCache();
+          setSyncing(false);
         } catch (err) {
           console.error(err);
-          showToast("تعذر تحميل البيانات: " + err.message, "error");
+          setSyncing(false);
+          if (!cached) {
+            $("#productsList").innerHTML = `
+              <div class="state-box">
+                <div class="icon">⚠️</div>
+                <h3>تعذر تحميل البيانات</h3>
+                <p>${U.escapeHtml(err.message)}</p>
+                <button class="btn btn-primary" onclick="location.reload()">🔄 إعادة المحاولة</button>
+              </div>
+            `;
+          }
         }
       }
 
-      // تحديث البيانات من الرد مباشرة (بدون طلب جديد)
-      function applyProductsFromResponse(data) {
-        if (!data || !Array.isArray(data.products)) return;
-        state.products = data.products.map((p, i) => ({
-          id: p.id || "", name: p.name || "", category: p.category || "",
-          image: p.image || "", description: p.description || "",
-          active: p.active === true || p.active === "true" || p.active === 1,
-          showHome: p.showHome === true || p.showHome === "true" || p.showHome === 1,
-          isOffer: p.isOffer === true || p.isOffer === "true" || p.isOffer === 1,
-          sortOrder: Number(p.sortOrder) || 0,
-          price: p.price ?? "", oldPrice: p.oldPrice ?? "", offerPrice: p.offerPrice ?? ""
-        })).sort((a, b) => a.sortOrder - b.sortOrder);
-
-        filterProducts();
-        updateStats();
-      }
-
-      function applySectionsFromResponse(data) {
-        if (!data || !Array.isArray(data.sections)) return;
-        state.sections = data.sections.map((s, i) => ({
-          id: s.id || "", name: s.name || "",
-          sortOrder: Number(s.sortOrder ?? i) || 0,
-          active: s.active === true || s.active === "true" || s.active === 1
-        })).filter(s => s.name).sort((a, b) => a.sortOrder - b.sortOrder);
-
-        renderSections();
-        populateCategorySelect();
-      }
-
-      /* ============ STATS ============ */
+      /* =========================================================
+         STATS
+         ========================================================= */
       function updateStats() {
         $("#statTotal").textContent = state.products.length;
         $("#statActive").textContent = state.products.filter(p => p.active).length;
@@ -1415,7 +1480,16 @@
         $("#statOffers").textContent = state.products.filter(p => p.isOffer).length;
       }
 
-      /* ============ RENDER PRODUCTS ============ */
+      /* =========================================================
+         RENDER PRODUCTS
+         ========================================================= */
+      let searchDebounce;
+      function onSearchInput(value) {
+        state.searchTerm = value;
+        clearTimeout(searchDebounce);
+        searchDebounce = setTimeout(() => filterProducts(), 200);
+      }
+
       function filterProducts() {
         const q = U.normalizeArabic(state.searchTerm);
         state.filteredProducts = state.products.filter(p => {
@@ -1481,7 +1555,9 @@
         }).join("");
       }
 
-      /* ============ RENDER SECTIONS ============ */
+      /* =========================================================
+         RENDER SECTIONS
+         ========================================================= */
       function renderSections() {
         const c = $("#sectionsList");
 
@@ -1522,7 +1598,9 @@
         }).join("");
       }
 
-      /* ============ PRODUCT CRUD ============ */
+      /* =========================================================
+         PRODUCT CRUD
+         ========================================================= */
       function openAddProduct() {
         $("#productModalTitle").textContent = "إضافة منتج";
         $("#productForm").reset();
@@ -1583,19 +1661,20 @@
         };
 
         setLoading(btn, true, "جاري الحفظ...");
+        setSyncing(true);
+
         try {
           const data = await api(id ? "edit" : "add", { id, product, ...product });
           closeModal("productModal");
           showToast(id ? "✓ تم التعديل" : "✓ تمت الإضافة");
 
-          // ← استخدام البيانات المرتجعة مباشرة (بدون طلب جديد)
-          if (data.products) {
-            applyProductsFromResponse(data);
-          }
+          if (data.products) applyProducts(data.products);
+          writeLocalCache();
         } catch (err) {
           showToast(err.message, "error");
         } finally {
           setLoading(btn, false);
+          setSyncing(false);
         }
       }
 
@@ -1603,22 +1682,22 @@
         const p = state.products.find(x => String(x.id) === String(id));
         if (!p) return;
 
-        // تحديث متفائل (Optimistic UI) - يظهر فوراً
+        // تحديث متفائل - فوري
+        const oldVal = p[field];
         p[field] = !p[field];
         filterProducts();
         updateStats();
 
         try {
           const data = await api("toggle", { id, field, value: p[field] });
-
-          // استخدام البيانات المرتجعة
           if (data.products) {
-            applyProductsFromResponse(data);
+            applyProducts(data.products);
+            writeLocalCache();
           }
           showToast("✓ تم التحديث");
         } catch (err) {
-          // رجع الحالة القديمة لو فشل
-          p[field] = !p[field];
+          // رجع القيمة القديمة
+          p[field] = oldVal;
           filterProducts();
           updateStats();
           showToast(err.message, "error");
@@ -1637,9 +1716,8 @@
 
         try {
           const data = await api("delete", { id });
-          if (data.products) {
-            applyProductsFromResponse(data);
-          }
+          if (data.products) applyProducts(data.products);
+          writeLocalCache();
           showToast("✓ تم الحذف");
         } catch (err) {
           state.products = backup;
@@ -1649,7 +1727,9 @@
         }
       }
 
-      /* ============ SECTION CRUD ============ */
+      /* =========================================================
+         SECTION CRUD
+         ========================================================= */
       function openAddSection() {
         $("#sectionModalTitle").textContent = "إضافة قسم";
         $("#sectionId").value = "";
@@ -1674,17 +1754,21 @@
         if (!name) return showToast("اكتب اسم القسم", "warning");
 
         setLoading(btn, true, "جاري الحفظ...");
+        setSyncing(true);
+
         try {
           const data = await api(id ? "editSection" : "addSection", { id, name, section: { id, name } });
           closeModal("sectionModal");
           showToast(id ? "✓ تم التعديل" : "✓ تمت الإضافة");
 
-          if (data.sections) applySectionsFromResponse(data);
-          if (data.products) applyProductsFromResponse(data);
+          if (data.sections) applySections(data.sections);
+          if (data.products) applyProducts(data.products);
+          writeLocalCache();
         } catch (err) {
           showToast(err.message, "error");
         } finally {
           setLoading(btn, false);
+          setSyncing(false);
         }
       }
 
@@ -1692,15 +1776,19 @@
         const s = state.sections.find(x => String(x.id) === String(id));
         if (!s) return;
 
+        const oldVal = s.active;
         s.active = !s.active;
         renderSections();
 
         try {
           const data = await api("toggleSection", { id, value: s.active });
-          if (data.sections) applySectionsFromResponse(data);
+          if (data.sections) {
+            applySections(data.sections);
+            writeLocalCache();
+          }
           showToast("✓ تم التحديث");
         } catch (err) {
-          s.active = !s.active;
+          s.active = oldVal;
           renderSections();
           showToast(err.message, "error");
         }
@@ -1716,7 +1804,8 @@
 
         try {
           const data = await api("deleteSection", { id });
-          if (data.sections) applySectionsFromResponse(data);
+          if (data.sections) applySections(data.sections);
+          writeLocalCache();
           showToast("✓ تم الحذف");
         } catch (err) {
           state.sections = backup;
@@ -1725,7 +1814,9 @@
         }
       }
 
-      /* ============ SETTINGS ============ */
+      /* =========================================================
+         SETTINGS
+         ========================================================= */
       function renderSettings() {
         const s = state.settings;
         const fields = [
@@ -1769,29 +1860,38 @@
         inputs.forEach(i => newSettings[i.dataset.key] = i.value.trim());
 
         setLoading(btn, true, "جاري الحفظ...");
+        setSyncing(true);
+
         try {
           await api("updateSettings", { settings: newSettings });
           state.settings = newSettings;
+          writeLocalCache();
           showToast("✓ تم الحفظ");
         } catch (err) {
           showToast(err.message, "error");
         } finally {
           setLoading(btn, false);
+          setSyncing(false);
         }
       }
 
-      /* ============ IMAGE UPLOAD ============ */
+      /* =========================================================
+         IMAGE UPLOAD
+         ========================================================= */
       async function handleImageUpload(e) {
         const file = e.target.files?.[0];
         if (!file) return;
         if (!file.type.startsWith("image/")) return showToast("الملف ليس صورة", "warning");
-        if (file.size > 8 * 1024 * 1024) return showToast("حجم الصورة كبير (5MB)", "warning");
+        if (file.size > 8 * 1024 * 1024) return showToast("حجم الصورة كبير (8MB)", "warning");
 
         $("#productImagePreview").src = URL.createObjectURL(file);
-        $("#uploadStatus").textContent = "جاري الرفع...";
+        $("#uploadStatus").textContent = "جاري تجهيز الصورة...";
 
         try {
           const prepared = await prepareImage(file);
+          $("#uploadStatus").textContent = "جاري الرفع...";
+          setSyncing(true);
+
           const data = await api("uploadImage", {
             fileName: prepared.fileName,
             mimeType: prepared.mimeType,
@@ -1806,6 +1906,8 @@
         } catch (err) {
           $("#uploadStatus").textContent = err.message;
           showToast(err.message, "error");
+        } finally {
+          setSyncing(false);
         }
       }
 
@@ -1848,7 +1950,9 @@
         return String(name || "image.jpg").replace(/[^a-zA-Z0-9._-]+/g, "-").replace(/-+/g, "-");
       }
 
-      /* ============ MODAL ============ */
+      /* =========================================================
+         MODAL
+         ========================================================= */
       function openModal(id) {
         const m = document.getElementById(id);
         if (!m) return;
@@ -1872,7 +1976,9 @@
         if (cats.includes(current)) sel.value = current;
       }
 
-      /* ============ EVENTS ============ */
+      /* =========================================================
+         EVENTS
+         ========================================================= */
       document.addEventListener("click", async e => {
         const filterBtn = e.target.closest(".filter-btn");
         if (filterBtn) {
@@ -1929,14 +2035,12 @@
       $("#quickViewSettings").addEventListener("click", () => openPage("settingsPage"));
 
       $("#refreshAllBtn").addEventListener("click", async () => {
+        clearLocalCache();
         await loadAll();
         showToast("✓ تم التحديث");
       });
 
-      $("#productSearch").addEventListener("input", e => {
-        state.searchTerm = e.target.value;
-        filterProducts();
-      });
+      $("#productSearch").addEventListener("input", e => onSearchInput(e.target.value));
 
       $("#productImageFile").addEventListener("change", handleImageUpload);
 
@@ -1948,17 +2052,13 @@
         if (e.key === "Escape") $$(".modal-backdrop.open").forEach(m => closeModal(m.id));
       });
 
-      /* ============ BOOT ============ */
+      /* =========================================================
+         BOOT
+         ========================================================= */
       async function boot() {
         if (state.adminKey) {
           showApp();
-          try { await loadAll(); }
-          catch (err) {
-            state.adminKey = "";
-            sessionStorage.removeItem(SESSION_KEY);
-            showLogin();
-            showLoginError(err.message);
-          }
+          await loadAll();
         } else {
           showLogin();
         }
