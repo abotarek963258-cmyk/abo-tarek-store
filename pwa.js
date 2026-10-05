@@ -1,13 +1,13 @@
 /* =========================================================
    ABO TAREK STORE - PWA REGISTRATION
-   Banner دايماً يظهر (Android + iOS)
+   Banner يظهر بعد 3 ثواني على أي جهاز
    ========================================================= */
 
 (function () {
   "use strict";
 
   /* =========================================================
-     1. تسجيل Service Worker
+     1. Service Worker
      ========================================================= */
 
   if ("serviceWorker" in navigator) {
@@ -19,129 +19,174 @@
   }
 
   /* =========================================================
-     2. Install Banner
+     2. Install Prompt
      ========================================================= */
 
-  const BANNER_SHOWN_KEY = "abo_tarek_banner_shown_v1";
   let deferredPrompt = null;
 
-  // مراقبة Chrome install prompt
   window.addEventListener("beforeinstallprompt", e => {
     e.preventDefault();
     deferredPrompt = e;
-    console.log("✅ Install prompt available");
+    console.log("✅ Install prompt captured");
   });
 
-  // لما يتثبت
   window.addEventListener("appinstalled", () => {
     console.log("✅ App installed");
     hideBanner();
-    try { localStorage.setItem(BANNER_SHOWN_KEY, "1"); } catch (err) {}
   });
 
   /* =========================================================
-     BANNER UI
+     3. Banner UI
      ========================================================= */
 
   function createBanner() {
-    if (document.getElementById("pwaInstallBanner")) return;
+    console.log("🎯 Creating banner...");
+
+    if (document.getElementById("pwaInstallBanner")) {
+      console.log("Banner already exists");
+      return;
+    }
 
     const banner = document.createElement("div");
     banner.id = "pwaInstallBanner";
-    banner.className = "pwa-install-banner";
+    banner.style.cssText = `
+      position: fixed;
+      bottom: 0;
+      right: 0;
+      left: 0;
+      z-index: 99999;
+      padding: 16px;
+      transform: translateY(100%);
+      transition: transform 0.4s ease;
+    `;
+
     banner.innerHTML = `
-      <div class="pwa-install-content">
-        <img src="./assets/logo.png" alt="أبو طارق" class="pwa-install-logo">
-        <div class="pwa-install-text">
-          <strong>📱 ثبّت تطبيق أبو طارق</strong>
-          <span>للوصول السريع من شاشة موبايلك</span>
+      <div style="
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 16px;
+        background: #ffffff;
+        border: 2px solid #e67b20;
+        border-radius: 16px;
+        box-shadow: 0 10px 40px rgba(10, 31, 51, 0.25);
+        max-width: 640px;
+        margin: 0 auto;
+      ">
+        <img src="./assets/logo.png" alt="أبو طارق" style="width:48px;height:48px;object-fit:contain;border-radius:8px;background:#fff5e6;padding:4px;flex-shrink:0">
+        <div style="flex:1;min-width:0">
+          <strong style="display:block;color:#0a1f33;font-size:14px;font-weight:900;font-family:Cairo,sans-serif">📱 ثبّت تطبيق أبو طارق</strong>
+          <span style="display:block;color:#718096;font-size:12px;margin-top:2px;font-family:Cairo,sans-serif">للوصول السريع من شاشة موبايلك</span>
         </div>
-        <button type="button" class="pwa-install-btn" id="pwaInstallBtn">ثبّت</button>
-        <button type="button" class="pwa-install-close" id="pwaInstallClose" aria-label="إغلاق">×</button>
+        <button type="button" id="pwaInstallBtn" style="
+          min-height:40px;
+          padding:0 20px;
+          background:#e67b20;
+          color:#fff;
+          border-radius:12px;
+          font-size:13px;
+          font-weight:900;
+          cursor:pointer;
+          border:none;
+          flex-shrink:0;
+          font-family:Cairo,sans-serif;
+        ">ثبّت</button>
+        <button type="button" id="pwaInstallClose" style="
+          width:32px;
+          height:32px;
+          background:transparent;
+          color:#718096;
+          border:none;
+          border-radius:8px;
+          font-size:20px;
+          cursor:pointer;
+          flex-shrink:0;
+        ">×</button>
       </div>
     `;
+
     document.body.appendChild(banner);
 
-    // أظهر البانر بعد 100ms
-    setTimeout(() => banner.classList.add("show"), 100);
+    // Animate in
+    requestAnimationFrame(() => {
+      banner.style.transform = "translateY(0)";
+    });
 
-    // زر التثبيت
+    // Install button
     document.getElementById("pwaInstallBtn").addEventListener("click", async () => {
+      console.log("Install clicked, deferredPrompt:", !!deferredPrompt);
+
       if (deferredPrompt) {
-        // Chrome / Android
-        deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
-        console.log("User choice:", outcome);
-        deferredPrompt = null;
-        hideBanner();
+        try {
+          deferredPrompt.prompt();
+          const { outcome } = await deferredPrompt.userChoice;
+          console.log("User choice:", outcome);
+          deferredPrompt = null;
+          hideBanner();
+        } catch (err) {
+          console.error("Prompt error:", err);
+          showManualInstructions();
+        }
       } else {
-        // iOS أو متصفح مش بيدعم
-        showIOSInstructions();
+        showManualInstructions();
       }
     });
 
-    // زر الإغلاق
-    document.getElementById("pwaInstallClose").addEventListener("click", () => {
-      hideBanner();
-      try { localStorage.setItem(BANNER_SHOWN_KEY, "1"); } catch (err) {}
-    });
+    // Close button
+    document.getElementById("pwaInstallClose").addEventListener("click", hideBanner);
   }
 
   function hideBanner() {
     const banner = document.getElementById("pwaInstallBanner");
-    if (banner) banner.classList.remove("show");
+    if (banner) {
+      banner.style.transform = "translateY(100%)";
+      setTimeout(() => banner.remove(), 400);
+    }
   }
 
-  function showIOSInstructions() {
-    alert("لتثبيت التطبيق على الآيفون:\n\n1. اضغط زر المشاركة (□↗) في الأسفل\n2. اختر 'إضافة إلى الشاشة الرئيسية'\n3. اضغط 'إضافة'");
-  }
+  function showManualInstructions() {
+    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const isAndroid = /Android/i.test(navigator.userAgent);
 
-  /* =========================================================
-     3. اكتشاف نوع الجهاز
-     ========================================================= */
+    let msg = "لتثبيت التطبيق:\n\n";
 
-  function isMobile() {
-    return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
-  }
+    if (isIOS) {
+      msg += "1. اضغط زر المشاركة (□↗) في Safari\n";
+      msg += "2. اختر 'إضافة إلى الشاشة الرئيسية'\n";
+      msg += "3. اضغط 'إضافة'";
+    } else if (isAndroid) {
+      msg += "1. اضغط على القائمة (⋮) في Chrome\n";
+      msg += "2. اختر 'تثبيت التطبيق' أو 'إضافة إلى الشاشة الرئيسية'\n";
+      msg += "3. اضغط 'تثبيت'";
+    } else {
+      msg += "1. اضغط على أيقونة التثبيت في شريط العناوين\n";
+      msg += "2. أو من القائمة → 'تثبيت أبو طارق'";
+    }
 
-  function isIOS() {
-    return /iPhone|iPad|iPod/i.test(navigator.userAgent);
-  }
-
-  function isStandalone() {
-    return window.matchMedia("(display-mode: standalone)").matches ||
-           window.navigator.standalone === true;
-  }
-
-  /* =========================================================
-     4. Show Banner Logic
-     ========================================================= */
-
-  function maybeShowBanner() {
-    // ميعرضوش لو التطبيق مثبت خلاص
-    if (isStandalone()) return;
-
-    // ميعرضوش على الكمبيوتر (بانر مخصص للموبايل بس)
-    if (!isMobile()) return;
-
-    // ميعرضوش لو المستخدم رفض قبل كده
-    try {
-      if (localStorage.getItem(BANNER_SHOWN_KEY) === "1") return;
-    } catch (err) {}
-
-    // استنى 8 ثواني الأول
-    setTimeout(createBanner, 8000);
+    alert(msg);
   }
 
   /* =========================================================
-     RUN
+     4. Show Banner after 3 seconds
      ========================================================= */
+
+  function scheduleBanner() {
+    console.log("⏰ Banner scheduled for 3 seconds...");
+    setTimeout(createBanner, 3000);
+  }
 
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", maybeShowBanner);
+    document.addEventListener("DOMContentLoaded", scheduleBanner);
   } else {
-    maybeShowBanner();
+    scheduleBanner();
   }
+
+  /* =========================================================
+     5. Force show (للاختبار)
+     ========================================================= */
+
+  window.showInstallBanner = createBanner;
+  window.hideInstallBanner = hideBanner;
 
   console.log("✅ pwa.js loaded");
 
