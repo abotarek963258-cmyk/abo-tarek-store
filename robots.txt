@@ -1,19 +1,4 @@
-# ==========================================
-# ABO TAREK STORE - robots.txt
-# ==========================================
-
 User-agent: *
 Allow: /
 
-# منع فهرسة الصفحات الإدارية
-Disallow: /admin.html
-Disallow: /ادمن.html
-
-# منع الملفات التقنية
-Disallow: /config.js
-Disallow: /features.js
-Disallow: /app.js
-Disallow: /analytics.js
-
-# Sitemap
 Sitemap: https://abotarek963258-cmyk.github.io/abo-tarek-store/sitemap.xml
