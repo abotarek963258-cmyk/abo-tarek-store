@@ -1,118 +1,91 @@
 /* =========================================================
-   ABO TAREK STORE - SERVICE WORKER
-   PWA - OFFLINE SUPPORT + SMART CACHE
-   DARK NAVY LUXURY EDITION
+   ABO TAREK STORE
+   SERVICE WORKER
+   FINAL STABLE EDITION
+   PWA + SMART CACHE + OFFLINE SUPPORT
    ========================================================= */
 
 "use strict";
 
-
 /* =========================================================
-   1. VERSION / CACHE NAMES
+   1. VERSION
    ========================================================= */
 
-const CACHE_VERSION = "v6";
+const VERSION = "v7";
 
-const CACHE_NAME =
-  "abo-tarek-cache-" + CACHE_VERSION;
+const STATIC_CACHE = `abo-tarek-static-${VERSION}`;
+const RUNTIME_CACHE = `abo-tarek-runtime-${VERSION}`;
+const IMAGE_CACHE = `abo-tarek-images-${VERSION}`;
 
-const RUNTIME_CACHE =
-  "abo-tarek-runtime-" + CACHE_VERSION;
-
-const IMAGE_CACHE =
-  "abo-tarek-images-" + CACHE_VERSION;
+const CACHE_PREFIX = "abo-tarek-";
 
 
 /* =========================================================
    2. BASE PATH
-   GitHub Pages:
-   /abo-tarek-store/
+   يعمل تلقائياً على GitHub Pages
    ========================================================= */
 
-const BASE_PATH = "/abo-tarek-store/";
+const BASE_PATH =
+  new URL("./", self.location.href).pathname;
 
 
 /* =========================================================
    3. CORE FILES
-   يتم حفظ الملفات الأساسية عند أول تثبيت
+   نحاول حفظ الملفات الأساسية فقط.
+   لو ملف غير موجود، لا نفشل تثبيت الـSW بالكامل.
    ========================================================= */
 
-const PRECACHE_URLS = [
+const CORE_FILES = [
+  "./",
+  "./index.html",
+  "./sections.html",
+  "./product.html",
 
-  /* Home */
-  BASE_PATH,
-  BASE_PATH + "index.html",
+  "./style.css",
+  "./features.css",
 
-  /* Catalog */
-  BASE_PATH + "sections.html",
+  "./config.js",
+  "./app.js",
+  "./features.js",
+  "./analytics.js",
+  "./pwa.js",
 
-  /* Product */
-  BASE_PATH + "product.html",
-
-  /* Main CSS */
-  BASE_PATH + "style.css",
-  BASE_PATH + "features.css",
-
-  /* JavaScript */
-  BASE_PATH + "config.js",
-  BASE_PATH + "features.js",
-  BASE_PATH + "app.js",
-  BASE_PATH + "analytics.js",
-  BASE_PATH + "pwa.js",
-
-  /* PWA */
-  BASE_PATH + "manifest.json",
-
-  /* Main branding */
-  BASE_PATH + "assets/logo.png",
-  BASE_PATH + "assets/storefront.jpg"
+  "./manifest.json"
 ];
 
 
 /* =========================================================
-   4. HELPERS
+   4. URL HELPERS
    ========================================================= */
 
-function isSameOrigin(url) {
-  return url.origin === self.location.origin;
+function getURL(requestOrURL) {
+  try {
+    return new URL(
+      typeof requestOrURL === "string"
+        ? requestOrURL
+        : requestOrURL.url,
+      self.location.href
+    );
+  } catch (_) {
+    return null;
+  }
 }
 
 
-function isHTMLRequest(request) {
+function isSameOrigin(url) {
+  return !!url &&
+    url.origin === self.location.origin;
+}
 
-  const accept =
-    request.headers.get("accept") || "";
 
+function isNavigationRequest(request) {
   return (
     request.mode === "navigate" ||
-    accept.includes("text/html")
-  );
-}
-
-
-function isImageRequest(request) {
-
-  const destination =
-    request.destination || "";
-
-  return (
-    destination === "image" ||
-    /\.(png|jpe?g|webp|gif|svg|avif|ico)$/i.test(
-      new URL(request.url).pathname
-    )
-  );
-}
-
-
-function isFontRequest(request) {
-
-  const destination =
-    request.destination || "";
-
-  return (
-    destination === "font" ||
-    /\.(woff2?|ttf|otf)$/i.test(
-      new URL(request.url).pathname
+    (
+      request.method === "GET" &&
+      (
+        request.headers.get("accept") || ""
+      ).includes("text/html")
     )
   );
 }
@@ -120,100 +93,338 @@ function isFontRequest(request) {
 
 function isStaticAsset(request) {
 
+  const url = getURL(request);
+
+  if (!url) {
+    return false;
+  }
+
+  const path =
+    url.pathname.toLowerCase();
+
   const destination =
     request.destination || "";
 
-  const path =
-    new URL(request.url).pathname;
-
   return (
-    ["script", "style", "worker"].includes(destination) ||
-    /\.(js|css|json)$/i.test(path)
+    destination === "script" ||
+    destination === "style" ||
+    destination === "worker" ||
+    /\.(js|css)$/i.test(path)
   );
 }
 
 
-function isIgnoredRequest(url) {
+function isImageRequest(request) {
 
-  const hostname =
-    url.hostname.toLowerCase();
+  const url = getURL(request);
 
-  /* Google Apps Script */
-
-  if (
-    hostname.includes(
-      "script.google.com"
-    ) ||
-    hostname.includes(
-      "script.googleusercontent.com"
-    )
-  ) {
-    return true;
+  if (!url) {
+    return false;
   }
 
+  const destination =
+    request.destination || "";
 
-  /* Google Analytics */
-
-  if (
-    hostname.includes(
-      "google-analytics.com"
-    ) ||
-    hostname.includes(
-      "googletagmanager.com"
-    ) ||
-    hostname.includes(
-      "googlesyndication.com"
-    ) ||
-    hostname.includes(
-      "doubleclick.net"
-    )
-  ) {
-    return true;
-  }
-
-
-  /* Facebook */
-
-  if (
-    hostname.includes(
-      "facebook.net"
-    ) ||
-    hostname.includes(
-      "facebook.com"
-    ) ||
-    hostname.includes(
-      "connect.facebook.net"
-    )
-  ) {
-    return true;
-  }
-
-
-  return false;
-}
-
-
-function isAdminRequest(url) {
-
-  const pathname =
+  const path =
     url.pathname.toLowerCase();
 
   return (
-    pathname.endsWith(
-      "/admin.html"
-    ) ||
-    pathname.includes(
-      "/admin/"
-    ) ||
-    pathname.includes(
-      "/ادمن"
-    )
+    destination === "image" ||
+    /\.(png|jpe?g|webp|gif|svg|avif|ico)$/i.test(path)
+  );
+}
+
+
+function isFontRequest(request) {
+
+  const url = getURL(request);
+
+  if (!url) {
+    return false;
+  }
+
+  const destination =
+    request.destination || "";
+
+  const path =
+    url.pathname.toLowerCase();
+
+  return (
+    destination === "font" ||
+    /\.(woff2?|ttf|otf)$/i.test(path)
   );
 }
 
 
 /* =========================================================
-   5. INSTALL
+   5. EXTERNAL SERVICES
+   لا نتدخل في APIs والتحليلات.
+   ========================================================= */
+
+function isExternalService(url) {
+
+  if (!url) {
+    return true;
+  }
+
+  const host =
+    url.hostname.toLowerCase();
+
+  return (
+    host.includes("script.google.com") ||
+    host.includes("script.googleusercontent.com") ||
+
+    host.includes("google-analytics.com") ||
+    host.includes("googletagmanager.com") ||
+    host.includes("googlesyndication.com") ||
+    host.includes("doubleclick.net") ||
+
+    host.includes("facebook.net") ||
+    host.includes("connect.facebook.net") ||
+    host.includes("facebook.com")
+  );
+}
+
+
+/* =========================================================
+   6. ADMIN
+   لوحة الإدارة لا يتم تخزينها في الكاش.
+   ========================================================= */
+
+function isAdminRequest(url) {
+
+  if (!url) {
+    return false;
+  }
+
+  const path =
+    url.pathname.toLowerCase();
+
+  return (
+    path.endsWith("/admin.html") ||
+    path.includes("/admin/")
+  );
+}
+
+
+/* =========================================================
+   7. CACHE HELPERS
+   ========================================================= */
+
+async function putInCache(
+  cacheName,
+  request,
+  response
+) {
+
+  if (
+    !response ||
+    (
+      !response.ok &&
+      response.type !== "opaque"
+    )
+  ) {
+    return;
+  }
+
+  try {
+
+    const cache =
+      await caches.open(cacheName);
+
+    await cache.put(
+      request,
+      response.clone()
+    );
+
+  } catch (error) {
+
+    console.warn(
+      "[SW] Cache write failed:",
+      error
+    );
+  }
+}
+
+
+/* =========================================================
+   8. NETWORK FIRST
+   للصفحات HTML
+   ========================================================= */
+
+async function networkFirstHTML(request) {
+
+  try {
+
+    const response =
+      await fetch(request);
+
+    if (
+      response &&
+      response.ok
+    ) {
+
+      await putInCache(
+        RUNTIME_CACHE,
+        request,
+        response
+      );
+
+      return response;
+    }
+
+    throw new Error(
+      "HTML network response failed"
+    );
+
+  } catch (_) {
+
+    const cached =
+      await caches.match(request);
+
+    if (cached) {
+      return cached;
+    }
+
+    const home =
+      await caches.match(
+        new URL(
+          "./index.html",
+          self.location.href
+        ).pathname
+      );
+
+    if (home) {
+      return home;
+    }
+
+    return new Response(
+      `
+      <!doctype html>
+      <html lang="ar" dir="rtl">
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport"
+              content="width=device-width,initial-scale=1">
+        <title>أبو طارق للأدوات المنزلية</title>
+      </head>
+      <body>
+        <h1>أبو طارق للأدوات المنزلية</h1>
+        <p>لا يوجد اتصال بالإنترنت حالياً.</p>
+      </body>
+      </html>
+      `,
+      {
+        status: 503,
+        headers: {
+          "Content-Type": "text/html; charset=utf-8"
+        }
+      }
+    );
+  }
+}
+
+
+/* =========================================================
+   9. STALE WHILE REVALIDATE
+   للـCSS / JS
+   ========================================================= */
+
+async function staleWhileRevalidate(request) {
+
+  const cached =
+    await caches.match(request);
+
+  const networkPromise =
+    fetch(request)
+      .then(response => {
+
+        if (
+          response &&
+          response.ok
+        ) {
+
+          putInCache(
+            RUNTIME_CACHE,
+            request,
+            response
+          );
+        }
+
+        return response;
+
+      })
+      .catch(() => null);
+
+  if (cached) {
+
+    /*
+      نرجع النسخة الموجودة فوراً
+      ونحدثها في الخلفية.
+    */
+
+    return cached;
+  }
+
+  const network =
+    await networkPromise;
+
+  if (network) {
+    return network;
+  }
+
+  return Response.error();
+}
+
+
+/* =========================================================
+   10. CACHE FIRST
+   للصور والخطوط
+   ========================================================= */
+
+async function cacheFirst(
+  request,
+  cacheName
+) {
+
+  const cached =
+    await caches.match(request);
+
+  if (cached) {
+    return cached;
+  }
+
+  try {
+
+    const response =
+      await fetch(request);
+
+    if (
+      response &&
+      (
+        response.ok ||
+        response.type === "opaque"
+      )
+    ) {
+
+      await putInCache(
+        cacheName,
+        request,
+        response
+      );
+    }
+
+    return response;
+
+  } catch (_) {
+
+    return Response.error();
+  }
+}
+
+
+/* =========================================================
+   11. INSTALL
    ========================================================= */
 
 self.addEventListener(
@@ -221,57 +432,83 @@ self.addEventListener(
   event => {
 
     console.log(
-      "[SW] Installing:",
-      CACHE_VERSION
+      "[SW] Installing",
+      VERSION
     );
-
 
     event.waitUntil(
 
-      caches
-        .open(CACHE_NAME)
+      (async () => {
 
-        .then(cache => {
-
-          /*
-            addAll ممكن يفشل بالكامل لو ملف واحد
-            غير موجود، لذلك نحفظ الملفات واحدة واحدة.
-          */
-
-          return Promise.all(
-            PRECACHE_URLS.map(
-              url =>
-                cache
-                  .add(url)
-                  .catch(error => {
-
-                    console.warn(
-                      "[SW] Precache failed:",
-                      url,
-                      error
-                    );
-
-                  })
-            )
+        const cache =
+          await caches.open(
+            STATIC_CACHE
           );
-        })
 
-        .then(() => {
+        /*
+          نحفظ كل ملف منفرداً.
+          لو ملف ناقص، باقي الملفات لا تتأثر.
+        */
 
-          /*
-            تفعيل النسخة الجديدة فوراً.
-          */
+        await Promise.allSettled(
 
-          return self.skipWaiting();
-        })
+          CORE_FILES.map(
+            async relativeURL => {
+
+              try {
+
+                const url =
+                  new URL(
+                    relativeURL,
+                    self.location.href
+                  );
+
+                const response =
+                  await fetch(
+                    new Request(
+                      url,
+                      {
+                        cache: "no-cache"
+                      }
+                    )
+                  );
+
+                if (
+                  response.ok
+                ) {
+
+                  await cache.put(
+                    url.pathname +
+                      url.search,
+                    response.clone()
+                  );
+                }
+
+              } catch (error) {
+
+                console.warn(
+                  "[SW] Could not precache:",
+                  relativeURL
+                );
+              }
+            }
+          )
+        );
+
+        /*
+          تفعيل النسخة الجديدة فوراً.
+        */
+
+        await self.skipWaiting();
+
+      })()
     );
   }
 );
 
 
 /* =========================================================
-   6. ACTIVATE
-   حذف الإصدارات القديمة
+   12. ACTIVATE
    ========================================================= */
 
 self.addEventListener(
@@ -279,196 +516,52 @@ self.addEventListener(
   event => {
 
     console.log(
-      "[SW] Activating:",
-      CACHE_VERSION
+      "[SW] Activating",
+      VERSION
     );
-
 
     event.waitUntil(
 
-      caches
-        .keys()
+      (async () => {
 
-        .then(cacheNames => {
+        const cacheNames =
+          await caches.keys();
 
-          return Promise.all(
+        await Promise.all(
 
-            cacheNames
-              .filter(cacheName => {
+          cacheNames
+            .filter(name => {
 
-                return (
+              return (
+                name.startsWith(
+                  CACHE_PREFIX
+                ) &&
+                name !== STATIC_CACHE &&
+                name !== RUNTIME_CACHE &&
+                name !== IMAGE_CACHE
+              );
 
-                  cacheName.startsWith(
-                    "abo-tarek-"
-                  ) &&
+            })
+            .map(name =>
+              caches.delete(name)
+            )
+        );
 
-                  cacheName !==
-                    CACHE_NAME &&
+        await self.clients.claim();
 
-                  cacheName !==
-                    RUNTIME_CACHE &&
+        console.log(
+          "[SW] Activated",
+          VERSION
+        );
 
-                  cacheName !==
-                    IMAGE_CACHE
-                );
-              })
-
-              .map(cacheName => {
-
-                console.log(
-                  "[SW] Removing old cache:",
-                  cacheName
-                );
-
-                return caches.delete(
-                  cacheName
-                );
-              })
-          );
-        })
-
-        .then(() => {
-
-          /*
-            السيطرة على الصفحات المفتوحة
-            بدون الحاجة لإعادة فتح الموقع.
-          */
-
-          return self.clients.claim();
-        })
+      })()
     );
   }
 );
 
 
 /* =========================================================
-   7. NETWORK FIRST
-   مناسب للـ HTML / CSS / JS
-   ========================================================= */
-
-function networkFirst(request) {
-
-  return fetch(request)
-
-    .then(response => {
-
-      if (
-        response &&
-        response.ok
-      ) {
-
-        const clone =
-          response.clone();
-
-        caches
-          .open(RUNTIME_CACHE)
-          .then(cache => {
-
-            cache
-              .put(request, clone)
-              .catch(() => {});
-
-          });
-      }
-
-      return response;
-    })
-
-    .catch(() => {
-
-      return caches
-        .match(request)
-        .then(cached => {
-
-          if (cached) {
-            return cached;
-          }
-
-
-          /*
-            لو صفحة غير موجودة في الكاش،
-            رجّع الصفحة الرئيسية.
-          */
-
-          if (
-            isHTMLRequest(request)
-          ) {
-
-            return caches.match(
-              BASE_PATH
-            );
-          }
-
-
-          return Response.error();
-        });
-    });
-}
-
-
-/* =========================================================
-   8. CACHE FIRST
-   للصور والخطوط
-   ========================================================= */
-
-function cacheFirst(
-  request,
-  cacheName
-) {
-
-  return caches
-    .match(request)
-    .then(cached => {
-
-      if (cached) {
-        return cached;
-      }
-
-
-      return fetch(request)
-
-        .then(response => {
-
-          /*
-            لا نخزن أخطاء السيرفر.
-          */
-
-          if (
-            response &&
-            (
-              response.ok ||
-              response.type ===
-                "opaque"
-            )
-          ) {
-
-            const clone =
-              response.clone();
-
-            caches
-              .open(cacheName)
-              .then(cache => {
-
-                cache
-                  .put(request, clone)
-                  .catch(() => {});
-
-              });
-          }
-
-          return response;
-        })
-
-        .catch(() => {
-
-          return Response.error();
-        });
-    });
-}
-
-
-/* =========================================================
-   9. FETCH
+   13. FETCH
    ========================================================= */
 
 self.addEventListener(
@@ -478,7 +571,10 @@ self.addEventListener(
     const request =
       event.request;
 
-    /* GET فقط */
+    /*
+      GET فقط.
+      لا نلمس POST أو PUT أو DELETE.
+    */
 
     if (
       request.method !== "GET"
@@ -486,29 +582,21 @@ self.addEventListener(
       return;
     }
 
+    const url =
+      getURL(request);
 
-    let url;
-
-    try {
-
-      url =
-        new URL(
-          request.url
-        );
-
-    } catch (_) {
-
+    if (!url) {
       return;
     }
 
 
     /* =====================================================
-       External services
-       لا نتدخل فيها.
+       Apps Script / Analytics / Facebook
+       لا يتم تخزينها.
        ===================================================== */
 
     if (
-      isIgnoredRequest(url)
+      isExternalService(url)
     ) {
       return;
     }
@@ -516,7 +604,7 @@ self.addEventListener(
 
     /* =====================================================
        Admin
-       لا نعمل لها cache.
+       لا يتم تخزين لوحة الإدارة.
        ===================================================== */
 
     if (
@@ -527,17 +615,17 @@ self.addEventListener(
 
 
     /* =====================================================
-       HTML / NAVIGATION
+       HTML
        Network First
        ===================================================== */
 
     if (
-      isHTMLRequest(request) &&
-      isSameOrigin(url)
+      isSameOrigin(url) &&
+      isNavigationRequest(request)
     ) {
 
       event.respondWith(
-        networkFirst(request)
+        networkFirstHTML(request)
       );
 
       return;
@@ -545,8 +633,8 @@ self.addEventListener(
 
 
     /* =====================================================
-       Local JS / CSS / JSON
-       Network First
+       Local JS / CSS
+       Stale While Revalidate
        ===================================================== */
 
     if (
@@ -555,7 +643,7 @@ self.addEventListener(
     ) {
 
       event.respondWith(
-        networkFirst(request)
+        staleWhileRevalidate(request)
       );
 
       return;
@@ -572,15 +660,17 @@ self.addEventListener(
     ) {
 
       /*
-        الصور الخارجية يمكن تخزينها حتى لو
-        كانت opaque response.
+        نسمح بالصور الخارجية،
+        لكن لا نتدخل في خدمات التحليلات.
       */
 
       event.respondWith(
+
         cacheFirst(
           request,
           IMAGE_CACHE
         )
+
       );
 
       return;
@@ -597,10 +687,12 @@ self.addEventListener(
     ) {
 
       event.respondWith(
+
         cacheFirst(
           request,
           RUNTIME_CACHE
         )
+
       );
 
       return;
@@ -608,8 +700,7 @@ self.addEventListener(
 
 
     /* =====================================================
-       Other same-origin resources
-       Network First
+       Other same-origin GET
        ===================================================== */
 
     if (
@@ -617,43 +708,42 @@ self.addEventListener(
     ) {
 
       event.respondWith(
-        networkFirst(request)
+        staleWhileRevalidate(request)
       );
 
       return;
     }
 
-
-    /* =====================================================
-       External resources
-       لا نتدخل فيها إلا للصور والخطوط.
-       ===================================================== */
-
-    return;
+    /*
+      أي طلب خارجي غير معروف:
+      اتركه للمتصفح الطبيعي.
+    */
   }
 );
 
 
 /* =========================================================
-   10. MESSAGE HANDLER
-   يسمح للموقع بطلب تفعيل النسخة الجديدة
+   14. MESSAGE HANDLER
    ========================================================= */
 
 self.addEventListener(
   "message",
   event => {
 
-    if (
-      !event.data
-    ) {
+    const data =
+      event.data;
+
+    if (!data) {
       return;
     }
 
 
-    /* Skip waiting */
+    /* -----------------------------------------------------
+       Activate new version
+       ----------------------------------------------------- */
 
     if (
-      event.data.type ===
+      data.type ===
       "SKIP_WAITING"
     ) {
 
@@ -663,10 +753,12 @@ self.addEventListener(
     }
 
 
-    /* Clear all Abu Tarek caches */
+    /* -----------------------------------------------------
+       Clear Abu Tarek caches
+       ----------------------------------------------------- */
 
     if (
-      event.data.type ===
+      data.type ===
       "CLEAR_CACHE"
     ) {
 
@@ -674,44 +766,50 @@ self.addEventListener(
 
         caches
           .keys()
-          .then(keys => {
+          .then(keys =>
 
-            return Promise.all(
+            Promise.all(
 
               keys
                 .filter(key =>
                   key.startsWith(
-                    "abo-tarek-"
+                    CACHE_PREFIX
                   )
                 )
                 .map(key =>
                   caches.delete(key)
                 )
-            );
-          })
+            )
+          )
       );
 
       return;
     }
 
 
-    /* Return current SW version */
+    /* -----------------------------------------------------
+       Return SW version
+       ----------------------------------------------------- */
 
     if (
-      event.data.type ===
+      data.type ===
       "GET_VERSION"
     ) {
 
       if (
         event.source &&
-        event.source.postMessage
+        typeof
+          event.source.postMessage ===
+          "function"
       ) {
 
         event.source.postMessage({
+
           type:
             "SW_VERSION",
+
           version:
-            CACHE_VERSION
+            VERSION
         });
       }
     }
@@ -720,36 +818,10 @@ self.addEventListener(
 
 
 /* =========================================================
-   11. ONLINE / OFFLINE MESSAGE
-   ========================================================= */
-
-self.addEventListener(
-  "online",
-  () => {
-
-    console.log(
-      "[SW] Network online"
-    );
-  }
-);
-
-
-self.addEventListener(
-  "offline",
-  () => {
-
-    console.log(
-      "[SW] Network offline"
-    );
-  }
-);
-
-
-/* =========================================================
-   12. FINAL LOG
+   15. FINAL
    ========================================================= */
 
 console.log(
-  "✅ Abu Tarek Service Worker loaded:",
-  CACHE_VERSION
+  "✅ Abu Tarek Service Worker ready:",
+  VERSION
 );
