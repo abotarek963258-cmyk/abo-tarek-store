@@ -10,7 +10,6 @@
    ========================================================= */
 
 :root {
-  /* Main Luxury Palette */
   --navy: #071321;
   --navy-2: #0b1d30;
   --navy-3: #12304a;
@@ -37,32 +36,27 @@
   --blue: #315fa8;
   --yellow: #d8a72d;
 
-  /* Compatibility with existing HTML / sections.html */
   --orange: var(--gold);
   --orange-2: var(--gold-2);
   --orange-3: var(--gold-3);
   --orange-soft: var(--gold-soft);
 
-  /* Backgrounds */
   --bg: #f4efe3;
   --bg-2: #ebe3d3;
   --surface: #fffdf8;
   --surface-2: #f9f5eb;
   --surface-dark: var(--navy);
 
-  /* Text */
   --text: #17212b;
   --text-2: #43505d;
   --muted: #78818a;
   --muted-dark: #aeb8c2;
   --text-light: #f8f3e8;
 
-  /* Borders */
   --border: rgba(7, 19, 33, 0.09);
   --border-dark: rgba(255, 255, 255, 0.09);
   --border-gold: rgba(212, 175, 55, 0.38);
 
-  /* Shadows */
   --shadow-xs: 0 3px 12px rgba(7, 19, 33, 0.06);
   --shadow-sm: 0 8px 24px rgba(7, 19, 33, 0.08);
   --shadow-md: 0 16px 40px rgba(7, 19, 33, 0.12);
@@ -70,7 +64,6 @@
   --shadow-gold: 0 10px 30px rgba(212, 175, 55, 0.16);
   --shadow-orange: var(--shadow-gold);
 
-  /* Radius */
   --radius-xs: 8px;
   --radius-sm: 12px;
   --radius-md: 16px;
@@ -78,11 +71,9 @@
   --radius-xl: 30px;
   --radius-pill: 999px;
 
-  /* Layout */
   --container: 1280px;
   --header-height: 76px;
 
-  /* Transition */
   --transition: 0.25s ease;
   --transition-slow: 0.4s ease;
 }
@@ -220,14 +211,12 @@ ol {
 
 .top-strip-inner::before {
   content: "✦";
-
   color: var(--gold);
   font-size: 12px;
 }
 
 .top-strip-inner::after {
   content: "✦";
-
   color: var(--gold);
   font-size: 12px;
 }
@@ -1877,8 +1866,6 @@ footer::after {
   pointer-events: none;
 }
 
-/* Main footer layout */
-
 .footer-inner,
 .footer-container,
 .site-footer .container {
@@ -1893,8 +1880,6 @@ footer::after {
   margin-inline: auto;
 }
 
-/* Generic footer grid */
-
 .footer-grid {
   display: grid;
 
@@ -1908,8 +1893,6 @@ footer::after {
 
   padding: 58px 0 42px;
 }
-
-/* Footer brand */
 
 .footer-brand {
   max-width: 350px;
@@ -1933,8 +1916,6 @@ footer::after {
 
   line-height: 2;
 }
-
-/* Footer headings */
 
 .footer-title,
 .footer-heading {
@@ -1963,8 +1944,6 @@ footer::after {
 
   border-radius: 3px;
 }
-
-/* Footer links */
 
 .footer-links,
 .footer-menu {
@@ -2015,42 +1994,36 @@ footer::after {
 }
 
 /* =========================================================
-   23. FOOTER PLATFORM / SOCIAL AREA
-   DARK NAVY LUXURY — SOCIAL REDESIGN
+   23. MAIN SOCIAL ICONS
+   SOCIAL ONLY — NO PLATFORM SECTION
    ========================================================= */
 
-/* منطقة السوشيال الرئيسية */
-
-.footer-social,
-.footer-platforms,
-.platform-links {
+.footer-social {
   display: flex;
 
   align-items: center;
+
   justify-content: flex-start;
 
   flex-wrap: wrap;
 
   gap: 10px;
 
-  margin-top: 18px;
+  margin-top: 20px;
 }
 
-/* كل زر سوشيال */
+.footer-social a {
+  position: relative;
 
-.footer-social a,
-.footer-platforms a,
-.platform-links a {
   width: 46px;
   height: 46px;
 
   flex: 0 0 46px;
 
   display: inline-flex;
+
   align-items: center;
   justify-content: center;
-
-  position: relative;
 
   border-radius: 14px;
 
@@ -2061,7 +2034,7 @@ footer::after {
       rgba(255, 255, 255, 0.035)
     );
 
-  border: 1px solid rgba(212, 175, 55, 0.18);
+  border: 1px solid rgba(212, 175, 55, 0.22);
 
   color: var(--cream);
 
@@ -2079,11 +2052,7 @@ footer::after {
     box-shadow var(--transition);
 }
 
-/* لمعة ذهبية بسيطة */
-
-.footer-social a::before,
-.footer-platforms a::before,
-.platform-links a::before {
+.footer-social a::before {
   content: "";
 
   position: absolute;
@@ -2095,8 +2064,8 @@ footer::after {
   background:
     linear-gradient(
       135deg,
-      rgba(255, 255, 255, 0.08),
-      transparent 45%
+      rgba(255, 255, 255, 0.09),
+      transparent 48%
     );
 
   opacity: 0;
@@ -2106,20 +2075,12 @@ footer::after {
   pointer-events: none;
 }
 
-.footer-social a:hover::before,
-.footer-platforms a:hover::before,
-.platform-links a:hover::before {
+.footer-social a:hover::before {
   opacity: 1;
 }
 
-/* Hover عام */
-
-.footer-social a:hover,
-.footer-platforms a:hover,
-.platform-links a:hover {
+.footer-social a:hover {
   transform: translateY(-5px);
-
-  color: var(--navy);
 
   background:
     linear-gradient(
@@ -2130,19 +2091,15 @@ footer::after {
 
   border-color: var(--gold-2);
 
+  color: var(--navy);
+
   box-shadow:
     0 12px 28px rgba(212, 175, 55, 0.22);
 }
 
-/* =========================================================
-   SOCIAL PLATFORM COLORS
-   ========================================================= */
-
 /* Facebook */
 
-.platform-links .facebook:hover,
-.footer-platforms .facebook:hover,
-.footer-social .facebook:hover {
+.footer-social a.facebook:hover {
   background: #1877f2;
 
   border-color: #1877f2;
@@ -2155,9 +2112,7 @@ footer::after {
 
 /* Instagram */
 
-.platform-links .instagram:hover,
-.footer-platforms .instagram:hover,
-.footer-social .instagram:hover {
+.footer-social a.instagram:hover {
   background:
     linear-gradient(
       135deg,
@@ -2176,9 +2131,7 @@ footer::after {
 
 /* TikTok */
 
-.platform-links .tiktok:hover,
-.footer-platforms .tiktok:hover,
-.footer-social .tiktok:hover {
+.footer-social a.tiktok:hover {
   background: #111;
 
   border-color: #444;
@@ -2191,9 +2144,7 @@ footer::after {
 
 /* WhatsApp */
 
-.platform-links .whatsapp:hover,
-.footer-platforms .whatsapp:hover,
-.footer-social .whatsapp:hover {
+.footer-social a.whatsapp:hover {
   background: #20a463;
 
   border-color: #20a463;
@@ -2205,408 +2156,28 @@ footer::after {
 }
 
 /* =========================================================
-   SOCIAL LABEL VERSION
-   لو HTML فيه اسم المنصة داخل الزر
+   24. IMPORTANT — HIDE THE WEIRD BOTTOM PLATFORM LOGOS
    ========================================================= */
 
-.footer-social a span,
-.footer-platforms a span,
-.platform-links a span {
-  display: inline-flex;
-  align-items: center;
+/*
+   القسم ده هو اللي كان بيعمل اللوجوهات الغريبة
+   في آخر الصفحة.
+   بنخفيه بالكامل بدل ما نغيّر شكله.
+*/
 
-  white-space: nowrap;
+.platform-section,
+.footer-platforms,
+.platform-links,
+.platform-badges,
+.platform-badge {
+  display: none !important;
 }
 
-/* لو الزر يحتوي أيقونة + اسم */
+/* لو الـ HTML عامل مساحة خاصة بالـ platform */
 
-.footer-social a.has-label,
-.footer-platforms a.has-label,
-.platform-links a.has-label {
-  width: auto;
-
-  min-width: 46px;
-
-  padding: 0 14px;
-
-  gap: 8px;
-
-  flex: 0 0 auto;
-
-  font-size: 11px;
-
-  font-weight: 800;
-}
-
-/* =========================================================
-   SOCIAL SECTION INSIDE FOOTER
-   ========================================================= */
-
-.footer-brand .footer-social,
-.footer-brand .footer-platforms,
-.footer-brand .platform-links {
-  margin-top: 20px;
-}
-
-/* عنوان السوشيال لو موجود */
-
-.footer-social-title,
-.social-title {
-  margin: 18px 0 9px;
-
-  color: var(--gold-2);
-
-  font-size: 11px;
-
-  font-weight: 900;
-}
-
-/* خط ذهبي صغير فوق مجموعة السوشيال */
-
-.footer-social::after,
-.footer-platforms::after,
-.platform-links::after {
-  content: "";
-
-  flex-basis: 100%;
-
-  order: -1;
-
-  display: none;
-}
-
-/* =========================================================
-   BOTTOM PLATFORM SECTION
-   ========================================================= */
-
-.platform-section {
-  position: relative;
-
-  padding: 30px 0 32px;
-
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.025),
-      rgba(255, 255, 255, 0.012)
-    );
-
-  border-top: 1px solid rgba(212, 175, 55, 0.12);
-
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.platform-section-inner {
-  display: flex;
-
-  align-items: center;
-
-  justify-content: space-between;
-
-  gap: 28px;
-}
-
-/* نص البلاتفورم */
-
+.platform-section-inner,
 .platform-section-copy {
-  flex: 1;
-
-  min-width: 0;
-}
-
-.platform-title {
-  margin: 0;
-
-  color: var(--cream);
-
-  font-size: 16px;
-
-  font-weight: 900;
-
-  line-height: 1.5;
-}
-
-.platform-description {
-  margin: 5px 0 0;
-
-  color: rgba(255, 255, 255, 0.52);
-
-  font-size: 11px;
-
-  line-height: 1.8;
-}
-
-/* =========================================================
-   PLATFORM BADGES
-   ========================================================= */
-
-.platform-badges {
-  display: flex;
-
-  align-items: center;
-
-  justify-content: flex-end;
-
-  flex-wrap: wrap;
-
-  gap: 9px;
-}
-
-.platform-badge {
-  min-height: 44px;
-
-  display: inline-flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  gap: 8px;
-
-  padding: 0 15px;
-
-  border-radius: 13px;
-
-  background:
-    rgba(255, 255, 255, 0.055);
-
-  border: 1px solid rgba(255, 255, 255, 0.1);
-
-  color: rgba(255, 255, 255, 0.8);
-
-  font-size: 11px;
-
-  font-weight: 800;
-
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.025);
-
-  transition:
-    transform var(--transition),
-    background var(--transition),
-    border-color var(--transition),
-    color var(--transition),
-    box-shadow var(--transition);
-}
-
-.platform-badge:hover {
-  transform: translateY(-3px);
-
-  background:
-    rgba(212, 175, 55, 0.11);
-
-  border-color:
-    rgba(212, 175, 55, 0.35);
-
-  color: var(--gold-2);
-
-  box-shadow:
-    0 8px 20px rgba(212, 175, 55, 0.08);
-}
-
-/* =========================================================
-   MOBILE SOCIAL LAYOUT
-   ========================================================= */
-
-@media (max-width: 700px) {
-
-  .footer-social,
-  .footer-platforms,
-  .platform-links {
-    justify-content: center;
-
-    gap: 9px;
-
-    margin-top: 16px;
-  }
-
-  .footer-social a,
-  .footer-platforms a,
-  .platform-links a {
-    width: 44px;
-    height: 44px;
-
-    flex-basis: 44px;
-
-    border-radius: 13px;
-
-    font-size: 17px;
-  }
-
-  .footer-social a.has-label,
-  .footer-platforms a.has-label,
-  .platform-links a.has-label {
-    width: auto;
-
-    min-width: 44px;
-
-    padding-inline: 12px;
-  }
-
-  .platform-section {
-    padding: 26px 0;
-  }
-
-  .platform-section-inner {
-    flex-direction: column;
-
-    align-items: center;
-
-    justify-content: center;
-
-    text-align: center;
-
-    gap: 18px;
-  }
-
-  .platform-section-copy {
-    width: 100%;
-  }
-
-  .platform-title {
-    font-size: 14px;
-  }
-
-  .platform-description {
-    font-size: 10px;
-  }
-
-  .platform-badges {
-    width: 100%;
-
-    justify-content: center;
-
-    gap: 8px;
-  }
-
-  .platform-badge {
-    min-height: 40px;
-
-    padding-inline: 12px;
-
-    font-size: 10px;
-  }
-}
-
-/* =========================================================
-   EXTRA SMALL SCREENS
-   ========================================================= */
-
-@media (max-width: 400px) {
-
-  .footer-social,
-  .footer-platforms,
-  .platform-links {
-    gap: 7px;
-  }
-
-  .footer-social a,
-  .footer-platforms a,
-  .platform-links a {
-    width: 42px;
-    height: 42px;
-
-    flex-basis: 42px;
-
-    border-radius: 12px;
-
-    font-size: 16px;
-  }
-
-  .platform-badge {
-    flex: 1 1 calc(50% - 8px);
-
-    min-width: 120px;
-  }
-}
-
-/* =========================================================
-   24. PLATFORM CARD / BOTTOM PLATFORM SECTION
-   ========================================================= */
-
-.platform-section {
-  position: relative;
-
-  padding: 35px 0;
-
-  background:
-    rgba(255, 255, 255, 0.025);
-
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.platform-section-inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  gap: 25px;
-}
-
-.platform-title {
-  margin: 0;
-
-  color: var(--cream);
-
-  font-size: 16px;
-  font-weight: 900;
-}
-
-.platform-description {
-  margin: 4px 0 0;
-
-  color: rgba(255, 255, 255, 0.52);
-
-  font-size: 11px;
-}
-
-.platform-badges {
-  display: flex;
-  align-items: center;
-
-  flex-wrap: wrap;
-
-  gap: 10px;
-}
-
-.platform-badge {
-  min-height: 42px;
-
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  gap: 8px;
-
-  padding: 0 14px;
-
-  border-radius: 12px;
-
-  background: rgba(255, 255, 255, 0.055);
-
-  border: 1px solid rgba(255, 255, 255, 0.09);
-
-  color: rgba(255, 255, 255, 0.8);
-
-  font-size: 11px;
-  font-weight: 800;
-
-  transition:
-    transform var(--transition),
-    background var(--transition),
-    border-color var(--transition),
-    color var(--transition);
-}
-
-.platform-badge:hover {
-  transform: translateY(-3px);
-
-  background: rgba(212, 175, 55, 0.11);
-
-  border-color: rgba(212, 175, 55, 0.3);
-
-  color: var(--gold-2);
+  display: none !important;
 }
 
 /* =========================================================
@@ -2912,6 +2483,7 @@ select:focus {
    ========================================================= */
 
 @media (max-width: 1100px) {
+
   .categories-grid {
     grid-template-columns:
       repeat(4, minmax(0, 1fr));
@@ -2945,6 +2517,7 @@ select:focus {
    ========================================================= */
 
 @media (max-width: 900px) {
+
   :root {
     --header-height: 68px;
   }
@@ -3042,12 +2615,6 @@ select:focus {
   .product-modal-image {
     min-height: 330px;
   }
-
-  .platform-section-inner {
-    flex-direction: column;
-
-    align-items: flex-start;
-  }
 }
 
 /* =========================================================
@@ -3055,6 +2622,7 @@ select:focus {
    ========================================================= */
 
 @media (max-width: 700px) {
+
   .container,
   .top-strip-inner,
   .nav-inner,
@@ -3277,20 +2845,33 @@ select:focus {
     max-width: none;
   }
 
+  /* السوشيال فقط */
+
+  .footer-social {
+    justify-content: center;
+
+    gap: 9px;
+
+    margin-top: 17px;
+  }
+
+  .footer-social a {
+    width: 44px;
+    height: 44px;
+
+    flex-basis: 44px;
+
+    border-radius: 13px;
+
+    font-size: 17px;
+  }
+
   .footer-bottom {
     flex-direction: column;
 
     align-items: center;
 
     text-align: center;
-  }
-
-  .platform-badges {
-    width: 100%;
-  }
-
-  .platform-badge {
-    flex: 1;
   }
 
   .floating-whatsapp {
@@ -3309,6 +2890,7 @@ select:focus {
    ========================================================= */
 
 @media (max-width: 400px) {
+
   .products-grid {
     grid-template-columns: 1fr;
   }
@@ -3344,6 +2926,21 @@ select:focus {
 
     padding: 0;
   }
+
+  .footer-social {
+    gap: 7px;
+  }
+
+  .footer-social a {
+    width: 42px;
+    height: 42px;
+
+    flex-basis: 42px;
+
+    border-radius: 12px;
+
+    font-size: 16px;
+  }
 }
 
 /* =========================================================
@@ -3351,6 +2948,7 @@ select:focus {
    ========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
+
   html {
     scroll-behavior: auto;
   }
@@ -3369,6 +2967,7 @@ select:focus {
    ========================================================= */
 
 @media print {
+
   .top-strip,
   .site-header,
   .main-nav,
@@ -3377,7 +2976,8 @@ select:focus {
   .product-actions,
   .footer-social,
   .footer-platforms,
-  .platform-links {
+  .platform-links,
+  .platform-section {
     display: none !important;
   }
 
@@ -3417,8 +3017,6 @@ select:focus {
    38. EXTRA COMPATIBILITY HELPERS
    ========================================================= */
 
-/* Existing sections.html compatibility */
-
 .section-card,
 .category-card {
   -webkit-tap-highlight-color: transparent;
@@ -3429,8 +3027,6 @@ a {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Prevent accidental horizontal overflow from long names */
-
 .product-name,
 .product-description,
 .section-title,
@@ -3438,8 +3034,6 @@ a {
 .footer-brand p {
   overflow-wrap: anywhere;
 }
-
-/* Better image rendering */
 
 .product-image img,
 .hero-image img,
@@ -3508,6 +3102,32 @@ a {
     );
 
   opacity: 0.65;
+}
+
+/* =========================================================
+   41. FINAL SOCIAL SAFETY OVERRIDE
+   ========================================================= */
+
+/*
+   تأكيد نهائي:
+   أي عنصر يحمل أسماء الـ platform القديمة لن يظهر
+   في أسفل الصفحة.
+*/
+
+.platform-section,
+.footer-platforms,
+.platform-links,
+.platform-badges,
+.platform-badge,
+.platform-section-inner,
+.platform-section-copy {
+  display: none !important;
+}
+
+/* السوشيال الرئيسية فقط */
+
+.footer-social {
+  display: flex !important;
 }
 
 /* =========================================================
