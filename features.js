@@ -2,46 +2,40 @@
    ABO TAREK STORE
    FEATURES ENGINE
    FINAL STABLE EDITION
-   Cart • Wishlist • Recently Viewed • Product Modal • WhatsApp
+
+   RESPONSIBILITIES:
+   - Cart
+   - Cart quantities
+   - Wishlist
+   - Product modal
+   - WhatsApp checkout
+   - LocalStorage
+   - UI bridge
+
+   IMPORTANT:
+   This file DOES NOT call Apps Script.
+   This file DOES NOT load app.js.
+   This file owns cart/wishlist events only.
    ========================================================= */
 
-(function () {
+(() => {
   "use strict";
 
   /* =========================================================
-     GLOBAL CONFIG
+     CONFIG
      ========================================================= */
 
-  const ROOT = window.ABO_TAREK || {};
-  const CFG = window.ABO_TAREK_CONFIG || ROOT.CONFIG || {};
+  const STORAGE_CART =
+    "abo_tarek_cart_v1";
 
-  const STORAGE = {
-    cart:
-      (CFG.CACHE_KEYS && CFG.CACHE_KEYS.cart) ||
-      "abo_tarek_cart_v1",
+  const STORAGE_WISHLIST =
+    "abo_tarek_wishlist_v1";
 
-    wishlist:
-      (CFG.CACHE_KEYS && CFG.CACHE_KEYS.wishlist) ||
-      "abo_tarek_wishlist_v1",
+  const WHATSAPP_NUMBER =
+    "201551604163";
 
-    recent:
-      (CFG.CACHE_KEYS && CFG.CACHE_KEYS.recent) ||
-      "abo_tarek_recent_v1"
-  };
-
-  const LIMITS = {
-    maxQuantity:
-      Number(
-        CFG.CART &&
-        CFG.CART.MAX_QUANTITY
-      ) || 99,
-
-    maxRecent:
-      Number(
-        CFG.RECENTLY_VIEWED &&
-        CFG.RECENTLY_VIEWED.MAX_ITEMS
-      ) || 8
-  };
+  const MAX_QUANTITY =
+    99;
 
   /* =========================================================
      STATE
@@ -49,145 +43,21 @@
 
   let cart = [];
   let wishlist = [];
-  let recentProducts = [];
 
-  let initialized = false;
-  let modalProduct = null;
+  let activeProduct = null;
   let modalQuantity = 1;
 
   let cartDrawer = null;
   let modal = null;
-  let toastContainer = null;
+
+  let toastTimer = null;
 
   /* =========================================================
-     HELPERS
+     SAFE HELPERS
      ========================================================= */
 
-  function cleanText(value) {
-    return String(value == null ? "" : value).trim();
-  }
-
-  function safeNumber(value, fallback = 0) {
-    const n = Number(
-      String(value == null ? "" : value)
-        .replace(/,/g, "")
-        .replace(/[^\d.-]/g, "")
-    );
-
-    return Number.isFinite(n) ? n : fallback;
-  }
-
-  function getProductId(product) {
-    if (!product) return "";
-
-    return cleanText(
-      product.id ||
-      product.productId ||
-      product.code ||
-      product.sku ||
-      product.name
-    );
-  }
-
-  function normalizeProduct(product) {
-    if (!product || typeof product !== "object") {
-      return null;
-    }
-
-    const id = getProductId(product);
-
-    if (!id) return null;
-
-    const normalized = {
-      id,
-      name: cleanText(product.name || product.title || "منتج"),
-      category: cleanText(product.category),
-      image: cleanText(product.image || product.imageUrl),
-      images: Array.isArray(product.images)
-        ? product.images.filter(Boolean)
-        : [],
-      description: cleanText(product.description),
-      active:
-        product.active === false ||
-        String(product.active).toLowerCase() === "false"
-          ? false
-          : true,
-      showHome:
-        product.showHome === true ||
-        String(product.showHome).toLowerCase() === "true",
-      isOffer:
-        product.isOffer === true ||
-        String(product.isOffer).toLowerCase() === "true",
-      sortOrder: safeNumber(product.sortOrder, 0),
-      price: safeNumber(product.price, 0),
-      oldPrice: safeNumber(product.oldPrice, 0),
-      offerPrice: safeNumber(product.offerPrice, 0)
-    };
-
-    return normalized;
-  }
-
-  function getProductPrice(product) {
-    if (!product) return 0;
-
-    if (product.offerPrice > 0) {
-      return product.offerPrice;
-    }
-
-    if (product.price > 0) {
-      return product.price;
-    }
-
-    return 0;
-  }
-
-  function formatPrice(value) {
-    const amount = safeNumber(value, 0);
-
-    if (amount <= 0) {
-      return "";
-    }
-
-    try {
-      return new Intl.NumberFormat("ar-EG").format(amount) + " جنيه";
-    } catch (error) {
-      return amount.toLocaleString("en-US") + " جنيه";
-    }
-  }
-
-  function resolveImage(product) {
-    if (!product) {
-      return "";
-    }
-
-    const image =
-      product.image ||
-      (Array.isArray(product.images) && product.images[0]) ||
-      "";
-
-    if (!image) {
-      return "";
-    }
-
-    try {
-      if (
-        typeof CFG.resolveImageUrl === "function"
-      ) {
-        return CFG.resolveImageUrl(image);
-      }
-
-      if (
-        typeof ROOT.resolveImageUrl === "function"
-      ) {
-        return ROOT.resolveImageUrl(image);
-      }
-    } catch (error) {}
-
-    return image;
-  }
-
-  function escapeHtml(value) {
-    return String(value == null ? "" : value)
+  function escapeHTML(value) {
+    return String(value ?? "")
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;")
@@ -195,341 +65,556 @@
       .replace(/'/g, "&#039;");
   }
 
-  function dispatch(name, detail) {
+  function numberValue(value) {
+    if (
+      value === null ||
+      value === undefined ||
+      value === ""
+    ) {
+      return null;
+    }
+
+    const normalized =
+      String(value)
+        .replace(/,/g, "")
+        .replace(/[^\d.-]/g, "");
+
+    if (!normalized) {
+      return null;
+    }
+
+    const number =
+      Number(normalized);
+
+    return Number.isFinite(number)
+      ? number
+      : null;
+  }
+
+  function formatPrice(value) {
+    const number =
+      Number(value);
+
+    if (!Number.isFinite(number)) {
+      return "";
+    }
+
     try {
-      document.dispatchEvent(
-        new CustomEvent(name, {
-          detail: detail || {}
-        })
+      return (
+        new Intl.NumberFormat("ar-EG")
+          .format(number)
+        + " ج.م"
       );
-    } catch (error) {}
+    } catch (_) {
+      return number + " ج.م";
+    }
+  }
+
+  function normalizeProduct(product) {
+    if (!product) {
+      return null;
+    }
+
+    const normalized = {
+      id:
+        String(product.id ?? ""),
+
+      name:
+        String(product.name ?? "منتج"),
+
+      category:
+        String(product.category ?? ""),
+
+      image:
+        String(product.image ?? ""),
+
+      description:
+        String(product.description ?? ""),
+
+      price:
+        numberValue(product.price),
+
+      oldPrice:
+        numberValue(product.oldPrice),
+
+      offerPrice:
+        numberValue(product.offerPrice),
+
+      isOffer:
+        product.isOffer === true ||
+        product.isOffer === 1 ||
+        product.isOffer === "1" ||
+        String(product.isOffer ?? "")
+          .toLowerCase()
+          .trim() === "true",
+
+      images: []
+    };
+
+    let images = [];
+
+    if (Array.isArray(product.images)) {
+      images = product.images;
+    } else if (
+      typeof product.images === "string"
+    ) {
+      try {
+        const parsed =
+          JSON.parse(product.images);
+
+        if (Array.isArray(parsed)) {
+          images = parsed;
+        }
+      } catch (_) {
+        images =
+          product.images
+            .split(/\r?\n|,/)
+            .map(item => item.trim())
+            .filter(Boolean);
+      }
+    }
+
+    if (normalized.image) {
+      images.unshift(
+        normalized.image
+      );
+    }
+
+    normalized.images =
+      [...new Set(
+        images
+          .map(item =>
+            String(item || "").trim()
+          )
+          .filter(Boolean)
+      )].slice(0, 5);
+
+    if (
+      !normalized.image &&
+      normalized.images.length
+    ) {
+      normalized.image =
+        normalized.images[0];
+    }
+
+    return normalized;
   }
 
   /* =========================================================
      STORAGE
      ========================================================= */
 
-  function readStorage(key, fallback) {
+  function loadStorage() {
     try {
-      const raw = localStorage.getItem(key);
+      const savedCart =
+        localStorage.getItem(
+          STORAGE_CART
+        );
 
-      if (!raw) {
-        return fallback;
+      const savedWishlist =
+        localStorage.getItem(
+          STORAGE_WISHLIST
+        );
+
+      cart =
+        savedCart
+          ? JSON.parse(savedCart)
+          : [];
+
+      wishlist =
+        savedWishlist
+          ? JSON.parse(savedWishlist)
+          : [];
+
+      if (!Array.isArray(cart)) {
+        cart = [];
       }
 
-      const parsed = JSON.parse(raw);
+      if (!Array.isArray(wishlist)) {
+        wishlist = [];
+      }
 
-      return parsed == null ? fallback : parsed;
-    } catch (error) {
-      return fallback;
+    } catch (_) {
+      cart = [];
+      wishlist = [];
     }
-  }
-
-  function writeStorage(key, value) {
-    try {
-      localStorage.setItem(
-        key,
-        JSON.stringify(value)
-      );
-
-      return true;
-    } catch (error) {
-      return false;
-    }
-  }
-
-  function loadState() {
-    const savedCart = readStorage(
-      STORAGE.cart,
-      []
-    );
-
-    const savedWishlist = readStorage(
-      STORAGE.wishlist,
-      []
-    );
-
-    const savedRecent = readStorage(
-      STORAGE.recent,
-      []
-    );
-
-    cart = Array.isArray(savedCart)
-      ? savedCart
-          .map(item => {
-            if (!item || typeof item !== "object") {
-              return null;
-            }
-
-            const product = normalizeProduct(
-              item.product || item
-            );
-
-            if (!product) {
-              return null;
-            }
-
-            return {
-              product,
-              quantity: Math.max(
-                1,
-                Math.min(
-                  LIMITS.maxQuantity,
-                  safeNumber(item.quantity, 1)
-                )
-              )
-            };
-          })
-          .filter(Boolean)
-      : [];
-
-    wishlist = Array.isArray(savedWishlist)
-      ? savedWishlist
-          .map(item => {
-            if (typeof item === "string") {
-              return item;
-            }
-
-            return getProductId(item);
-          })
-          .filter(Boolean)
-      : [];
-
-    wishlist = [...new Set(wishlist)];
-
-    recentProducts = Array.isArray(savedRecent)
-      ? savedRecent
-          .map(normalizeProduct)
-          .filter(Boolean)
-      : [];
-
-    saveCart();
-    saveWishlist();
-    saveRecent();
   }
 
   function saveCart() {
-    writeStorage(STORAGE.cart, cart);
+    try {
+      localStorage.setItem(
+        STORAGE_CART,
+        JSON.stringify(cart)
+      );
+    } catch (_) {}
   }
 
   function saveWishlist() {
-    writeStorage(
-      STORAGE.wishlist,
-      wishlist
-    );
+    try {
+      localStorage.setItem(
+        STORAGE_WISHLIST,
+        JSON.stringify(wishlist)
+      );
+    } catch (_) {}
   }
 
-  function saveRecent() {
-    writeStorage(
-      STORAGE.recent,
-      recentProducts
+  /* =========================================================
+     PRICE
+     ========================================================= */
+
+  function getProductPrice(product) {
+    if (!product) {
+      return null;
+    }
+
+    if (
+      product.isOffer &&
+      product.offerPrice !== null
+    ) {
+      return product.offerPrice;
+    }
+
+    if (
+      product.price !== null
+    ) {
+      return product.price;
+    }
+
+    if (
+      product.offerPrice !== null
+    ) {
+      return product.offerPrice;
+    }
+
+    return null;
+  }
+
+  function getOldPrice(product) {
+    if (!product) {
+      return null;
+    }
+
+    const current =
+      getProductPrice(product);
+
+    if (
+      product.oldPrice !== null &&
+      current !== null &&
+      product.oldPrice > current
+    ) {
+      return product.oldPrice;
+    }
+
+    return null;
+  }
+
+  /* =========================================================
+     TOAST
+     ========================================================= */
+
+  function showToast(message) {
+
+    let toast =
+      document.getElementById(
+        "aboTarekFeatureToast"
+      );
+
+    if (!toast) {
+
+      toast =
+        document.createElement(
+          "div"
+        );
+
+      toast.id =
+        "aboTarekFeatureToast";
+
+      toast.className =
+        "at-feature-toast";
+
+      document.body.appendChild(
+        toast
+      );
+    }
+
+    toast.textContent =
+      message;
+
+    toast.classList.add(
+      "show"
     );
+
+    clearTimeout(
+      toastTimer
+    );
+
+    toastTimer =
+      setTimeout(() => {
+
+        toast.classList.remove(
+          "show"
+        );
+
+      }, 2200);
   }
 
   /* =========================================================
      CART
      ========================================================= */
 
-  function getCart() {
-    return cart.slice();
+  function findCartItem(productId) {
+    return cart.find(
+      item =>
+        String(item.id) ===
+        String(productId)
+    );
   }
 
   function getCartCount() {
     return cart.reduce(
       (total, item) =>
-        total + safeNumber(item.quantity, 0),
+        total +
+        Math.max(
+          1,
+          Number(item.quantity) || 1
+        ),
       0
     );
   }
 
   function getCartTotal() {
     return cart.reduce(
-      (total, item) =>
-        total +
-        getProductPrice(item.product) *
-          safeNumber(item.quantity, 0),
+      (total, item) => {
+
+        const price =
+          getProductPrice(item);
+
+        if (price === null) {
+          return total;
+        }
+
+        return (
+          total +
+          price *
+          Math.max(
+            1,
+            Number(item.quantity) || 1
+          )
+        );
+
+      },
       0
     );
   }
 
-  function findCartItem(productId) {
-    return cart.find(
-      item =>
-        getProductId(item.product) ===
-        productId
-    );
-  }
+  function addToCart(
+    product,
+    quantity = 1
+  ) {
 
-  function addToCart(product, quantity = 1) {
-    const normalized = normalizeProduct(product);
+    const normalized =
+      normalizeProduct(product);
 
-    if (!normalized) {
-      showToast(
-        "تعذر إضافة المنتج",
-        "error"
-      );
-
-      return false;
+    if (
+      !normalized ||
+      !normalized.id
+    ) {
+      return;
     }
 
-    const id = getProductId(normalized);
+    let amount =
+      Number(quantity);
 
-    let amount = Math.max(
-      1,
-      Math.min(
-        LIMITS.maxQuantity,
-        safeNumber(quantity, 1)
-      )
-    );
+    if (
+      !Number.isFinite(amount)
+    ) {
+      amount = 1;
+    }
 
-    const existing = findCartItem(id);
+    amount =
+      Math.max(
+        1,
+        Math.min(
+          MAX_QUANTITY,
+          Math.floor(amount)
+        )
+      );
+
+    const existing =
+      findCartItem(
+        normalized.id
+      );
 
     if (existing) {
-      existing.quantity = Math.min(
-        LIMITS.maxQuantity,
-        existing.quantity + amount
-      );
+
+      existing.quantity =
+        Math.min(
+          MAX_QUANTITY,
+          (
+            Number(existing.quantity) ||
+            0
+          ) + amount
+        );
+
+      existing.product =
+        normalized;
+
     } else {
+
       cart.push({
-        product: normalized,
+        ...normalized,
         quantity: amount
       });
+
     }
 
     saveCart();
-    updateCartUI();
 
-    dispatch(
-      "abo-tarek:cart-updated",
-      {
-        cart: getCart(),
-        count: getCartCount(),
-        total: getCartTotal(),
-        product: normalized,
-        quantity: amount
-      }
-    );
+    updateCartUI();
 
     showToast(
       existing
-        ? "تم تحديث الكمية في السلة"
-        : "تمت إضافة المنتج للسلة",
-      "success"
+        ? "تم تحديث كمية المنتج في السلة ✓"
+        : "تمت إضافة المنتج للسلة ✓"
     );
 
-    return true;
-  }
-
-  function setCartQuantity(productId, quantity) {
-    const item = findCartItem(
-      cleanText(productId)
-    );
-
-    if (!item) {
-      return false;
-    }
-
-    const amount = Math.max(
-      0,
-      Math.min(
-        LIMITS.maxQuantity,
-        safeNumber(quantity, 1)
-      )
-    );
-
-    if (amount <= 0) {
-      removeFromCart(productId);
-      return true;
-    }
-
-    item.quantity = amount;
-
-    saveCart();
-    updateCartUI();
-
-    dispatch(
-      "abo-tarek:cart-updated",
+    emitFeatureEvent(
+      "cart:add",
       {
-        cart: getCart(),
-        count: getCartCount(),
-        total: getCartTotal()
+        product: normalized,
+        quantity: amount
       }
     );
-
-    return true;
   }
 
-  function updateCartQuantity(productId, delta) {
-    const item = findCartItem(
-      cleanText(productId)
-    );
+  function removeFromCart(
+    productId
+  ) {
+
+    const before =
+      cart.length;
+
+    cart =
+      cart.filter(
+        item =>
+          String(item.id) !==
+          String(productId)
+      );
+
+    if (
+      cart.length !== before
+    ) {
+
+      saveCart();
+
+      updateCartUI();
+
+      showToast(
+        "تم حذف المنتج من السلة"
+      );
+
+      emitFeatureEvent(
+        "cart:remove",
+        {
+          productId
+        }
+      );
+    }
+  }
+
+  function changeCartQuantity(
+    productId,
+    delta
+  ) {
+
+    const item =
+      findCartItem(
+        productId
+      );
 
     if (!item) {
-      return false;
+      return;
     }
 
-    return setCartQuantity(
-      productId,
-      item.quantity + safeNumber(delta, 0)
+    let quantity =
+      Number(item.quantity) || 1;
+
+    quantity +=
+      Number(delta) || 0;
+
+    quantity =
+      Math.max(
+        1,
+        Math.min(
+          MAX_QUANTITY,
+          Math.floor(quantity)
+        )
+      );
+
+    item.quantity =
+      quantity;
+
+    saveCart();
+
+    updateCartUI();
+
+    emitFeatureEvent(
+      "cart:quantity",
+      {
+        productId,
+        quantity
+      }
     );
   }
 
-  function removeFromCart(productId) {
-    const id = cleanText(productId);
+  function setCartQuantity(
+    productId,
+    quantity
+  ) {
 
-    const oldLength = cart.length;
+    const item =
+      findCartItem(
+        productId
+      );
 
-    cart = cart.filter(
-      item =>
-        getProductId(item.product) !== id
-    );
-
-    if (cart.length === oldLength) {
-      return false;
+    if (!item) {
+      return;
     }
 
+    let value =
+      Number(quantity);
+
+    if (!Number.isFinite(value)) {
+      value = 1;
+    }
+
+    value =
+      Math.max(
+        1,
+        Math.min(
+          MAX_QUANTITY,
+          Math.floor(value)
+        )
+      );
+
+    item.quantity =
+      value;
+
     saveCart();
+
     updateCartUI();
-
-    dispatch(
-      "abo-tarek:cart-updated",
-      {
-        cart: getCart(),
-        count: getCartCount(),
-        total: getCartTotal()
-      }
-    );
-
-    showToast(
-      "تم حذف المنتج من السلة",
-      "success"
-    );
-
-    return true;
   }
 
   function clearCart() {
-    if (!cart.length) {
-      return;
-    }
 
     cart = [];
 
     saveCart();
+
     updateCartUI();
 
-    dispatch(
-      "abo-tarek:cart-updated",
-      {
-        cart: [],
-        count: 0,
-        total: 0
-      }
-    );
-
     showToast(
-      "تم تفريغ السلة",
-      "success"
+      "تم تفريغ السلة"
     );
   }
 
@@ -537,1457 +622,3319 @@
      WISHLIST
      ========================================================= */
 
-  function getWishlist() {
-    return wishlist.slice();
+  function isInWishlist(
+    productId
+  ) {
+
+    return wishlist.some(
+      item =>
+        String(
+          typeof item === "object"
+            ? item.id
+            : item
+        ) ===
+        String(productId)
+    );
   }
 
-  function isInWishlist(productOrId) {
-    const id =
-      typeof productOrId === "object"
-        ? getProductId(productOrId)
-        : cleanText(productOrId);
+  function addToWishlist(
+    product
+  ) {
 
-    return !!id && wishlist.includes(id);
-  }
+    const normalized =
+      normalizeProduct(product);
 
-  function toggleWishlist(product) {
-    const normalized = normalizeProduct(product);
-
-    if (!normalized) {
-      return false;
+    if (
+      !normalized ||
+      !normalized.id
+    ) {
+      return;
     }
 
-    const id = getProductId(normalized);
-
-    if (wishlist.includes(id)) {
-      wishlist = wishlist.filter(
-        item => item !== id
-      );
-
-      saveWishlist();
-      updateWishlistUI();
-
-      dispatch(
-        "abo-tarek:wishlist-updated",
-        {
-          wishlist: getWishlist(),
-          product: normalized,
-          active: false
-        }
-      );
-
-      showToast(
-        "تم حذف المنتج من المفضلة",
-        "success"
-      );
-
-      return false;
+    if (
+      isInWishlist(
+        normalized.id
+      )
+    ) {
+      return;
     }
 
-    wishlist.push(id);
+    wishlist.push(
+      normalized
+    );
 
     saveWishlist();
+
     updateWishlistUI();
 
-    dispatch(
-      "abo-tarek:wishlist-updated",
+    showToast(
+      "تمت إضافة المنتج للمفضلة ♥"
+    );
+
+    emitFeatureEvent(
+      "wishlist:add",
       {
-        wishlist: getWishlist(),
-        product: normalized,
-        active: true
+        product: normalized
       }
     );
+  }
+
+  function removeFromWishlist(
+    productId
+  ) {
+
+    wishlist =
+      wishlist.filter(
+        item =>
+          String(
+            typeof item === "object"
+              ? item.id
+              : item
+          ) !==
+          String(productId)
+      );
+
+    saveWishlist();
+
+    updateWishlistUI();
 
     showToast(
-      "تمت إضافة المنتج للمفضلة",
-      "success"
+      "تم حذف المنتج من المفضلة"
     );
 
-    return true;
-  }
-
-  /* =========================================================
-     RECENTLY VIEWED
-     ========================================================= */
-
-  function addRecentlyViewed(product) {
-    const normalized = normalizeProduct(product);
-
-    if (!normalized) {
-      return;
-    }
-
-    const id = getProductId(normalized);
-
-    recentProducts = recentProducts.filter(
-      item => getProductId(item) !== id
-    );
-
-    recentProducts.unshift(normalized);
-
-    recentProducts = recentProducts.slice(
-      0,
-      LIMITS.maxRecent
-    );
-
-    saveRecent();
-
-    dispatch(
-      "abo-tarek:recently-viewed-updated",
+    emitFeatureEvent(
+      "wishlist:remove",
       {
-        products: recentProducts.slice()
+        productId
       }
     );
   }
 
-  function getRecentlyViewed() {
-    return recentProducts.slice();
-  }
+  function toggleWishlist(
+    product
+  ) {
 
-  /* =========================================================
-     TOAST
-     ========================================================= */
-
-  function ensureToastContainer() {
-    if (toastContainer) {
-      return toastContainer;
-    }
-
-    toastContainer =
-      document.querySelector(
-        ".abo-toast-container"
-      );
-
-    if (!toastContainer) {
-      toastContainer =
-        document.createElement("div");
-
-      toastContainer.className =
-        "abo-toast-container";
-
-      toastContainer.setAttribute(
-        "aria-live",
-        "polite"
-      );
-
-      document.body.appendChild(
-        toastContainer
-      );
-    }
-
-    return toastContainer;
-  }
-
-  function showToast(message, type = "info") {
-    if (!document.body) {
+    if (!product) {
       return;
     }
 
-    const container =
-      ensureToastContainer();
+    const id =
+      String(product.id ?? "");
 
-    const toast =
-      document.createElement("div");
+    if (!id) {
+      return;
+    }
 
-    toast.className =
-      "abo-toast abo-toast-" +
-      cleanText(type || "info");
+    if (
+      isInWishlist(id)
+    ) {
 
-    toast.setAttribute(
-      "role",
-      "status"
-    );
+      removeFromWishlist(id);
 
-    toast.innerHTML =
-      '<span class="abo-toast-message">' +
-      escapeHtml(message) +
-      "</span>";
+    } else {
 
-    container.appendChild(toast);
+      addToWishlist(product);
 
-    requestAnimationFrame(() => {
-      toast.classList.add("is-visible");
-    });
+    }
 
-    window.setTimeout(() => {
-      toast.classList.remove(
-        "is-visible"
-      );
-
-      window.setTimeout(() => {
-        toast.remove();
-      }, 250);
-    }, 2600);
   }
 
   /* =========================================================
-     CART COUNT UI
+     CART HTML
      ========================================================= */
 
-  function updateCartCountElements() {
-    const count = getCartCount();
+  function cartItemHTML(item) {
 
-    document
-      .querySelectorAll(
-        "#cartCount," +
-        ".cart-count," +
-        "[data-cart-count]"
-      )
-      .forEach(element => {
-        element.textContent = String(count);
+    const image =
+      item.image ||
+      "./assets/logo.png";
 
-        element.hidden = count <= 0;
+    const price =
+      getProductPrice(item);
 
-        element.classList.toggle(
-          "is-empty",
-          count <= 0
-        );
-      });
-  }
+    const quantity =
+      Math.max(
+        1,
+        Number(item.quantity) || 1
+      );
 
-  function updateWishlistUI() {
-    document
-      .querySelectorAll(
-        "[data-wishlist-id]," +
-        ".wishlist-btn[data-product-id]," +
-        ".product-wishlist[data-product-id]"
-      )
-      .forEach(button => {
-        const id =
-          button.getAttribute(
-            "data-wishlist-id"
-          ) ||
-          button.getAttribute(
-            "data-product-id"
-          );
+    const lineTotal =
+      price !== null
+        ? price * quantity
+        : null;
 
-        const active =
-          isInWishlist(id);
+    return `
 
-        button.classList.toggle(
-          "is-active",
-          active
-        );
+      <div
+        class="at-cart-item"
+        data-cart-item="${escapeHTML(item.id)}">
 
-        button.classList.toggle(
-          "active",
-          active
-        );
+        <div class="at-cart-item-image">
 
-        button.setAttribute(
-          "aria-pressed",
-          active ? "true" : "false"
-        );
+          <img
+            src="${escapeHTML(image)}"
+            alt="${escapeHTML(item.name)}"
+            loading="lazy"
+            decoding="async"
+            onerror="this.onerror=null;this.src='./assets/logo.png';">
 
-        const icon =
-          button.querySelector(
-            "[data-wishlist-icon]"
-          );
+        </div>
 
-        if (icon) {
-          icon.textContent =
-            active ? "♥" : "♡";
-        }
-      });
+        <div class="at-cart-item-info">
+
+          <div class="at-cart-item-name">
+            ${escapeHTML(item.name)}
+          </div>
+
+          <div class="at-cart-item-category">
+            ${escapeHTML(item.category)}
+          </div>
+
+          ${
+            price !== null
+              ? `
+                <div class="at-cart-item-price">
+                  ${formatPrice(price)}
+                </div>
+              `
+              : `
+                <div class="at-cart-item-price">
+                  السعر عند الطلب
+                </div>
+              `
+          }
+
+          <div class="at-cart-controls">
+
+            <button
+              type="button"
+              data-cart-minus="${escapeHTML(item.id)}">
+              −
+            </button>
+
+            <input
+              type="number"
+              min="1"
+              max="${MAX_QUANTITY}"
+              value="${quantity}"
+              data-cart-quantity="${escapeHTML(item.id)}"
+              aria-label="كمية ${escapeHTML(item.name)}">
+
+            <button
+              type="button"
+              data-cart-plus="${escapeHTML(item.id)}">
+              +
+            </button>
+
+          </div>
+
+        </div>
+
+        <div class="at-cart-item-side">
+
+          ${
+            lineTotal !== null
+              ? `
+                <strong>
+                  ${formatPrice(lineTotal)}
+                </strong>
+              `
+              : ""
+          }
+
+          <button
+            type="button"
+            class="at-cart-remove"
+            data-cart-remove="${escapeHTML(item.id)}"
+            aria-label="حذف المنتج">
+
+            ×
+
+          </button>
+
+        </div>
+
+      </div>
+
+    `;
   }
 
   /* =========================================================
      CART DRAWER
      ========================================================= */
 
-  function ensureCartDrawer() {
-    if (cartDrawer) {
-      return cartDrawer;
-    }
+  function createCartDrawer() {
 
-    cartDrawer =
-      document.querySelector(
-        ".abo-cart-drawer"
-      );
-
-    if (cartDrawer) {
-      return cartDrawer;
+    if (
+      document.getElementById(
+        "aboTarekCartDrawer"
+      )
+    ) {
+      return;
     }
 
     const overlay =
-      document.createElement("div");
+      document.createElement(
+        "div"
+      );
+
+    overlay.id =
+      "aboTarekCartDrawer";
 
     overlay.className =
-      "abo-cart-overlay";
+      "at-cart-overlay";
 
-    overlay.hidden = true;
+    overlay.innerHTML = `
 
-    const drawer =
-      document.createElement("aside");
+      <aside
+        class="at-cart-drawer"
+        role="dialog"
+        aria-modal="true"
+        aria-label="سلة المشتريات">
 
-    drawer.className =
-      "abo-cart-drawer";
+        <div class="at-cart-header">
 
-    drawer.setAttribute(
-      "aria-label",
-      "سلة المشتريات"
-    );
+          <div>
 
-    drawer.innerHTML = `
-      <div class="abo-cart-header">
-        <div>
-          <span class="abo-cart-kicker">طلبك</span>
-          <h2>سلة المشتريات</h2>
+            <div class="at-cart-title">
+              سلة المشتريات
+            </div>
+
+            <div
+              class="at-cart-count"
+              id="atCartCountText">
+              0 منتج
+            </div>
+
+          </div>
+
+          <button
+            type="button"
+            class="at-cart-close"
+            data-close-cart
+            aria-label="إغلاق السلة">
+
+            ×
+
+          </button>
+
         </div>
 
-        <button
-          type="button"
-          class="abo-cart-close"
-          data-cart-close
-          aria-label="إغلاق السلة"
-        >×</button>
-      </div>
+        <div
+          class="at-cart-body"
+          id="atCartBody">
+        </div>
 
-      <div
-        class="abo-cart-body"
-        data-cart-body
-      ></div>
+        <div
+          class="at-cart-footer"
+          id="atCartFooter">
+        </div>
 
-      <div
-        class="abo-cart-footer"
-        data-cart-footer
-      ></div>
+      </aside>
+
     `;
 
     document.body.appendChild(
       overlay
     );
 
-    document.body.appendChild(
-      drawer
-    );
+    cartDrawer =
+      overlay;
 
     overlay.addEventListener(
       "click",
-      closeCart
+      event => {
+
+        if (
+          event.target ===
+          overlay
+        ) {
+          closeCart();
+        }
+
+        if (
+          event.target.closest(
+            "[data-close-cart]"
+          )
+        ) {
+          closeCart();
+        }
+
+      }
     );
-
-    drawer.addEventListener(
-      "click",
-      handleCartClick
-    );
-
-    cartDrawer = drawer;
-
-    return cartDrawer;
-  }
-
-  function renderCartDrawer() {
-    const drawer =
-      ensureCartDrawer();
 
     const body =
-      drawer.querySelector(
-        "[data-cart-body]"
+      overlay.querySelector(
+        "#atCartBody"
       );
 
-    const footer =
-      drawer.querySelector(
-        "[data-cart-footer]"
-      );
+    body.addEventListener(
+      "click",
+      event => {
 
-    if (!body || !footer) {
-      return;
-    }
+        const minus =
+          event.target.closest(
+            "[data-cart-minus]"
+          );
 
-    if (!cart.length) {
-      body.innerHTML = `
-        <div class="abo-cart-empty">
-          <div class="abo-cart-empty-icon">🛒</div>
-          <h3>السلة فاضية</h3>
-          <p>اختار المنتجات اللي عايز تطلبها وهتظهر هنا.</p>
+        if (minus) {
 
-          <button
-            type="button"
-            class="abo-feature-btn abo-feature-btn-primary"
-            data-cart-close
-          >
-            تصفح المنتجات
-          </button>
-        </div>
-      `;
+          changeCartQuantity(
+            minus.dataset.cartMinus,
+            -1
+          );
 
-      footer.innerHTML = "";
-      return;
-    }
+          return;
+        }
 
-    body.innerHTML = cart
-      .map(item => {
-        const product = item.product;
-        const quantity =
-          safeNumber(item.quantity, 1);
+        const plus =
+          event.target.closest(
+            "[data-cart-plus]"
+          );
 
-        const price =
-          getProductPrice(product);
+        if (plus) {
 
-        const image =
-          resolveImage(product);
+          changeCartQuantity(
+            plus.dataset.cartPlus,
+            1
+          );
 
-        return `
-          <article
-            class="abo-cart-item"
-            data-cart-item-id="${escapeHtml(
-              product.id
-            )}"
-          >
-            <div class="abo-cart-item-media">
-              ${
-                image
-                  ? `
-                    <img
-                      src="${escapeHtml(image)}"
-                      alt="${escapeHtml(product.name)}"
-                      loading="lazy"
-                    >
-                  `
-                  : `
-                    <div class="abo-cart-item-placeholder">
-                      🛍️
-                    </div>
-                  `
-              }
-            </div>
+          return;
+        }
 
-            <div class="abo-cart-item-info">
-              <h3>
-                ${escapeHtml(product.name)}
-              </h3>
+        const remove =
+          event.target.closest(
+            "[data-cart-remove]"
+          );
 
-              ${
-                product.category
-                  ? `
-                    <span class="abo-cart-item-category">
-                      ${escapeHtml(product.category)}
-                    </span>
-                  `
-                  : ""
-              }
+        if (remove) {
 
-              ${
-                price > 0
-                  ? `
-                    <strong class="abo-cart-item-price">
-                      ${formatPrice(price)}
-                    </strong>
-                  `
-                  : `
-                    <span class="abo-cart-item-price">
-                      السعر عند الطلب
-                    </span>
-                  `
-              }
+          removeFromCart(
+            remove.dataset.cartRemove
+          );
 
-              <div class="abo-cart-item-controls">
-                <button
-                  type="button"
-                  data-cart-action="decrease"
-                  data-product-id="${escapeHtml(
-                    product.id
-                  )}"
-                  aria-label="تقليل الكمية"
-                >−</button>
+        }
 
-                <span>
-                  ${quantity}
-                </span>
+      }
+    );
 
-                <button
-                  type="button"
-                  data-cart-action="increase"
-                  data-product-id="${escapeHtml(
-                    product.id
-                  )}"
-                  aria-label="زيادة الكمية"
-                >+</button>
+    body.addEventListener(
+      "change",
+      event => {
 
-                <button
-                  type="button"
-                  class="abo-cart-remove"
-                  data-cart-action="remove"
-                  data-product-id="${escapeHtml(
-                    product.id
-                  )}"
-                >
-                  حذف
-                </button>
-              </div>
-            </div>
-          </article>
-        `;
-      })
-      .join("");
+        const input =
+          event.target.closest(
+            "[data-cart-quantity]"
+          );
 
-    const total =
-      getCartTotal();
+        if (!input) {
+          return;
+        }
 
-    footer.innerHTML = `
-      <div class="abo-cart-total">
-        <span>الإجمالي</span>
-        <strong>
-          ${
-            total > 0
-              ? formatPrice(total)
-              : "السعر عند الطلب"
-          }
-        </strong>
-      </div>
+        setCartQuantity(
+          input.dataset.cartQuantity,
+          input.value
+        );
 
-      <div class="abo-cart-actions">
-        <button
-          type="button"
-          class="abo-feature-btn abo-feature-btn-primary"
-          data-cart-whatsapp
-        >
-          طلب عبر واتساب
-        </button>
-
-        <button
-          type="button"
-          class="abo-feature-btn abo-feature-btn-secondary"
-          data-cart-clear
-        >
-          تفريغ السلة
-        </button>
-      </div>
-    `;
+      }
+    );
   }
 
   function openCart() {
-    const drawer =
-      ensureCartDrawer();
 
-    renderCartDrawer();
+    createCartDrawer();
 
-    const overlay =
-      document.querySelector(
-        ".abo-cart-overlay"
-      );
+    updateCartUI();
 
-    drawer.classList.add(
-      "is-open"
-    );
-
-    if (overlay) {
-      overlay.hidden = false;
-
-      requestAnimationFrame(() => {
-        overlay.classList.add(
-          "is-visible"
-        );
-      });
-    }
-
-    document.body.classList.add(
-      "abo-cart-open"
+    cartDrawer.classList.add(
+      "open"
     );
 
     document.body.classList.add(
-      "abo-scroll-locked"
+      "at-no-scroll"
     );
   }
 
   function closeCart() {
-    const drawer =
-      cartDrawer ||
-      document.querySelector(
-        ".abo-cart-drawer"
-      );
 
-    const overlay =
-      document.querySelector(
-        ".abo-cart-overlay"
-      );
-
-    if (drawer) {
-      drawer.classList.remove(
-        "is-open"
-      );
+    if (!cartDrawer) {
+      return;
     }
 
-    if (overlay) {
-      overlay.classList.remove(
-        "is-visible"
-      );
-
-      window.setTimeout(() => {
-        overlay.hidden = true;
-      }, 200);
-    }
-
-    document.body.classList.remove(
-      "abo-cart-open"
+    cartDrawer.classList.remove(
+      "open"
     );
 
     document.body.classList.remove(
-      "abo-scroll-locked"
+      "at-no-scroll"
     );
   }
 
-  function handleCartClick(event) {
-    const close =
-      event.target.closest(
-        "[data-cart-close]"
-      );
+  function renderCartFooter() {
 
-    if (close) {
-      closeCart();
-      return;
-    }
-
-    const actionButton =
-      event.target.closest(
-        "[data-cart-action]"
-      );
-
-    if (actionButton) {
-      const action =
-        actionButton.getAttribute(
-          "data-cart-action"
-        );
-
-      const productId =
-        actionButton.getAttribute(
-          "data-product-id"
-        );
-
-      if (action === "increase") {
-        updateCartQuantity(
-          productId,
-          1
-        );
-      }
-
-      if (action === "decrease") {
-        updateCartQuantity(
-          productId,
-          -1
-        );
-      }
-
-      if (action === "remove") {
-        removeFromCart(productId);
-      }
-
-      renderCartDrawer();
-      return;
-    }
-
-    if (
-      event.target.closest(
-        "[data-cart-clear]"
-      )
-    ) {
-      clearCart();
-      renderCartDrawer();
-      return;
-    }
-
-    if (
-      event.target.closest(
-        "[data-cart-whatsapp]"
-      )
-    ) {
-      openWhatsAppOrder();
-    }
-  }
-
-  function updateCartUI() {
-    updateCartCountElements();
-
-    if (cartDrawer) {
-      renderCartDrawer();
-    }
-  }
-
-  /* =========================================================
-     WHATSAPP
-     ========================================================= */
-
-  function getWhatsAppNumber() {
-    const value =
-      CFG.WHATSAPP_NUMBER ||
-      CFG.CONTACT?.whatsappNumber ||
-      CFG.DEFAULTS?.whatsappNumber ||
-      "201551604163";
-
-    const normalized =
-      String(value)
-        .replace(/\D/g, "")
-        .replace(/^00/, "");
-
-    if (
-      normalized.startsWith("01") &&
-      normalized.length === 11
-    ) {
-      return "20" + normalized;
-    }
-
-    if (
-      normalized.startsWith("1") &&
-      normalized.length === 10
-    ) {
-      return "20" + normalized;
-    }
-
-    return normalized;
-  }
-
-  function buildWhatsAppUrl(message) {
-    const number =
-      getWhatsAppNumber();
-
-    return (
-      "https://wa.me/" +
-      number +
-      "?text=" +
-      encodeURIComponent(message)
-    );
-  }
-
-  function buildCartMessage() {
-    const lines = [
-      "السلام عليكم، عايز أعمل طلب من أبو طارق للأدوات المنزلية.",
-      "",
-      "🛒 المنتجات:"
-    ];
-
-    cart.forEach((item, index) => {
-      const product =
-        item.product;
-
-      const quantity =
-        safeNumber(
-          item.quantity,
-          1
-        );
-
-      const price =
-        getProductPrice(product);
-
-      let line =
-        `${index + 1}) ${product.name} × ${quantity}`;
-
-      if (price > 0) {
-        line +=
-          ` — ${formatPrice(
-            price * quantity
-          )}`;
-      }
-
-      lines.push(line);
-    });
-
-    lines.push("");
+    const count =
+      getCartCount();
 
     const total =
       getCartTotal();
 
-    if (total > 0) {
-      lines.push(
-        `💰 الإجمالي التقريبي: ${formatPrice(total)}`
-      );
-    }
-
-    lines.push("");
-    lines.push(
-      "من فضلك أكدلي الطلب والتفاصيل."
-    );
-
-    return lines.join("\n");
-  }
-
-  function openWhatsAppOrder() {
     if (!cart.length) {
-      showToast(
-        "السلة فاضية",
-        "info"
-      );
 
-      return;
+      return `
+
+        <div class="at-cart-empty">
+
+          <div class="at-cart-empty-icon">
+            🛒
+          </div>
+
+          <strong>
+            السلة فاضية
+          </strong>
+
+          <span>
+            اختار المنتجات اللي عايزها وهتظهر هنا.
+          </span>
+
+        </div>
+
+      `;
+
     }
 
-    const url =
-      buildWhatsAppUrl(
-        buildCartMessage()
-      );
+    return `
 
-    window.open(
-      url,
-      "_blank",
-      "noopener,noreferrer"
-    );
+      <div class="at-cart-summary">
 
-    dispatch(
-      "abo-tarek:checkout",
-      {
-        cart: getCart(),
-        count: getCartCount(),
-        total: getCartTotal()
-      }
-    );
+        <div>
+          <span>
+            عدد المنتجات
+          </span>
+
+          <strong>
+            ${count}
+          </strong>
+        </div>
+
+        <div>
+          <span>
+            الإجمالي
+          </span>
+
+          <strong>
+            ${
+              total > 0
+                ? formatPrice(total)
+                : "حسب السعر"
+            }
+          </strong>
+        </div>
+
+      </div>
+
+      <button
+        type="button"
+        class="at-cart-checkout"
+        data-cart-checkout>
+
+        💬 إتمام الطلب عبر واتساب
+
+      </button>
+
+      <button
+        type="button"
+        class="at-cart-clear"
+        data-cart-clear>
+
+        تفريغ السلة
+
+      </button>
+
+    `;
   }
 
-  function openProductWhatsApp(
-    product,
-    quantity = 1
-  ) {
-    const normalized =
-      normalizeProduct(product);
+  function updateCartUI() {
 
-    if (!normalized) {
-      return;
-    }
+    createCartDrawer();
 
-    const price =
-      getProductPrice(normalized);
-
-    let message =
-      "السلام عليكم، عايز أستفسر عن المنتج ده من أبو طارق للأدوات المنزلية.\n\n";
-
-    message +=
-      "🛍️ المنتج: " +
-      normalized.name;
-
-    if (normalized.category) {
-      message +=
-        "\n📂 القسم: " +
-        normalized.category;
-    }
-
-    message +=
-      "\n🔢 الكمية: " +
-      Math.max(
-        1,
-        safeNumber(quantity, 1)
+    const body =
+      cartDrawer.querySelector(
+        "#atCartBody"
       );
 
-    if (price > 0) {
-      message +=
-        "\n💰 السعر: " +
-        formatPrice(price);
+    const footer =
+      cartDrawer.querySelector(
+        "#atCartFooter"
+      );
+
+    const countText =
+      cartDrawer.querySelector(
+        "#atCartCountText"
+      );
+
+    const count =
+      getCartCount();
+
+    if (countText) {
+
+      countText.textContent =
+        `${count} منتج`;
+
     }
 
-    const url =
-      buildWhatsAppUrl(message);
+    if (!cart.length) {
 
-    window.open(
-      url,
-      "_blank",
-      "noopener,noreferrer"
-    );
+      body.innerHTML =
+        renderCartFooter();
+
+      footer.innerHTML =
+        "";
+
+    } else {
+
+      body.innerHTML =
+        cart
+          .map(cartItemHTML)
+          .join("");
+
+      footer.innerHTML =
+        renderCartFooter();
+
+    }
+
+    const checkout =
+      cartDrawer.querySelector(
+        "[data-cart-checkout]"
+      );
+
+    if (checkout) {
+
+      checkout.onclick =
+        checkoutWhatsApp;
+
+    }
+
+    const clear =
+      cartDrawer.querySelector(
+        "[data-cart-clear]"
+      );
+
+    if (clear) {
+
+      clear.onclick =
+        clearCart;
+
+    }
+
+    updateCartButtons();
+  }
+
+  /* =========================================================
+     CART BUTTONS ON PAGE
+     ========================================================= */
+
+  function updateCartButtons() {
+
+    const count =
+      getCartCount();
+
+    document
+      .querySelectorAll(
+        "[data-cart-count]"
+      )
+      .forEach(element => {
+
+        element.textContent =
+          String(count);
+
+      });
+
+    document
+      .querySelectorAll(
+        "[data-cart-button]"
+      )
+      .forEach(button => {
+
+        button.setAttribute(
+          "aria-label",
+          `السلة ${count} منتج`
+        );
+
+      });
+  }
+
+  /* =========================================================
+     WISHLIST UI
+     ========================================================= */
+
+  function updateWishlistUI() {
+
+    document
+      .querySelectorAll(
+        "[data-wishlist-id]"
+      )
+      .forEach(button => {
+
+        const id =
+          button.dataset.wishlistId;
+
+        const active =
+          isInWishlist(id);
+
+        button.classList.toggle(
+          "active",
+          active
+        );
+
+        if (
+          button.tagName ===
+          "BUTTON"
+        ) {
+
+          button.setAttribute(
+            "aria-pressed",
+            active
+              ? "true"
+              : "false"
+          );
+
+          if (
+            button.textContent
+              .trim()
+              .includes("♡") ||
+            button.textContent
+              .trim()
+              .includes("♥")
+          ) {
+
+            button.textContent =
+              active
+                ? "♥"
+                : "♡";
+
+          }
+
+        }
+
+      });
+
+    document
+      .querySelectorAll(
+        "[data-wishlist-count]"
+      )
+      .forEach(element => {
+
+        element.textContent =
+          String(
+            wishlist.length
+          );
+
+      });
   }
 
   /* =========================================================
      PRODUCT MODAL
      ========================================================= */
 
-  function ensureProductModal() {
-    if (modal) {
-      return modal;
-    }
+  function createProductModal() {
 
-    modal =
-      document.querySelector(
-        ".abo-product-modal"
-      );
-
-    if (modal) {
-      return modal;
+    if (
+      document.getElementById(
+        "aboTarekProductModal"
+      )
+    ) {
+      return;
     }
 
     const overlay =
-      document.createElement("div");
+      document.createElement(
+        "div"
+      );
+
+    overlay.id =
+      "aboTarekProductModal";
 
     overlay.className =
-      "abo-product-modal";
+      "at-product-overlay";
 
     overlay.innerHTML = `
-      <div class="abo-product-modal-backdrop"></div>
 
       <div
-        class="abo-product-modal-dialog"
+        class="at-product-modal"
         role="dialog"
         aria-modal="true"
-        aria-label="تفاصيل المنتج"
-      >
+        aria-label="تفاصيل المنتج">
+
         <button
           type="button"
-          class="abo-product-modal-close"
-          data-modal-close
-          aria-label="إغلاق"
-        >×</button>
+          class="at-product-close"
+          data-close-product
+          aria-label="إغلاق">
+
+          ×
+
+        </button>
 
         <div
-          class="abo-product-modal-media"
-          data-modal-media
-        ></div>
+          id="atProductModalContent">
+        </div>
 
-        <div
-          class="abo-product-modal-content"
-          data-modal-content
-        ></div>
       </div>
+
     `;
 
     document.body.appendChild(
       overlay
     );
 
+    modal =
+      overlay;
+
     overlay.addEventListener(
       "click",
-      handleModalClick
+      event => {
+
+        if (
+          event.target ===
+          overlay
+        ) {
+          closeProductModal();
+        }
+
+        if (
+          event.target.closest(
+            "[data-close-product]"
+          )
+        ) {
+          closeProductModal();
+        }
+
+      }
     );
-
-    modal = overlay;
-
-    return modal;
   }
 
-  function renderProductModal(product) {
+  function openProductModal(
+    product
+  ) {
+
     const normalized =
       normalizeProduct(product);
 
-    if (!normalized) {
+    if (
+      !normalized
+    ) {
       return;
     }
 
-    const element =
-      ensureProductModal();
+    createProductModal();
 
-    modalProduct =
+    activeProduct =
       normalized;
 
-    modalQuantity = 1;
-
-    const media =
-      element.querySelector(
-        "[data-modal-media]"
-      );
+    modalQuantity =
+      1;
 
     const content =
-      element.querySelector(
-        "[data-modal-content]"
+      modal.querySelector(
+        "#atProductModalContent"
       );
 
     const image =
-      resolveImage(normalized);
+      normalized.image ||
+      "./assets/logo.png";
 
     const price =
-      getProductPrice(normalized);
+      getProductPrice(
+        normalized
+      );
 
-    const hasOldPrice =
-      normalized.oldPrice > 0 &&
-      price > 0 &&
-      normalized.oldPrice > price;
+    const oldPrice =
+      getOldPrice(
+        normalized
+      );
 
-    const favorite =
-      isInWishlist(normalized);
+    const inWishlist =
+      isInWishlist(
+        normalized.id
+      );
 
-    if (media) {
-      media.innerHTML = image
-        ? `
-          <img
-            src="${escapeHtml(image)}"
-            alt="${escapeHtml(
-              normalized.name
-            )}"
-          >
-        `
-        : `
-          <div class="abo-product-modal-placeholder">
-            🛍️
-          </div>
-        `;
-    }
+    content.innerHTML = `
 
-    if (content) {
-      content.innerHTML = `
-        <div class="abo-product-modal-top">
+      <div class="at-modal-product">
+
+        <div class="at-modal-image">
+
           ${
             normalized.isOffer
               ? `
-                <span class="abo-product-modal-badge">
-                  عرض خاص
+                <span class="at-modal-offer">
+                  عرض
                 </span>
               `
               : ""
           }
 
-          ${
-            normalized.category
-              ? `
-                <span class="abo-product-modal-category">
-                  ${escapeHtml(
-                    normalized.category
-                  )}
-                </span>
-              `
-              : ""
-          }
+          <button
+            type="button"
+            class="at-modal-wishlist ${
+              inWishlist
+                ? "active"
+                : ""
+            }"
+            data-modal-wishlist
+            aria-label="المفضلة">
+
+            ${
+              inWishlist
+                ? "♥"
+                : "♡"
+            }
+
+          </button>
+
+          <img
+            id="atModalMainImage"
+            src="${escapeHTML(image)}"
+            alt="${escapeHTML(normalized.name)}"
+            loading="eager"
+            decoding="async"
+            onerror="this.onerror=null;this.src='./assets/logo.png';">
+
         </div>
 
-        <h2>
-          ${escapeHtml(
-            normalized.name
-          )}
-        </h2>
-
         ${
-          normalized.description
+          normalized.images.length > 1
             ? `
-              <p class="abo-product-modal-description">
-                ${escapeHtml(
-                  normalized.description
-                )}
-              </p>
+              <div
+                class="at-modal-thumbnails">
+
+                ${normalized.images
+                  .map(
+                    (item, index) => `
+                      <button
+                        type="button"
+                        class="at-modal-thumb ${
+                          index === 0
+                            ? "active"
+                            : ""
+                        }"
+                        data-modal-image="${escapeHTML(item)}">
+
+                        <img
+                          src="${escapeHTML(item)}"
+                          alt="${escapeHTML(normalized.name)}"
+                          loading="lazy"
+                          decoding="async">
+
+                      </button>
+                    `
+                  )
+                  .join("")}
+
+              </div>
             `
             : ""
         }
 
-        <div class="abo-product-modal-price">
-          ${
-            price > 0
-              ? `
-                <strong>
-                  ${formatPrice(price)}
-                </strong>
-              `
-              : `
-                <strong>
-                  السعر عند الطلب
-                </strong>
-              `
-          }
+        <div class="at-modal-info">
+
+          <div class="at-modal-category">
+            ${escapeHTML(
+              normalized.category ||
+              "أبو طارق"
+            )}
+          </div>
+
+          <h2>
+            ${escapeHTML(
+              normalized.name
+            )}
+          </h2>
 
           ${
-            hasOldPrice
+            normalized.description
               ? `
-                <del>
-                  ${formatPrice(
-                    normalized.oldPrice
+                <p>
+                  ${escapeHTML(
+                    normalized.description
                   )}
-                </del>
+                </p>
               `
               : ""
           }
-        </div>
 
-        <div class="abo-product-modal-quantity">
-          <span>الكمية</span>
+          <div class="at-modal-price">
 
-          <div class="abo-inline-quantity">
-            <button
-              type="button"
-              data-modal-quantity="-1"
-              aria-label="تقليل"
-            >−</button>
-
-            <strong data-modal-qty>
-              1
-            </strong>
-
-            <button
-              type="button"
-              data-modal-quantity="1"
-              aria-label="زيادة"
-            >+</button>
-          </div>
-        </div>
-
-        <div class="abo-product-modal-actions">
-          <button
-            type="button"
-            class="abo-feature-btn abo-feature-btn-primary"
-            data-modal-add
-          >
-            🛒 أضف للسلة
-          </button>
-
-          <button
-            type="button"
-            class="abo-feature-btn abo-feature-btn-secondary"
-            data-modal-whatsapp
-          >
-            واتساب
-          </button>
-
-          <button
-            type="button"
-            class="abo-feature-btn abo-feature-btn-ghost ${
-              favorite ? "is-active" : ""
-            }"
-            data-modal-wishlist
-            aria-pressed="${
-              favorite ? "true" : "false"
-            }"
-          >
             ${
-              favorite
-                ? "♥ في المفضلة"
-                : "♡ أضف للمفضلة"
+              price !== null
+                ? `
+                  <strong>
+                    ${formatPrice(price)}
+                  </strong>
+                `
+                : `
+                  <strong>
+                    السعر عند الطلب
+                  </strong>
+                `
             }
-          </button>
+
+            ${
+              oldPrice !== null
+                ? `
+                  <del>
+                    ${formatPrice(oldPrice)}
+                  </del>
+                `
+                : ""
+            }
+
+          </div>
+
+          <div class="at-modal-quantity">
+
+            <span>
+              الكمية
+            </span>
+
+            <div>
+
+              <button
+                type="button"
+                data-modal-minus>
+                −
+              </button>
+
+              <input
+                id="atModalQuantity"
+                type="number"
+                value="1"
+                min="1"
+                max="${MAX_QUANTITY}"
+                inputmode="numeric">
+
+              <button
+                type="button"
+                data-modal-plus>
+                +
+              </button>
+
+            </div>
+
+          </div>
+
+          <div class="at-modal-actions">
+
+            <button
+              type="button"
+              class="at-modal-add"
+              data-modal-add>
+
+              🛒 إضافة للسلة
+
+            </button>
+
+            <button
+              type="button"
+              class="at-modal-whatsapp"
+              data-modal-whatsapp>
+
+              💬 واتساب
+
+            </button>
+
+          </div>
+
         </div>
 
-        <a
-          class="abo-product-modal-details"
-          href="product.html?id=${encodeURIComponent(
-            normalized.id
-          )}"
-        >
-          عرض صفحة المنتج كاملة
-        </a>
-      `;
-    }
-  }
+      </div>
 
-  function updateModalQuantityUI() {
-    if (!modal) {
-      return;
-    }
+    `;
 
-    const element =
-      modal.querySelector(
-        "[data-modal-qty]"
-      );
+    bindModalEvents();
 
-    if (element) {
-      element.textContent =
-        String(modalQuantity);
-    }
-  }
-
-  function handleModalClick(event) {
-    if (
-      event.target.closest(
-        ".abo-product-modal-backdrop"
-      ) ||
-      event.target.closest(
-        "[data-modal-close]"
-      )
-    ) {
-      closeProductModal();
-      return;
-    }
-
-    const quantityButton =
-      event.target.closest(
-        "[data-modal-quantity]"
-      );
-
-    if (quantityButton) {
-      const delta =
-        safeNumber(
-          quantityButton.getAttribute(
-            "data-modal-quantity"
-          ),
-          0
-        );
-
-      modalQuantity = Math.max(
-        1,
-        Math.min(
-          LIMITS.maxQuantity,
-          modalQuantity + delta
-        )
-      );
-
-      updateModalQuantityUI();
-      return;
-    }
-
-    if (
-      event.target.closest(
-        "[data-modal-add]"
-      )
-    ) {
-      if (modalProduct) {
-        addToCart(
-          modalProduct,
-          modalQuantity
-        );
-      }
-
-      return;
-    }
-
-    if (
-      event.target.closest(
-        "[data-modal-whatsapp]"
-      )
-    ) {
-      if (modalProduct) {
-        openProductWhatsApp(
-          modalProduct,
-          modalQuantity
-        );
-      }
-
-      return;
-    }
-
-    if (
-      event.target.closest(
-        "[data-modal-wishlist]"
-      )
-    ) {
-      if (modalProduct) {
-        toggleWishlist(
-          modalProduct
-        );
-
-        renderProductModal(
-          modalProduct
-        );
-      }
-    }
-  }
-
-  function openProductModal(product) {
-    const normalized =
-      normalizeProduct(product);
-
-    if (!normalized) {
-      return;
-    }
-
-    renderProductModal(
-      normalized
-    );
-
-    const element =
-      ensureProductModal();
-
-    element.classList.add(
-      "is-open"
+    modal.classList.add(
+      "open"
     );
 
     document.body.classList.add(
-      "abo-modal-open"
-    );
-
-    document.body.classList.add(
-      "abo-scroll-locked"
-    );
-
-    addRecentlyViewed(
-      normalized
+      "at-no-scroll"
     );
   }
 
   function closeProductModal() {
+
     if (!modal) {
       return;
     }
 
     modal.classList.remove(
-      "is-open"
+      "open"
     );
 
     document.body.classList.remove(
-      "abo-modal-open"
+      "at-no-scroll"
     );
 
-    if (
-      !document.querySelector(
-        ".abo-cart-drawer.is-open"
-      )
-    ) {
-      document.body.classList.remove(
-        "abo-scroll-locked"
-      );
-    }
-
-    modalProduct = null;
+    activeProduct =
+      null;
   }
 
-  /* =========================================================
-     GLOBAL UI HANDLERS
-     
-     IMPORTANT:
-     We intentionally DO NOT delegate product-card
-     add-to-cart or wishlist clicks here.
+  function bindModalEvents() {
 
-     app.js and sections.html call the public API directly.
-     This prevents double additions.
-     ========================================================= */
-
-  function handleGlobalClick(event) {
-    const cartTrigger =
-      event.target.closest(
-        "[data-cart-trigger]," +
-        "#cartTrigger," +
-        ".cart-trigger," +
-        ".open-cart"
-      );
-
-    if (cartTrigger) {
-      event.preventDefault();
-      openCart();
+    if (!modal) {
       return;
     }
 
-    const closeTrigger =
-      event.target.closest(
-        "[data-cart-close]"
+    const minus =
+      modal.querySelector(
+        "[data-modal-minus]"
       );
 
-    if (
-      closeTrigger &&
-      !event.target.closest(
-        ".abo-cart-drawer"
-      )
-    ) {
-      closeCart();
-      return;
-    }
-
-    const modalTrigger =
-      event.target.closest(
-        "[data-product-modal]"
+    const plus =
+      modal.querySelector(
+        "[data-modal-plus]"
       );
 
-    if (modalTrigger) {
-      event.preventDefault();
+    const input =
+      modal.querySelector(
+        "#atModalQuantity"
+      );
 
-      let product = null;
+    const add =
+      modal.querySelector(
+        "[data-modal-add]"
+      );
 
-      try {
-        const raw =
-          modalTrigger.getAttribute(
-            "data-product-modal"
-          );
+    const whatsapp =
+      modal.querySelector(
+        "[data-modal-whatsapp]"
+      );
 
-        if (raw) {
-          product =
-            JSON.parse(
-              raw
+    const wishlistButton =
+      modal.querySelector(
+        "[data-modal-wishlist]"
+      );
+
+    if (minus) {
+
+      minus.onclick =
+        () => {
+
+          modalQuantity =
+            Math.max(
+              1,
+              modalQuantity - 1
             );
-        }
-      } catch (error) {}
 
-      if (!product) {
-        const id =
-          modalTrigger.getAttribute(
-            "data-product-id"
+          if (input) {
+            input.value =
+              modalQuantity;
+          }
+
+        };
+
+    }
+
+    if (plus) {
+
+      plus.onclick =
+        () => {
+
+          modalQuantity =
+            Math.min(
+              MAX_QUANTITY,
+              modalQuantity + 1
+            );
+
+          if (input) {
+            input.value =
+              modalQuantity;
+          }
+
+        };
+
+    }
+
+    if (input) {
+
+      input.addEventListener(
+        "input",
+        () => {
+
+          let value =
+            Number(
+              input.value
+            );
+
+          if (
+            !Number.isFinite(value)
+          ) {
+            value = 1;
+          }
+
+          value =
+            Math.max(
+              1,
+              Math.min(
+                MAX_QUANTITY,
+                Math.floor(value)
+              )
+            );
+
+          modalQuantity =
+            value;
+
+          input.value =
+            value;
+
+        }
+      );
+
+    }
+
+    if (add) {
+
+      add.onclick =
+        () => {
+
+          if (
+            activeProduct
+          ) {
+
+            addToCart(
+              activeProduct,
+              modalQuantity
+            );
+
+            closeProductModal();
+
+          }
+
+        };
+
+    }
+
+    if (whatsapp) {
+
+      whatsapp.onclick =
+        () => {
+
+          if (
+            activeProduct
+          ) {
+
+            openProductWhatsApp(
+              activeProduct,
+              modalQuantity
+            );
+
+          }
+
+        };
+
+    }
+
+    if (wishlistButton) {
+
+      wishlistButton.onclick =
+        () => {
+
+          if (
+            !activeProduct
+          ) {
+            return;
+          }
+
+          toggleWishlist(
+            activeProduct
           );
 
-        product =
-          findProductAnywhere(id);
-      }
+          const active =
+            isInWishlist(
+              activeProduct.id
+            );
 
-      if (product) {
-        openProductModal(
-          product
-        );
-      }
+          wishlistButton.classList.toggle(
+            "active",
+            active
+          );
+
+          wishlistButton.textContent =
+            active
+              ? "♥"
+              : "♡";
+
+        };
+
     }
+
+    modal
+      .querySelectorAll(
+        "[data-modal-image]"
+      )
+      .forEach(button => {
+
+        button.addEventListener(
+          "click",
+          () => {
+
+            const image =
+              button.dataset
+                .modalImage;
+
+            const main =
+              modal.querySelector(
+                "#atModalMainImage"
+              );
+
+            if (
+              main &&
+              image
+            ) {
+
+              main.src =
+                image;
+
+            }
+
+            modal
+              .querySelectorAll(
+                ".at-modal-thumb"
+              )
+              .forEach(
+                item =>
+                  item.classList.remove(
+                    "active"
+                  )
+              );
+
+            button.classList.add(
+              "active"
+            );
+
+          }
+        );
+
+      });
   }
 
   /* =========================================================
-     PRODUCT LOOKUP
+     PRODUCT WHATSAPP
      ========================================================= */
 
-  function findProductAnywhere(id) {
-    const cleanId =
-      cleanText(id);
+  function openProductWhatsApp(
+    product,
+    quantity = 1
+  ) {
 
-    if (!cleanId) {
-      return null;
+    const normalized =
+      normalizeProduct(product);
+
+    if (!normalized) {
+      return;
     }
 
-    try {
-      const app =
-        window.ABO_TAREK_APP;
-
-      if (
-        app &&
-        typeof app.getProductById ===
-          "function"
-      ) {
-        const found =
-          app.getProductById(
-            cleanId
-          );
-
-        if (found) {
-          return normalizeProduct(
-            found
-          );
-        }
-      }
-
-      if (
-        app &&
-        Array.isArray(
-          app.products
+    const amount =
+      Math.max(
+        1,
+        Math.min(
+          MAX_QUANTITY,
+          Number(quantity) || 1
         )
-      ) {
-        const found =
-          app.products.find(
-            item =>
-              getProductId(item) ===
-              cleanId
+      );
+
+    const price =
+      getProductPrice(
+        normalized
+      );
+
+    const message =
+      [
+        "مرحبًا أبو طارق 👋",
+        "",
+        "أرغب في طلب:",
+        `المنتج: ${normalized.name}`,
+        `الكمية: ${amount}`,
+        price !== null
+          ? `السعر: ${formatPrice(price)}`
+          : "",
+        "",
+        "من موقع أبو طارق."
+      ]
+        .filter(Boolean)
+        .join("\n");
+
+    const url =
+      "https://wa.me/" +
+      WHATSAPP_NUMBER +
+      "?text=" +
+      encodeURIComponent(
+        message
+      );
+
+    window.open(
+      url,
+      "_blank",
+      "noopener"
+    );
+
+    emitFeatureEvent(
+      "checkout:product",
+      {
+        product: normalized,
+        quantity: amount
+      }
+    );
+  }
+
+  /* =========================================================
+     CART WHATSAPP
+     ========================================================= */
+
+  function checkoutWhatsApp() {
+
+    if (!cart.length) {
+
+      showToast(
+        "السلة فاضية"
+      );
+
+      return;
+    }
+
+    const lines = [];
+
+    lines.push(
+      "مرحبًا أبو طارق 👋"
+    );
+
+    lines.push("");
+
+    lines.push(
+      "أرغب في طلب المنتجات التالية:"
+    );
+
+    lines.push("");
+
+    cart.forEach(
+      (item, index) => {
+
+        const quantity =
+          Math.max(
+            1,
+            Number(item.quantity) || 1
           );
 
-        if (found) {
-          return normalizeProduct(
-            found
-          );
+        const price =
+          getProductPrice(item);
+
+        let line =
+          `${index + 1}. ${item.name} × ${quantity}`;
+
+        if (
+          price !== null
+        ) {
+
+          line +=
+            ` — ${formatPrice(price)}`;
+
         }
+
+        lines.push(line);
+
       }
-    } catch (error) {}
+    );
+
+    const total =
+      getCartTotal();
+
+    lines.push("");
+
+    if (total > 0) {
+
+      lines.push(
+        `الإجمالي التقريبي: ${formatPrice(total)}`
+      );
+
+    }
+
+    lines.push("");
+
+    lines.push(
+      "الطلب من موقع أبو طارق."
+    );
+
+    const url =
+      "https://wa.me/" +
+      WHATSAPP_NUMBER +
+      "?text=" +
+      encodeURIComponent(
+        lines.join("\n")
+      );
+
+    window.open(
+      url,
+      "_blank",
+      "noopener"
+    );
+
+    emitFeatureEvent(
+      "checkout:cart",
+      {
+        cart: cart.map(
+          item => ({
+            id: item.id,
+            quantity:
+              item.quantity
+          })
+        ),
+        total
+      }
+    );
+  }
+
+  /* =========================================================
+     GLOBAL EVENT BRIDGE
+     ========================================================= */
+
+  function emitFeatureEvent(
+    name,
+    detail
+  ) {
 
     try {
-      const cacheKeys = [
-        CFG.CACHE_KEYS?.products,
-        "abo_tarek_products_v14",
-        "abo_tarek_products_v13",
-        "abo_tarek_products_v12",
-        "abo_tarek_products_v11"
-      ].filter(Boolean);
 
-      for (const key of cacheKeys) {
-        const data =
-          readStorage(
-            key,
-            []
+      document.dispatchEvent(
+        new CustomEvent(
+          "abo:tarek:" + name,
+          {
+            detail
+          }
+        )
+      );
+
+    } catch (_) {}
+
+  }
+
+  /* =========================================================
+     GLOBAL PAGE EVENTS
+     ========================================================= */
+
+  function bindGlobalEvents() {
+
+    /*
+     * Cart buttons:
+     * data-cart-button
+     */
+
+    document.addEventListener(
+      "click",
+      event => {
+
+        const cartButton =
+          event.target.closest(
+            "[data-cart-button]"
           );
 
         if (
-          Array.isArray(data)
+          cartButton
         ) {
-          const found =
-            data.find(
-              item =>
-                getProductId(item) ===
-                cleanId
+
+          event.preventDefault();
+
+          openCart();
+
+          return;
+        }
+
+        /*
+         * Wishlist:
+         * data-wishlist-id
+         */
+
+        const wishlistButton =
+          event.target.closest(
+            "[data-wishlist-id]"
+          );
+
+        if (
+          wishlistButton
+        ) {
+
+          event.preventDefault();
+
+          const id =
+            wishlistButton.dataset
+              .wishlistId;
+
+          const product =
+            findProductFromDOM(
+              id,
+              wishlistButton
             );
 
-          if (found) {
-            return normalizeProduct(
-              found
+          if (product) {
+
+            toggleWishlist(
+              product
             );
+
           }
+
+          return;
         }
+
+        /*
+         * Product modal:
+         * data-product-modal
+         */
+
+        const modalButton =
+          event.target.closest(
+            "[data-product-modal]"
+          );
+
+        if (
+          modalButton
+        ) {
+
+          event.preventDefault();
+
+          const id =
+            modalButton.dataset
+              .productModal;
+
+          const product =
+            findProductFromDOM(
+              id,
+              modalButton
+            );
+
+          if (product) {
+
+            openProductModal(
+              product
+            );
+
+          }
+
+        }
+
       }
-    } catch (error) {}
+    );
+
+    /*
+     * Custom event bridge:
+     * Allows catalog pages to communicate
+     * without creating another cart system.
+     */
+
+    document.addEventListener(
+      "abo:tarek:add-to-cart",
+      event => {
+
+        const product =
+          event.detail?.product;
+
+        const quantity =
+          event.detail?.quantity ||
+          1;
+
+        if (product) {
+
+          addToCart(
+            product,
+            quantity
+          );
+
+        }
+
+      }
+    );
+
+    /*
+     * ESC closes overlays.
+     */
+
+    document.addEventListener(
+      "keydown",
+      event => {
+
+        if (
+          event.key !==
+          "Escape"
+        ) {
+          return;
+        }
+
+        closeCart();
+        closeProductModal();
+
+      }
+    );
+
+  }
+
+  /* =========================================================
+     DOM PRODUCT RECOVERY
+     ========================================================= */
+
+  function findProductFromDOM(
+    id,
+    element
+  ) {
+
+    /*
+     * First try product object
+     * exposed on the element.
+     */
+
+    if (
+      element &&
+      element._aboTarekProduct
+    ) {
+
+      return element
+        ._aboTarekProduct;
+
+    }
+
+    /*
+     * Try common global collections.
+     */
+
+    const collections = [
+      window.ABO_TAREK_PRODUCTS,
+      window.products,
+      window.PRODUCTS
+    ];
+
+    for (
+      const collection of collections
+    ) {
+
+      if (
+        !Array.isArray(
+          collection
+        )
+      ) {
+        continue;
+      }
+
+      const found =
+        collection.find(
+          item =>
+            String(
+              item?.id
+            ) ===
+            String(id)
+        );
+
+      if (found) {
+        return found;
+      }
+
+    }
+
+    /*
+     * If no product object is available,
+     * build the minimum product from card DOM.
+     */
+
+    if (element) {
+
+      const card =
+        element.closest(
+          "[data-product-id]"
+        );
+
+      if (card) {
+
+        const image =
+          card.querySelector(
+            "img"
+          );
+
+        const title =
+          card.querySelector(
+            ".catalog-product-name, .product-name, h2, h3"
+          );
+
+        const category =
+          card.querySelector(
+            ".catalog-product-category, .product-category"
+          );
+
+        if (title) {
+
+          return {
+
+            id,
+
+            name:
+              title.textContent
+                .trim(),
+
+            category:
+              category
+                ? category.textContent.trim()
+                : "",
+
+            image:
+              image
+                ? image.src
+                : "",
+
+            description:
+              "",
+
+            price:
+              null,
+
+            oldPrice:
+              null,
+
+            offerPrice:
+              null,
+
+            isOffer:
+              false,
+
+            images:
+              image
+                ? [image.src]
+                : []
+
+          };
+
+        }
+
+      }
+
+    }
 
     return null;
   }
 
   /* =========================================================
-     CART / WISHLIST BUTTON STATE
+     FEATURE API
      ========================================================= */
 
-  function refreshFeatureButtons() {
-    updateCartCountElements();
-    updateWishlistUI();
+  const API = {
+
+    addToCart,
+
+    removeFromCart,
+
+    changeCartQuantity,
+
+    setCartQuantity,
+
+    clearCart,
+
+    getCartCount,
+
+    getCartTotal,
+
+    getCart:
+      () =>
+        [...cart],
+
+    openCart,
+
+    closeCart,
+
+    addToWishlist,
+
+    removeFromWishlist,
+
+    toggleWishlist,
+
+    isInWishlist,
+
+    getWishlist:
+      () =>
+        [...wishlist],
+
+    openProduct:
+      openProductModal,
+
+    openProductModal,
+
+    closeProductModal,
+
+    openProductWhatsApp,
+
+    checkoutWhatsApp,
+
+    formatPrice,
+
+    getProductPrice
+
+  };
+
+  /*
+   * ONE GLOBAL OBJECT.
+   * Other files communicate with this only.
+   */
+
+  window.ABO_TAREK_FEATURES =
+    API;
+
+  /* =========================================================
+     CSS
+     ========================================================= */
+
+  function injectStyles() {
+
+    if (
+      document.getElementById(
+        "aboTarekFeaturesCSS"
+      )
+    ) {
+      return;
+    }
+
+    const style =
+      document.createElement(
+        "style"
+      );
+
+    style.id =
+      "aboTarekFeaturesCSS";
+
+    style.textContent = `
+
+      /* =====================================================
+         FEATURE GLOBAL
+         ===================================================== */
+
+      body.at-no-scroll {
+        overflow: hidden !important;
+      }
+
+      /* =====================================================
+         TOAST
+         ===================================================== */
+
+      .at-feature-toast {
+        position: fixed;
+
+        right: 50%;
+        bottom: 22px;
+
+        z-index: 100000;
+
+        transform:
+          translate(50%, 18px);
+
+        opacity: 0;
+
+        pointer-events: none;
+
+        padding:
+          10px 16px;
+
+        border:
+          1px solid rgba(212,175,55,.35);
+
+        border-radius: 999px;
+
+        background:
+          #071321;
+
+        color:
+          #f7f1e4;
+
+        box-shadow:
+          0 12px 35px rgba(0,0,0,.35);
+
+        font-family:
+          Cairo,
+          system-ui,
+          sans-serif;
+
+        font-size: 11px;
+        font-weight: 800;
+
+        transition:
+          opacity .2s ease,
+          transform .2s ease;
+      }
+
+      .at-feature-toast.show {
+        opacity: 1;
+
+        transform:
+          translate(50%, 0);
+      }
+
+      /* =====================================================
+         CART OVERLAY
+         ===================================================== */
+
+      .at-cart-overlay,
+      .at-product-overlay {
+
+        position: fixed;
+
+        inset: 0;
+
+        z-index: 99990;
+
+        display: flex;
+
+        background:
+          rgba(0,0,0,.65);
+
+        opacity: 0;
+
+        pointer-events: none;
+
+        transition:
+          opacity .22s ease;
+
+      }
+
+      .at-cart-overlay.open,
+      .at-product-overlay.open {
+
+        opacity: 1;
+
+        pointer-events: auto;
+
+      }
+
+      /* =====================================================
+         CART
+         ===================================================== */
+
+      .at-cart-overlay {
+
+        justify-content:
+          flex-start;
+
+      }
+
+      .at-cart-drawer {
+
+        width:
+          min(430px, 94vw);
+
+        height: 100%;
+
+        display: flex;
+        flex-direction: column;
+
+        background:
+          #071321;
+
+        border-left:
+          1px solid rgba(212,175,55,.18);
+
+        box-shadow:
+          -20px 0 60px rgba(0,0,0,.35);
+
+        transform:
+          translateX(-100%);
+
+        transition:
+          transform .25s ease;
+
+        direction: rtl;
+
+      }
+
+      .at-cart-overlay.open
+      .at-cart-drawer {
+
+        transform:
+          translateX(0);
+
+      }
+
+      .at-cart-header {
+
+        min-height: 76px;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content:
+          space-between;
+
+        gap: 12px;
+
+        padding:
+          14px 17px;
+
+        border-bottom:
+          1px solid rgba(212,175,55,.13);
+
+      }
+
+      .at-cart-title {
+
+        color:
+          #f7f1e4;
+
+        font-size:
+          18px;
+
+        font-weight:
+          900;
+
+      }
+
+      .at-cart-count {
+
+        margin-top:
+          2px;
+
+        color:
+          #d4af37;
+
+        font-size:
+          10px;
+
+        font-weight:
+          700;
+
+      }
+
+      .at-cart-close {
+
+        width: 39px;
+        height: 39px;
+
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+
+        border:
+          1px solid rgba(212,175,55,.18);
+
+        border-radius: 11px;
+
+        background:
+          rgba(255,255,255,.035);
+
+        color:
+          #f7f1e4;
+
+        cursor:
+          pointer;
+
+        font-size:
+          22px;
+
+      }
+
+      .at-cart-body {
+
+        flex: 1;
+
+        overflow-y: auto;
+
+        padding:
+          13px;
+
+      }
+
+      .at-cart-footer {
+
+        padding:
+          12px 13px;
+
+        border-top:
+          1px solid rgba(212,175,55,.13);
+
+      }
+
+      /* =====================================================
+         CART ITEM
+         ===================================================== */
+
+      .at-cart-item {
+
+        display: grid;
+
+        grid-template-columns:
+          66px minmax(0,1fr) auto;
+
+        gap: 9px;
+
+        margin-bottom:
+          9px;
+
+        padding:
+          9px;
+
+        border:
+          1px solid rgba(212,175,55,.12);
+
+        border-radius:
+          14px;
+
+        background:
+          rgba(255,255,255,.035);
+
+      }
+
+      .at-cart-item-image {
+
+        width: 66px;
+        height: 66px;
+
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+
+        overflow: hidden;
+
+        border-radius:
+          10px;
+
+        background:
+          #f7f1e4;
+
+      }
+
+      .at-cart-item-image img {
+
+        width: 100%;
+        height: 100%;
+
+        object-fit:
+          contain;
+
+        padding:
+          5px;
+
+      }
+
+      .at-cart-item-info {
+
+        min-width:
+          0;
+
+      }
+
+      .at-cart-item-name {
+
+        color:
+          #f7f1e4;
+
+        font-size:
+          11px;
+
+        line-height:
+          1.55;
+
+        font-weight:
+          800;
+
+        display:
+          -webkit-box;
+
+        -webkit-line-clamp:
+          2;
+
+        -webkit-box-orient:
+          vertical;
+
+        overflow:
+          hidden;
+
+      }
+
+      .at-cart-item-category {
+
+        margin-top:
+          2px;
+
+        color:
+          #8996a2;
+
+        font-size:
+          8px;
+
+      }
+
+      .at-cart-item-price {
+
+        margin-top:
+          3px;
+
+        color:
+          #d4af37;
+
+        font-size:
+          10px;
+
+        font-weight:
+          800;
+
+      }
+
+      .at-cart-item-side {
+
+        display:
+          flex;
+
+        flex-direction:
+          column;
+
+        align-items:
+          flex-end;
+
+        justify-content:
+          space-between;
+
+        gap:
+          5px;
+
+      }
+
+      .at-cart-item-side strong {
+
+        color:
+          #f7f1e4;
+
+        font-size:
+          9px;
+
+        white-space:
+          nowrap;
+
+      }
+
+      .at-cart-remove {
+
+        width:
+          27px;
+
+        height:
+          27px;
+
+        border:
+          1px solid rgba(255,255,255,.08);
+
+        border-radius:
+          8px;
+
+        background:
+          rgba(255,255,255,.025);
+
+        color:
+          #9ba6b0;
+
+        cursor:
+          pointer;
+
+        font-size:
+          17px;
+
+      }
+
+      /* =====================================================
+         CART QUANTITY
+         ===================================================== */
+
+      .at-cart-controls {
+
+        width:
+          106px;
+
+        height:
+          29px;
+
+        display:
+          grid;
+
+        grid-template-columns:
+          29px 1fr 29px;
+
+        margin-top:
+          6px;
+
+        overflow:
+          hidden;
+
+        border:
+          1px solid rgba(212,175,55,.15);
+
+        border-radius:
+          8px;
+
+      }
+
+      .at-cart-controls button {
+
+        border:
+          0;
+
+        background:
+          rgba(212,175,55,.07);
+
+        color:
+          #d4af37;
+
+        cursor:
+          pointer;
+
+        font-weight:
+          900;
+
+      }
+
+      .at-cart-controls input {
+
+        width:
+          100%;
+
+        min-width:
+          0;
+
+        border:
+          0;
+
+        outline:
+          0;
+
+        background:
+          transparent;
+
+        color:
+          #f7f1e4;
+
+        text-align:
+          center;
+
+        font-size:
+          9px;
+
+        font-weight:
+          800;
+
+      }
+
+      /* =====================================================
+         CART SUMMARY
+         ===================================================== */
+
+      .at-cart-summary {
+
+        display:
+          grid;
+
+        gap:
+          7px;
+
+        margin-bottom:
+          9px;
+
+      }
+
+      .at-cart-summary > div {
+
+        display:
+          flex;
+
+        align-items:
+          center;
+
+        justify-content:
+          space-between;
+
+        color:
+          #9ba6b0;
+
+        font-size:
+          10px;
+
+      }
+
+      .at-cart-summary strong {
+
+        color:
+          #d4af37;
+
+        font-size:
+          12px;
+
+      }
+
+      .at-cart-checkout {
+
+        width:
+          100%;
+
+        min-height:
+          45px;
+
+        border:
+          1px solid #d4af37;
+
+        border-radius:
+          11px;
+
+        background:
+          #d4af37;
+
+        color:
+          #071321;
+
+        cursor:
+          pointer;
+
+        font-size:
+          11px;
+
+        font-weight:
+          900;
+
+      }
+
+      .at-cart-clear {
+
+        width:
+          100%;
+
+        margin-top:
+          6px;
+
+        min-height:
+          35px;
+
+        border:
+          1px solid rgba(212,175,55,.13);
+
+        border-radius:
+          9px;
+
+        background:
+          transparent;
+
+        color:
+          #8996a2;
+
+        cursor:
+          pointer;
+
+        font-size:
+          9px;
+
+        font-weight:
+          700;
+
+      }
+
+      /* =====================================================
+         EMPTY
+         ===================================================== */
+
+      .at-cart-empty {
+
+        min-height:
+          270px;
+
+        display:
+          flex;
+
+        flex-direction:
+          column;
+
+        align-items:
+          center;
+
+        justify-content:
+          center;
+
+        text-align:
+          center;
+
+        color:
+          #8996a2;
+
+      }
+
+      .at-cart-empty-icon {
+
+        margin-bottom:
+          9px;
+
+        font-size:
+          35px;
+
+      }
+
+      .at-cart-empty strong {
+
+        color:
+          #f7f1e4;
+
+        font-size:
+          14px;
+
+      }
+
+      .at-cart-empty span {
+
+        margin-top:
+          5px;
+
+        font-size:
+          10px;
+
+      }
+
+      /* =====================================================
+         PRODUCT MODAL
+         ===================================================== */
+
+      .at-product-overlay {
+
+        align-items:
+          center;
+
+        justify-content:
+          center;
+
+        padding:
+          15px;
+
+        overflow-y:
+          auto;
+
+      }
+
+      .at-product-modal {
+
+        position:
+          relative;
+
+        width:
+          min(920px, 100%);
+
+        max-height:
+          calc(100vh - 30px);
+
+        overflow-y:
+          auto;
+
+        border:
+          1px solid rgba(212,175,55,.18);
+
+        border-radius:
+          20px;
+
+        background:
+          #f7f1e4;
+
+        color:
+          #071321;
+
+        box-shadow:
+          0 30px 90px rgba(0,0,0,.45);
+
+        direction:
+          rtl;
+
+      }
+
+      .at-product-close {
+
+        position:
+          absolute;
+
+        top:
+          11px;
+
+        left:
+          11px;
+
+        z-index:
+          10;
+
+        width:
+          39px;
+
+        height:
+          39px;
+
+        display:
+          flex;
+
+        align-items:
+          center;
+
+        justify-content:
+          center;
+
+        border:
+          1px solid rgba(7,19,33,.12);
+
+        border-radius:
+          50%;
+
+        background:
+          rgba(247,241,228,.93);
+
+        color:
+          #071321;
+
+        cursor:
+          pointer;
+
+        font-size:
+          22px;
+
+      }
+
+      .at-modal-product {
+
+        display:
+          grid;
+
+        grid-template-columns:
+          minmax(0, 1fr)
+          minmax(0, 1fr);
+
+        gap:
+          0;
+
+      }
+
+      .at-modal-image {
+
+        position:
+          relative;
+
+        min-height:
+          430px;
+
+        display:
+          flex;
+
+        align-items:
+          center;
+
+        justify-content:
+          center;
+
+        background:
+          #f7f1e4;
+
+        overflow:
+          hidden;
+
+        border-radius:
+          20px 0 0 20px;
+
+      }
+
+      .at-modal-image > img {
+
+        width:
+          100%;
+
+        height:
+          100%;
+
+        max-height:
+          520px;
+
+        padding:
+          30px;
+
+        object-fit:
+          contain;
+
+      }
+
+      .at-modal-offer {
+
+        position:
+          absolute;
+
+        top:
+          14px;
+
+        right:
+          14px;
+
+        z-index:
+          5;
+
+        padding:
+          5px 10px;
+
+        border-radius:
+          999px;
+
+        background:
+          #d4af37;
+
+        color:
+          #071321;
+
+        font-size:
+          10px;
+
+        font-weight:
+          900;
+
+      }
+
+      .at-modal-wishlist {
+
+        position:
+          absolute;
+
+        top:
+          12px;
+
+        left:
+          12px;
+
+        z-index:
+          5;
+
+        width:
+          40px;
+
+        height:
+          40px;
+
+        border:
+          1px solid rgba(7,19,33,.12);
+
+        border-radius:
+          50%;
+
+        background:
+          rgba(255,255,255,.8);
+
+        color:
+          #071321;
+
+        cursor:
+          pointer;
+
+        font-size:
+          18px;
+
+      }
+
+      .at-modal-wishlist.active {
+
+        color:
+          #b08c1c;
+
+      }
+
+      .at-modal-thumbnails {
+
+        position:
+          absolute;
+
+        left:
+          15px;
+
+        bottom:
+          15px;
+
+        z-index:
+          5;
+
+        display:
+          flex;
+
+        gap:
+          6px;
+
+        max-width:
+          calc(100% - 30px);
+
+        overflow-x:
+          auto;
+
+      }
+
+      .at-modal-thumb {
+
+        width:
+          53px;
+
+        height:
+          53px;
+
+        flex:
+          0 0 53px;
+
+        padding:
+          3px;
+
+        border:
+          1px solid rgba(7,19,33,.12);
+
+        border-radius:
+          8px;
+
+        background:
+          #f7f1e4;
+
+        cursor:
+          pointer;
+
+      }
+
+      .at-modal-thumb.active {
+
+        border-color:
+          #d4af37;
+
+      }
+
+      .at-modal-thumb img {
+
+        width:
+          100%;
+
+        height:
+          100%;
+
+        object-fit:
+          contain;
+
+      }
+
+      /* =====================================================
+         MODAL INFO
+         ===================================================== */
+
+      .at-modal-info {
+
+        padding:
+          34px 30px;
+
+        background:
+          #071321;
+
+        color:
+          #f7f1e4;
+
+        border-radius:
+          0 20px 20px 0;
+
+      }
+
+      .at-modal-category {
+
+        color:
+          #d4af37;
+
+        font-size:
+          11px;
+
+        font-weight:
+          800;
+
+      }
+
+      .at-modal-info h2 {
+
+        margin:
+          8px 0 0;
+
+        color:
+          #f7f1e4;
+
+        font-size:
+          clamp(22px, 4vw, 34px);
+
+        line-height:
+          1.4;
+
+      }
+
+      .at-modal-info p {
+
+        margin:
+          12px 0 0;
+
+        color:
+          #aeb9c4;
+
+        font-size:
+          12px;
+
+        line-height:
+          1.9;
+
+      }
+
+      .at-modal-price {
+
+        display:
+          flex;
+
+        align-items:
+          center;
+
+        flex-wrap:
+          wrap;
+
+        gap:
+          9px;
+
+        margin-top:
+          17px;
+
+      }
+
+      .at-modal-price strong {
+
+        color:
+          #d4af37;
+
+        font-size:
+          22px;
+
+        font-weight:
+          900;
+
+      }
+
+      .at-modal-price del {
+
+        color:
+          #84919d;
+
+        font-size:
+          11px;
+
+      }
+
+      /* =====================================================
+         MODAL QUANTITY
+         ===================================================== */
+
+      .at-modal-quantity {
+
+        margin-top:
+          17px;
+
+      }
+
+      .at-modal-quantity > span {
+
+        display:
+          block;
+
+        margin-bottom:
+          7px;
+
+        color:
+          #f7f1e4;
+
+        font-size:
+          11px;
+
+        font-weight:
+          800;
+
+      }
+
+      .at-modal-quantity > div {
+
+        width:
+          135px;
+
+        height:
+          41px;
+
+        display:
+          grid;
+
+        grid-template-columns:
+          38px 1fr 38px;
+
+        overflow:
+          hidden;
+
+        border:
+          1px solid rgba(212,175,55,.18);
+
+        border-radius:
+          10px;
+
+      }
+
+      .at-modal-quantity button {
+
+        border:
+          0;
+
+        background:
+          rgba(212,175,55,.07);
+
+        color:
+          #d4af37;
+
+        cursor:
+          pointer;
+
+        font-size:
+          17px;
+
+        font-weight:
+          900;
+
+      }
+
+      .at-modal-quantity input {
+
+        width:
+          100%;
+
+        border:
+          0;
+
+        outline:
+          0;
+
+        background:
+          transparent;
+
+        color:
+          #f7f1e4;
+
+        text-align:
+          center;
+
+        font-size:
+          12px;
+
+        font-weight:
+          800;
+
+      }
+
+      /* =====================================================
+         MODAL ACTIONS
+         ===================================================== */
+
+      .at-modal-actions {
+
+        display:
+          grid;
+
+        grid-template-columns:
+          1fr 1fr;
+
+        gap:
+          8px;
+
+        margin-top:
+          17px;
+
+      }
+
+      .at-modal-actions button {
+
+        min-height:
+          47px;
+
+        border-radius:
+          11px;
+
+        cursor:
+          pointer;
+
+        font-size:
+          11px;
+
+        font-weight:
+          900;
+
+      }
+
+      .at-modal-add {
+
+        border:
+          1px solid #d4af37;
+
+        background:
+          #d4af37;
+
+        color:
+          #071321;
+
+      }
+
+      .at-modal-whatsapp {
+
+        border:
+          1px solid rgba(212,175,55,.2);
+
+        background:
+          rgba(255,255,255,.035);
+
+        color:
+          #f7f1e4;
+
+      }
+
+      /* =====================================================
+         MOBILE
+         ===================================================== */
+
+      @media (max-width: 700px) {
+
+        .at-cart-drawer {
+
+          width:
+            min(430px, 96vw);
+
+        }
+
+        .at-product-overlay {
+
+          padding:
+            8px;
+
+          align-items:
+            flex-start;
+
+        }
+
+        .at-product-modal {
+
+          max-height:
+            calc(100vh - 16px);
+
+          border-radius:
+            16px;
+
+        }
+
+        .at-modal-product {
+
+          grid-template-columns:
+            1fr;
+
+        }
+
+        .at-modal-image {
+
+          min-height:
+            280px;
+
+          height:
+            70vw;
+
+          max-height:
+            390px;
+
+          border-radius:
+            16px 16px 0 0;
+
+        }
+
+        .at-modal-image > img {
+
+          padding:
+            18px;
+
+        }
+
+        .at-modal-info {
+
+          padding:
+            22px 17px;
+
+          border-radius:
+            0 0 16px 16px;
+
+        }
+
+        .at-modal-info h2 {
+
+          font-size:
+            23px;
+
+        }
+
+        .at-modal-actions {
+
+          grid-template-columns:
+            1fr;
+
+        }
+
+      }
+
+      @media (max-width: 420px) {
+
+        .at-cart-item {
+
+          grid-template-columns:
+            57px minmax(0,1fr) auto;
+
+        }
+
+        .at-cart-item-image {
+
+          width:
+            57px;
+
+          height:
+            57px;
+
+        }
+
+        .at-cart-item-name {
+
+          font-size:
+            10px;
+
+        }
+
+        .at-cart-controls {
+
+          width:
+            98px;
+
+        }
+
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+
+        .at-feature-toast,
+        .at-cart-overlay,
+        .at-cart-drawer,
+        .at-product-overlay {
+
+          transition:
+            none !important;
+
+        }
+
+      }
+
+    `;
+
+    document.head.appendChild(
+      style
+    );
   }
 
   /* =========================================================
@@ -1995,156 +3942,63 @@
      ========================================================= */
 
   function init() {
-    if (initialized) {
-      return;
-    }
 
-    initialized = true;
+    loadStorage();
 
-    loadState();
+    injectStyles();
 
-    document.addEventListener(
-      "click",
-      handleGlobalClick
-    );
+    createCartDrawer();
+
+    createProductModal();
+
+    bindGlobalEvents();
 
     updateCartUI();
-    refreshFeatureButtons();
 
-    dispatch(
-      "abo-tarek:features-ready",
-      {
-        cart: getCart(),
-        wishlist: getWishlist(),
-        recent: getRecentlyViewed()
-      }
-    );
+    updateWishlistUI();
+
+    /*
+     * Make current state available
+     * for analytics / other modules.
+     */
+
+    window.ABO_TAREK_CART =
+      cart;
+
+    window.ABO_TAREK_WISHLIST =
+      wishlist;
   }
 
-  /* =========================================================
-     PUBLIC API
-     ========================================================= */
-
-  const API = {
-    version: "final-stable-1.0.0",
-
-    /* Cart */
-    getCart,
-    getCartCount,
-    getCartTotal,
-    addToCart,
-    setCartQuantity,
-    updateCartQuantity,
-    removeFromCart,
-    clearCart,
-    openCart,
-    closeCart,
-
-    /* Wishlist */
-    getWishlist,
-    isInWishlist,
-    toggleWishlist,
-
-    /* Recently viewed */
-    addRecentlyViewed,
-    getRecentlyViewed,
-
-    /* Product */
-    openProductModal,
-    closeProductModal,
-
-    /* WhatsApp */
-    openWhatsAppOrder,
-    openProductWhatsApp,
-    buildWhatsAppUrl,
-    buildCartMessage,
-
-    /* UI */
-    showToast,
-    updateCartUI,
-    refreshFeatureButtons,
-
-    /* Utilities */
-    normalizeProduct,
-    getProductPrice,
-    formatPrice,
-    resolveImage
-  };
-
-  window.ABO_TAREK_FEATURES =
-    API;
-
-  /* Compatibility alias */
-  window.ABO_TAREK_CART =
-    API;
-
-  /* =========================================================
-     DOM READY
-     ========================================================= */
+  /*
+   * Run once only.
+   */
 
   if (
-    document.readyState ===
-    "loading"
+    !window.__ABO_TAREK_FEATURES_INITIALIZED
   ) {
-    document.addEventListener(
-      "DOMContentLoaded",
-      init,
-      {
-        once: true
-      }
-    );
-  } else {
-    init();
+
+    window.__ABO_TAREK_FEATURES_INITIALIZED =
+      true;
+
+    if (
+      document.readyState ===
+      "loading"
+    ) {
+
+      document.addEventListener(
+        "DOMContentLoaded",
+        init,
+        {
+          once: true
+        }
+      );
+
+    } else {
+
+      init();
+
+    }
+
   }
-
-  /* =========================================================
-     KEEP UI IN SYNC WHEN OTHER FILES UPDATE STATE
-     ========================================================= */
-
-  document.addEventListener(
-    "abo-tarek:cart-updated",
-    () => {
-      updateCartCountElements();
-
-      if (cartDrawer) {
-        renderCartDrawer();
-      }
-    }
-  );
-
-  document.addEventListener(
-    "abo-tarek:wishlist-updated",
-    () => {
-      updateWishlistUI();
-    }
-  );
-
-  window.addEventListener(
-    "storage",
-    event => {
-      if (
-        event.key ===
-        STORAGE.cart
-      ) {
-        loadState();
-        updateCartUI();
-      }
-
-      if (
-        event.key ===
-        STORAGE.wishlist
-      ) {
-        loadState();
-        updateWishlistUI();
-      }
-
-      if (
-        event.key ===
-        STORAGE.recent
-      ) {
-        loadState();
-      }
-    }
-  );
 
 })();
