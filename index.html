@@ -16,7 +16,8 @@
 
   <!-- =========================================================
        ABO TAREK STORE
-       HOMEPAGE — FINAL FOUNDATION
+       HOMEPAGE — DARK NAVY LUXURY
+       MOBILE MENU EDITION
        ========================================================= -->
 
   <title>أبو طارق للأدوات المنزلية | الموقع الرسمي في الإسكندرية</title>
@@ -209,13 +210,452 @@
 
   <link
     rel="stylesheet"
-    href="./style.css?v=6000"
+    href="./style.css?v=7000"
   >
 
   <link
     rel="stylesheet"
-    href="./features.css?v=6000"
+    href="./features.css?v=7000"
   >
+
+  <!-- =========================================================
+       MOBILE MENU EXTRA STYLES
+       ========================================================= -->
+
+  <style>
+
+    /* =======================================================
+       MOBILE MENU — DARK NAVY LUXURY
+       ======================================================= */
+
+    .mobile-menu {
+      position: fixed;
+      inset: 0;
+      z-index: 99990;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .mobile-menu.is-open {
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    .mobile-menu-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(2, 8, 15, .72);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      opacity: 0;
+      transition: opacity .25s ease;
+    }
+
+    .mobile-menu.is-open .mobile-menu-backdrop {
+      opacity: 1;
+    }
+
+    .mobile-menu-panel {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: min(88vw, 390px);
+      height: 100%;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      background:
+        radial-gradient(
+          circle at 100% 0%,
+          rgba(212,175,55,.11),
+          transparent 32%
+        ),
+        linear-gradient(
+          180deg,
+          #0a1b2d 0%,
+          #071321 48%,
+          #050e18 100%
+        );
+      border-left: 1px solid rgba(212,175,55,.22);
+      box-shadow: -20px 0 70px rgba(0,0,0,.42);
+      transform: translateX(105%);
+      transition: transform .3s cubic-bezier(.22,.61,.36,1);
+      padding: 18px;
+    }
+
+    .mobile-menu.is-open .mobile-menu-panel {
+      transform: translateX(0);
+    }
+
+    .mobile-menu-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid rgba(246,240,226,.09);
+    }
+
+    .mobile-menu-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 11px;
+      color: #f6f0e2;
+      text-decoration: none;
+      min-width: 0;
+    }
+
+    .mobile-menu-brand img {
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
+      border-radius: 12px;
+      flex: 0 0 auto;
+    }
+
+    .mobile-menu-brand span {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .mobile-menu-brand strong {
+      color: #f6f0e2;
+      font-size: 17px;
+      font-weight: 900;
+      line-height: 1.2;
+    }
+
+    .mobile-menu-brand small {
+      margin-top: 3px;
+      color: rgba(246,240,226,.62);
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    .mobile-menu-close {
+      width: 42px;
+      height: 42px;
+      border: 1px solid rgba(212,175,55,.3);
+      border-radius: 12px;
+      background: rgba(212,175,55,.08);
+      color: #d4af37;
+      font-size: 29px;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex: 0 0 auto;
+    }
+
+    .mobile-menu-welcome {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 18px 0 14px;
+      padding: 14px;
+      border-radius: 15px;
+      background: rgba(246,240,226,.045);
+      border: 1px solid rgba(246,240,226,.07);
+    }
+
+    .mobile-menu-welcome > span {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(212,175,55,.12);
+      color: #d4af37;
+      flex: 0 0 auto;
+    }
+
+    .mobile-menu-welcome div {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .mobile-menu-welcome strong {
+      color: #f6f0e2;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .mobile-menu-welcome small {
+      margin-top: 3px;
+      color: rgba(246,240,226,.56);
+      font-size: 10px;
+    }
+
+    .mobile-menu-links {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .mobile-menu-link {
+      width: 100%;
+      min-height: 52px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 13px;
+      border: 1px solid rgba(246,240,226,.06);
+      border-radius: 14px;
+      background: rgba(246,240,226,.035);
+      color: #f6f0e2;
+      text-decoration: none;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      text-align: right;
+      cursor: pointer;
+      transition:
+        background .2s ease,
+        border-color .2s ease,
+        transform .2s ease;
+    }
+
+    .mobile-menu-link:hover,
+    .mobile-menu-link:focus-visible {
+      background: rgba(212,175,55,.09);
+      border-color: rgba(212,175,55,.25);
+      outline: none;
+    }
+
+    .mobile-menu-link:active {
+      transform: scale(.985);
+    }
+
+    .mobile-menu-link.active {
+      background: linear-gradient(
+        135deg,
+        rgba(212,175,55,.15),
+        rgba(212,175,55,.055)
+      );
+      border-color: rgba(212,175,55,.28);
+    }
+
+    .mobile-menu-link.featured {
+      background:
+        linear-gradient(
+          135deg,
+          rgba(212,175,55,.18),
+          rgba(212,175,55,.06)
+        );
+      border-color: rgba(212,175,55,.34);
+    }
+
+    .mobile-menu-link-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255,255,255,.045);
+      flex: 0 0 auto;
+      font-size: 16px;
+    }
+
+    .mobile-menu-link > span:nth-child(2) {
+      flex: 1;
+    }
+
+    .mobile-menu-link b {
+      color: #d4af37;
+      font-size: 16px;
+      font-weight: 900;
+    }
+
+    .mobile-menu-button {
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    .mobile-menu-cart-count {
+      min-width: 25px;
+      height: 25px;
+      padding: 0 6px;
+      border-radius: 99px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #d4af37;
+      color: #071321;
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .mobile-menu-contact {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 15px;
+    }
+
+    .mobile-menu-contact-btn {
+      min-height: 47px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      border-radius: 13px;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 800;
+      border: 1px solid rgba(246,240,226,.08);
+    }
+
+    .mobile-menu-contact-btn.whatsapp {
+      background: rgba(37,211,102,.11);
+      border-color: rgba(37,211,102,.22);
+      color: #bff5d2;
+    }
+
+    .mobile-menu-contact-btn.phone {
+      background: rgba(212,175,55,.09);
+      border-color: rgba(212,175,55,.22);
+      color: #f6e8b5;
+    }
+
+    .mobile-menu-social {
+      margin-top: 21px;
+      padding-top: 17px;
+      border-top: 1px solid rgba(246,240,226,.08);
+    }
+
+    .mobile-menu-social-title {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      color: rgba(246,240,226,.7);
+      font-size: 10px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .mobile-menu-social-title i {
+      height: 1px;
+      flex: 1;
+      background: rgba(212,175,55,.2);
+    }
+
+    .mobile-social-links {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .mobile-social {
+      min-height: 62px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      border-radius: 13px;
+      border: 1px solid rgba(246,240,226,.07);
+      background: rgba(246,240,226,.035);
+      color: #f6f0e2;
+      text-decoration: none;
+    }
+
+    .mobile-social span {
+      font-size: 19px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .mobile-social small {
+      color: rgba(246,240,226,.56);
+      font-size: 8px;
+      font-weight: 700;
+    }
+
+    .mobile-social.facebook span {
+      color: #7da7ff;
+    }
+
+    .mobile-social.instagram span {
+      color: #f39abf;
+    }
+
+    .mobile-social.tiktok span {
+      color: #f6f0e2;
+    }
+
+    .mobile-menu-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 20px;
+      padding: 13px 2px 4px;
+      color: rgba(246,240,226,.45);
+      font-size: 9px;
+    }
+
+    .mobile-menu-footer span {
+      font-weight: 700;
+    }
+
+    .mobile-menu-footer small {
+      color: rgba(212,175,55,.6);
+    }
+
+    body.mobile-menu-open {
+      overflow: hidden;
+    }
+
+    @media (min-width: 651px) {
+
+      .mobile-menu {
+        display: none !important;
+      }
+
+    }
+
+    @media (max-width: 420px) {
+
+      .mobile-menu-panel {
+        width: min(92vw, 370px);
+        padding: 15px;
+      }
+
+      .mobile-menu-head {
+        padding-bottom: 15px;
+      }
+
+      .mobile-menu-brand strong {
+        font-size: 15px;
+      }
+
+      .mobile-menu-link {
+        min-height: 49px;
+        font-size: 12px;
+      }
+
+      .mobile-menu-welcome {
+        margin-top: 14px;
+      }
+
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+      .mobile-menu-backdrop,
+      .mobile-menu-panel,
+      .mobile-menu-link {
+        transition: none !important;
+      }
+
+    }
+
+  </style>
+
 
   <!-- =========================================================
        STRUCTURED DATA
@@ -337,6 +777,7 @@
 
 
 <body class="dark-luxury-home">
+
 
   <!-- =========================================================
        TOP STRIP
@@ -487,10 +928,13 @@
           id="menuBtn"
           type="button"
           aria-label="فتح القائمة"
-          aria-controls="mainNav"
+          aria-controls="mobileMenu"
           aria-expanded="false"
+          data-mobile-menu-toggle
         >
-          ☰
+          <span class="menu-icon" aria-hidden="true">
+            ☰
+          </span>
         </button>
 
       </div>
@@ -498,6 +942,402 @@
     </div>
 
   </header>
+
+
+  <!-- =========================================================
+       MOBILE MENU
+       ========================================================= -->
+
+  <aside
+    class="mobile-menu"
+    id="mobileMenu"
+    aria-hidden="true"
+  >
+
+    <div
+      class="mobile-menu-backdrop"
+      data-mobile-menu-close
+    ></div>
+
+    <div
+      class="mobile-menu-panel"
+      role="dialog"
+      aria-modal="true"
+      aria-label="قائمة أبو طارق"
+    >
+
+      <div class="mobile-menu-head">
+
+        <a
+          href="./"
+          class="mobile-menu-brand"
+          data-mobile-menu-close
+        >
+
+          <img
+            src="./assets/logo.png"
+            width="48"
+            height="48"
+            alt="أبو طارق للأدوات المنزلية"
+          >
+
+          <span>
+            <strong>أبو طارق</strong>
+            <small>للأدوات المنزلية</small>
+          </span>
+
+        </a>
+
+        <button
+          type="button"
+          class="mobile-menu-close"
+          aria-label="إغلاق القائمة"
+          data-mobile-menu-close
+        >
+          ×
+        </button>
+
+      </div>
+
+
+      <div class="mobile-menu-welcome">
+
+        <span>
+          ✦
+        </span>
+
+        <div>
+
+          <strong>
+            أهلاً بيك في أبو طارق
+          </strong>
+
+          <small>
+            كل احتياجات البيت في مكان واحد
+          </small>
+
+        </div>
+
+      </div>
+
+
+      <nav
+        class="mobile-menu-links"
+        aria-label="قائمة الموقع"
+      >
+
+        <a
+          href="./"
+          class="mobile-menu-link active"
+          data-mobile-menu-close
+        >
+
+          <span class="mobile-menu-link-icon">
+            🏠
+          </span>
+
+          <span>
+            الرئيسية
+          </span>
+
+          <b>
+            ←
+          </b>
+
+        </a>
+
+
+        <a
+          href="./sections.html"
+          class="mobile-menu-link featured"
+          data-mobile-menu-close
+        >
+
+          <span class="mobile-menu-link-icon">
+            🛍️
+          </span>
+
+          <span>
+            كل الأصناف
+          </span>
+
+          <b>
+            ←
+          </b>
+
+        </a>
+
+
+        <a
+          href="#offers"
+          class="mobile-menu-link"
+          data-mobile-menu-close
+        >
+
+          <span class="mobile-menu-link-icon">
+            🔥
+          </span>
+
+          <span>
+            العروض
+          </span>
+
+          <b>
+            ←
+          </b>
+
+        </a>
+
+
+        <button
+          type="button"
+          class="mobile-menu-link mobile-menu-button"
+          data-cart-button
+          data-mobile-menu-close
+        >
+
+          <span class="mobile-menu-link-icon">
+            🛒
+          </span>
+
+          <span>
+            السلة
+          </span>
+
+          <strong
+            class="mobile-menu-cart-count"
+            id="mobileMenuCartCount"
+          >
+            0
+          </strong>
+
+        </button>
+
+
+        <a
+          href="#categories"
+          class="mobile-menu-link"
+          data-mobile-menu-close
+        >
+
+          <span class="mobile-menu-link-icon">
+            🗂️
+          </span>
+
+          <span>
+            الأقسام
+          </span>
+
+          <b>
+            ←
+          </b>
+
+        </a>
+
+
+        <a
+          href="#branches"
+          class="mobile-menu-link"
+          data-mobile-menu-close
+        >
+
+          <span class="mobile-menu-link-icon">
+            📍
+          </span>
+
+          <span>
+            فروعنا
+          </span>
+
+          <b>
+            ←
+          </b>
+
+        </a>
+
+
+        <a
+          href="./about.html"
+          class="mobile-menu-link"
+          data-mobile-menu-close
+        >
+
+          <span class="mobile-menu-link-icon">
+            ℹ️
+          </span>
+
+          <span>
+            من نحن
+          </span>
+
+          <b>
+            ←
+          </b>
+
+        </a>
+
+
+        <a
+          href="./contact.html"
+          class="mobile-menu-link"
+          data-mobile-menu-close
+        >
+
+          <span class="mobile-menu-link-icon">
+            💬
+          </span>
+
+          <span>
+            تواصل معنا
+          </span>
+
+          <b>
+            ←
+          </b>
+
+        </a>
+
+      </nav>
+
+
+      <!-- QUICK CONTACT -->
+
+      <div class="mobile-menu-contact">
+
+        <a
+          href="https://wa.me/201551604163"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="mobile-menu-contact-btn whatsapp"
+          data-setting="whatsapp"
+        >
+
+          <span>
+            💬
+          </span>
+
+          <strong>
+            واتساب
+          </strong>
+
+        </a>
+
+
+        <a
+          href="tel:01223599165"
+          class="mobile-menu-contact-btn phone"
+          data-setting="phone1"
+        >
+
+          <span>
+            📞
+          </span>
+
+          <strong>
+            اتصال
+          </strong>
+
+        </a>
+
+      </div>
+
+
+      <!-- SOCIAL -->
+
+      <div class="mobile-menu-social">
+
+        <div class="mobile-menu-social-title">
+
+          <span>
+            تابعنا على السوشيال
+          </span>
+
+          <i></i>
+
+        </div>
+
+
+        <div class="mobile-social-links">
+
+          <a
+            href="https://www.facebook.com/profile.php?id=61587289863971"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="mobile-social facebook"
+            data-setting="facebook"
+            aria-label="فيسبوك"
+          >
+
+            <span>
+              f
+            </span>
+
+            <small>
+              Facebook
+            </small>
+
+          </a>
+
+
+          <a
+            href="https://www.instagram.com/abotarekstore/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="mobile-social instagram"
+            data-setting="instagram"
+            aria-label="إنستجرام"
+          >
+
+            <span>
+              ◎
+            </span>
+
+            <small>
+              Instagram
+            </small>
+
+          </a>
+
+
+          <a
+            href="https://www.tiktok.com/@abo.tarek.store2"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="mobile-social tiktok"
+            data-setting="tiktok"
+            aria-label="تيك توك"
+          >
+
+            <span>
+              ♪
+            </span>
+
+            <small>
+              TikTok
+            </small>
+
+          </a>
+
+        </div>
+
+      </div>
+
+
+      <div class="mobile-menu-footer">
+
+        <span>
+          ✦ أبو طارق للأدوات المنزلية
+        </span>
+
+        <small>
+          الإسكندرية
+        </small>
+
+      </div>
+
+    </div>
+
+  </aside>
 
 
   <!-- =========================================================
@@ -556,9 +1396,7 @@
   <main>
 
 
-    <!-- =======================================================
-         HERO
-         ======================================================= -->
+    <!-- HERO -->
 
     <section
       class="hero"
@@ -661,9 +1499,7 @@
     </section>
 
 
-    <!-- =======================================================
-         QUICK FEATURES
-         ======================================================= -->
+    <!-- QUICK FEATURES -->
 
     <section
       class="features-bar"
@@ -760,9 +1596,7 @@
     </section>
 
 
-    <!-- =======================================================
-         CATEGORIES
-         ======================================================= -->
+    <!-- CATEGORIES -->
 
     <section
       id="categories"
@@ -826,9 +1660,7 @@
     </section>
 
 
-    <!-- =======================================================
-         FEATURED OFFERS
-         ======================================================= -->
+    <!-- OFFERS -->
 
     <section
       id="offers"
@@ -881,9 +1713,7 @@
     </section>
 
 
-    <!-- =======================================================
-         LATEST / FEATURED PRODUCTS
-         ======================================================= -->
+    <!-- PRODUCTS -->
 
     <section
       id="products"
@@ -943,8 +1773,6 @@
         </div>
 
 
-        <!-- IMPORTANT CTA -->
-
         <div class="catalog-cta">
 
           <div class="catalog-cta-content">
@@ -977,9 +1805,7 @@
     </section>
 
 
-    <!-- =======================================================
-         RECENTLY VIEWED
-         ======================================================= -->
+    <!-- RECENTLY VIEWED -->
 
     <section
       id="recentlyViewed"
@@ -1027,9 +1853,7 @@
     </section>
 
 
-    <!-- =======================================================
-         ABOUT
-         ======================================================= -->
+    <!-- ABOUT -->
 
     <section
       id="about"
@@ -1078,51 +1902,23 @@
           <div class="about-highlight">
 
             <div class="about-highlight-item">
-
-              <strong>
-                🏠
-              </strong>
-
-              <span>
-                احتياجات البيت
-              </span>
-
+              <strong>🏠</strong>
+              <span>احتياجات البيت</span>
             </div>
 
             <div class="about-highlight-item">
-
-              <strong>
-                🍳
-              </strong>
-
-              <span>
-                أدوات المطبخ
-              </span>
-
+              <strong>🍳</strong>
+              <span>أدوات المطبخ</span>
             </div>
 
             <div class="about-highlight-item">
-
-              <strong>
-                ☕
-              </strong>
-
-              <span>
-                شاي وقهوة
-              </span>
-
+              <strong>☕</strong>
+              <span>شاي وقهوة</span>
             </div>
 
             <div class="about-highlight-item">
-
-              <strong>
-                🍽️
-              </strong>
-
-              <span>
-                سفرة وتقديم
-              </span>
-
+              <strong>🍽️</strong>
+              <span>سفرة وتقديم</span>
             </div>
 
           </div>
@@ -1134,9 +1930,7 @@
     </section>
 
 
-    <!-- =======================================================
-         BRANCHES
-         ======================================================= -->
+    <!-- BRANCHES -->
 
     <section
       id="branches"
@@ -1173,8 +1967,6 @@
         <div class="branches-grid">
 
 
-          <!-- BRANCH 1 -->
-
           <a
             href="https://maps.app.goo.gl/eSGccYFsFV8KmgCF7"
             target="_blank"
@@ -1208,8 +2000,6 @@
 
           </a>
 
-
-          <!-- BRANCH 2 -->
 
           <a
             href="https://maps.app.goo.gl/UuSj8ifqPBFMFxDY6"
@@ -1252,9 +2042,7 @@
     </section>
 
 
-    <!-- =======================================================
-         WHY ABO TAREK
-         ======================================================= -->
+    <!-- WHY US -->
 
     <section
       id="why-us"
@@ -1362,9 +2150,7 @@
     </section>
 
 
-    <!-- =======================================================
-         CONTACT CTA
-         ======================================================= -->
+    <!-- CONTACT -->
 
     <section
       id="contact"
@@ -1446,10 +2232,6 @@
       <div class="footer-inner">
 
 
-        <!-- ===================================================
-             BRAND
-             =================================================== -->
-
         <div class="footer-brand">
 
           <a
@@ -1486,8 +2268,6 @@
             وشاي وقهوة وأواني طهي وميلامين في الإسكندرية.
           </p>
 
-
-          <!-- COMPACT SOCIAL -->
 
           <div
             class="footer-social"
@@ -1598,10 +2378,6 @@
         </div>
 
 
-        <!-- ===================================================
-             QUICK LINKS
-             =================================================== -->
-
         <div class="footer-col">
 
           <h4>
@@ -1626,10 +2402,6 @@
 
         </div>
 
-
-        <!-- ===================================================
-             CONTACT
-             =================================================== -->
 
         <div class="footer-col">
 
@@ -1660,18 +2432,12 @@
             📞 01222474380
           </a>
 
-          <a
-            href="./contact.html"
-          >
+          <a href="./contact.html">
             جميع وسائل التواصل ←
           </a>
 
         </div>
 
-
-        <!-- ===================================================
-             BRANCHES / INFO
-             =================================================== -->
 
         <div class="footer-col">
 
@@ -1699,10 +2465,6 @@
 
       </div>
 
-
-      <!-- =====================================================
-           FOOTER BOTTOM
-           ===================================================== -->
 
       <div class="footer-bottom">
 
@@ -1779,29 +2541,362 @@
        JAVASCRIPT
        ========================================================= -->
 
-  <script
-    src="./config.js?v=6000"
-  ></script>
+  <script src="./config.js?v=7000"></script>
 
-  <script
-    src="./features.js?v=6000"
-    defer
-  ></script>
+  <script src="./features.js?v=7000" defer></script>
 
-  <script
-    src="./app.js?v=6000"
-    defer
-  ></script>
+  <script src="./app.js?v=7000" defer></script>
 
-  <script
-    src="./analytics.js?v=6000"
-    defer
-  ></script>
+  <script src="./analytics.js?v=7000" defer></script>
 
-  <script
-    src="./pwa.js?v=6000"
-    defer
-  ></script>
+  <script src="./pwa.js?v=7000" defer></script>
+
+
+  <!-- =========================================================
+       MOBILE MENU CONTROLLER
+       ========================================================= -->
+
+  <script>
+
+    (function () {
+
+      "use strict";
+
+      function initAboTarekMobileMenu() {
+
+        const menu =
+          document.getElementById("mobileMenu");
+
+        const button =
+          document.getElementById("menuBtn");
+
+        const cartCount =
+          document.getElementById(
+            "mobileMenuCartCount"
+          );
+
+        if (!menu || !button) {
+          return;
+        }
+
+
+        const closeElements =
+          menu.querySelectorAll(
+            "[data-mobile-menu-close]"
+          );
+
+
+        function isMobile() {
+
+          return window.innerWidth <= 650;
+
+        }
+
+
+        function updateCartCount() {
+
+          if (!cartCount) {
+            return;
+          }
+
+          try {
+
+            const features =
+              window.ABO_TAREK_FEATURES;
+
+            if (
+              features &&
+              typeof features.getCartCount === "function"
+            ) {
+
+              const count =
+                Number(
+                  features.getCartCount() || 0
+                );
+
+              cartCount.textContent =
+                count > 99
+                  ? "99+"
+                  : String(count);
+
+              return;
+
+            }
+
+
+            const raw =
+              localStorage.getItem(
+                "abo_tarek_cart_v1"
+              );
+
+            if (!raw) {
+
+              cartCount.textContent = "0";
+              return;
+
+            }
+
+
+            const cart =
+              JSON.parse(raw);
+
+            let count = 0;
+
+            if (Array.isArray(cart)) {
+
+              cart.forEach(function (item) {
+
+                count +=
+                  Number(item.quantity || 1);
+
+              });
+
+            } else if (
+              cart &&
+              typeof cart === "object"
+            ) {
+
+              Object.values(cart).forEach(
+                function (item) {
+
+                  count +=
+                    Number(item.quantity || 1);
+
+                }
+              );
+
+            }
+
+            cartCount.textContent =
+              count > 99
+                ? "99+"
+                : String(count);
+
+          } catch (error) {
+
+            cartCount.textContent = "0";
+
+          }
+
+        }
+
+
+        function openMenu() {
+
+          if (!isMobile()) {
+            return;
+          }
+
+          menu.classList.add("is-open");
+
+          menu.setAttribute(
+            "aria-hidden",
+            "false"
+          );
+
+          button.setAttribute(
+            "aria-expanded",
+            "true"
+          );
+
+          button.setAttribute(
+            "aria-label",
+            "إغلاق القائمة"
+          );
+
+          button.classList.add("is-open");
+
+          document.body.classList.add(
+            "mobile-menu-open"
+          );
+
+          updateCartCount();
+
+        }
+
+
+        function closeMenu() {
+
+          menu.classList.remove("is-open");
+
+          menu.setAttribute(
+            "aria-hidden",
+            "true"
+          );
+
+          button.setAttribute(
+            "aria-expanded",
+            "false"
+          );
+
+          button.setAttribute(
+            "aria-label",
+            "فتح القائمة"
+          );
+
+          button.classList.remove("is-open");
+
+          document.body.classList.remove(
+            "mobile-menu-open"
+          );
+
+        }
+
+
+        function toggleMenu(event) {
+
+          if (event) {
+
+            event.preventDefault();
+            event.stopPropagation();
+
+          }
+
+          if (
+            menu.classList.contains("is-open")
+          ) {
+
+            closeMenu();
+
+          } else {
+
+            openMenu();
+
+          }
+
+        }
+
+
+        button.addEventListener(
+          "click",
+          toggleMenu
+        );
+
+
+        closeElements.forEach(
+          function (element) {
+
+            element.addEventListener(
+              "click",
+              function () {
+
+                closeMenu();
+
+              }
+            );
+
+          }
+        );
+
+
+        menu
+          .querySelectorAll(
+            ".mobile-menu-link[href]"
+          )
+          .forEach(function (link) {
+
+            link.addEventListener(
+              "click",
+              function () {
+
+                closeMenu();
+
+              }
+            );
+
+          });
+
+
+        document.addEventListener(
+          "keydown",
+          function (event) {
+
+            if (
+              event.key === "Escape" &&
+              menu.classList.contains("is-open")
+            ) {
+
+              closeMenu();
+
+            }
+
+          }
+        );
+
+
+        window.addEventListener(
+          "resize",
+          function () {
+
+            if (
+              !isMobile() &&
+              menu.classList.contains("is-open")
+            ) {
+
+              closeMenu();
+
+            }
+
+          },
+          { passive: true }
+        );
+
+
+        window.addEventListener(
+          "storage",
+          updateCartCount
+        );
+
+
+        document.addEventListener(
+          "abo:tarek:cart",
+          updateCartCount
+        );
+
+
+        setTimeout(
+          updateCartCount,
+          500
+        );
+
+
+        setTimeout(
+          updateCartCount,
+          1500
+        );
+
+
+        /*
+         * Keep cart count fresh without touching
+         * the existing cart implementation.
+         */
+
+        setInterval(
+          updateCartCount,
+          3000
+        );
+
+      }
+
+
+      if (
+        document.readyState === "loading"
+      ) {
+
+        document.addEventListener(
+          "DOMContentLoaded",
+          initAboTarekMobileMenu
+        );
+
+      } else {
+
+        initAboTarekMobileMenu();
+
+      }
+
+    })();
+
+  </script>
 
 
 </body>
