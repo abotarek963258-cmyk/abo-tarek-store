@@ -1,8 +1,8 @@
 /* =========================================================
    ABO TAREK STORE
    ANALYTICS.JS
+   LIGHTWEIGHT UNIVERSAL TRACKING
    Google Analytics 4 + Facebook Pixel
-   DARK LUXURY / UNIVERSAL TRACKING EDITION
    ========================================================= */
 
 (function () {
@@ -13,50 +13,49 @@
      ========================================================= */
 
   const ROOT = window.ABO_TAREK || {};
-  const CFG = ROOT.CONFIG || window.ABO_TAREK_CONFIG || {};
+  const CFG =
+    ROOT.CONFIG ||
+    window.ABO_TAREK_CONFIG ||
+    {};
 
-  /*
-    ضع IDs هنا إذا كانت متوفرة.
+  const ANALYTICS =
+    CFG.ANALYTICS ||
+    {};
 
-    GA4 مثال:
-    const GA4_ID = "G-XXXXXXXXXX";
+  const GA4_ID = String(
+    ANALYTICS.GA4_ID ||
+    ANALYTICS.GA_ID ||
+    ""
+  ).trim();
 
-    Facebook Pixel مثال:
-    const FB_PIXEL_ID = "123456789012345";
-  */
-
-  const GA4_ID =
-    String(
-      CFG?.ANALYTICS?.GA4_ID ||
-      CFG?.ANALYTICS?.GA_ID ||
-      ""
-    ).trim();
-
-  const FB_PIXEL_ID =
-    String(
-      CFG?.ANALYTICS?.FB_PIXEL_ID ||
-      CFG?.ANALYTICS?.FACEBOOK_PIXEL_ID ||
-      ""
-    ).trim();
+  const FB_PIXEL_ID = String(
+    ANALYTICS.FB_PIXEL_ID ||
+    ANALYTICS.FACEBOOK_PIXEL_ID ||
+    ""
+  ).trim();
 
 
   /* =========================================================
-     INTERNAL STATE
+     STATE
      ========================================================= */
 
   const state = {
+    initialized: false,
     ga4: false,
     facebook: false,
-    initialized: false
+    pageViewSent: false
   };
 
 
   /* =========================================================
-     SAFE HELPERS
+     HELPERS
      ========================================================= */
 
   function cleanString(value, fallback = "") {
-    if (value === null || value === undefined) {
+    if (
+      value === null ||
+      value === undefined
+    ) {
       return fallback;
     }
 
@@ -74,6 +73,20 @@
 
 
   function normalizeProduct(product = {}) {
+    const price = safeNumber(
+      product.offerPrice ||
+      product.price ||
+      0
+    );
+
+    const quantity = Math.max(
+      1,
+      safeNumber(
+        product.quantity,
+        1
+      )
+    );
+
     return {
       item_id: cleanString(
         product.id ||
@@ -93,27 +106,27 @@
         ""
       ),
 
-      price: safeNumber(
-        product.offerPrice ||
-        product.price ||
-        0
-      ),
-
-      quantity: safeNumber(
-        product.quantity ||
-        1,
-        1
-      )
+      price,
+      quantity
     };
   }
 
 
   function getPageContext() {
     return {
-      page_title: document.title || "",
-      page_location: window.location.href,
-      page_path: window.location.pathname,
-      language: document.documentElement.lang || "ar",
+      page_title:
+        document.title || "",
+
+      page_location:
+        window.location.href,
+
+      page_path:
+        window.location.pathname,
+
+      language:
+        document.documentElement.lang ||
+        "ar",
+
       site_section:
         document.body?.dataset?.page ||
         ""
@@ -121,59 +134,131 @@
   }
 
 
+  function loadScript(src) {
+    return new Promise(function (resolve, reject) {
+
+      const existing =
+        document.querySelector(
+          'script[src="' + src + '"]'
+        );
+
+      if (existing) {
+        resolve(existing);
+        return;
+      }
+
+      const script =
+        document.createElement("script");
+
+      script.async = true;
+      script.src = src;
+
+      script.onload = function () {
+        resolve(script);
+      };
+
+      script.onerror = function () {
+        reject(
+          new Error(
+            "Analytics script failed"
+          )
+        );
+      };
+
+      document.head.appendChild(
+        script
+      );
+    });
+  }
+
+
   /* =========================================================
      GOOGLE ANALYTICS 4
      ========================================================= */
 
-  function initGA4() {
+  async function initGA4() {
+
     if (!GA4_ID) {
       return false;
     }
 
     try {
-      if (window.gtag && state.ga4) {
-        return true;
-      }
 
-      const existingScript = document.querySelector(
-        'script[src*="googletagmanager.com/gtag/js"]'
-      );
+      window.dataLayer =
+        window.dataLayer || [];
 
-      if (!existingScript) {
-        const script = document.createElement("script");
+      window.gtag =
+        window.gtag ||
+        function () {
+          window.dataLayer.push(
+            arguments
+          );
+        };
+
+
+      if (
+        !document.querySelector(
+          'script[data-abo-ga4="true"]'
+        )
+      ) {
+
+        const script =
+          document.createElement(
+            "script"
+          );
 
         script.async = true;
 
+        script.dataset.aboGa4 =
+          "true";
+
         script.src =
           "https://www.googletagmanager.com/gtag/js?id=" +
-          encodeURIComponent(GA4_ID);
+          encodeURIComponent(
+            GA4_ID
+          );
 
-        document.head.appendChild(script);
+        document.head.appendChild(
+          script
+        );
       }
 
-      window.dataLayer = window.dataLayer || [];
 
-      window.gtag = window.gtag || function () {
-        window.dataLayer.push(arguments);
-      };
+      window.gtag(
+        "js",
+        new Date()
+      );
 
-      window.gtag("js", new Date());
 
-      window.gtag("config", GA4_ID, {
-        page_title: document.title,
-        page_location: window.location.href,
-        language: document.documentElement.lang || "ar",
-        currency: "EGP",
-        send_page_view: true
-      });
+      window.gtag(
+        "config",
+        GA4_ID,
+        {
+          currency: "EGP",
+
+          language:
+            document.documentElement
+              .lang || "ar",
+
+          page_title:
+            document.title,
+
+          page_location:
+            window.location.href,
+
+          send_page_view: false
+        }
+      );
+
 
       state.ga4 = true;
 
       return true;
 
     } catch (error) {
+
       console.warn(
-        "⚠️ GA4 initialization error:",
+        "ABO TAREK GA4 error:",
         error
       );
 
@@ -186,28 +271,43 @@
      FACEBOOK PIXEL
      ========================================================= */
 
-  function initFacebookPixel() {
+  async function initFacebookPixel() {
+
     if (!FB_PIXEL_ID) {
       return false;
     }
 
     try {
-      if (window.fbq && state.facebook) {
-        return true;
-      }
 
       if (!window.fbq) {
-        (function (f, b, e, v, n, t, s) {
+
+        (function (
+          f,
+          b,
+          e,
+          v,
+          n,
+          t,
+          s
+        ) {
 
           if (f.fbq) {
             return;
           }
 
-          n = f.fbq = function () {
-            n.callMethod
-              ? n.callMethod.apply(n, arguments)
-              : n.queue.push(arguments);
-          };
+          n =
+            f.fbq =
+            function () {
+
+              n.callMethod
+                ? n.callMethod.apply(
+                    n,
+                    arguments
+                  )
+                : n.queue.push(
+                    arguments
+                  );
+            };
 
           if (!f._fbq) {
             f._fbq = n;
@@ -218,13 +318,20 @@
           n.version = "2.0";
           n.queue = [];
 
-          t = b.createElement(e);
+          t =
+            b.createElement(e);
+
           t.async = true;
+
           t.src = v;
 
-          s = b.getElementsByTagName(e)[0];
+          s =
+            b.getElementsByTagName(e)[0];
 
-          s.parentNode.insertBefore(t, s);
+          s.parentNode.insertBefore(
+            t,
+            s
+          );
 
         })(
           window,
@@ -234,16 +341,21 @@
         );
       }
 
-      window.fbq("init", FB_PIXEL_ID);
-      window.fbq("track", "PageView");
+
+      window.fbq(
+        "init",
+        FB_PIXEL_ID
+      );
+
 
       state.facebook = true;
 
       return true;
 
     } catch (error) {
+
       console.warn(
-        "⚠️ Facebook Pixel initialization error:",
+        "ABO TAREK Facebook Pixel error:",
         error
       );
 
@@ -257,26 +369,42 @@
      ========================================================= */
 
   const FB_EVENT_MAP = {
-    view_product: "ViewContent",
-    view_item: "ViewContent",
 
-    add_to_cart: "AddToCart",
+    view_product:
+      "ViewContent",
 
-    remove_from_cart: "RemoveFromCart",
+    view_item:
+      "ViewContent",
 
-    begin_checkout: "InitiateCheckout",
+    add_to_cart:
+      "AddToCart",
 
-    purchase: "Purchase",
+    remove_from_cart:
+      "RemoveFromCart",
 
-    contact: "Contact",
+    begin_checkout:
+      "InitiateCheckout",
 
-    search: "Search",
+    purchase:
+      "Purchase",
 
-    view_category: "ViewContent",
+    contact:
+      "Contact",
 
-    add_to_wishlist: "AddToWishlist",
+    search:
+      "Search",
 
-    share: "Share"
+    view_category:
+      "ViewContent",
+
+    add_to_wishlist:
+      "AddToWishlist",
+
+    share:
+      "Share",
+
+    social_click:
+      "Contact"
   };
 
 
@@ -284,23 +412,33 @@
      UNIVERSAL TRACK
      ========================================================= */
 
-  window.aboTrack = function (eventName, data = {}) {
+  function track(
+    eventName,
+    data = {}
+  ) {
 
-    const event = cleanString(
-      eventName,
-      "custom_event"
-    );
+    const event =
+      cleanString(
+        eventName,
+        "custom_event"
+      );
 
     const payload = {
       ...data,
       ...getPageContext()
     };
 
+
     try {
 
       /* ---------- GA4 ---------- */
 
-      if (window.gtag && state.ga4) {
+      if (
+        state.ga4 &&
+        typeof window.gtag ===
+          "function"
+      ) {
+
         window.gtag(
           "event",
           event,
@@ -311,7 +449,11 @@
 
       /* ---------- FACEBOOK ---------- */
 
-      if (window.fbq && state.facebook) {
+      if (
+        state.facebook &&
+        typeof window.fbq ===
+          "function"
+      ) {
 
         const facebookEvent =
           FB_EVENT_MAP[event] ||
@@ -327,58 +469,79 @@
     } catch (error) {
 
       console.warn(
-        "⚠️ Analytics tracking error:",
+        "ABO TAREK analytics tracking error:",
         error
       );
     }
-  };
+  }
 
 
   /* =========================================================
      PAGE VIEW
      ========================================================= */
 
-  window.aboTrackPageView = function () {
+  function trackPageView() {
 
-    try {
+    if (
+      state.pageViewSent
+    ) {
+      return;
+    }
 
-      const payload = getPageContext();
+    state.pageViewSent = true;
 
-      if (window.gtag && state.ga4) {
-        window.gtag(
-          "event",
-          "page_view",
-          payload
-        );
-      }
 
-      /*
-        Facebook PageView يتم إطلاقه أثناء initialization،
-        لذلك لا نعيده هنا لتجنب التكرار.
-      */
+    const payload =
+      getPageContext();
 
-    } catch (error) {
-      console.warn(
-        "⚠️ Page view tracking error:",
-        error
+
+    if (
+      state.ga4 &&
+      typeof window.gtag ===
+        "function"
+    ) {
+
+      window.gtag(
+        "event",
+        "page_view",
+        payload
       );
     }
-  };
+
+
+    if (
+      state.facebook &&
+      typeof window.fbq ===
+        "function"
+    ) {
+
+      window.fbq(
+        "track",
+        "PageView"
+      );
+    }
+  }
 
 
   /* =========================================================
      PRODUCT VIEW
      ========================================================= */
 
-  window.aboTrackProductView = function (product) {
+  function trackProductView(
+    product
+  ) {
 
     if (!product) {
       return;
     }
 
-    const item = normalizeProduct(product);
+    const item =
+      normalizeProduct(
+        product
+      );
 
-    window.aboTrack(
+
+    track(
       "view_product",
       {
         currency: "EGP",
@@ -387,23 +550,25 @@
 
         items: [item],
 
-        content_type: "product",
+        content_type:
+          "product",
 
         content_ids: [
           item.item_id
         ],
 
-        content_name: item.item_name
+        content_name:
+          item.item_name
       }
     );
-  };
+  }
 
 
   /* =========================================================
      ADD TO CART
      ========================================================= */
 
-  window.aboTrackAddToCart = function (
+  function trackAddToCart(
     product,
     quantity = 1
   ) {
@@ -412,12 +577,14 @@
       return;
     }
 
-    const item = normalizeProduct({
-      ...product,
-      quantity
-    });
+    const item =
+      normalizeProduct({
+        ...product,
+        quantity
+      });
 
-    window.aboTrack(
+
+    track(
       "add_to_cart",
       {
         currency: "EGP",
@@ -428,169 +595,200 @@
 
         items: [item],
 
-        content_type: "product",
+        content_type:
+          "product",
 
         content_ids: [
           item.item_id
         ],
 
-        content_name: item.item_name
+        content_name:
+          item.item_name
       }
     );
-  };
+  }
 
 
   /* =========================================================
      WISHLIST
      ========================================================= */
 
-  window.aboTrackWishlist = function (product) {
+  function trackWishlist(
+    product
+  ) {
 
     if (!product) {
       return;
     }
 
-    const item = normalizeProduct(product);
+    const item =
+      normalizeProduct(
+        product
+      );
 
-    window.aboTrack(
+
+    track(
       "add_to_wishlist",
       {
         currency: "EGP",
 
-        value: item.price,
+        value:
+          item.price,
 
         items: [item],
 
-        content_type: "product",
+        content_type:
+          "product",
 
         content_ids: [
           item.item_id
         ],
 
-        content_name: item.item_name
+        content_name:
+          item.item_name
       }
     );
-  };
+  }
 
 
   /* =========================================================
      SEARCH
      ========================================================= */
 
-  window.aboTrackSearch = function (searchTerm) {
+  function trackSearch(
+    searchTerm
+  ) {
 
-    const term = cleanString(searchTerm);
+    const term =
+      cleanString(
+        searchTerm
+      );
 
     if (!term) {
       return;
     }
 
-    window.aboTrack(
+    track(
       "search",
       {
         search_term: term
       }
     );
-  };
+  }
 
 
   /* =========================================================
-     CATEGORY VIEW
+     CATEGORY
      ========================================================= */
 
-  window.aboTrackCategory = function (category) {
+  function trackCategory(
+    category
+  ) {
 
-    const name = cleanString(category);
+    const name =
+      cleanString(
+        category
+      );
 
     if (!name) {
       return;
     }
 
-    window.aboTrack(
+    track(
       "view_category",
       {
-        item_category: name,
+        item_category:
+          name,
 
-        content_name: name
+        content_name:
+          name
       }
     );
-  };
+  }
 
 
   /* =========================================================
      SHARE
      ========================================================= */
 
-  window.aboTrackShare = function (
+  function trackShare(
     method = "unknown"
   ) {
 
-    window.aboTrack(
+    track(
       "share",
       {
-        method: cleanString(
-          method,
-          "unknown"
-        )
+        method:
+          cleanString(
+            method,
+            "unknown"
+          )
       }
     );
-  };
+  }
 
 
   /* =========================================================
      CONTACT
      ========================================================= */
 
-  window.aboTrackContact = function (
+  function trackContact(
     method = "unknown"
   ) {
 
-    window.aboTrack(
+    track(
       "contact",
       {
-        method: cleanString(
-          method,
-          "unknown"
-        )
+        method:
+          cleanString(
+            method,
+            "unknown"
+          )
       }
     );
-  };
+  }
 
 
   /* =========================================================
      CHECKOUT
      ========================================================= */
 
-  window.aboTrackCheckout = function (
+  function trackCheckout(
     items = [],
     value = 0
   ) {
 
     const normalizedItems =
       Array.isArray(items)
-        ? items.map(normalizeProduct)
+        ? items.map(
+            normalizeProduct
+          )
         : [];
 
-    window.aboTrack(
+
+    track(
       "begin_checkout",
       {
         currency: "EGP",
 
-        value: safeNumber(value),
+        value:
+          safeNumber(value),
 
-        items: normalizedItems,
+        items:
+          normalizedItems,
 
-        content_type: "product"
+        content_type:
+          "product"
       }
     );
-  };
+  }
 
 
   /* =========================================================
      PURCHASE
      ========================================================= */
 
-  window.aboTrackPurchase = function (
+  function trackPurchase(
     transactionId,
     items = [],
     value = 0
@@ -598,27 +796,34 @@
 
     const normalizedItems =
       Array.isArray(items)
-        ? items.map(normalizeProduct)
+        ? items.map(
+            normalizeProduct
+          )
         : [];
 
-    window.aboTrack(
+
+    track(
       "purchase",
       {
         transaction_id:
-          cleanString(transactionId),
+          cleanString(
+            transactionId
+          ),
 
         currency: "EGP",
 
-        value: safeNumber(value),
+        value:
+          safeNumber(value),
 
-        items: normalizedItems
+        items:
+          normalizedItems
       }
     );
-  };
+  }
 
 
   /* =========================================================
-     AUTO EVENTS
+     AUTOMATIC CLICK TRACKING
      ========================================================= */
 
   function bindAutomaticTracking() {
@@ -636,63 +841,92 @@
           return;
         }
 
+
         const href =
-          target.getAttribute("href") || "";
+          target.getAttribute(
+            "href"
+          ) || "";
+
 
         const text =
           cleanString(
             target.textContent
-          ).slice(0, 100);
+          ).slice(
+            0,
+            100
+          );
 
 
         /* WhatsApp */
 
         if (
-          href.includes("wa.me") ||
-          href.includes("whatsapp.com")
+          href.includes(
+            "wa.me"
+          ) ||
+          href.includes(
+            "whatsapp.com"
+          )
         ) {
-          window.aboTrackContact("whatsapp");
+
+          trackContact(
+            "whatsapp"
+          );
         }
 
 
         /* Phone */
 
         if (
-          href.startsWith("tel:")
+          href.startsWith(
+            "tel:"
+          )
         ) {
-          window.aboTrackContact("phone");
+
+          trackContact(
+            "phone"
+          );
         }
 
 
         /* Catalog */
 
         if (
-          href.includes("sections.html")
+          href.includes(
+            "sections.html"
+          )
         ) {
-          window.aboTrack(
-            "view_category",
-            {
-              content_name:
-                "كل الأصناف"
-            }
+
+          trackCategory(
+            "كل الأصناف"
           );
         }
 
 
-        /* External social links */
+        /* Social */
 
         if (
-          href.includes("facebook.com") ||
-          href.includes("instagram.com") ||
-          href.includes("tiktok.com")
+          href.includes(
+            "facebook.com"
+          ) ||
+          href.includes(
+            "instagram.com"
+          ) ||
+          href.includes(
+            "tiktok.com"
+          )
         ) {
-          window.aboTrack(
+
+          track(
             "social_click",
             {
               platform:
-                href.includes("facebook")
+                href.includes(
+                  "facebook"
+                )
                   ? "facebook"
-                  : href.includes("instagram")
+                  : href.includes(
+                      "instagram"
+                    )
                     ? "instagram"
                     : "tiktok"
             }
@@ -700,35 +934,41 @@
         }
 
 
-        /* Search buttons */
+        /* Search */
 
         if (
           target.matches(
             "#headerSearchBtn, #catalogSearchBtn"
           )
         ) {
+
           const input =
             document.querySelector(
               "#catalogSearch, #headerSearch"
             );
 
-          if (input?.value) {
-            window.aboTrackSearch(
+          if (
+            input?.value
+          ) {
+
+            trackSearch(
               input.value
             );
           }
         }
 
 
-        /* Share buttons */
+        /* Share */
 
         if (
           target.closest(
             "[data-share], .share-btn, .product-share"
           )
         ) {
-          window.aboTrackShare(
-            text || "share"
+
+          trackShare(
+            text ||
+            "share"
           );
         }
 
@@ -737,65 +977,83 @@
     );
 
 
-    /* Search input */
+    /* Search fields */
 
-    const searchInputs =
+    const inputs =
       document.querySelectorAll(
         "#catalogSearch, #headerSearch"
       );
 
-    searchInputs.forEach(function (input) {
 
-      let lastValue = "";
+    inputs.forEach(
+      function (input) {
 
-      input.addEventListener(
-        "change",
-        function () {
+        let lastValue =
+          "";
 
-          const value =
-            cleanString(input.value);
+        input.addEventListener(
+          "change",
+          function () {
 
-          if (
-            value &&
-            value !== lastValue
-          ) {
-            lastValue = value;
+            const value =
+              cleanString(
+                input.value
+              );
 
-            window.aboTrackSearch(
-              value
-            );
+            if (
+              value &&
+              value !== lastValue
+            ) {
+
+              lastValue =
+                value;
+
+              trackSearch(
+                value
+              );
+            }
           }
-        }
-      );
-
-    });
+        );
+      }
+    );
   }
 
 
   /* =========================================================
-     PRODUCT DATA EVENT
+     FEATURE EVENTS
      ========================================================= */
 
-  function bindProductEvents() {
+  function bindFeatureEvents() {
 
     document.addEventListener(
-      "abo:tarek:ready",
+      "abo-tarek:add-to-cart",
       function (event) {
 
-        const detail =
-          event.detail || {};
+        /*
+          app.js / features.js may already
+          call analytics directly.
 
-        if (
-          detail.products &&
-          Array.isArray(detail.products)
-        ) {
-          /*
-            لا نسجل مشاهدة المنتجات هنا،
-            حتى لا يتم احتساب كل المنتجات الموجودة
-            في الصفحة كمشاهدات.
-          */
-        }
+          This listener intentionally does
+          NOT track the event, preventing
+          duplicate AddToCart events.
+        */
 
+        return;
+      }
+    );
+
+
+    document.addEventListener(
+      "abo-tarek:wishlist",
+      function (event) {
+
+        /*
+          Reserved for future integration.
+          No automatic tracking here to avoid
+          duplicate Wishlist events.
+        */
+
+        return;
       }
     );
   }
@@ -805,28 +1063,163 @@
      INITIALIZATION
      ========================================================= */
 
-  function init() {
+  async function init() {
 
-    if (state.initialized) {
+    if (
+      state.initialized
+    ) {
       return;
     }
 
-    state.initialized = true;
+    state.initialized =
+      true;
 
-    initGA4();
-    initFacebookPixel();
+
+    /*
+      Analytics is intentionally initialized
+      asynchronously so it never becomes a
+      dependency for the store itself.
+    */
+
+    try {
+
+      await Promise.allSettled([
+        initGA4(),
+        initFacebookPixel()
+      ]);
+
+    } catch (error) {
+
+      console.warn(
+        "ABO TAREK analytics initialization warning:",
+        error
+      );
+    }
+
 
     bindAutomaticTracking();
-    bindProductEvents();
+    bindFeatureEvents();
 
-    console.log(
-      "✅ ABO TAREK analytics initialized",
-      {
-        ga4: state.ga4,
-        facebook: state.facebook
-      }
+
+    trackPageView();
+
+
+    window.dispatchEvent(
+      new CustomEvent(
+        "abo-tarek:analytics-ready",
+        {
+          detail:
+            getStatus()
+        }
+      )
     );
   }
+
+
+  /* =========================================================
+     STATUS
+     ========================================================= */
+
+  function getStatus() {
+
+    return {
+
+      ga4:
+        state.ga4,
+
+      facebook:
+        state.facebook,
+
+      ga4Id:
+        GA4_ID
+          ? "configured"
+          : "not configured",
+
+      facebookPixel:
+        FB_PIXEL_ID
+          ? "configured"
+          : "not configured",
+
+      initialized:
+        state.initialized
+    };
+  }
+
+
+  /* =========================================================
+     PUBLIC API
+     ========================================================= */
+
+  window.aboTrack =
+    track;
+
+  window.aboTrackPageView =
+    trackPageView;
+
+  window.aboTrackProductView =
+    trackProductView;
+
+  window.aboTrackAddToCart =
+    trackAddToCart;
+
+  window.aboTrackWishlist =
+    trackWishlist;
+
+  window.aboTrackSearch =
+    trackSearch;
+
+  window.aboTrackCategory =
+    trackCategory;
+
+  window.aboTrackShare =
+    trackShare;
+
+  window.aboTrackContact =
+    trackContact;
+
+  window.aboTrackCheckout =
+    trackCheckout;
+
+  window.aboTrackPurchase =
+    trackPurchase;
+
+
+  window.ABO_TAREK_ANALYTICS = {
+
+    init,
+
+    track,
+
+    productView:
+      trackProductView,
+
+    addToCart:
+      trackAddToCart,
+
+    wishlist:
+      trackWishlist,
+
+    search:
+      trackSearch,
+
+    category:
+      trackCategory,
+
+    share:
+      trackShare,
+
+    contact:
+      trackContact,
+
+    checkout:
+      trackCheckout,
+
+    purchase:
+      trackPurchase,
+
+    status:
+      getStatus
+  };
 
 
   /* =========================================================
@@ -834,7 +1227,8 @@
      ========================================================= */
 
   if (
-    document.readyState === "loading"
+    document.readyState ===
+    "loading"
   ) {
 
     document.addEventListener(
@@ -848,58 +1242,6 @@
   } else {
 
     init();
-
   }
-
-
-  /* =========================================================
-     PUBLIC API
-     ========================================================= */
-
-  window.ABO_TAREK_ANALYTICS = {
-    init,
-    track: window.aboTrack,
-
-    productView:
-      window.aboTrackProductView,
-
-    addToCart:
-      window.aboTrackAddToCart,
-
-    wishlist:
-      window.aboTrackWishlist,
-
-    search:
-      window.aboTrackSearch,
-
-    category:
-      window.aboTrackCategory,
-
-    share:
-      window.aboTrackShare,
-
-    contact:
-      window.aboTrackContact,
-
-    checkout:
-      window.aboTrackCheckout,
-
-    purchase:
-      window.aboTrackPurchase,
-
-    status: function () {
-      return {
-        ga4: state.ga4,
-        facebook: state.facebook,
-        ga4Id: GA4_ID
-          ? "configured"
-          : "not configured",
-        facebookPixel:
-          FB_PIXEL_ID
-            ? "configured"
-            : "not configured"
-      };
-    }
-  };
 
 })();
