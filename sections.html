@@ -1,6 +1,5 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
-
 <head>
   <meta charset="utf-8">
 
@@ -9,500 +8,1642 @@
     content="width=device-width,initial-scale=1,viewport-fit=cover"
   >
 
-  <meta name="theme-color" content="#071321">
+  <meta
+    name="theme-color"
+    content="#071321"
+  >
 
-  <title>كل الأصناف | أبو طارق للأدوات المنزلية في الإسكندرية</title>
+  <title>كل الأصناف | أبو طارق للأدوات المنزلية</title>
 
   <meta
     name="description"
-    content="تصفح كل أصناف ومنتجات أبو طارق للأدوات المنزلية في الإسكندرية. أدوات مطبخ، أواني طهي، سفرة، شاي وقهوة، أكواب وكاسات، ميلامين وأدوات منزلية."
-  >
-
-  <meta
-    name="keywords"
-    content="أبو طارق, أبو طارق للأدوات المنزلية, أدوات منزلية, أدوات مطبخ, أواني, أكواب, كاسات, شاي وقهوة, سفرة, ميلامين, الإسكندرية"
+    content="تصفح كل أصناف أبو طارق للأدوات المنزلية في الإسكندرية. أدوات مطبخ وسفرة وأكواب وكاسات وشاي وقهوة وأدوات منزلية."
   >
 
   <link
-    rel="canonical"
-    href="https://abotarek963258-cmyk.github.io/abo-tarek-store/sections.html"
+    rel="icon"
+    href="./assets/logo.png"
+    type="image/png"
   >
 
-  <meta property="og:type" content="website">
-  <meta property="og:locale" content="ar_EG">
-
-  <meta
-    property="og:title"
-    content="كل الأصناف | أبو طارق للأدوات المنزلية"
+  <link
+    rel="preconnect"
+    href="https://fonts.googleapis.com"
   >
 
-  <meta
-    property="og:description"
-    content="اكتشف جميع أقسام وأصناف أبو طارق للأدوات المنزلية."
+  <link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin
   >
-
-  <meta
-    property="og:url"
-    content="https://abotarek963258-cmyk.github.io/abo-tarek-store/sections.html"
-  >
-
-  <meta
-    property="og:image"
-    content="https://abotarek963258-cmyk.github.io/abo-tarek-store/assets/storefront.jpg"
-  >
-
-  <meta name="twitter:card" content="summary_large_image">
-
-  <meta
-    name="twitter:title"
-    content="كل الأصناف | أبو طارق للأدوات المنزلية"
-  >
-
-  <meta
-    name="twitter:description"
-    content="تصفح جميع أقسام وأصناف أبو طارق للأدوات المنزلية."
-  >
-
-  <meta
-    name="twitter:image"
-    content="https://abotarek963258-cmyk.github.io/abo-tarek-store/assets/storefront.jpg"
-  >
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
   <link
     href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap"
     rel="stylesheet"
   >
 
-  <link rel="stylesheet" href="./style.css?v=6001">
-  <link rel="stylesheet" href="./features.css?v=6001">
-
   <style>
     /* =====================================================
-       CATALOG PAGE
+       ABO TAREK
+       SECTIONS / CATALOG
+       DARK NAVY LUXURY — FINAL
        ===================================================== */
 
-    .catalog-page {
-      min-height: 100vh;
-      background:
-        radial-gradient(
-          circle at 80% 0%,
-          rgba(212,175,55,.055),
-          transparent 30%
-        ),
-        #071321;
+    :root {
+      --navy: #071321;
+      --navy-2: #0a1b2d;
+      --navy-3: #10263b;
+      --navy-4: #17344e;
+
+      --gold: #d4af37;
+      --gold-light: #f0d878;
+      --gold-soft: rgba(212,175,55,.12);
+
+      --cream: #f8f3e7;
+      --cream-2: #eee6d4;
+      --white: #ffffff;
+
+      --text: #182331;
+      --muted: #6d7884;
+
+      --border: rgba(212,175,55,.22);
+      --border-dark: rgba(255,255,255,.08);
+
+      --shadow:
+        0 18px 50px rgba(0,0,0,.16);
+
+      --radius: 18px;
+      --radius-small: 12px;
+
+      --container: 1240px;
     }
 
-    .catalog-hero {
-      position: relative;
-      overflow: hidden;
-      padding: 58px 0 42px;
-      border-bottom: 1px solid rgba(212,175,55,.12);
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+
+      font-family:
+        "Cairo",
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
       background:
         linear-gradient(
-          135deg,
-          rgba(16,40,61,.92),
-          rgba(7,19,33,.98)
+          180deg,
+          #071321 0,
+          #091827 330px,
+          #f7f2e8 700px,
+          #f7f2e8 100%
         );
+
+      color: var(--text);
+      overflow-x: hidden;
     }
 
-    .catalog-hero::before {
-      content: "";
-      position: absolute;
-      width: 420px;
-      height: 420px;
-      top: -220px;
-      left: -120px;
-      border-radius: 50%;
-      background: rgba(212,175,55,.055);
-      pointer-events: none;
+    body.modal-open,
+    body.menu-open {
+      overflow: hidden;
     }
 
-    .catalog-hero-inner {
-      position: relative;
-      z-index: 1;
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    img {
+      max-width: 100%;
+    }
+
+    .container {
+      width: min(
+        calc(100% - 32px),
+        var(--container)
+      );
+
+      margin-inline: auto;
+    }
+
+    /* =====================================================
+       TOP BAR
+       ===================================================== */
+
+    .top-strip {
+      min-height: 38px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      padding: 7px 16px;
+
+      background:
+        linear-gradient(
+          90deg,
+          #071321,
+          #0e2439,
+          #071321
+        );
+
+      border-bottom:
+        1px solid
+        rgba(212,175,55,.16);
+
+      color: var(--cream);
+
+      font-size: 12px;
+      font-weight: 700;
+
       text-align: center;
     }
 
-    .catalog-kicker {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 7px 13px;
-      margin-bottom: 13px;
-      color: #f0d77a;
-      border: 1px solid rgba(212,175,55,.18);
-      border-radius: 999px;
-      background: rgba(212,175,55,.06);
-      font-size: 12px;
-      font-weight: 800;
-    }
-
-    .catalog-title {
-      margin: 0;
-      color: #f7f1e5;
-      font-size: clamp(30px, 5vw, 50px);
-      line-height: 1.25;
-      font-weight: 950;
-    }
-
-    .catalog-title span {
-      color: #d4af37;
-    }
-
-    .catalog-description {
-      max-width: 700px;
-      margin: 14px auto 0;
-      color: rgba(247,241,229,.63);
-      font-size: 14px;
-      line-height: 2;
+    .top-strip span {
+      color: var(--gold-light);
     }
 
     /* =====================================================
-       SEARCH
+       HEADER
        ===================================================== */
 
-    .catalog-tools {
+    .site-header {
       position: sticky;
       top: 0;
-      z-index: 50;
-      padding: 14px 0;
-      background: rgba(7,19,33,.93);
-      border-bottom: 1px solid rgba(247,241,229,.07);
+      z-index: 1000;
+
+      background:
+        rgba(7,19,33,.96);
+
+      border-bottom:
+        1px solid
+        rgba(255,255,255,.07);
+
       backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
     }
 
-    .catalog-tools-inner {
-      display: grid;
-      grid-template-columns: minmax(0,1fr) auto;
-      gap: 12px;
+    .header-inner {
+      min-height: 82px;
+
+      display: flex;
       align-items: center;
+      gap: 22px;
     }
 
-    .catalog-search {
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+
+      flex: 0 0 auto;
+    }
+
+    .brand-logo {
+      width: 54px;
+      height: 54px;
+
+      border-radius: 14px;
+
+      object-fit: contain;
+
+      background:
+        linear-gradient(
+          135deg,
+          #fff,
+          #eee6d4
+        );
+
+      padding: 5px;
+
+      box-shadow:
+        0 8px 25px
+        rgba(0,0,0,.25);
+    }
+
+    .brand-copy strong {
+      display: block;
+
+      color: var(--cream);
+
+      font-size: 18px;
+      font-weight: 900;
+      line-height: 1.2;
+    }
+
+    .brand-copy span {
+      display: block;
+
+      margin-top: 3px;
+
+      color:
+        rgba(248,243,231,.66);
+
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .header-search {
+      flex: 1;
+      min-width: 180px;
+      max-width: 570px;
+
       position: relative;
     }
 
-    .catalog-search input {
+    .header-search input {
       width: 100%;
-      height: 50px;
-      padding: 0 48px 0 16px;
-      color: #f7f1e5;
-      background: rgba(255,255,255,.045);
-      border: 1px solid rgba(247,241,229,.11);
+      height: 46px;
+
+      padding:
+        0 48px
+        0 18px;
+
+      border:
+        1px solid
+        rgba(255,255,255,.1);
+
       border-radius: 14px;
+
       outline: none;
-      font-family: inherit;
-      font-size: 14px;
+
+      background:
+        rgba(255,255,255,.055);
+
+      color: var(--cream);
+
       transition:
         border-color .2s ease,
         background .2s ease;
     }
 
-    .catalog-search input::placeholder {
-      color: rgba(247,241,229,.38);
+    .header-search input::placeholder {
+      color:
+        rgba(248,243,231,.48);
     }
 
-    .catalog-search input:focus {
-      border-color: rgba(212,175,55,.42);
-      background: rgba(255,255,255,.06);
+    .header-search input:focus {
+      border-color:
+        rgba(212,175,55,.55);
+
+      background:
+        rgba(255,255,255,.08);
     }
 
-    .catalog-search-icon {
+    .search-icon {
       position: absolute;
+
+      right: 16px;
       top: 50%;
-      right: 17px;
-      transform: translateY(-50%);
-      color: #d4af37;
-      font-size: 17px;
+
+      transform:
+        translateY(-50%);
+
+      color: var(--gold-light);
+
       pointer-events: none;
     }
 
-    .catalog-count {
-      min-width: 120px;
-      height: 50px;
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+
+      flex: 0 0 auto;
+    }
+
+    .header-action {
+      min-height: 43px;
+
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 0 15px;
-      color: #f0d77a;
-      background: rgba(212,175,55,.065);
-      border: 1px solid rgba(212,175,55,.18);
-      border-radius: 14px;
-      font-size: 12px;
-      font-weight: 900;
-    }
+      gap: 7px;
 
-    /* =====================================================
-       SECTIONS
-       ===================================================== */
+      padding:
+        0 13px;
 
-    .catalog-sections {
-      padding: 38px 0 15px;
-    }
+      border:
+        1px solid
+        rgba(212,175,55,.22);
 
-    .catalog-section-heading {
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: 15px;
-      margin-bottom: 17px;
-    }
+      border-radius: 12px;
 
-    .catalog-section-heading h2 {
-      margin: 0;
-      color: #f7f1e5;
-      font-size: 24px;
-      font-weight: 950;
-    }
+      color: var(--cream);
 
-    .catalog-section-heading p {
-      margin: 5px 0 0;
-      color: rgba(247,241,229,.48);
-      font-size: 12px;
-    }
-
-    .catalog-sections-grid {
-      display: grid;
-      grid-template-columns:
-        repeat(auto-fit,minmax(155px,1fr));
-      gap: 12px;
-    }
-
-    .catalog-section-card {
-      position: relative;
-      min-height: 112px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: flex-start;
-      padding: 17px;
-      overflow: hidden;
-      color: #f7f1e5;
       background:
-        linear-gradient(
-          145deg,
-          rgba(16,40,61,.92),
-          rgba(7,19,33,.96)
-        );
-      border: 1px solid rgba(247,241,229,.08);
-      border-radius: 17px;
-      cursor: pointer;
-      text-align: right;
-      font-family: inherit;
+        rgba(255,255,255,.045);
+
+      font-size: 12px;
+      font-weight: 800;
+
       transition:
-        transform .22s ease,
-        border-color .22s ease,
-        background .22s ease;
+        transform .2s ease,
+        background .2s ease,
+        border-color .2s ease;
     }
 
-    .catalog-section-card::after {
-      content: "";
-      position: absolute;
-      width: 100px;
-      height: 100px;
-      left: -30px;
-      bottom: -55px;
-      border-radius: 50%;
-      background: rgba(212,175,55,.07);
-      pointer-events: none;
-    }
+    .header-action:hover {
+      transform:
+        translateY(-1px);
 
-    .catalog-section-card:hover,
-    .catalog-section-card.active {
-      transform: translateY(-3px);
-      border-color: rgba(212,175,55,.36);
       background:
-        linear-gradient(
-          145deg,
-          rgba(25,55,78,.96),
-          rgba(8,22,37,.98)
-        );
+        rgba(212,175,55,.1);
+
+      border-color:
+        rgba(212,175,55,.45);
     }
 
-    .catalog-section-icon {
-      width: 42px;
-      height: 42px;
-      display: grid;
-      place-items: center;
-      margin-bottom: 10px;
-      color: #071321;
+    .header-action.primary {
       background:
         linear-gradient(
           135deg,
-          #f0d77a,
-          #d4af37
+          #d4af37,
+          #b98d18
         );
-      border-radius: 12px;
-      font-size: 19px;
+
+      border-color:
+        transparent;
+
+      color: #081421;
     }
 
-    .catalog-section-name {
-      position: relative;
-      z-index: 1;
-      color: #f7f1e5;
-      font-size: 14px;
+    .cart-badge {
+      min-width: 20px;
+      height: 20px;
+
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      padding: 0 5px;
+
+      border-radius: 999px;
+
+      background: #fff;
+      color: var(--navy);
+
+      font-size: 10px;
       font-weight: 900;
     }
 
-    .catalog-section-count {
-      position: relative;
-      z-index: 1;
-      margin-top: 3px;
-      color: rgba(247,241,229,.43);
-      font-size: 10px;
-    }
-
     /* =====================================================
-       PRODUCTS
+       HERO
        ===================================================== */
 
-    .catalog-products {
-      padding: 26px 0 70px;
+    .catalog-hero {
+      position: relative;
+
+      padding:
+        66px 0
+        52px;
+
+      overflow: hidden;
+
+      color: var(--cream);
     }
 
-    .catalog-products-heading {
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: 15px;
-      margin-bottom: 18px;
+    .catalog-hero::before {
+      content: "";
+
+      position: absolute;
+      inset: 0;
+
+      background:
+        radial-gradient(
+          circle at 15% 20%,
+          rgba(212,175,55,.13),
+          transparent 30%
+        ),
+        radial-gradient(
+          circle at 90% 10%,
+          rgba(255,255,255,.05),
+          transparent 28%
+        );
+
+      pointer-events: none;
     }
 
-    .catalog-products-heading h2 {
-      margin: 0;
-      color: #f7f1e5;
-      font-size: 25px;
-      font-weight: 950;
+    .hero-content {
+      position: relative;
+      z-index: 1;
+
+      max-width: 800px;
     }
 
-    .catalog-active-filter {
+    .eyebrow {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      min-height: 32px;
-      padding: 5px 10px;
-      color: #f0d77a;
-      background: rgba(212,175,55,.07);
-      border: 1px solid rgba(212,175,55,.16);
+      gap: 8px;
+
+      padding:
+        7px 13px;
+
+      border:
+        1px solid
+        rgba(212,175,55,.3);
+
       border-radius: 999px;
+
+      background:
+        rgba(212,175,55,.08);
+
+      color:
+        var(--gold-light);
+
       font-size: 11px;
       font-weight: 800;
     }
 
-    .catalog-products-grid {
-      display: grid;
-      grid-template-columns:
-        repeat(4,minmax(0,1fr));
-      gap: 17px;
+    .hero-content h1 {
+      margin:
+        18px 0
+        12px;
+
+      font-size:
+        clamp(30px,5vw,52px);
+
+      line-height: 1.15;
+
+      font-weight: 900;
+
+      letter-spacing:
+        -.7px;
     }
 
-    .catalog-products-grid .product-card {
+    .hero-content h1 span {
+      color:
+        var(--gold-light);
+    }
+
+    .hero-content p {
+      max-width: 690px;
+
+      margin: 0;
+
+      color:
+        rgba(248,243,231,.7);
+
+      font-size:
+        clamp(14px,2vw,17px);
+
+      line-height: 1.9;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+
+      margin-top: 24px;
+    }
+
+    .hero-btn {
+      min-height: 46px;
+
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      padding:
+        0 19px;
+
+      border-radius: 12px;
+
+      font-size: 13px;
+      font-weight: 900;
+
+      transition:
+        transform .2s ease,
+        box-shadow .2s ease;
+    }
+
+    .hero-btn:hover {
+      transform:
+        translateY(-2px);
+    }
+
+    .hero-btn.primary {
+      background:
+        linear-gradient(
+          135deg,
+          #d4af37,
+          #b98d18
+        );
+
+      color: #071321;
+
+      box-shadow:
+        0 10px 28px
+        rgba(212,175,55,.16);
+    }
+
+    .hero-btn.secondary {
+      border:
+        1px solid
+        rgba(255,255,255,.12);
+
+      color: var(--cream);
+
+      background:
+        rgba(255,255,255,.045);
+    }
+
+    /* =====================================================
+       MAIN
+       ===================================================== */
+
+    main {
+      position: relative;
+
+      background:
+        linear-gradient(
+          180deg,
+          transparent 0,
+          #f7f2e8 50px
+        );
+    }
+
+    .catalog-shell {
+      padding:
+        0 0
+        80px;
+    }
+
+    /* =====================================================
+       TOOLBAR
+       ===================================================== */
+
+    .catalog-toolbar {
+      position: relative;
+      z-index: 5;
+
+      margin-top: -2px;
+
+      padding: 18px;
+
+      display: flex;
+      align-items: center;
+      gap: 14px;
+
+      background:
+        rgba(255,255,255,.94);
+
+      border:
+        1px solid
+        rgba(10,27,45,.08);
+
+      border-radius:
+        18px;
+
+      box-shadow:
+        0 12px 38px
+        rgba(7,19,33,.08);
+    }
+
+    .toolbar-search {
+      flex: 1;
+
+      position: relative;
+    }
+
+    .toolbar-search input {
+      width: 100%;
+      height: 48px;
+
+      padding:
+        0 46px
+        0 16px;
+
+      border:
+        1px solid
+        #dfe2e5;
+
+      border-radius: 12px;
+
+      outline: none;
+
+      background:
+        #fff;
+
+      color: var(--text);
+
+      transition:
+        border-color .2s ease,
+        box-shadow .2s ease;
+    }
+
+    .toolbar-search input:focus {
+      border-color:
+        rgba(212,175,55,.7);
+
+      box-shadow:
+        0 0 0 4px
+        rgba(212,175,55,.09);
+    }
+
+    .toolbar-search-icon {
+      position: absolute;
+
+      right: 15px;
+      top: 50%;
+
+      transform:
+        translateY(-50%);
+
+      color:
+        #9a7620;
+
+      pointer-events: none;
+    }
+
+    .result-count {
+      flex: 0 0 auto;
+
+      min-height: 42px;
+
+      display: inline-flex;
+      align-items: center;
+
+      padding:
+        0 14px;
+
+      border-radius: 11px;
+
+      background:
+        #f5f1e8;
+
+      color:
+        #66531f;
+
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    /* =====================================================
+       SECTION TITLE
+       ===================================================== */
+
+    .block {
+      padding-top: 48px;
+    }
+
+    .section-heading {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 18px;
+
+      margin-bottom: 20px;
+    }
+
+    .heading-copy {
       min-width: 0;
     }
 
-    /* =====================================================
-       LOADING
-       ===================================================== */
+    .heading-kicker {
+      display: block;
 
-    .catalog-loading {
-      display: grid;
-      grid-template-columns:
-        repeat(4,minmax(0,1fr));
-      gap: 17px;
+      margin-bottom: 5px;
+
+      color:
+        #a17b1d;
+
+      font-size: 11px;
+      font-weight: 900;
+
+      letter-spacing:
+        .3px;
     }
 
-    .catalog-skeleton {
-      height: 315px;
-      overflow: hidden;
-      border-radius: 19px;
+    .section-heading h2 {
+      margin: 0;
+
+      color:
+        #101d2b;
+
+      font-size:
+        clamp(21px,3vw,30px);
+
+      line-height: 1.25;
+
+      font-weight: 900;
+    }
+
+    .section-heading p {
+      margin:
+        5px 0
+        0;
+
+      color:
+        var(--muted);
+
+      font-size: 12px;
+    }
+
+    /* =====================================================
+       CATEGORIES
+       ===================================================== */
+
+    .categories-grid {
+      display: grid;
+
+      grid-template-columns:
+        repeat(
+          auto-fit,
+          minmax(180px,1fr)
+        );
+
+      gap: 12px;
+    }
+
+    .category-card {
+      min-height: 92px;
+
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      padding:
+        14px;
+
+      border:
+        1px solid
+        rgba(10,27,45,.08);
+
+      border-radius:
+        15px;
+
+      background:
+        rgba(255,255,255,.92);
+
+      box-shadow:
+        0 8px 24px
+        rgba(7,19,33,.045);
+
+      transition:
+        transform .2s ease,
+        border-color .2s ease,
+        box-shadow .2s ease;
+    }
+
+    .category-card:hover {
+      transform:
+        translateY(-3px);
+
+      border-color:
+        rgba(212,175,55,.4);
+
+      box-shadow:
+        0 14px 32px
+        rgba(7,19,33,.09);
+    }
+
+    .category-icon {
+      width: 52px;
+      height: 52px;
+
+      flex: 0 0 52px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      border-radius: 14px;
+
       background:
         linear-gradient(
-          90deg,
-          rgba(255,255,255,.035) 25%,
-          rgba(255,255,255,.075) 50%,
-          rgba(255,255,255,.035) 75%
+          135deg,
+          #0a1b2d,
+          #17344e
         );
-      background-size: 200% 100%;
-      animation:
-        catalogSkeleton 1.35s infinite;
+
+      color:
+        var(--gold-light);
+
+      font-size: 22px;
     }
 
-    @keyframes catalogSkeleton {
-      from {
-        background-position: 200% 0;
-      }
+    .category-content {
+      min-width: 0;
+      flex: 1;
+    }
 
-      to {
-        background-position: -200% 0;
-      }
+    .category-content strong {
+      display: block;
+
+      color:
+        #172432;
+
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .category-content small {
+      display: block;
+
+      margin-top: 3px;
+
+      color:
+        #89919a;
+
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    .category-arrow {
+      color:
+        #a98528;
+
+      font-size: 18px;
+
+      transition:
+        transform .2s ease;
+    }
+
+    .category-card:hover
+    .category-arrow {
+      transform:
+        translateX(-3px);
     }
 
     /* =====================================================
-       EMPTY / ERROR
+       PRODUCT GRID
        ===================================================== */
 
-    .catalog-empty,
-    .catalog-error {
-      grid-column: 1 / -1;
-      min-height: 250px;
+    .products-grid {
+      display: grid;
+
+      grid-template-columns:
+        repeat(
+          4,
+          minmax(0,1fr)
+        );
+
+      gap: 18px;
+    }
+
+    /* =====================================================
+       PRODUCT CARD
+       ===================================================== */
+
+    .product-card {
+      position: relative;
+
+      min-width: 0;
+
+      display: flex;
+      flex-direction: column;
+
+      overflow: hidden;
+
+      border:
+        1px solid
+        rgba(10,27,45,.075);
+
+      border-radius:
+        17px;
+
+      background:
+        #ffffff;
+
+      box-shadow:
+        0 9px 28px
+        rgba(7,19,33,.06);
+
+      transition:
+        transform .22s ease,
+        box-shadow .22s ease,
+        border-color .22s ease;
+    }
+
+    .product-card:hover {
+      transform:
+        translateY(-4px);
+
+      border-color:
+        rgba(212,175,55,.35);
+
+      box-shadow:
+        0 18px 38px
+        rgba(7,19,33,.11);
+    }
+
+    /* =====================================================
+       IMPORTANT:
+       SMALLER / CLEANER PRODUCT IMAGE AREA
+       ===================================================== */
+
+    .product-media {
+      position: relative;
+
+      width: 100%;
+
+      height: 205px;
+
+      padding: 16px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      background:
+        linear-gradient(
+          145deg,
+          #fdfcf9,
+          #f4efe5
+        );
+
+      border-bottom:
+        1px solid
+        rgba(10,27,45,.06);
+
+      overflow: hidden;
+    }
+
+    /*
+      المنتج نفسه لا يملأ الكارت بالكامل.
+      contain يحافظ على شكله الحقيقي
+      بدون قص أو تكبير مبالغ فيه.
+    */
+
+    .product-media img {
+      width: 100%;
+      height: 100%;
+
+      max-width: 165px;
+      max-height: 175px;
+
+      display: block;
+
+      object-fit: contain;
+
+      object-position:
+        center center;
+
+      filter:
+        drop-shadow(
+          0 8px 12px
+          rgba(0,0,0,.08)
+        );
+
+      transition:
+        transform .25s ease;
+    }
+
+    .product-card:hover
+    .product-media img {
+      transform:
+        scale(1.035);
+    }
+
+    .product-placeholder {
+      width: 76px;
+      height: 76px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      border-radius: 20px;
+
+      background:
+        #eee7d8;
+
+      color:
+        #9a7620;
+
+      font-size: 28px;
+    }
+
+    .offer-badge {
+      position: absolute;
+
+      top: 11px;
+      right: 11px;
+
+      z-index: 2;
+
+      padding:
+        5px 9px;
+
+      border-radius:
+        999px;
+
+      background:
+        #a98320;
+
+      color:
+        #fff;
+
+      font-size: 9px;
+      font-weight: 900;
+
+      box-shadow:
+        0 5px 12px
+        rgba(0,0,0,.1);
+    }
+
+    .wishlist-button {
+      position: absolute;
+
+      top: 10px;
+      left: 10px;
+
+      z-index: 3;
+
+      width: 34px;
+      height: 34px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      padding: 0;
+
+      border:
+        1px solid
+        rgba(10,27,45,.08);
+
+      border-radius: 50%;
+
+      background:
+        rgba(255,255,255,.94);
+
+      color:
+        #8c949c;
+
+      font-size: 17px;
+
+      transition:
+        .2s ease;
+    }
+
+    .wishlist-button:hover,
+    .wishlist-button.is-active {
+      border-color:
+        rgba(212,175,55,.5);
+
+      color:
+        #ad8420;
+
+      background:
+        #fffaf0;
+    }
+
+    /* =====================================================
+       PRODUCT CONTENT
+       ===================================================== */
+
+    .product-content {
+      min-width: 0;
+
+      display: flex;
+      flex-direction: column;
+
+      flex: 1;
+
+      padding:
+        14px 14px 15px;
+    }
+
+    .product-category {
+      display: block;
+
+      margin-bottom: 4px;
+
+      color:
+        #a27c20;
+
+      font-size: 9px;
+      font-weight: 900;
+    }
+
+    .product-title {
+      margin: 0;
+
+      min-height: 42px;
+
+      color:
+        #152231;
+
+      font-size: 14px;
+      line-height: 1.55;
+
+      font-weight: 900;
+
+      display:
+        -webkit-box;
+
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+
+      overflow: hidden;
+    }
+
+    .product-description {
+      margin:
+        6px 0
+        0;
+
+      min-height: 34px;
+
+      color:
+        #89919a;
+
+      font-size: 10px;
+      line-height: 1.7;
+
+      display:
+        -webkit-box;
+
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+
+      overflow: hidden;
+    }
+
+    .product-bottom {
+      margin-top: 12px;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .price-area {
+      min-width: 0;
+    }
+
+    .price {
+      display: block;
+
+      color:
+        #8f6b16;
+
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .old-price {
+      display: block;
+
+      margin-top: 2px;
+
+      color:
+        #a5aab0;
+
+      font-size: 9px;
+      font-weight: 600;
+    }
+
+    .price-request {
+      color:
+        #8d959c;
+
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .add-button {
+      min-height: 38px;
+
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+
+      flex: 0 0 auto;
+
+      padding:
+        0 11px;
+
+      border: 0;
+
+      border-radius: 10px;
+
+      background:
+        linear-gradient(
+          135deg,
+          #0a1b2d,
+          #17344e
+        );
+
+      color:
+        #fff;
+
+      font-size: 10px;
+      font-weight: 900;
+
+      transition:
+        transform .2s ease,
+        background .2s ease;
+    }
+
+    .add-button:hover {
+      transform:
+        translateY(-1px);
+
+      background:
+        linear-gradient(
+          135deg,
+          #17344e,
+          #254a68
+        );
+    }
+
+    .details-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      margin-top: 9px;
+      padding-top: 9px;
+
+      border-top:
+        1px solid
+        #eef0f2;
+
+      color:
+        #737d87;
+
+      font-size: 9px;
+      font-weight: 800;
+    }
+
+    .details-link span {
+      color:
+        #a17a1d;
+
+      font-size: 14px;
+    }
+
+    /* =====================================================
+       STATES
+       ===================================================== */
+
+    .state-box {
+      grid-column:
+        1 / -1;
+
+      min-height: 190px;
+
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
+
       padding: 30px;
+
+      border:
+        1px dashed
+        rgba(10,27,45,.14);
+
+      border-radius: 16px;
+
+      background:
+        rgba(255,255,255,.7);
+
       text-align: center;
-      border: 1px dashed rgba(212,175,55,.18);
-      border-radius: 20px;
-      background: rgba(255,255,255,.02);
     }
 
-    .catalog-empty-icon,
-    .catalog-error-icon {
-      width: 62px;
-      height: 62px;
-      display: grid;
-      place-items: center;
-      margin-bottom: 12px;
-      color: #d4af37;
-      border: 1px solid rgba(212,175,55,.20);
-      border-radius: 50%;
-      background: rgba(212,175,55,.06);
-      font-size: 24px;
+    .state-icon {
+      margin-bottom: 9px;
+
+      font-size: 30px;
     }
 
-    .catalog-empty h3,
-    .catalog-error h3 {
-      margin: 0 0 6px;
-      color: #f7f1e5;
-      font-size: 18px;
-      font-weight: 900;
+    .state-box strong {
+      color:
+        #172432;
+
+      font-size: 14px;
     }
 
-    .catalog-empty p,
-    .catalog-error p {
-      max-width: 420px;
-      margin: 0;
-      color: rgba(247,241,229,.48);
-      font-size: 13px;
-      line-height: 1.8;
+    .state-box p {
+      margin:
+        5px 0
+        15px;
+
+      color:
+        #8a929a;
+
+      font-size: 11px;
     }
 
-    .catalog-reset {
-      margin-top: 14px;
+    .retry-button {
       min-height: 40px;
-      padding: 8px 15px;
-      color: #071321;
-      background: #d4af37;
+
+      padding:
+        0 16px;
+
       border: 0;
+
       border-radius: 10px;
-      font-family: inherit;
-      font-size: 12px;
+
+      background:
+        #0a1b2d;
+
+      color:
+        #fff;
+
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    /* =====================================================
+       SKELETON
+       ===================================================== */
+
+    .skeleton {
+      overflow: hidden;
+
+      border-radius: 17px;
+
+      background:
+        #fff;
+
+      border:
+        1px solid
+        rgba(10,27,45,.06);
+    }
+
+    .skeleton-media {
+      height: 205px;
+
+      background:
+        linear-gradient(
+          90deg,
+          #f0eee9 20%,
+          #faf9f5 40%,
+          #f0eee9 60%
+        );
+
+      background-size:
+        200% 100%;
+
+      animation:
+        skeletonMove 1.3s infinite;
+    }
+
+    .skeleton-content {
+      padding: 14px;
+    }
+
+    .skeleton-line {
+      height: 10px;
+
+      margin-bottom: 9px;
+
+      border-radius: 8px;
+
+      background:
+        #eeeae1;
+    }
+
+    .skeleton-line.short {
+      width: 55%;
+    }
+
+    @keyframes skeletonMove {
+      from {
+        background-position:
+          200% 0;
+      }
+
+      to {
+        background-position:
+          -200% 0;
+      }
+    }
+
+    /* =====================================================
+       MODAL
+       ===================================================== */
+
+    .product-modal {
+      position: fixed;
+      inset: 0;
+
+      z-index: 5000;
+
+      display: none;
+      align-items: center;
+      justify-content: center;
+
+      padding: 18px;
+
+      background:
+        rgba(3,10,18,.76);
+
+      backdrop-filter:
+        blur(8px);
+    }
+
+    .product-modal.is-open {
+      display: flex;
+    }
+
+    .modal-dialog {
+      position: relative;
+
+      width:
+        min(850px,100%);
+
+      max-height:
+        min(700px,calc(100vh - 36px));
+
+      overflow: auto;
+
+      display: grid;
+
+      grid-template-columns:
+        minmax(280px,.9fr)
+        minmax(320px,1.1fr);
+
+      border-radius:
+        22px;
+
+      background:
+        #fff;
+
+      box-shadow:
+        0 30px 90px
+        rgba(0,0,0,.35);
+    }
+
+    .modal-media {
+      min-height: 360px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      padding: 28px;
+
+      background:
+        linear-gradient(
+          145deg,
+          #f8f4ea,
+          #eee6d4
+        );
+    }
+
+    .modal-media img {
+      width: 100%;
+      height: 320px;
+
+      object-fit: contain;
+
+      filter:
+        drop-shadow(
+          0 15px 20px
+          rgba(0,0,0,.1)
+        );
+    }
+
+    .modal-content {
+      padding:
+        34px 30px;
+    }
+
+    .modal-category {
+      color:
+        #9d761d;
+
+      font-size: 10px;
       font-weight: 900;
-      cursor: pointer;
+    }
+
+    .modal-content h2 {
+      margin:
+        8px 0
+        12px;
+
+      color:
+        #101d2b;
+
+      font-size: 25px;
+      line-height: 1.4;
+
+      font-weight: 900;
+    }
+
+    .modal-description {
+      color:
+        #737d87;
+
+      font-size: 12px;
+      line-height: 1.9;
+    }
+
+    .modal-price {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      margin-top: 20px;
+    }
+
+    .modal-price strong {
+      color:
+        #96721d;
+
+      font-size: 21px;
+      font-weight: 900;
+    }
+
+    .modal-price del {
+      color:
+        #a1a7ad;
+
+      font-size: 11px;
+    }
+
+    .modal-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+
+      margin-top: 22px;
+    }
+
+    .modal-button {
+      min-height: 44px;
+
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      padding:
+        0 15px;
+
+      border-radius:
+        11px;
+
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .modal-button.primary {
+      border: 0;
+
+      background:
+        #0a1b2d;
+
+      color:
+        #fff;
+    }
+
+    .modal-button.whatsapp {
+      border: 0;
+
+      background:
+        #1f9d58;
+
+      color:
+        #fff;
+    }
+
+    .modal-close {
+      position: absolute;
+
+      top: 12px;
+      left: 12px;
+
+      z-index: 4;
+
+      width: 36px;
+      height: 36px;
+
+      border: 0;
+
+      border-radius: 50%;
+
+      background:
+        rgba(7,19,33,.9);
+
+      color:
+        #fff;
+
+      font-size: 20px;
     }
 
     /* =====================================================
@@ -510,531 +1651,640 @@
        ===================================================== */
 
     .catalog-footer {
-      padding: 35px 0;
-      border-top: 1px solid rgba(247,241,229,.07);
-      background: #050e18;
-      text-align: center;
+      margin-top: 70px;
+
+      padding:
+        38px 0;
+
+      background:
+        #071321;
+
+      color:
+        var(--cream);
     }
 
-    .catalog-footer-brand {
-      display: inline-flex;
+    .footer-inner {
+      display: flex;
       align-items: center;
-      gap: 9px;
-      color: #f7f1e5;
+      justify-content: space-between;
+      gap: 25px;
+    }
+
+    .footer-brand strong {
+      display: block;
+
       font-size: 18px;
-      font-weight: 950;
-      text-decoration: none;
+      font-weight: 900;
     }
 
-    .catalog-footer-brand span {
-      color: #d4af37;
+    .footer-brand span {
+      display: block;
+
+      margin-top: 4px;
+
+      color:
+        rgba(248,243,231,.55);
+
+      font-size: 10px;
     }
 
-    .catalog-footer-text {
-      max-width: 520px;
-      margin: 9px auto 0;
-      color: rgba(247,241,229,.43);
-      font-size: 12px;
-      line-height: 1.8;
-    }
-
-    .catalog-footer-links {
+    .footer-links {
       display: flex;
       flex-wrap: wrap;
-      justify-content: center;
-      gap: 10px 18px;
-      margin-top: 17px;
-    }
+      gap: 15px;
 
-    .catalog-footer-links a {
-      color: rgba(247,241,229,.58);
-      font-size: 12px;
+      color:
+        rgba(248,243,231,.72);
+
+      font-size: 10px;
       font-weight: 700;
-      text-decoration: none;
-      transition: color .2s ease;
     }
 
-    .catalog-footer-links a:hover {
-      color: #d4af37;
+    .footer-links a:hover {
+      color:
+        var(--gold-light);
     }
 
     /* =====================================================
        RESPONSIVE
        ===================================================== */
 
-    @media (max-width: 1100px) {
-
-      .catalog-products-grid,
-      .catalog-loading {
+    @media (max-width: 1050px) {
+      .products-grid {
         grid-template-columns:
           repeat(3,minmax(0,1fr));
       }
+
+      .header-search {
+        max-width: 390px;
+      }
     }
 
-    @media (max-width: 760px) {
+    @media (max-width: 820px) {
+      .header-inner {
+        min-height: 70px;
+
+        gap: 10px;
+      }
+
+      .brand-copy {
+        display: none;
+      }
+
+      .brand-logo {
+        width: 46px;
+        height: 46px;
+      }
+
+      .header-search {
+        max-width: none;
+      }
+
+      .header-action span.label {
+        display: none;
+      }
+
+      .header-action {
+        width: 43px;
+        padding: 0;
+      }
 
       .catalog-hero {
-        padding: 42px 0 34px;
+        padding:
+          45px 0
+          38px;
       }
 
-      .catalog-tools-inner {
+      .catalog-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .result-count {
+        justify-content: center;
+      }
+
+      .products-grid {
+        grid-template-columns:
+          repeat(2,minmax(0,1fr));
+
+        gap: 13px;
+      }
+
+      .product-media {
+        height: 185px;
+      }
+
+      .product-media img {
+        max-width: 145px;
+        max-height: 155px;
+      }
+
+      .modal-dialog {
         grid-template-columns: 1fr;
+
+        max-height:
+          calc(100vh - 24px);
       }
 
-      .catalog-count {
+      .modal-media {
+        min-height: 260px;
+      }
+
+      .modal-media img {
+        height: 230px;
+      }
+
+      .footer-inner {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .container {
+        width:
+          min(
+            calc(100% - 22px),
+            var(--container)
+          );
+      }
+
+      .top-strip {
+        font-size: 10px;
+      }
+
+      .header-inner {
+        flex-wrap: wrap;
+
+        padding:
+          8px 0;
+      }
+
+      .brand {
+        order: 1;
+      }
+
+      .header-actions {
+        order: 2;
+        margin-right: auto;
+      }
+
+      .header-search {
+        order: 3;
+
+        flex-basis: 100%;
+      }
+
+      .header-search input {
+        height: 43px;
+      }
+
+      .hero-content h1 {
+        font-size: 30px;
+      }
+
+      .categories-grid {
+        grid-template-columns:
+          repeat(2,minmax(0,1fr));
+
+        gap: 9px;
+      }
+
+      .category-card {
+        min-height: 78px;
+
+        padding: 10px;
+
+        gap: 8px;
+      }
+
+      .category-icon {
+        width: 42px;
+        height: 42px;
+
+        flex-basis: 42px;
+
+        border-radius: 11px;
+
+        font-size: 18px;
+      }
+
+      .category-content strong {
+        font-size: 11px;
+      }
+
+      .products-grid {
+        gap: 10px;
+      }
+
+      /*
+        الموبايل:
+        الصورة أصغر بوضوح
+        والكارت لا يضخم المنتج.
+      */
+
+      .product-media {
+        height: 155px;
+        padding: 10px;
+      }
+
+      .product-media img {
+        max-width: 120px;
+        max-height: 130px;
+      }
+
+      .product-content {
+        padding:
+          11px 10px 12px;
+      }
+
+      .product-title {
+        min-height: 38px;
+
+        font-size: 11px;
+      }
+
+      .product-description {
+        font-size: 9px;
+      }
+
+      .product-bottom {
+        align-items: flex-end;
+        flex-direction: column;
+        gap: 7px;
+      }
+
+      .add-button {
         width: 100%;
       }
 
-      .catalog-sections-grid {
-        grid-template-columns:
-          repeat(2,minmax(0,1fr));
+      .price {
+        font-size: 11px;
       }
 
-      .catalog-products-grid,
-      .catalog-loading {
-        grid-template-columns:
-          repeat(2,minmax(0,1fr));
-        gap: 11px;
+      .wishlist-button {
+        width: 30px;
+        height: 30px;
+
+        font-size: 15px;
       }
 
-      .catalog-products {
-        padding-bottom: 50px;
-      }
+      .offer-badge {
+        top: 8px;
+        right: 8px;
 
-      .catalog-section-heading,
-      .catalog-products-heading {
-        align-items: flex-start;
-        flex-direction: column;
+        font-size: 8px;
       }
     }
 
-    @media (max-width: 430px) {
-
-      .catalog-title {
-        font-size: 28px;
-      }
-
-      .catalog-description {
-        font-size: 12px;
-      }
-
-      .catalog-sections-grid {
+    @media (max-width: 390px) {
+      .products-grid {
         grid-template-columns:
-          repeat(2,minmax(0,1fr));
-        gap: 9px;
+          1fr 1fr;
       }
 
-      .catalog-section-card {
-        min-height: 102px;
-        padding: 13px;
+      .product-media {
+        height: 142px;
       }
 
-      .catalog-section-icon {
-        width: 37px;
-        height: 37px;
-        margin-bottom: 8px;
-        font-size: 16px;
+      .product-media img {
+        max-width: 105px;
+        max-height: 115px;
       }
 
-      .catalog-section-name {
-        font-size: 12px;
+      .product-title {
+        font-size: 10.5px;
       }
 
-      .catalog-products-grid,
-      .catalog-loading {
-        gap: 9px;
+      .category-content small {
+        display: none;
       }
     }
 
     @media (prefers-reduced-motion: reduce) {
-
-      .catalog-skeleton {
-        animation: none;
-      }
-
-      .catalog-section-card {
-        transition: none;
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
       }
     }
   </style>
 </head>
 
-
-<body class="dark-luxury-home catalog-page">
+<body>
 
   <!-- =====================================================
-       TOP STRIP
+       TOP
        ===================================================== -->
 
   <div class="top-strip">
-
-    <div class="container">
-
-      <div class="top-strip-inner">
-
-        <span id="topStripText">
-          ✦ أبو طارق للأدوات المنزلية — توصيل لكل الإسكندرية
-        </span>
-
-        <a
-          href="https://wa.me/201551604163"
-          target="_blank"
-          rel="noopener"
-        >
-          تواصل معنا عبر واتساب
-        </a>
-
-      </div>
-
-    </div>
-
+    <span>✦</span>
+    &nbsp;
+    أبو طارق للأدوات المنزلية — كل اللي بيتك محتاجه في مكان واحد
   </div>
-
 
   <!-- =====================================================
        HEADER
        ===================================================== -->
 
   <header class="site-header">
+    <div class="container header-inner">
 
-    <div class="container">
+      <a
+        href="./index.html"
+        class="brand"
+        aria-label="أبو طارق"
+      >
+        <img
+          class="brand-logo"
+          src="./assets/logo.png"
+          alt="أبو طارق للأدوات المنزلية"
+          width="54"
+          height="54"
+        >
 
-      <div class="nav">
+        <span class="brand-copy">
+          <strong>أبو طارق</strong>
+          <span>للأدوات المنزلية</span>
+        </span>
+      </a>
+
+      <form
+        class="header-search"
+        id="headerSearchForm"
+      >
+        <span class="search-icon">
+          🔎
+        </span>
+
+        <input
+          id="headerSearchInput"
+          type="search"
+          autocomplete="off"
+          placeholder="ابحث عن منتج أو قسم..."
+          aria-label="البحث"
+        >
+      </form>
+
+      <div class="header-actions">
 
         <a
           href="./index.html"
-          class="brand"
-          aria-label="العودة إلى الصفحة الرئيسية"
+          class="header-action"
         >
-
-          <img
-            id="siteLogo"
-            src="./assets/logo.png"
-            alt="أبو طارق للأدوات المنزلية"
-            width="52"
-            height="52"
-          >
-
-          <span class="brand-text">
-
-            <strong id="brandName">
-              أبو طارق
-            </strong>
-
-            <small>
-              للأدوات المنزلية
-            </small>
-
-          </span>
-
+          <span>الرئيسية</span>
         </a>
 
-
-        <form
-          class="header-search"
-          id="headerSearchForm"
-          role="search"
+        <a
+          href="https://wa.me/201551604163"
+          class="header-action primary"
+          target="_blank"
+          rel="noopener"
+          data-whatsapp
         >
+          <span class="label">واتساب</span>
+          <span>💬</span>
+        </a>
 
-          <input
-            id="headerSearchInput"
-            type="search"
-            placeholder="ابحث عن منتج..."
-            autocomplete="off"
-          >
-
-          <button
-            type="submit"
-            aria-label="بحث"
-          >
-            🔎
-          </button>
-
-        </form>
-
-
-        <div class="header-actions">
-
-          <a
-            class="header-btn whatsapp-btn"
-            href="https://wa.me/201551604163"
-            target="_blank"
-            rel="noopener"
-            aria-label="واتساب"
-          >
-            <span>واتساب</span>
-          </a>
-
-          <a
-            class="header-btn"
-            href="./index.html"
-          >
-            الرئيسية
-          </a>
-
-          <button
-            class="menu-btn"
-            id="menuBtn"
-            type="button"
-            aria-label="فتح القائمة"
-            aria-expanded="false"
-          >
-            ☰
-          </button>
-
-        </div>
+        <button
+          type="button"
+          class="header-action"
+          id="cartTrigger"
+          data-cart-trigger
+          aria-label="السلة"
+        >
+          <span>🛒</span>
+          <span
+            class="cart-badge"
+            id="cartCount"
+            data-cart-count
+            hidden
+          >0</span>
+        </button>
 
       </div>
 
-
-      <nav
-        class="main-nav"
-        id="mainNav"
-        aria-label="القائمة الرئيسية"
-      >
-
-        <div class="nav-inner">
-
-          <a href="./index.html">
-            الرئيسية
-          </a>
-
-          <a
-            href="./sections.html"
-            class="active"
-          >
-            كل الأصناف
-          </a>
-
-          <a href="./index.html#offers">
-            العروض
-          </a>
-
-          <a href="./index.html#about">
-            عن أبو طارق
-          </a>
-
-          <a href="./index.html#branches">
-            الفروع
-          </a>
-
-          <a href="./index.html#contact">
-            تواصل معنا
-          </a>
-
-        </div>
-
-      </nav>
-
     </div>
-
   </header>
 
-
   <!-- =====================================================
-       CATALOG HERO
+       HERO
        ===================================================== -->
 
   <section class="catalog-hero">
-
     <div class="container">
+      <div class="hero-content">
 
-      <div class="catalog-hero-inner">
+        <span class="eyebrow">
+          ✦ كتالوج أبو طارق
+        </span>
 
-        <div class="catalog-kicker">
-          ✦ الكتالوج الكامل
-        </div>
-
-        <h1 class="catalog-title">
-          كل <span>الأصناف</span>
+        <h1>
+          كل الأصناف
+          <span>في مكان واحد</span>
         </h1>
 
-        <p class="catalog-description">
-          اكتشف مجموعة أبو طارق الكاملة من الأدوات المنزلية
-          واختار المنتجات اللي تناسب بيتك واحتياجاتك.
+        <p>
+          تصفح تشكيلتنا من الأدوات المنزلية
+          وأدوات المطبخ والسفرة والأكواب والكاسات
+          والشاي والقهوة وغيرها من احتياجات البيت.
         </p>
 
-      </div>
+        <div class="hero-actions">
 
-    </div>
-
-  </section>
-
-
-  <!-- =====================================================
-       SEARCH
-       ===================================================== -->
-
-  <section class="catalog-tools">
-
-    <div class="container">
-
-      <div class="catalog-tools-inner">
-
-        <div class="catalog-search">
-
-          <span
-            class="catalog-search-icon"
-            aria-hidden="true"
+          <a
+            href="./index.html"
+            class="hero-btn primary"
           >
-            🔎
-          </span>
+            العودة للرئيسية
+          </a>
 
-          <input
-            id="catalogSearch"
-            type="search"
-            placeholder="ابحث عن اسم المنتج أو القسم..."
-            autocomplete="off"
-            aria-label="البحث في المنتجات"
+          <a
+            href="https://wa.me/201551604163"
+            target="_blank"
+            rel="noopener"
+            class="hero-btn secondary"
+            data-whatsapp
           >
+            اسألنا على واتساب
+          </a>
 
         </div>
 
-        <div
-          class="catalog-count"
-          id="catalogCount"
-        >
-          جاري التحميل...
-        </div>
-
       </div>
-
     </div>
-
   </section>
-
 
   <!-- =====================================================
        MAIN
        ===================================================== -->
 
   <main>
+    <div class="container catalog-shell">
 
-    <!-- ===================================================
-         SECTIONS
-         =================================================== -->
+      <!-- TOOLBAR -->
 
-    <section class="catalog-sections">
+      <div class="catalog-toolbar">
 
-      <div class="container">
+        <div class="toolbar-search">
 
-        <div class="catalog-section-heading">
+          <span class="toolbar-search-icon">
+            🔎
+          </span>
 
-          <div>
+          <input
+            id="catalogSearch"
+            type="search"
+            autocomplete="off"
+            placeholder="ابحث باسم المنتج أو القسم..."
+            aria-label="البحث في المنتجات"
+          >
+
+        </div>
+
+        <div
+          class="result-count"
+          id="resultCount"
+        >
+          جاري تحميل المنتجات...
+        </div>
+
+      </div>
+
+      <!-- =================================================
+           CATEGORIES
+           ================================================= -->
+
+      <section class="block">
+
+        <div class="section-heading">
+
+          <div class="heading-copy">
+            <span class="heading-kicker">
+              الأقسام
+            </span>
 
             <h2>
-              الأقسام
+              اختار القسم
             </h2>
 
             <p>
-              اختار القسم اللي عايز تتصفحه
+              تصفح المنتجات حسب القسم
             </p>
-
           </div>
 
         </div>
-
 
         <div
-          class="catalog-sections-grid"
-          id="catalogSections"
+          class="categories-grid"
+          id="categoriesGrid"
         >
 
-          <div class="catalog-loading">
-
-            <div class="catalog-skeleton"></div>
-            <div class="catalog-skeleton"></div>
-            <div class="catalog-skeleton"></div>
-            <div class="catalog-skeleton"></div>
-
+          <div class="state-box">
+            <div class="state-icon">⏳</div>
+            <strong>جاري تحميل الأقسام</strong>
           </div>
 
         </div>
 
-      </div>
+      </section>
 
-    </section>
+      <!-- =================================================
+           PRODUCTS
+           ================================================= -->
 
+      <section
+        class="block"
+        id="productsSection"
+      >
 
-    <!-- ===================================================
-         PRODUCTS
-         =================================================== -->
+        <div class="section-heading">
 
-    <section class="catalog-products">
-
-      <div class="container">
-
-        <div class="catalog-products-heading">
-
-          <div>
-
-            <h2>
+          <div class="heading-copy">
+            <span class="heading-kicker">
               المنتجات
+            </span>
+
+            <h2 id="productsTitle">
+              كل المنتجات
             </h2>
 
-          </div>
-
-
-          <div
-            class="catalog-active-filter"
-            id="catalogActiveFilter"
-            hidden
-          >
-            كل المنتجات
+            <p>
+              اختار المنتج وشوف التفاصيل أو أضفه للسلة
+            </p>
           </div>
 
         </div>
-
 
         <div
-          class="catalog-products-grid"
-          id="catalogProducts"
+          class="products-grid"
+          id="productsGrid"
         >
 
-          <div class="catalog-loading">
+          <div class="skeleton">
+            <div class="skeleton-media"></div>
+            <div class="skeleton-content">
+              <div class="skeleton-line short"></div>
+              <div class="skeleton-line"></div>
+              <div class="skeleton-line short"></div>
+            </div>
+          </div>
 
-            <div class="catalog-skeleton"></div>
-            <div class="catalog-skeleton"></div>
-            <div class="catalog-skeleton"></div>
-            <div class="catalog-skeleton"></div>
+          <div class="skeleton">
+            <div class="skeleton-media"></div>
+            <div class="skeleton-content">
+              <div class="skeleton-line short"></div>
+              <div class="skeleton-line"></div>
+              <div class="skeleton-line short"></div>
+            </div>
+          </div>
 
+          <div class="skeleton">
+            <div class="skeleton-media"></div>
+            <div class="skeleton-content">
+              <div class="skeleton-line short"></div>
+              <div class="skeleton-line"></div>
+              <div class="skeleton-line short"></div>
+            </div>
+          </div>
+
+          <div class="skeleton">
+            <div class="skeleton-media"></div>
+            <div class="skeleton-content">
+              <div class="skeleton-line short"></div>
+              <div class="skeleton-line"></div>
+              <div class="skeleton-line short"></div>
+            </div>
           </div>
 
         </div>
 
-      </div>
+      </section>
 
-    </section>
-
+    </div>
   </main>
-
 
   <!-- =====================================================
        FOOTER
        ===================================================== -->
 
   <footer class="catalog-footer">
+    <div class="container footer-inner">
 
-    <div class="container">
+      <div class="footer-brand">
+        <strong>
+          أبو طارق للأدوات المنزلية
+        </strong>
 
-      <a
-        href="./index.html"
-        class="catalog-footer-brand"
-      >
-        أبو طارق
         <span>
-          للأدوات المنزلية
+          كل اللي بيتك محتاجه في مكان واحد
         </span>
-      </a>
+      </div>
 
-
-      <p class="catalog-footer-text">
-        كل اللي بيتك محتاجه في مكان واحد.
-        أبو طارق للأدوات المنزلية في الإسكندرية.
-      </p>
-
-
-      <div class="catalog-footer-links">
+      <nav class="footer-links">
 
         <a href="./index.html">
           الرئيسية
@@ -1044,1802 +2294,2193 @@
           كل الأصناف
         </a>
 
-        <a href="./index.html#offers">
-          العروض
+        <a
+          href="https://wa.me/201551604163"
+          target="_blank"
+          rel="noopener"
+          data-whatsapp
+        >
+          واتساب
         </a>
 
-        <a href="./index.html#branches">
-          الفروع
-        </a>
+      </nav>
 
-        <a href="./index.html#contact">
-          تواصل معنا
-        </a>
+    </div>
+  </footer>
 
-      </div>
+  <!-- =====================================================
+       PRODUCT MODAL
+       ===================================================== -->
+
+  <div
+    class="product-modal"
+    id="productModal"
+    aria-hidden="true"
+  >
+
+    <div
+      class="modal-dialog"
+      role="dialog"
+      aria-modal="true"
+      aria-label="تفاصيل المنتج"
+    >
+
+      <button
+        type="button"
+        class="modal-close"
+        id="modalClose"
+        aria-label="إغلاق"
+      >
+        ×
+      </button>
+
+      <div
+        class="modal-media"
+        id="modalMedia"
+      ></div>
+
+      <div
+        class="modal-content"
+        id="modalContent"
+      ></div>
 
     </div>
 
-  </footer>
-
-
-  <!-- =====================================================
-       WHATSAPP
-       ===================================================== -->
-
-  <a
-    class="floating-wa"
-    href="https://wa.me/201551604163"
-    target="_blank"
-    rel="noopener"
-    aria-label="تواصل مع أبو طارق عبر واتساب"
-  >
-    <span>
-      واتساب
-    </span>
-  </a>
-
+  </div>
 
   <!-- =====================================================
-       CORE SCRIPTS
-       ===================================================== -->
-
-  <script src="./config.js?v=6001"></script>
-  <script src="./features.js?v=6001"></script>
-
-
-  <!-- =====================================================
-       CATALOG CONTROLLER
-       النسخة الجديدة لا تعتمد على app.js
+       SCRIPTS
        ===================================================== -->
 
   <script>
-    (() => {
+    /* =====================================================
+       CONFIG
+       ===================================================== */
 
-      "use strict";
+    const DATA_URL =
+      "https://script.google.com/macros/s/AKfycbycQxcL3WeELjc-YQ6EY86X-QZXUtWKLH2WHz_CDoRY72SIhd5mBRQBUVhVuA-AfgME/exec";
 
+    const CACHE_KEY =
+      "abo_tarek_sections_v5";
 
-      /* ===================================================
-         CONFIG
-         =================================================== */
+    const CACHE_TIME_KEY =
+      "abo_tarek_sections_v5_time";
 
-      const DATA_URL =
-        "https://script.google.com/macros/s/AKfycbycQxcL3WeELjc-YQ6EY86X-QZXUtWKLH2WHz_CDoRY72SIhd5mBRQBUVhVuA-AfgME/exec";
+    const CACHE_TTL =
+      30 * 60 * 1000;
 
+    const BG_REFRESH =
+      10 * 60 * 1000;
 
-      /* ===================================================
-         DOM
-         =================================================== */
+    const WHATSAPP =
+      "201551604163";
 
-      const $ = selector =>
-        document.querySelector(selector);
+    let products = [];
+    let sections = [];
 
+    let currentQuery = "";
+    let currentCategory = "";
 
-      const sectionsEl =
-        $("#catalogSections");
+    let requestPromise = null;
 
+    let imageObserver = null;
 
-      const productsEl =
-        $("#catalogProducts");
+    /* =====================================================
+       HELPERS
+       ===================================================== */
 
+    function clean(value) {
+      return String(
+        value == null
+          ? ""
+          : value
+      ).trim();
+    }
 
-      const searchEl =
-        $("#catalogSearch");
-
-
-      const countEl =
-        $("#catalogCount");
-
-
-      const filterEl =
-        $("#catalogActiveFilter");
-
-
-      const headerSearch =
-        $("#headerSearchInput");
-
-
-      const headerSearchForm =
-        $("#headerSearchForm");
-
-
-      const topStripText =
-        $("#topStripText");
-
-
-      const siteLogo =
-        $("#siteLogo");
-
-
-      const brandName =
-        $("#brandName");
-
-
-      /* ===================================================
-         STATE
-         =================================================== */
-
-      let allProducts = [];
-      let allSections = [];
-
-      let activeCategory = "";
-      let searchTerm = "";
-
-      let loading = false;
-      let loaded = false;
-
-
-      /* ===================================================
-         HELPERS
-         =================================================== */
-
-      function escapeHtml(value) {
-
-        return String(value ?? "")
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;")
-          .replace(/"/g, "&quot;")
-          .replace(/'/g, "&#039;");
+    function bool(value) {
+      if (
+        value === true ||
+        value === 1
+      ) {
+        return true;
       }
 
+      return [
+        "true",
+        "1",
+        "yes",
+        "نعم",
+        "صح"
+      ].includes(
+        clean(value).toLowerCase()
+      );
+    }
 
-      function normalizeText(value) {
+    function number(value) {
+      const n =
+        Number(
+          String(
+            value == null
+              ? ""
+              : value
+          )
+            .replace(/,/g, "")
+            .replace(/[^\d.-]/g, "")
+        );
 
-        return String(value ?? "")
-          .trim()
-          .toLowerCase();
+      return Number.isFinite(n)
+        ? n
+        : 0;
+    }
+
+    function escapeHtml(value) {
+      return String(
+        value == null
+          ? ""
+          : value
+      )
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(
+          /"/g,
+          "&quot;"
+        )
+        .replace(
+          /'/g,
+          "&#039;"
+        );
+    }
+
+    function getId(product) {
+      return clean(
+        product?.id ||
+        product?.productId ||
+        product?.code ||
+        product?.sku ||
+        product?.name
+      );
+    }
+
+    function normalizeProduct(
+      product
+    ) {
+      if (
+        !product ||
+        typeof product !==
+          "object"
+      ) {
+        return null;
       }
 
+      const id =
+        getId(product);
 
-      function getIcon(name) {
-
-        const cfg =
-          window.ABO_TAREK_CONFIG;
-
-
-        if (
-          cfg &&
-          typeof cfg.getCategoryIcon === "function"
-        ) {
-
-          return cfg.getCategoryIcon(name);
-        }
-
-
-        const icons = {
-
-          "سفرة": "🍽️",
-
-          "شاي وقهوة": "☕",
-
-          "أكواب وكاسات": "🥛",
-
-          "مطبخ": "🍳",
-
-          "أواني طهي": "🥘",
-
-          "ميلامين": "🍽️",
-
-          "أدوات منزلية": "🏠"
-
-        };
-
-
-        return icons[name] || "🛍️";
+      if (!id) {
+        return null;
       }
 
+      let images = [];
 
-      function getPrice(product) {
-
-        const cfg =
-          window.ABO_TAREK_CONFIG;
-
-
-        if (
-          cfg &&
-          typeof cfg.getProductPrice === "function"
-        ) {
-
-          return Number(
-            cfg.getProductPrice(product) || 0
-          );
-        }
-
-
-        const offer =
-          Number(product.offerPrice || 0);
-
-
-        const price =
-          Number(product.price || 0);
-
-
-        if (offer > 0) {
-          return offer;
-        }
-
-
-        if (price > 0) {
-          return price;
-        }
-
-
-        return 0;
+      if (
+        Array.isArray(
+          product.images
+        )
+      ) {
+        images =
+          product.images
+            .map(clean)
+            .filter(Boolean);
       }
 
+      if (
+        typeof product.images ===
+        "string"
+      ) {
+        try {
+          const parsed =
+            JSON.parse(
+              product.images
+            );
 
-      function formatPrice(value) {
-
-        const cfg =
-          window.ABO_TAREK_CONFIG;
-
-
-        if (
-          cfg &&
-          typeof cfg.formatPrice === "function"
-        ) {
-
-          return cfg.formatPrice(value);
+          if (
+            Array.isArray(
+              parsed
+            )
+          ) {
+            images =
+              parsed
+                .map(clean)
+                .filter(Boolean);
+          }
+        } catch (error) {
+          images =
+            product.images
+              .split(/[,\n|]+/)
+              .map(clean)
+              .filter(Boolean);
         }
+      }
 
+      const image =
+        clean(
+          product.image ||
+          product.imageUrl ||
+          images[0]
+        );
 
+      if (
+        image &&
+        !images.includes(image)
+      ) {
+        images.unshift(image);
+      }
+
+      return {
+        id,
+
+        name: clean(
+          product.name ||
+          product.title
+        ),
+
+        category:
+          clean(
+            product.category
+          ),
+
+        image,
+
+        images,
+
+        description:
+          clean(
+            product.description
+          ),
+
+        active:
+          product.active === false
+            ? false
+            : !(
+                clean(
+                  product.active
+                ).toLowerCase() ===
+                "false"
+              ),
+
+        isOffer:
+          bool(
+            product.isOffer
+          ),
+
+        price:
+          number(
+            product.price
+          ),
+
+        oldPrice:
+          number(
+            product.oldPrice
+          ),
+
+        offerPrice:
+          number(
+            product.offerPrice
+          ),
+
+        sortOrder:
+          number(
+            product.sortOrder
+          )
+      };
+    }
+
+    function normalizeSection(
+      section
+    ) {
+      if (
+        !section ||
+        typeof section !==
+          "object"
+      ) {
+        return null;
+      }
+
+      const name =
+        clean(
+          section.name ||
+          section.title
+        );
+
+      if (!name) {
+        return null;
+      }
+
+      return {
+        id:
+          clean(
+            section.id ||
+            name
+          ),
+
+        name,
+
+        sortOrder:
+          number(
+            section.sortOrder
+          ),
+
+        active:
+          section.active === false
+            ? false
+            : !(
+                clean(
+                  section.active
+                ).toLowerCase() ===
+                "false"
+              )
+      };
+    }
+
+    function sortProducts(
+      list
+    ) {
+      return list.sort(
+        (a,b) =>
+          number(
+            a.sortOrder
+          ) -
+          number(
+            b.sortOrder
+          )
+      );
+    }
+
+    function resolveImage(
+      image
+    ) {
+      if (!image) {
+        return "";
+      }
+
+      if (
+        window.ABO_TAREK_CONFIG &&
+        typeof window
+          .ABO_TAREK_CONFIG
+          .resolveImageUrl ===
+          "function"
+      ) {
+        try {
+          return window
+            .ABO_TAREK_CONFIG
+            .resolveImageUrl(
+              image
+            );
+        } catch (error) {}
+      }
+
+      return image;
+    }
+
+    function getPrice(
+      product
+    ) {
+      if (
+        number(
+          product.offerPrice
+        ) > 0
+      ) {
+        return number(
+          product.offerPrice
+        );
+      }
+
+      return number(
+        product.price
+      );
+    }
+
+    function formatPrice(
+      value
+    ) {
+      const amount =
+        number(value);
+
+      if (
+        amount <= 0
+      ) {
+        return "";
+      }
+
+      try {
         return (
-          Number(value || 0)
-            .toLocaleString("ar-EG") +
+          new Intl.NumberFormat(
+            "ar-EG"
+          ).format(
+            amount
+          ) +
+          " جنيه"
+        );
+      } catch (error) {
+        return (
+          amount.toLocaleString() +
           " جنيه"
         );
       }
+    }
 
+    /* =====================================================
+       CACHE
+       ===================================================== */
 
-      function normalizeProduct(product) {
+    function saveCache() {
+      try {
+        localStorage.setItem(
+          CACHE_KEY,
+          JSON.stringify({
+            products,
+            sections
+          })
+        );
 
-        if (!product) {
-          return null;
-        }
+        localStorage.setItem(
+          CACHE_TIME_KEY,
+          String(
+            Date.now()
+          )
+        );
+      } catch (error) {}
+    }
 
-
-        return {
-
-          ...product,
-
-          id:
-            String(product.id ?? "").trim(),
-
-          name:
-            String(product.name ?? "").trim(),
-
-          category:
-            String(product.category ?? "").trim(),
-
-          description:
-            String(product.description ?? "").trim(),
-
-          image:
-            String(product.image ?? "").trim(),
-
-          price:
-            Number(product.price || 0),
-
-          oldPrice:
-            Number(product.oldPrice || 0),
-
-          offerPrice:
-            Number(product.offerPrice || 0),
-
-          sortOrder:
-            Number(product.sortOrder || 0),
-
-          active:
-            !(
-              product.active === false ||
-              product.active === "false" ||
-              product.active === 0 ||
-              product.active === "0"
-            )
-
-        };
-      }
-
-
-      function normalizeSection(section) {
-
-        if (!section) {
-          return null;
-        }
-
-
-        return {
-
-          ...section,
-
-          id:
-            String(section.id ?? "").trim(),
-
-          name:
-            String(section.name ?? "").trim(),
-
-          sortOrder:
-            Number(section.sortOrder || 0),
-
-          active:
-            !(
-              section.active === false ||
-              section.active === "false" ||
-              section.active === 0 ||
-              section.active === "0"
-            )
-
-        };
-      }
-
-
-      /* ===================================================
-         SETTINGS
-         =================================================== */
-
-      function applySettings(settings) {
-
-        if (!settings) {
-          return;
-        }
-
-
-        const siteName =
-          settings.siteName ||
-          "أبو طارق";
-
-
-        const logo =
-          settings.logoImage ||
-          "./assets/logo.png";
-
-
-        if (brandName) {
-
-          brandName.textContent =
-            siteName
-              .replace(
-                "للأدوات المنزلية",
-                ""
-              )
-              .trim() ||
-            "أبو طارق";
-        }
-
-
-        if (siteLogo) {
-
-          siteLogo.src =
-            logo;
-
-          siteLogo.onerror = () => {
-
-            siteLogo.src =
-              "./assets/logo.png";
-
-          };
-        }
-
-
-        if (
-          topStripText &&
-          settings.topStripText
-        ) {
-
-          topStripText.textContent =
-            settings.topStripText;
-        }
-
-
-        if (
-          settings.whatsappNumber
-        ) {
-
-          const number =
-            String(
-              settings.whatsappNumber
-            )
-              .replace(/\D/g, "");
-
-
-          document
-            .querySelectorAll(
-              'a[href*="wa.me"]'
-            )
-            .forEach(link => {
-
-              link.href =
-                "https://wa.me/" +
-                number;
-
-            });
-        }
-
-      }
-
-
-      /* ===================================================
-         FETCH BUNDLE
-         =================================================== */
-
-      async function fetchBundle() {
-
-        const controller =
-          new AbortController();
-
-
-        const timeout =
-          setTimeout(
-            () => controller.abort(),
-            20000
+    function loadCache() {
+      try {
+        const raw =
+          localStorage.getItem(
+            CACHE_KEY
           );
 
-
-        try {
-
-          const response =
-            await fetch(
-              DATA_URL +
-              "?t=" +
-              Date.now(),
-              {
-                method: "GET",
-                cache: "no-store",
-                signal:
-                  controller.signal
-              }
-            );
-
-
-          if (!response.ok) {
-
-            throw new Error(
-              "HTTP " +
-              response.status
-            );
-          }
-
-
-          const data =
-            await response.json();
-
-
-          if (
-            !data ||
-            data.ok === false
-          ) {
-
-            throw new Error(
-              data?.error ||
-              "استجابة غير صحيحة من السيرفر"
-            );
-          }
-
-
-          return data;
-
-        } finally {
-
-          clearTimeout(timeout);
-
+        if (!raw) {
+          return false;
         }
 
+        const data =
+          JSON.parse(raw);
+
+        if (
+          Array.isArray(
+            data.products
+          )
+        ) {
+          products =
+            sortProducts(
+              data.products
+                .map(
+                  normalizeProduct
+                )
+                .filter(Boolean)
+            );
+        }
+
+        if (
+          Array.isArray(
+            data.sections
+          )
+        ) {
+          sections =
+            data.sections
+              .map(
+                normalizeSection
+              )
+              .filter(Boolean)
+              .sort(
+                (a,b) =>
+                  a.sortOrder -
+                  b.sortOrder
+              );
+        }
+
+        return (
+          products.length > 0 ||
+          sections.length > 0
+        );
+      } catch (error) {
+        return false;
+      }
+    }
+
+    function cacheAge() {
+      try {
+        return (
+          Date.now() -
+          number(
+            localStorage.getItem(
+              CACHE_TIME_KEY
+            )
+          )
+        );
+      } catch (error) {
+        return Infinity;
+      }
+    }
+
+    /* =====================================================
+       API
+       ===================================================== */
+
+    async function fetchData(
+      silent = false
+    ) {
+      if (
+        requestPromise
+      ) {
+        return requestPromise;
       }
 
+      requestPromise =
+        (async () => {
+          try {
+            const response =
+              await fetch(
+                DATA_URL +
+                  "?t=" +
+                  Date.now(),
+                {
+                  method:
+                    "GET",
 
-      /* ===================================================
-         CACHE
-         =================================================== */
+                  cache:
+                    "no-store",
 
-      function saveCache(data) {
+                  headers: {
+                    Accept:
+                      "application/json"
+                  }
+                }
+              );
 
-        try {
+            if (
+              !response.ok
+            ) {
+              throw new Error(
+                "HTTP " +
+                  response.status
+              );
+            }
 
-          localStorage.setItem(
-            "abo_tarek_catalog_bundle_v1",
-            JSON.stringify({
-              timestamp: Date.now(),
-              products:
-                data.products || [],
-              sections:
-                data.sections || [],
-              settings:
-                data.settings || {}
+            const data =
+              await response.json();
+
+            if (
+              !data ||
+              data.ok === false
+            ) {
+              throw new Error(
+                data?.error ||
+                  "خطأ في استجابة السيرفر"
+              );
+            }
+
+            const bundle =
+              data.data &&
+              typeof data.data ===
+                "object"
+                ? data.data
+                : data;
+
+            products =
+              sortProducts(
+                (
+                  Array.isArray(
+                    bundle.products
+                  )
+                    ? bundle.products
+                    : []
+                )
+                  .map(
+                    normalizeProduct
+                  )
+                  .filter(
+                    product =>
+                      product &&
+                      product.active !== false
+                  )
+              );
+
+            sections =
+              (
+                Array.isArray(
+                  bundle.sections
+                )
+                  ? bundle.sections
+                  : []
+              )
+                .map(
+                  normalizeSection
+                )
+                .filter(
+                  section =>
+                    section &&
+                    section.active !==
+                      false
+                )
+                .sort(
+                  (a,b) =>
+                    a.sortOrder -
+                    b.sortOrder
+                );
+
+            saveCache();
+
+            renderAll();
+
+            return true;
+
+          } catch (error) {
+
+            console.warn(
+              "[Abo Tarek] catalog:",
+              error
+            );
+
+            if (
+              !silent &&
+              !products.length
+            ) {
+              showError();
+            }
+
+            return false;
+
+          } finally {
+            requestPromise =
+              null;
+          }
+        })();
+
+      return requestPromise;
+    }
+
+    /* =====================================================
+       CATEGORIES
+       ===================================================== */
+
+    function categoryIcon(
+      name
+    ) {
+      const icons = {
+        "سفرة": "🍽️",
+        "شاي وقهوة": "☕",
+        "أكواب وكاسات": "🥛",
+        "مطبخ": "🍳",
+        "أواني طهي": "🥘",
+        "ميلامين": "🍽️",
+        "أدوات منزلية": "🏠"
+      };
+
+      return (
+        icons[
+          clean(name)
+        ] ||
+        "🛍️"
+      );
+    }
+
+    function renderCategories() {
+      const grid =
+        document.getElementById(
+          "categoriesGrid"
+        );
+
+      if (!grid) {
+        return;
+      }
+
+      let list =
+        sections.filter(
+          section =>
+            section.active !==
+            false
+        );
+
+      if (!list.length) {
+        const names =
+          [
+            ...new Set(
+              products
+                .map(
+                  product =>
+                    product.category
+                )
+                .filter(Boolean)
+            )
+          ];
+
+        list =
+          names.map(
+            (name,index) => ({
+              id:
+                name,
+              name,
+              sortOrder:
+                index,
+              active:
+                true
             })
           );
-
-        } catch (_) {}
-
       }
 
+      if (!list.length) {
+        grid.innerHTML = `
+          <div class="state-box">
+            <div class="state-icon">🛍️</div>
+            <strong>لا توجد أقسام حالياً</strong>
+          </div>
+        `;
 
-      function readCache() {
+        return;
+      }
 
-        try {
+      grid.innerHTML =
+        list.map(
+          section => {
+            const count =
+              products.filter(
+                product =>
+                  product.category ===
+                  section.name
+              ).length;
 
-          const raw =
-            localStorage.getItem(
-              "abo_tarek_catalog_bundle_v1"
-            );
+            const active =
+              currentCategory ===
+              section.name;
 
+            return `
+              <a
+                href="#productsSection"
+                class="category-card ${
+                  active
+                    ? "is-active"
+                    : ""
+                }"
+                data-category="${escapeHtml(
+                  section.name
+                )}"
+              >
+                <span class="category-icon">
+                  ${categoryIcon(
+                    section.name
+                  )}
+                </span>
 
-          if (!raw) {
-            return null;
+                <span class="category-content">
+                  <strong>
+                    ${escapeHtml(
+                      section.name
+                    )}
+                  </strong>
+
+                  <small>
+                    ${count}
+                    ${count === 1
+                      ? " منتج"
+                      : " منتجات"}
+                  </small>
+                </span>
+
+                <span class="category-arrow">
+                  ←
+                </span>
+              </a>
+            `;
           }
+        ).join("");
+    }
 
+    /* =====================================================
+       FILTER
+       ===================================================== */
 
-          const data =
-            JSON.parse(raw);
+    function getFiltered() {
+      let result =
+        products.slice();
 
-
-          if (
-            !data ||
-            !Array.isArray(data.products)
-          ) {
-
-            return null;
-          }
-
-
-          return data;
-
-        } catch (_) {
-
-          return null;
-        }
-
+      if (
+        currentCategory
+      ) {
+        result =
+          result.filter(
+            product =>
+              product.category ===
+              currentCategory
+          );
       }
 
+      const query =
+        clean(
+          currentQuery
+        ).toLowerCase();
 
-      /* ===================================================
-         SET DATA
-         =================================================== */
+      if (query) {
+        result =
+          result.filter(
+            product => {
+              const text =
+                [
+                  product.name,
+                  product.category,
+                  product.description
+                ]
+                  .join(" ")
+                  .toLowerCase();
 
-      function setData(data) {
-
-        allProducts =
-          (data.products || [])
-            .map(normalizeProduct)
-            .filter(Boolean)
-            .filter(product =>
-              product.active
-            );
-
-
-        allSections =
-          (data.sections || [])
-            .map(normalizeSection)
-            .filter(Boolean)
-            .filter(section =>
-              section.active
-            );
-
-
-        allProducts.sort(
-          (a, b) =>
-            a.sortOrder -
-            b.sortOrder
-        );
-
-
-        allSections.sort(
-          (a, b) =>
-            a.sortOrder -
-            b.sortOrder
-        );
-
-
-        applySettings(
-          data.settings || {}
-        );
-
-
-        loaded = true;
-
+              return text.includes(
+                query
+              );
+            }
+          );
       }
 
+      return result;
+    }
 
-      /* ===================================================
-         LOADING STATE
-         =================================================== */
+    function updateTitle(
+      count
+    ) {
+      const title =
+        document.getElementById(
+          "productsTitle"
+        );
 
-      function showError(message) {
+      if (!title) {
+        return;
+      }
 
-        countEl.textContent =
-          "تعذر تحميل المنتجات";
+      if (
+        currentCategory
+      ) {
+        title.textContent =
+          currentCategory;
+        return;
+      }
 
+      if (
+        currentQuery
+      ) {
+        title.textContent =
+          "نتائج البحث";
+        return;
+      }
 
-        sectionsEl.innerHTML = `
+      title.textContent =
+        "كل المنتجات";
+    }
 
-          <div class="catalog-error">
+    function updateCount(
+      count
+    ) {
+      const element =
+        document.getElementById(
+          "resultCount"
+        );
 
-            <div class="catalog-error-icon">
-              ⚠️
-            </div>
+      if (!element) {
+        return;
+      }
 
-            <h3>
-              حصلت مشكلة في تحميل الكتالوج
+      element.textContent =
+        `${count} ${
+          count === 1
+            ? "منتج"
+            : "منتج"
+        }`;
+    }
+
+    /* =====================================================
+       PRODUCT CARD
+       ===================================================== */
+
+    function renderProduct(
+      product
+    ) {
+      const features =
+        window.ABO_TAREK_FEATURES;
+
+      const favorite =
+        features &&
+        typeof features
+          .isInWishlist ===
+          "function"
+          ? features.isInWishlist(
+              product.id
+            )
+          : false;
+
+      const image =
+        resolveImage(
+          product.image ||
+          product.images?.[0]
+        );
+
+      const price =
+        getPrice(
+          product
+        );
+
+      const oldPrice =
+        number(
+          product.oldPrice
+        );
+
+      return `
+        <article
+          class="product-card"
+          data-product-id="${escapeHtml(
+            product.id
+          )}"
+        >
+
+          <div class="product-media">
+
+            ${
+              product.isOffer
+                ? `
+                  <span class="offer-badge">
+                    عرض
+                  </span>
+                `
+                : ""
+            }
+
+            <button
+              type="button"
+              class="wishlist-button ${
+                favorite
+                  ? "is-active"
+                  : ""
+              }"
+              data-wishlist-id="${escapeHtml(
+                product.id
+              )}"
+              aria-label="${
+                favorite
+                  ? "إزالة من المفضلة"
+                  : "إضافة للمفضلة"
+              }"
+              aria-pressed="${
+                favorite
+                  ? "true"
+                  : "false"
+              }"
+            >
+              ${
+                favorite
+                  ? "♥"
+                  : "♡"
+              }
+            </button>
+
+            <a
+              href="./product.html?id=${encodeURIComponent(
+                product.id
+              )}"
+              aria-label="${escapeHtml(
+                product.name
+              )}"
+            >
+              ${
+                image
+                  ? `
+                    <img
+                      data-src="${escapeHtml(
+                        image
+                      )}"
+                      src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
+                      alt="${escapeHtml(
+                        product.name
+                      )}"
+                      width="165"
+                      height="175"
+                      loading="lazy"
+                      decoding="async"
+                    >
+                  `
+                  : `
+                    <div class="product-placeholder">
+                      🛍️
+                    </div>
+                  `
+              }
+            </a>
+
+          </div>
+
+          <div class="product-content">
+
+            ${
+              product.category
+                ? `
+                  <span class="product-category">
+                    ${escapeHtml(
+                      product.category
+                    )}
+                  </span>
+                `
+                : ""
+            }
+
+            <h3 class="product-title">
+              <a
+                href="./product.html?id=${encodeURIComponent(
+                  product.id
+                )}"
+              >
+                ${escapeHtml(
+                  product.name
+                )}
+              </a>
             </h3>
 
+            ${
+              product.description
+                ? `
+                  <p class="product-description">
+                    ${escapeHtml(
+                      product.description
+                    )}
+                  </p>
+                `
+                : `
+                  <p class="product-description"></p>
+                `
+            }
+
+            <div class="product-bottom">
+
+              <div class="price-area">
+
+                ${
+                  price > 0
+                    ? `
+                      <span class="price">
+                        ${formatPrice(
+                          price
+                        )}
+                      </span>
+                    `
+                    : `
+                      <span class="price-request">
+                        السعر عند الطلب
+                      </span>
+                    `
+                }
+
+                ${
+                  oldPrice > price &&
+                  price > 0
+                    ? `
+                      <del class="old-price">
+                        ${formatPrice(
+                          oldPrice
+                        )}
+                      </del>
+                    `
+                    : ""
+                }
+
+              </div>
+
+              <button
+                type="button"
+                class="add-button"
+                data-add-cart="${escapeHtml(
+                  product.id
+                )}"
+              >
+                🛒 أضف
+              </button>
+
+            </div>
+
+            <a
+              class="details-link"
+              href="./product.html?id=${encodeURIComponent(
+                product.id
+              )}"
+            >
+              <span>
+                عرض التفاصيل
+              </span>
+
+              <span>
+                ←
+              </span>
+            </a>
+
+          </div>
+
+        </article>
+      `;
+    }
+
+    function renderProducts(
+      list
+    ) {
+      const grid =
+        document.getElementById(
+          "productsGrid"
+        );
+
+      if (!grid) {
+        return;
+      }
+
+      updateCount(
+        list.length
+      );
+
+      updateTitle(
+        list.length
+      );
+
+      if (!list.length) {
+        grid.innerHTML = `
+          <div class="state-box">
+            <div class="state-icon">🔎</div>
+            <strong>
+              مفيش منتجات مطابقة
+            </strong>
             <p>
-              ${escapeHtml(
-                message ||
-                "تأكد من اتصال الإنترنت وحاول مرة أخرى."
-              )}
+              جرّب كلمة بحث مختلفة أو اختار قسم تاني.
             </p>
 
             <button
               type="button"
-              class="catalog-reset"
-              id="retryCatalog"
+              class="retry-button"
+              id="clearFilters"
             >
-              إعادة المحاولة
+              إظهار كل المنتجات
             </button>
-
           </div>
-
         `;
 
+        observeImages();
 
-        productsEl.innerHTML = "";
-
+        return;
       }
 
+      grid.innerHTML =
+        list.map(
+          renderProduct
+        ).join("");
 
-      /* ===================================================
-         BUILD SECTIONS
-         =================================================== */
+      observeImages();
+    }
 
-      function buildSections() {
+    /* =====================================================
+       IMAGE OBSERVER
+       ===================================================== */
 
-        const names = [];
+    function observeImages() {
+      const images =
+        document.querySelectorAll(
+          "img[data-src]"
+        );
 
+      if (
+        !images.length
+      ) {
+        return;
+      }
 
-        allSections.forEach(
-          section => {
+      if (
+        !("IntersectionObserver" in window)
+      ) {
+        images.forEach(
+          img => {
+            img.src =
+              img.dataset.src;
 
-            if (
-              section.name &&
-              !names.includes(
-                section.name
-              )
-            ) {
+            img.removeAttribute(
+              "data-src"
+            );
+          }
+        );
 
-              names.push(
-                section.name
+        return;
+      }
+
+      if (
+        !imageObserver
+      ) {
+        imageObserver =
+          new IntersectionObserver(
+            entries => {
+              entries.forEach(
+                entry => {
+                  if (
+                    !entry.isIntersecting
+                  ) {
+                    return;
+                  }
+
+                  const img =
+                    entry.target;
+
+                  if (
+                    img.dataset.src
+                  ) {
+                    img.src =
+                      img.dataset.src;
+
+                    img.removeAttribute(
+                      "data-src"
+                    );
+                  }
+
+                  imageObserver.unobserve(
+                    img
+                  );
+                }
               );
+            },
+            {
+              rootMargin:
+                "350px 0px"
             }
+          );
+      }
 
-          }
+      images.forEach(
+        img =>
+          imageObserver.observe(
+            img
+          )
+      );
+    }
+
+    /* =====================================================
+       MODAL
+       ===================================================== */
+
+    function openModal(
+      product
+    ) {
+      const modal =
+        document.getElementById(
+          "productModal"
         );
 
-
-        allProducts.forEach(
-          product => {
-
-            if (
-              product.category &&
-              !names.includes(
-                product.category
-              )
-            ) {
-
-              names.push(
-                product.category
-              );
-            }
-
-          }
+      const media =
+        document.getElementById(
+          "modalMedia"
         );
 
-
-        const counts = {};
-
-
-        allProducts.forEach(
-          product => {
-
-            const category =
-              product.category ||
-              "أخرى";
-
-
-            counts[category] =
-              (counts[category] || 0) +
-              1;
-
-          }
+      const content =
+        document.getElementById(
+          "modalContent"
         );
 
+      if (
+        !modal ||
+        !media ||
+        !content
+      ) {
+        return;
+      }
 
-        if (!names.length) {
+      const image =
+        resolveImage(
+          product.image ||
+          product.images?.[0]
+        );
 
-          sectionsEl.innerHTML = `
+      const price =
+        getPrice(
+          product
+        );
 
-            <div class="catalog-empty">
+      const features =
+        window.ABO_TAREK_FEATURES;
 
-              <div class="catalog-empty-icon">
-                🛍️
-              </div>
+      const favorite =
+        features &&
+        typeof features
+          .isInWishlist ===
+          "function"
+          ? features.isInWishlist(
+              product.id
+            )
+          : false;
 
-              <h3>
-                لا توجد أقسام حالياً
-              </h3>
-
-              <p>
-                سيتم عرض الأقسام هنا بمجرد إضافة المنتجات والأقسام.
-              </p>
-
+      media.innerHTML =
+        image
+          ? `
+            <img
+              src="${escapeHtml(
+                image
+              )}"
+              alt="${escapeHtml(
+                product.name
+              )}"
+            >
+          `
+          : `
+            <div class="product-placeholder">
+              🛍️
             </div>
-
           `;
 
-          return;
+      content.innerHTML = `
+        ${
+          product.category
+            ? `
+              <span class="modal-category">
+                ${escapeHtml(
+                  product.category
+                )}
+              </span>
+            `
+            : ""
         }
 
+        <h2>
+          ${escapeHtml(
+            product.name
+          )}
+        </h2>
 
-        sectionsEl.innerHTML = `
+        ${
+          product.description
+            ? `
+              <p class="modal-description">
+                ${escapeHtml(
+                  product.description
+                )}
+              </p>
+            `
+            : ""
+        }
+
+        <div class="modal-price">
+
+          ${
+            price > 0
+              ? `
+                <strong>
+                  ${formatPrice(
+                    price
+                  )}
+                </strong>
+              `
+              : `
+                <strong>
+                  السعر عند الطلب
+                </strong>
+              `
+          }
+
+          ${
+            number(
+              product.oldPrice
+            ) > price &&
+            price > 0
+              ? `
+                <del>
+                  ${formatPrice(
+                    product.oldPrice
+                  )}
+                </del>
+              `
+              : ""
+          }
+
+        </div>
+
+        <div class="modal-actions">
 
           <button
             type="button"
-            class="catalog-section-card ${
-              activeCategory === ""
-                ? "active"
-                : ""
-            }"
-            data-category=""
+            class="modal-button primary"
+            data-modal-add="${escapeHtml(
+              product.id
+            )}"
           >
-
-            <span class="catalog-section-icon">
-              ✦
-            </span>
-
-            <span class="catalog-section-name">
-              كل المنتجات
-            </span>
-
-            <span class="catalog-section-count">
-              ${allProducts.length} منتج
-            </span>
-
+            🛒 أضف للسلة
           </button>
 
-
-          ${names.map(name => `
-
-            <button
-              type="button"
-              class="catalog-section-card ${
-                normalizeText(
-                  activeCategory
-                ) ===
-                normalizeText(name)
-                  ? "active"
-                  : ""
-              }"
-              data-category="${escapeHtml(name)}"
-            >
-
-              <span class="catalog-section-icon">
-                ${getIcon(name)}
-              </span>
-
-              <span class="catalog-section-name">
-                ${escapeHtml(name)}
-              </span>
-
-              <span class="catalog-section-count">
-                ${counts[name] || 0} منتج
-              </span>
-
-            </button>
-
-          `).join("")}
-
-        `;
-
-      }
-
-
-      /* ===================================================
-         FILTER
-         =================================================== */
-
-      function getFilteredProducts() {
-
-        const search =
-          normalizeText(
-            searchTerm
-          );
-
-
-        return allProducts.filter(
-          product => {
-
-            const categoryMatch =
-              !activeCategory ||
-              normalizeText(
-                product.category
-              ) ===
-              normalizeText(
-                activeCategory
-              );
-
-
-            if (!categoryMatch) {
-              return false;
-            }
-
-
-            if (!search) {
-              return true;
-            }
-
-
-            const searchableText =
-              normalizeText([
-                product.name,
-                product.category,
-                product.description
-              ].join(" "));
-
-
-            return searchableText.includes(
-              search
-            );
-
-          }
-        );
-
-      }
-
-
-      /* ===================================================
-         PRODUCT CARD
-         =================================================== */
-
-      function productCard(product) {
-
-        const price =
-          getPrice(product);
-
-
-        const oldPrice =
-          Number(
-            product.oldPrice || 0
-          );
-
-
-        const offerPrice =
-          Number(
-            product.offerPrice || 0
-          );
-
-
-        const image =
-          product.image ||
-          "./assets/storefront.jpg";
-
-
-        const safeId =
-          escapeHtml(product.id);
-
-
-        const safeName =
-          escapeHtml(product.name);
-
-
-        const safeCategory =
-          escapeHtml(product.category);
-
-
-        const safeDescription =
-          escapeHtml(
-            product.description
-          );
-
-
-        let priceHtml = "";
-
-
-        if (price > 0) {
-
-          priceHtml = `
-
-            <div class="product-price">
-
-              <strong>
-                ${formatPrice(price)}
-              </strong>
-
-              ${
-                oldPrice > price
-                  ? `
-                    <del>
-                      ${formatPrice(oldPrice)}
-                    </del>
-                  `
-                  : ""
-              }
-
-            </div>
-
-          `;
-
-        } else {
-
-          priceHtml = `
-
-            <div class="product-price">
-
-              <strong>
-                السعر عند الطلب
-              </strong>
-
-            </div>
-
-          `;
-
-        }
-
-
-        return `
-
-          <article
-            class="product-card"
-            data-product-id="${safeId}"
+          <button
+            type="button"
+            class="modal-button whatsapp"
+            data-modal-whatsapp="${escapeHtml(
+              product.id
+            )}"
           >
-
-            <div class="product-image-wrap">
-
-              ${
-                offerPrice > 0 &&
-                oldPrice > offerPrice
-                  ? `
-                    <span class="product-offer-badge">
-                      عرض
-                    </span>
-                  `
-                  : ""
-              }
-
-
-              <img
-                src="${escapeHtml(image)}"
-                alt="${safeName}"
-                loading="lazy"
-                decoding="async"
-                width="500"
-                height="500"
-              >
-
-
-              <button
-                type="button"
-                class="product-wishlist wishlist-btn"
-                data-wishlist-id="${safeId}"
-                aria-label="إضافة للمفضلة"
-              >
-                ♡
-              </button>
-
-            </div>
-
-
-            <div class="product-card-body">
-
-              <div class="product-category">
-                ${safeCategory}
-              </div>
-
-
-              <h3 class="product-title">
-                ${safeName}
-              </h3>
-
-
-              ${
-                safeDescription
-                  ? `
-                    <p class="product-description">
-                      ${safeDescription}
-                    </p>
-                  `
-                  : ""
-              }
-
-
-              ${priceHtml}
-
-
-              <div class="product-actions">
-
-                <button
-                  type="button"
-                  class="btn-primary product-add-cart"
-                  data-add-to-cart="${safeId}"
-                >
-                  🛒 أضف للسلة
-                </button>
-
-
-                <a
-                  href="./product.html?id=${encodeURIComponent(
-                    product.id
-                  )}"
-                  class="btn-outline"
-                >
-                  التفاصيل
-                </a>
-
-              </div>
-
-            </div>
-
-          </article>
-
-        `;
-
-      }
-
-
-      /* ===================================================
-         RENDER PRODUCTS
-         =================================================== */
-
-      function renderProducts() {
-
-        const products =
-          getFilteredProducts();
-
-
-        countEl.textContent =
-          `${products.length} منتج`;
-
-
-        if (activeCategory) {
-
-          filterEl.hidden = false;
-
-          filterEl.textContent =
-            `القسم: ${activeCategory}`;
-
-        } else if (searchTerm) {
-
-          filterEl.hidden = false;
-
-          filterEl.textContent =
-            `البحث: ${searchTerm}`;
-
-        } else {
-
-          filterEl.hidden = true;
-
-        }
-
-
-        if (!products.length) {
-
-          productsEl.innerHTML = `
-
-            <div class="catalog-empty">
-
-              <div class="catalog-empty-icon">
-                🔎
-              </div>
-
-              <h3>
-                مفيش منتجات مطابقة
-              </h3>
-
-              <p>
-                جرّب كلمة بحث مختلفة أو اختار قسم تاني.
-              </p>
-
-              <button
-                type="button"
-                class="catalog-reset"
-                id="resetCatalog"
-              >
-                عرض كل المنتجات
-              </button>
-
-            </div>
-
-          `;
-
-          return;
-        }
-
-
-        productsEl.innerHTML =
-          products
-            .map(productCard)
-            .join("");
-
-
-        syncWishlistButtons();
-
-      }
-
-
-      /* ===================================================
-         WISHLIST UI
-         =================================================== */
-
-      function syncWishlistButtons() {
-
-        const feature =
-          window.ABO_TAREK_FEATURES;
-
-
-        if (
-          !feature ||
-          typeof feature.isInWishlist !==
-            "function"
-        ) {
-
-          return;
-        }
-
-
-        productsEl
-          .querySelectorAll(
-            "[data-wishlist-id]"
-          )
-          .forEach(button => {
-
-            const id =
-              button.getAttribute(
-                "data-wishlist-id"
-              );
-
-
-            try {
-
-              const active =
-                feature.isInWishlist(id);
-
-
-              button.classList.toggle(
-                "active",
-                !!active
-              );
-
-
-              button.textContent =
-                active ? "♥" : "♡";
-
-
-              button.setAttribute(
-                "aria-label",
-                active
-                  ? "إزالة من المفضلة"
-                  : "إضافة للمفضلة"
-              );
-
-            } catch (_) {}
-
-          });
-
-      }
-
-
-      /* ===================================================
-         PRODUCT ACTIONS
-         =================================================== */
-
-      function bindProductActions() {
-
-        productsEl
-          .querySelectorAll(
-            "[data-add-to-cart]"
-          )
-          .forEach(button => {
-
-            button.addEventListener(
-              "click",
-              () => {
-
-                const id =
-                  button.getAttribute(
-                    "data-add-to-cart"
-                  );
-
-
-                const product =
-                  allProducts.find(
-                    item =>
-                      String(item.id) ===
-                      String(id)
-                  );
-
-
-                if (!product) {
-                  return;
-                }
-
-
-                const feature =
-                  window.ABO_TAREK_FEATURES;
-
-
-                if (
-                  feature &&
-                  typeof feature.addToCart ===
-                    "function"
-                ) {
-
-                  feature.addToCart(
-                    product,
-                    1
-                  );
-
-
-                  button.disabled = true;
-
-                  const original =
-                    button.innerHTML;
-
-
-                  button.innerHTML =
-                    "✓ تمت الإضافة";
-
-
-                  setTimeout(
-                    () => {
-
-                      button.disabled =
-                        false;
-
-                      button.innerHTML =
-                        original;
-
-                    },
-                    900
-                  );
-
-                }
-
-              }
-            );
-
-          });
-
-
-        productsEl
-          .querySelectorAll(
-            "[data-wishlist-id]"
-          )
-          .forEach(button => {
-
-            button.addEventListener(
-              "click",
-              () => {
-
-                const id =
-                  button.getAttribute(
-                    "data-wishlist-id"
-                  );
-
-
-                const product =
-                  allProducts.find(
-                    item =>
-                      String(item.id) ===
-                      String(id)
-                  );
-
-
-                if (!product) {
-                  return;
-                }
-
-
-                const feature =
-                  window.ABO_TAREK_FEATURES;
-
-
-                if (
-                  feature &&
-                  typeof feature.toggleWishlist ===
-                    "function"
-                ) {
-
-                  feature.toggleWishlist(
-                    product
-                  );
-
-
-                  setTimeout(
-                    syncWishlistButtons,
-                    0
-                  );
-
-                }
-
-              }
-            );
-
-          });
-
-      }
-
-
-      /* ===================================================
-         CATEGORY
-         =================================================== */
-
-      function setCategory(category) {
-
-        activeCategory =
-          String(
-            category || ""
-          ).trim();
-
-
-        buildSections();
-
-        renderProducts();
-
-        bindProductActions();
-
-
-        const url =
-          new URL(
-            window.location.href
-          );
-
-
-        if (activeCategory) {
-
-          url.searchParams.set(
-            "category",
-            activeCategory
-          );
-
-        } else {
-
-          url.searchParams.delete(
-            "category"
-          );
-
-        }
-
-
-        history.replaceState(
-          {},
-          "",
-          url
-        );
-
-
-        document
-          .querySelector(
-            ".catalog-products"
-          )
-          ?.scrollIntoView({
-            behavior: "smooth",
-            block: "start"
-          });
-
-      }
-
-
-      /* ===================================================
-         SECTION CLICK
-         =================================================== */
-
-      sectionsEl.addEventListener(
-        "click",
-        event => {
-
-          const card =
-            event.target.closest(
-              "[data-category]"
-            );
-
-
-          if (!card) {
-            return;
-          }
-
-
-          setCategory(
-            card.getAttribute(
-              "data-category"
-            ) || ""
-          );
-
-        }
+            واتساب
+          </button>
+
+          <button
+            type="button"
+            class="modal-button primary"
+            data-modal-wishlist="${escapeHtml(
+              product.id
+            )}"
+          >
+            ${
+              favorite
+                ? "♥ في المفضلة"
+                : "♡ أضف للمفضلة"
+            }
+          </button>
+
+        </div>
+      `;
+
+      modal.classList.add(
+        "is-open"
       );
 
+      modal.setAttribute(
+        "aria-hidden",
+        "false"
+      );
 
-      /* ===================================================
-         SEARCH
-         =================================================== */
+      document.body.classList.add(
+        "modal-open"
+      );
 
-      function setSearch(value) {
+      try {
+        localStorage.setItem(
+          "abo_tarek_recent_v1",
+          JSON.stringify(
+            [
+              product,
+              ...(
+                JSON.parse(
+                  localStorage.getItem(
+                    "abo_tarek_recent_v1"
+                  ) || "[]"
+                )
+              ).filter(
+                item =>
+                  getId(item) !==
+                  product.id
+              )
+            ].slice(0,8)
+          )
+        );
+      } catch (error) {}
+    }
 
-        searchTerm =
-          String(
-            value || ""
-          ).trim();
+    function closeModal() {
+      const modal =
+        document.getElementById(
+          "productModal"
+        );
 
+      if (!modal) {
+        return;
+      }
+
+      modal.classList.remove(
+        "is-open"
+      );
+
+      modal.setAttribute(
+        "aria-hidden",
+        "true"
+      );
+
+      document.body.classList.remove(
+        "modal-open"
+      );
+    }
+
+    /* =====================================================
+       ALL RENDER
+       ===================================================== */
+
+    function renderAll() {
+      renderCategories();
+
+      renderProducts(
+        getFiltered()
+      );
+
+      updateWhatsApp();
+
+      observeImages();
+    }
+
+    /* =====================================================
+       WHATSAPP
+       ===================================================== */
+
+    function updateWhatsApp() {
+      document
+        .querySelectorAll(
+          "[data-whatsapp]"
+        )
+        .forEach(
+          link => {
+            link.href =
+              "https://wa.me/" +
+              WHATSAPP;
+          }
+        );
+    }
+
+    /* =====================================================
+       EVENTS
+       ===================================================== */
+
+    function setupEvents() {
+
+      /* Search */
+
+      const search =
+        document.getElementById(
+          "catalogSearch"
+        );
+
+      const headerSearch =
+        document.getElementById(
+          "headerSearchInput"
+        );
+
+      function searchValue(
+        value
+      ) {
+        currentQuery =
+          clean(value);
 
         if (
-          searchEl.value !==
-          searchTerm
+          search &&
+          search.value !==
+            currentQuery
         ) {
-
-          searchEl.value =
-            searchTerm;
+          search.value =
+            currentQuery;
         }
-
 
         if (
           headerSearch &&
           headerSearch.value !==
-            searchTerm
+            currentQuery
         ) {
-
           headerSearch.value =
-            searchTerm;
+            currentQuery;
         }
 
+        renderProducts(
+          getFiltered()
+        );
 
-        renderProducts();
-
-        bindProductActions();
-
+        renderCategories();
       }
 
-
-      searchEl.addEventListener(
-        "input",
-        event => {
-
-          setSearch(
-            event.target.value
-          );
-
-        }
-      );
-
-
-      headerSearchForm?.addEventListener(
-        "submit",
-        event => {
-
-          event.preventDefault();
-
-
-          setSearch(
-            headerSearch.value
-          );
-
-
-          searchEl.focus();
-
-
-          document
-            .querySelector(
-              ".catalog-products"
+      if (search) {
+        search.addEventListener(
+          "input",
+          event =>
+            searchValue(
+              event.target.value
             )
-            ?.scrollIntoView({
-              behavior: "smooth",
-              block: "start"
-            });
+        );
+      }
 
-        }
-      );
+      if (headerSearch) {
+        headerSearch.addEventListener(
+          "input",
+          event =>
+            searchValue(
+              event.target.value
+            )
+        );
+      }
 
+      document
+        .getElementById(
+          "headerSearchForm"
+        )
+        ?.addEventListener(
+          "submit",
+          event => {
+            event.preventDefault();
 
-      /* ===================================================
-         RESET
-         =================================================== */
+            searchValue(
+              headerSearch?.value ||
+                ""
+            );
+
+            document
+              .getElementById(
+                "productsSection"
+              )
+              ?.scrollIntoView({
+                behavior:
+                  "smooth"
+              });
+          }
+        );
+
+      /* Category */
 
       document.addEventListener(
         "click",
         event => {
 
-          if (
-            event.target.id ===
-            "resetCatalog"
-          ) {
-
-            activeCategory = "";
-            searchTerm = "";
-
-            searchEl.value = "";
-
-            if (headerSearch) {
-              headerSearch.value = "";
-            }
-
-            buildSections();
-            renderProducts();
-            bindProductActions();
-
-          }
-
-
-          if (
-            event.target.id ===
-            "retryCatalog"
-          ) {
-
-            loadCatalog(
-              true
+          const category =
+            event.target.closest(
+              "[data-category]"
             );
 
+          if (category) {
+            event.preventDefault();
+
+            currentCategory =
+              clean(
+                category.getAttribute(
+                  "data-category"
+                )
+              );
+
+            renderCategories();
+
+            renderProducts(
+              getFiltered()
+            );
+
+            document
+              .getElementById(
+                "productsSection"
+              )
+              ?.scrollIntoView({
+                behavior:
+                  "smooth"
+              });
+
+            return;
           }
 
+          /* Clear filters */
+
+          if (
+            event.target.closest(
+              "#clearFilters"
+            )
+          ) {
+            currentQuery = "";
+            currentCategory = "";
+
+            if (search) {
+              search.value =
+                "";
+            }
+
+            if (
+              headerSearch
+            ) {
+              headerSearch.value =
+                "";
+            }
+
+            renderAll();
+
+            return;
+          }
+
+          /* Add to cart */
+
+          const addButton =
+            event.target.closest(
+              "[data-add-cart]"
+            );
+
+          if (addButton) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const id =
+              addButton.getAttribute(
+                "data-add-cart"
+              );
+
+            const product =
+              products.find(
+                item =>
+                  item.id ===
+                  id
+              );
+
+            if (
+              product &&
+              window
+                .ABO_TAREK_FEATURES &&
+              typeof window
+                .ABO_TAREK_FEATURES
+                .addToCart ===
+                "function"
+            ) {
+              window
+                .ABO_TAREK_FEATURES
+                .addToCart(
+                  product,
+                  1
+                );
+            }
+
+            return;
+          }
+
+          /* Wishlist */
+
+          const wishlist =
+            event.target.closest(
+              "[data-wishlist-id]"
+            );
+
+          if (wishlist) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const id =
+              wishlist.getAttribute(
+                "data-wishlist-id"
+              );
+
+            const product =
+              products.find(
+                item =>
+                  item.id ===
+                  id
+              );
+
+            if (
+              product &&
+              window
+                .ABO_TAREK_FEATURES &&
+              typeof window
+                .ABO_TAREK_FEATURES
+                .toggleWishlist ===
+                "function"
+            ) {
+              window
+                .ABO_TAREK_FEATURES
+                .toggleWishlist(
+                  product
+                );
+
+              setTimeout(
+                renderAll,
+                0
+              );
+            }
+
+            return;
+          }
+
+          /* Modal */
+
+          const modalAdd =
+            event.target.closest(
+              "[data-modal-add]"
+            );
+
+          if (modalAdd) {
+            const id =
+              modalAdd.getAttribute(
+                "data-modal-add"
+              );
+
+            const product =
+              products.find(
+                item =>
+                  item.id ===
+                  id
+              );
+
+            if (
+              product &&
+              window
+                .ABO_TAREK_FEATURES
+            ) {
+              window
+                .ABO_TAREK_FEATURES
+                .addToCart(
+                  product,
+                  1
+                );
+            }
+
+            return;
+          }
+
+          const modalWhatsApp =
+            event.target.closest(
+              "[data-modal-whatsapp]"
+            );
+
+          if (modalWhatsApp) {
+            const id =
+              modalWhatsApp.getAttribute(
+                "data-modal-whatsapp"
+              );
+
+            const product =
+              products.find(
+                item =>
+                  item.id ===
+                  id
+              );
+
+            if (
+              product &&
+              window
+                .ABO_TAREK_FEATURES &&
+              typeof window
+                .ABO_TAREK_FEATURES
+                .openProductWhatsApp ===
+                "function"
+            ) {
+              window
+                .ABO_TAREK_FEATURES
+                .openProductWhatsApp(
+                  product,
+                  1
+                );
+            }
+
+            return;
+          }
+
+          const modalWishlist =
+            event.target.closest(
+              "[data-modal-wishlist]"
+            );
+
+          if (modalWishlist) {
+            const id =
+              modalWishlist.getAttribute(
+                "data-modal-wishlist"
+              );
+
+            const product =
+              products.find(
+                item =>
+                  item.id ===
+                  id
+              );
+
+            if (
+              product &&
+              window
+                .ABO_TAREK_FEATURES &&
+              typeof window
+                .ABO_TAREK_FEATURES
+                .toggleWishlist ===
+                "function"
+            ) {
+              window
+                .ABO_TAREK_FEATURES
+                .toggleWishlist(
+                  product
+                );
+
+              openModal(
+                product
+              );
+            }
+
+            return;
+          }
+
+          /* Product card opens modal only
+             when user clicks non-link area. */
+
+          const card =
+            event.target.closest(
+              ".product-card"
+            );
+
+          if (
+            card &&
+            !event.target.closest(
+              "a,button"
+            )
+          ) {
+            const id =
+              card.getAttribute(
+                "data-product-id"
+              );
+
+            const product =
+              products.find(
+                item =>
+                  item.id ===
+                  id
+              );
+
+            if (product) {
+              openModal(
+                product
+              );
+            }
+          }
         }
       );
 
+      /* Modal close */
 
-      /* ===================================================
-         QUERY
-         =================================================== */
+      document
+        .getElementById(
+          "modalClose"
+        )
+        ?.addEventListener(
+          "click",
+          closeModal
+        );
 
-      function readQuery() {
-
-        const params =
-          new URLSearchParams(
-            window.location.search
-          );
-
-
-        activeCategory =
-          params.get(
-            "category"
-          ) || "";
-
-
-        searchTerm =
-          params.get(
-            "q"
-          ) || "";
-
-
-        searchEl.value =
-          searchTerm;
-
-
-        if (headerSearch) {
-
-          headerSearch.value =
-            searchTerm;
-
-        }
-
-      }
-
-
-      /* ===================================================
-         RENDER
-         =================================================== */
-
-      function renderAll() {
-
-        buildSections();
-
-        renderProducts();
-
-        bindProductActions();
-
-      }
-
-
-      /* ===================================================
-         LOAD CATALOG
-         =================================================== */
-
-      async function loadCatalog(
-        forceNetwork = false
-      ) {
-
-        if (loading) {
-          return;
-        }
-
-
-        loading = true;
-
-
-        try {
-
-          readQuery();
-
-
-          /*
-            أولاً نعرض الكاش لو موجود،
-            عشان المستخدم يشوف المنتجات فوراً.
-          */
-
-          if (!forceNetwork) {
-
-            const cached =
-              readCache();
-
-
-            if (cached) {
-
-              setData(cached);
-
-              renderAll();
-
+      document
+        .getElementById(
+          "productModal"
+        )
+        ?.addEventListener(
+          "click",
+          event => {
+            if (
+              event.target.id ===
+              "productModal"
+            ) {
+              closeModal();
             }
-
           }
+        );
 
-
-          /*
-            بعد ذلك نجيب النسخة الحديثة
-            من السيرفر.
-          */
-
-          const data =
-            await fetchBundle();
-
-
-          setData(data);
-
-          saveCache(data);
-
-          renderAll();
-
-
-        } catch (error) {
-
-          console.error(
-            "[Catalog] Load error:",
-            error
-          );
-
-
-          /*
-            لو فيه بيانات معروضة بالفعل من الكاش،
-            ما نمسحهاش.
-          */
-
-          if (!loaded) {
-
-            showError(
-              "تعذر الاتصال بالسيرفر. حاول مرة أخرى."
-            );
-
+      document.addEventListener(
+        "keydown",
+        event => {
+          if (
+            event.key ===
+            "Escape"
+          ) {
+            closeModal();
           }
-
-        } finally {
-
-          loading = false;
-
         }
+      );
 
-      }
+      /* Features synchronization */
 
-
-      /* ===================================================
-         MOBILE MENU
-         =================================================== */
-
-      const menuBtn =
-        document.querySelector(
-          "#menuBtn"
-        );
-
-
-      const mainNav =
-        document.querySelector(
-          "#mainNav"
-        );
-
-
-      menuBtn?.addEventListener(
-        "click",
+      document.addEventListener(
+        "abo-tarek:wishlist-updated",
         () => {
-
-          const open =
-            mainNav?.classList.toggle(
-              "open"
-            );
-
-
-          menuBtn.setAttribute(
-            "aria-expanded",
-            open ? "true" : "false"
+          renderProducts(
+            getFiltered()
           );
-
         }
       );
 
-
-      mainNav
-        ?.querySelectorAll("a")
-        .forEach(link => {
-
-          link.addEventListener(
-            "click",
-            () => {
-
-              mainNav.classList.remove(
-                "open"
-              );
-
-              menuBtn?.setAttribute(
-                "aria-expanded",
-                "false"
-              );
-
-            }
-          );
-
-        });
-
-
-      /* ===================================================
-         WISHLIST EVENTS
-         =================================================== */
-
-      window.addEventListener(
-        "abo-tarek:wishlist-changed",
-        syncWishlistButtons
-      );
-
-
-      window.addEventListener(
+      document.addEventListener(
         "abo-tarek:cart-updated",
         () => {
-
-          /*
-            features.js مسؤول عن السلة.
-            الصفحة لا تعمل أي إضافة ثانية.
-          */
-
+          updateCartCount();
         }
       );
+    }
 
-
-      /* ===================================================
-         START
-         =================================================== */
-
-      if (
-        document.readyState ===
-        "loading"
-      ) {
-
-        document.addEventListener(
-          "DOMContentLoaded",
-          () => {
-
-            loadCatalog();
-
-          },
-          {
-            once: true
-          }
+    function updateCartCount() {
+      const count =
+        document.getElementById(
+          "cartCount"
         );
 
-      } else {
-
-        loadCatalog();
-
+      if (!count) {
+        return;
       }
 
-    })();
+      let total = 0;
+
+      try {
+        if (
+          window
+            .ABO_TAREK_FEATURES &&
+          typeof window
+            .ABO_TAREK_FEATURES
+            .getCartCount ===
+            "function"
+        ) {
+          total =
+            window
+              .ABO_TAREK_FEATURES
+              .getCartCount();
+        }
+      } catch (error) {}
+
+      count.textContent =
+        String(total);
+
+      count.hidden =
+        total <= 0;
+    }
+
+    /* =====================================================
+       ERROR
+       ===================================================== */
+
+    function showError() {
+      const categories =
+        document.getElementById(
+          "categoriesGrid"
+        );
+
+      const productsGrid =
+        document.getElementById(
+          "productsGrid"
+        );
+
+      if (categories) {
+        categories.innerHTML = `
+          <div class="state-box">
+            <div class="state-icon">⚠️</div>
+            <strong>
+              تعذر تحميل الأقسام
+            </strong>
+            <p>
+              حاول تحديث الصفحة مرة أخرى.
+            </p>
+
+            <button
+              type="button"
+              class="retry-button"
+              id="retryButton"
+            >
+              إعادة المحاولة
+            </button>
+          </div>
+        `;
+      }
+
+      if (productsGrid) {
+        productsGrid.innerHTML = `
+          <div class="state-box">
+            <div class="state-icon">⚠️</div>
+            <strong>
+              تعذر تحميل المنتجات
+            </strong>
+            <p>
+              السيرفر لم يرد حالياً.
+            </p>
+
+            <button
+              type="button"
+              class="retry-button"
+              id="retryProductsButton"
+            >
+              إعادة المحاولة
+            </button>
+          </div>
+        `;
+      }
+
+      document
+        .getElementById(
+          "retryButton"
+        )
+        ?.addEventListener(
+          "click",
+          () =>
+            fetchData(
+              false
+            )
+        );
+
+      document
+        .getElementById(
+          "retryProductsButton"
+        )
+        ?.addEventListener(
+          "click",
+          () =>
+            fetchData(
+              false
+            )
+        );
+    }
+
+    /* =====================================================
+       INIT
+       ===================================================== */
+
+    async function init() {
+      setupEvents();
+
+      updateWhatsApp();
+
+      const hasCache =
+        loadCache();
+
+      if (hasCache) {
+        renderAll();
+
+        updateCartCount();
+
+        if (
+          cacheAge() >
+          BG_REFRESH
+        ) {
+          fetchData(
+            true
+          );
+        }
+
+        if (
+          cacheAge() <=
+          CACHE_TTL
+        ) {
+          return;
+        }
+      }
+
+      await fetchData(
+        false
+      );
+
+      updateCartCount();
+    }
+
+    /* =====================================================
+       START
+       ===================================================== */
+
+    if (
+      document.readyState ===
+      "loading"
+    ) {
+      document.addEventListener(
+        "DOMContentLoaded",
+        init,
+        {
+          once: true
+        }
+      );
+    } else {
+      init();
+    }
+
   </script>
 
-
   <!-- =====================================================
-       PWA
+       FEATURES
        ===================================================== -->
 
-  <script src="./pwa.js?v=6001"></script>
+  <script
+    src="./config.js?v=6000"
+    defer
+  ></script>
+
+  <script
+    src="./features.js?v=6000"
+    defer
+  ></script>
 
 </body>
-
 </html>
