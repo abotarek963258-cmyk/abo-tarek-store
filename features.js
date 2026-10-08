@@ -1,3122 +1,2091 @@
 /* =========================================================
    ABO TAREK STORE
    FEATURES ENGINE
-   PREMIUM / STABLE EDITION
+   FINAL STABLE EDITION
+   Cart • Wishlist • Recently Viewed • Product Modal • WhatsApp
    ========================================================= */
 
-(() => {
+(function () {
   "use strict";
 
   /* =========================================================
-     CONFIG
+     GLOBAL CONFIG
      ========================================================= */
 
-  const CFG =
-    window.ABO_TAREK_CONFIG ||
-    window.ABO_TAREK ||
-    {};
+  const ROOT = window.ABO_TAREK || {};
+  const CFG = window.ABO_TAREK_CONFIG || ROOT.CONFIG || {};
 
   const STORAGE = {
     cart:
-      CFG?.CACHE_KEYS?.cart ||
+      (CFG.CACHE_KEYS && CFG.CACHE_KEYS.cart) ||
       "abo_tarek_cart_v1",
 
     wishlist:
-      CFG?.CACHE_KEYS?.wishlist ||
+      (CFG.CACHE_KEYS && CFG.CACHE_KEYS.wishlist) ||
       "abo_tarek_wishlist_v1",
 
     recent:
-      CFG?.CACHE_KEYS?.recent ||
+      (CFG.CACHE_KEYS && CFG.CACHE_KEYS.recent) ||
       "abo_tarek_recent_v1"
   };
 
-  const MAX_QTY =
-    Number(
-      CFG?.PRODUCTS?.maxCartQuantity ||
-      CFG?.CART?.maxQuantity ||
-      99
-    ) || 99;
+  const LIMITS = {
+    maxQuantity:
+      Number(
+        CFG.CART &&
+        CFG.CART.MAX_QUANTITY
+      ) || 99,
 
-  const WHATSAPP_NUMBER =
-    typeof CFG?.getWhatsAppNumber === "function"
-      ? CFG.getWhatsAppNumber()
-      : String(
-          CFG?.WHATSAPP_NUMBER ||
-          "201551604163"
-        ).replace(/\D/g, "");
-
+    maxRecent:
+      Number(
+        CFG.RECENTLY_VIEWED &&
+        CFG.RECENTLY_VIEWED.MAX_ITEMS
+      ) || 8
+  };
 
   /* =========================================================
      STATE
      ========================================================= */
 
-  const state = {
-    cart: [],
-    wishlist: [],
-    recent: [],
-    products: [],
-    drawerOpen: false,
-    wishlistOpen: false,
-    initialized: false
-  };
+  let cart = [];
+  let wishlist = [];
+  let recentProducts = [];
 
+  let initialized = false;
+  let modalProduct = null;
+  let modalQuantity = 1;
+
+  let cartDrawer = null;
+  let modal = null;
+  let toastContainer = null;
 
   /* =========================================================
-     DOM HELPERS
+     HELPERS
      ========================================================= */
 
-  const $ = (selector, root = document) =>
-    root.querySelector(selector);
+  function cleanText(value) {
+    return String(value == null ? "" : value).trim();
+  }
 
-  const $$ = (selector, root = document) =>
-    Array.from(
-      root.querySelectorAll(selector)
+  function safeNumber(value, fallback = 0) {
+    const n = Number(
+      String(value == null ? "" : value)
+        .replace(/,/g, "")
+        .replace(/[^\d.-]/g, "")
     );
 
+    return Number.isFinite(n) ? n : fallback;
+  }
 
-  /* =========================================================
-     SAFE STORAGE
-     ========================================================= */
+  function getProductId(product) {
+    if (!product) return "";
 
-  function readStorage(key, fallback = []) {
+    return cleanText(
+      product.id ||
+      product.productId ||
+      product.code ||
+      product.sku ||
+      product.name
+    );
+  }
+
+  function normalizeProduct(product) {
+    if (!product || typeof product !== "object") {
+      return null;
+    }
+
+    const id = getProductId(product);
+
+    if (!id) return null;
+
+    const normalized = {
+      id,
+      name: cleanText(product.name || product.title || "منتج"),
+      category: cleanText(product.category),
+      image: cleanText(product.image || product.imageUrl),
+      images: Array.isArray(product.images)
+        ? product.images.filter(Boolean)
+        : [],
+      description: cleanText(product.description),
+      active:
+        product.active === false ||
+        String(product.active).toLowerCase() === "false"
+          ? false
+          : true,
+      showHome:
+        product.showHome === true ||
+        String(product.showHome).toLowerCase() === "true",
+      isOffer:
+        product.isOffer === true ||
+        String(product.isOffer).toLowerCase() === "true",
+      sortOrder: safeNumber(product.sortOrder, 0),
+      price: safeNumber(product.price, 0),
+      oldPrice: safeNumber(product.oldPrice, 0),
+      offerPrice: safeNumber(product.offerPrice, 0)
+    };
+
+    return normalized;
+  }
+
+  function getProductPrice(product) {
+    if (!product) return 0;
+
+    if (product.offerPrice > 0) {
+      return product.offerPrice;
+    }
+
+    if (product.price > 0) {
+      return product.price;
+    }
+
+    return 0;
+  }
+
+  function formatPrice(value) {
+    const amount = safeNumber(value, 0);
+
+    if (amount <= 0) {
+      return "";
+    }
 
     try {
+      return new Intl.NumberFormat("ar-EG").format(amount) + " جنيه";
+    } catch (error) {
+      return amount.toLocaleString("en-US") + " جنيه";
+    }
+  }
 
-      const raw =
-        localStorage.getItem(key);
+  function resolveImage(product) {
+    if (!product) {
+      return "";
+    }
+
+    const image =
+      product.image ||
+      (Array.isArray(product.images) && product.images[0]) ||
+      "";
+
+    if (!image) {
+      return "";
+    }
+
+    try {
+      if (
+        typeof CFG.resolveImageUrl === "function"
+      ) {
+        return CFG.resolveImageUrl(image);
+      }
+
+      if (
+        typeof ROOT.resolveImageUrl === "function"
+      ) {
+        return ROOT.resolveImageUrl(image);
+      }
+    } catch (error) {}
+
+    return image;
+  }
+
+  function escapeHtml(value) {
+    return String(value == null ? "" : value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  function dispatch(name, detail) {
+    try {
+      document.dispatchEvent(
+        new CustomEvent(name, {
+          detail: detail || {}
+        })
+      );
+    } catch (error) {}
+  }
+
+  /* =========================================================
+     STORAGE
+     ========================================================= */
+
+  function readStorage(key, fallback) {
+    try {
+      const raw = localStorage.getItem(key);
 
       if (!raw) {
         return fallback;
       }
 
-      const value =
-        JSON.parse(raw);
+      const parsed = JSON.parse(raw);
 
-      return value ?? fallback;
-
-    } catch (_) {
-
+      return parsed == null ? fallback : parsed;
+    } catch (error) {
       return fallback;
-
     }
-
   }
 
-
   function writeStorage(key, value) {
-
     try {
-
       localStorage.setItem(
         key,
         JSON.stringify(value)
       );
 
       return true;
-
-    } catch (_) {
-
+    } catch (error) {
       return false;
-
     }
-
   }
 
-
-  function loadStorage() {
-
-    const cart =
-      readStorage(
-        STORAGE.cart,
-        []
-      );
-
-    const wishlist =
-      readStorage(
-        STORAGE.wishlist,
-        []
-      );
-
-    const recent =
-      readStorage(
-        STORAGE.recent,
-        []
-      );
-
-
-    state.cart =
-      Array.isArray(cart)
-        ? cart
-        : [];
-
-
-    state.wishlist =
-      Array.isArray(wishlist)
-        ? wishlist
-        : [];
-
-
-    state.recent =
-      Array.isArray(recent)
-        ? recent
-        : [];
-
-  }
-
-
-  /* =========================================================
-     GENERAL HELPERS
-     ========================================================= */
-
-  function escapeHtml(value) {
-
-    return String(value ?? "")
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;");
-
-  }
-
-
-  function productId(product) {
-
-    if (!product) {
-      return "";
-    }
-
-    return String(
-      product.id ??
-      product._id ??
-      product.productId ??
-      ""
-    ).trim();
-
-  }
-
-
-  function normalizeProduct(product) {
-
-    if (!product) {
-      return null;
-    }
-
-    const id =
-      productId(product);
-
-    if (!id) {
-      return null;
-    }
-
-
-    return {
-      ...product,
-
-      id,
-
-      name:
-        String(
-          product.name ||
-          "منتج أبو طارق"
-        ).trim(),
-
-      category:
-        String(
-          product.category ||
-          ""
-        ).trim(),
-
-      image:
-        String(
-          product.image ||
-          product.images?.[0] ||
-          ""
-        ).trim(),
-
-      description:
-        String(
-          product.description ||
-          ""
-        ).trim(),
-
-      price:
-        Number(
-          product.price ||
-          0
-        ) || 0,
-
-      oldPrice:
-        Number(
-          product.oldPrice ||
-          0
-        ) || 0,
-
-      offerPrice:
-        Number(
-          product.offerPrice ||
-          0
-        ) || 0,
-
-      active:
-        product.active !== false,
-
-      isOffer:
-        product.isOffer === true ||
-        product.isOffer === "true" ||
-        Number(
-          product.offerPrice ||
-          0
-        ) > 0
-
-    };
-
-  }
-
-
-  function normalizeQuantity(value) {
-
-    let qty =
-      Number(value);
-
-    if (!Number.isFinite(qty)) {
-      qty = 1;
-    }
-
-    qty =
-      Math.round(qty);
-
-    return Math.max(
-      1,
-      Math.min(
-        MAX_QTY,
-        qty
-      )
+  function loadState() {
+    const savedCart = readStorage(
+      STORAGE.cart,
+      []
     );
 
-  }
-
-
-  function resolveImage(image) {
-
-    if (!image) {
-      return "./assets/storefront.jpg";
-    }
-
-    try {
-
-      if (
-        typeof CFG.resolveImageUrl ===
-        "function"
-      ) {
-
-        return CFG.resolveImageUrl(
-          image
-        );
-
-      }
-
-    } catch (_) {}
-
-    return String(image);
-
-  }
-
-
-  function getPrice(product) {
-
-    if (!product) {
-      return 0;
-    }
-
-
-    try {
-
-      if (
-        typeof CFG.getProductPrice ===
-        "function"
-      ) {
-
-        const value =
-          Number(
-            CFG.getProductPrice(
-              product
-            )
-          );
-
-        if (
-          Number.isFinite(value) &&
-          value > 0
-        ) {
-          return value;
-        }
-
-      }
-
-    } catch (_) {}
-
-
-    if (
-      product.isOffer &&
-      Number(product.offerPrice) > 0
-    ) {
-
-      return Number(
-        product.offerPrice
-      );
-
-    }
-
-
-    if (
-      Number(product.price) > 0
-    ) {
-
-      return Number(
-        product.price
-      );
-
-    }
-
-
-    return 0;
-
-  }
-
-
-  function formatPrice(value) {
-
-    const number =
-      Number(value);
-
-    if (
-      !Number.isFinite(number) ||
-      number <= 0
-    ) {
-
-      return "";
-
-    }
-
-
-    try {
-
-      if (
-        typeof CFG.formatPrice ===
-        "function"
-      ) {
-
-        return CFG.formatPrice(
-          number
-        );
-
-      }
-
-    } catch (_) {}
-
-
-    return (
-      number.toLocaleString("ar-EG") +
-      " ج.م"
+    const savedWishlist = readStorage(
+      STORAGE.wishlist,
+      []
     );
 
+    const savedRecent = readStorage(
+      STORAGE.recent,
+      []
+    );
+
+    cart = Array.isArray(savedCart)
+      ? savedCart
+          .map(item => {
+            if (!item || typeof item !== "object") {
+              return null;
+            }
+
+            const product = normalizeProduct(
+              item.product || item
+            );
+
+            if (!product) {
+              return null;
+            }
+
+            return {
+              product,
+              quantity: Math.max(
+                1,
+                Math.min(
+                  LIMITS.maxQuantity,
+                  safeNumber(item.quantity, 1)
+                )
+              )
+            };
+          })
+          .filter(Boolean)
+      : [];
+
+    wishlist = Array.isArray(savedWishlist)
+      ? savedWishlist
+          .map(item => {
+            if (typeof item === "string") {
+              return item;
+            }
+
+            return getProductId(item);
+          })
+          .filter(Boolean)
+      : [];
+
+    wishlist = [...new Set(wishlist)];
+
+    recentProducts = Array.isArray(savedRecent)
+      ? savedRecent
+          .map(normalizeProduct)
+          .filter(Boolean)
+      : [];
+
+    saveCart();
+    saveWishlist();
+    saveRecent();
   }
 
+  function saveCart() {
+    writeStorage(STORAGE.cart, cart);
+  }
+
+  function saveWishlist() {
+    writeStorage(
+      STORAGE.wishlist,
+      wishlist
+    );
+  }
+
+  function saveRecent() {
+    writeStorage(
+      STORAGE.recent,
+      recentProducts
+    );
+  }
 
   /* =========================================================
      CART
      ========================================================= */
 
-  function normalizeCartItem(item) {
-
-    if (!item) {
-      return null;
-    }
-
-    const id =
-      productId(item);
-
-    if (!id) {
-      return null;
-    }
-
-
-    return {
-      id,
-
-      name:
-        String(
-          item.name ||
-          "منتج"
-        ),
-
-      category:
-        String(
-          item.category ||
-          ""
-        ),
-
-      image:
-        String(
-          item.image ||
-          ""
-        ),
-
-      price:
-        Number(
-          item.price ||
-          0
-        ) || 0,
-
-      quantity:
-        normalizeQuantity(
-          item.quantity
-        )
-    };
-
+  function getCart() {
+    return cart.slice();
   }
-
-
-  function saveCart() {
-
-    writeStorage(
-      STORAGE.cart,
-      state.cart
-    );
-
-    updateCartUI();
-
-  }
-
-
-  function findCartItem(id) {
-
-    return state.cart.find(
-      item =>
-        String(item.id) ===
-        String(id)
-    );
-
-  }
-
-
-  function addToCart(
-    product,
-    quantity = 1
-  ) {
-
-    const normalized =
-      normalizeProduct(
-        product
-      );
-
-    if (!normalized) {
-      return false;
-    }
-
-
-    const id =
-      normalized.id;
-
-    const qty =
-      normalizeQuantity(
-        quantity
-      );
-
-
-    const existing =
-      findCartItem(id);
-
-
-    if (existing) {
-
-      existing.quantity =
-        normalizeQuantity(
-          Number(
-            existing.quantity ||
-            0
-          ) + qty
-        );
-
-    } else {
-
-      state.cart.push({
-
-        id,
-
-        name:
-          normalized.name,
-
-        category:
-          normalized.category,
-
-        image:
-          normalized.image,
-
-        price:
-          getPrice(
-            normalized
-          ),
-
-        quantity:
-          qty
-
-      });
-
-    }
-
-
-    saveCart();
-
-    addRecent(
-      normalized
-    );
-
-    dispatch(
-      "abo-tarek:cart-updated",
-      {
-        cart:
-          [...state.cart]
-      }
-    );
-
-    toast(
-      "تمت إضافة المنتج للسلة 🛒"
-    );
-
-    openCart();
-
-    return true;
-
-  }
-
-
-  function updateCartQuantity(
-    id,
-    quantity
-  ) {
-
-    const item =
-      findCartItem(id);
-
-    if (!item) {
-      return false;
-    }
-
-
-    item.quantity =
-      normalizeQuantity(
-        quantity
-      );
-
-
-    saveCart();
-
-
-    dispatch(
-      "abo-tarek:cart-updated",
-      {
-        cart:
-          [...state.cart]
-      }
-    );
-
-
-    return true;
-
-  }
-
-
-  function removeFromCart(id) {
-
-    const before =
-      state.cart.length;
-
-
-    state.cart =
-      state.cart.filter(
-        item =>
-          String(item.id) !==
-          String(id)
-      );
-
-
-    if (
-      state.cart.length ===
-      before
-    ) {
-      return false;
-    }
-
-
-    saveCart();
-
-
-    dispatch(
-      "abo-tarek:cart-updated",
-      {
-        cart:
-          [...state.cart]
-      }
-    );
-
-
-    toast(
-      "تم حذف المنتج من السلة"
-    );
-
-
-    return true;
-
-  }
-
-
-  function clearCart() {
-
-    state.cart = [];
-
-    saveCart();
-
-
-    dispatch(
-      "abo-tarek:cart-updated",
-      {
-        cart: []
-      }
-    );
-
-
-    toast(
-      "تم تفريغ السلة"
-    );
-
-  }
-
 
   function getCartCount() {
-
-    return state.cart.reduce(
+    return cart.reduce(
       (total, item) =>
-        total +
-        normalizeQuantity(
-          item.quantity
-        ),
+        total + safeNumber(item.quantity, 0),
       0
     );
-
   }
-
 
   function getCartTotal() {
-
-    return state.cart.reduce(
-      (total, item) => {
-
-        const price =
-          Number(
-            item.price ||
-            0
-          );
-
-        const qty =
-          normalizeQuantity(
-            item.quantity
-          );
-
-        return (
-          total +
-          price * qty
-        );
-
-      },
+    return cart.reduce(
+      (total, item) =>
+        total +
+        getProductPrice(item.product) *
+          safeNumber(item.quantity, 0),
       0
     );
-
   }
 
+  function findCartItem(productId) {
+    return cart.find(
+      item =>
+        getProductId(item.product) ===
+        productId
+    );
+  }
+
+  function addToCart(product, quantity = 1) {
+    const normalized = normalizeProduct(product);
+
+    if (!normalized) {
+      showToast(
+        "تعذر إضافة المنتج",
+        "error"
+      );
+
+      return false;
+    }
+
+    const id = getProductId(normalized);
+
+    let amount = Math.max(
+      1,
+      Math.min(
+        LIMITS.maxQuantity,
+        safeNumber(quantity, 1)
+      )
+    );
+
+    const existing = findCartItem(id);
+
+    if (existing) {
+      existing.quantity = Math.min(
+        LIMITS.maxQuantity,
+        existing.quantity + amount
+      );
+    } else {
+      cart.push({
+        product: normalized,
+        quantity: amount
+      });
+    }
+
+    saveCart();
+    updateCartUI();
+
+    dispatch(
+      "abo-tarek:cart-updated",
+      {
+        cart: getCart(),
+        count: getCartCount(),
+        total: getCartTotal(),
+        product: normalized,
+        quantity: amount
+      }
+    );
+
+    showToast(
+      existing
+        ? "تم تحديث الكمية في السلة"
+        : "تمت إضافة المنتج للسلة",
+      "success"
+    );
+
+    return true;
+  }
+
+  function setCartQuantity(productId, quantity) {
+    const item = findCartItem(
+      cleanText(productId)
+    );
+
+    if (!item) {
+      return false;
+    }
+
+    const amount = Math.max(
+      0,
+      Math.min(
+        LIMITS.maxQuantity,
+        safeNumber(quantity, 1)
+      )
+    );
+
+    if (amount <= 0) {
+      removeFromCart(productId);
+      return true;
+    }
+
+    item.quantity = amount;
+
+    saveCart();
+    updateCartUI();
+
+    dispatch(
+      "abo-tarek:cart-updated",
+      {
+        cart: getCart(),
+        count: getCartCount(),
+        total: getCartTotal()
+      }
+    );
+
+    return true;
+  }
+
+  function updateCartQuantity(productId, delta) {
+    const item = findCartItem(
+      cleanText(productId)
+    );
+
+    if (!item) {
+      return false;
+    }
+
+    return setCartQuantity(
+      productId,
+      item.quantity + safeNumber(delta, 0)
+    );
+  }
+
+  function removeFromCart(productId) {
+    const id = cleanText(productId);
+
+    const oldLength = cart.length;
+
+    cart = cart.filter(
+      item =>
+        getProductId(item.product) !== id
+    );
+
+    if (cart.length === oldLength) {
+      return false;
+    }
+
+    saveCart();
+    updateCartUI();
+
+    dispatch(
+      "abo-tarek:cart-updated",
+      {
+        cart: getCart(),
+        count: getCartCount(),
+        total: getCartTotal()
+      }
+    );
+
+    showToast(
+      "تم حذف المنتج من السلة",
+      "success"
+    );
+
+    return true;
+  }
+
+  function clearCart() {
+    if (!cart.length) {
+      return;
+    }
+
+    cart = [];
+
+    saveCart();
+    updateCartUI();
+
+    dispatch(
+      "abo-tarek:cart-updated",
+      {
+        cart: [],
+        count: 0,
+        total: 0
+      }
+    );
+
+    showToast(
+      "تم تفريغ السلة",
+      "success"
+    );
+  }
 
   /* =========================================================
      WISHLIST
      ========================================================= */
 
-  function wishlistIds() {
-
-    return state.wishlist.map(
-      item =>
-        String(
-          item.id ??
-          item
-        )
-    );
-
+  function getWishlist() {
+    return wishlist.slice();
   }
 
-
-  function isInWishlist(product) {
-
+  function isInWishlist(productOrId) {
     const id =
-      productId(product);
+      typeof productOrId === "object"
+        ? getProductId(productOrId)
+        : cleanText(productOrId);
 
-    return wishlistIds().includes(
-      id
-    );
-
+    return !!id && wishlist.includes(id);
   }
 
-
-  function saveWishlist() {
-
-    writeStorage(
-      STORAGE.wishlist,
-      state.wishlist
-    );
-
-    updateWishlistUI();
-
-  }
-
-
-  function toggleWishlist(
-    product
-  ) {
-
-    const normalized =
-      normalizeProduct(
-        product
-      );
+  function toggleWishlist(product) {
+    const normalized = normalizeProduct(product);
 
     if (!normalized) {
       return false;
     }
 
+    const id = getProductId(normalized);
 
-    const id =
-      normalized.id;
-
-
-    const index =
-      state.wishlist.findIndex(
-        item =>
-          String(item.id) ===
-          id
-      );
-
-
-    if (index >= 0) {
-
-      state.wishlist.splice(
-        index,
-        1
+    if (wishlist.includes(id)) {
+      wishlist = wishlist.filter(
+        item => item !== id
       );
 
       saveWishlist();
-
-      toast(
-        "تم حذف المنتج من المفضلة"
-      );
+      updateWishlistUI();
 
       dispatch(
         "abo-tarek:wishlist-updated",
         {
-          wishlist:
-            [...state.wishlist]
+          wishlist: getWishlist(),
+          product: normalized,
+          active: false
         }
       );
 
-      return false;
+      showToast(
+        "تم حذف المنتج من المفضلة",
+        "success"
+      );
 
+      return false;
     }
 
-
-    state.wishlist.push({
-
-      id,
-
-      name:
-        normalized.name,
-
-      category:
-        normalized.category,
-
-      image:
-        normalized.image,
-
-      price:
-        getPrice(
-          normalized
-        )
-
-    });
-
+    wishlist.push(id);
 
     saveWishlist();
-
-
-    toast(
-      "تمت إضافة المنتج للمفضلة ♡"
-    );
-
+    updateWishlistUI();
 
     dispatch(
       "abo-tarek:wishlist-updated",
       {
-        wishlist:
-          [...state.wishlist]
+        wishlist: getWishlist(),
+        product: normalized,
+        active: true
       }
     );
 
-
-    return true;
-
-  }
-
-
-  function removeFromWishlist(
-    id
-  ) {
-
-    state.wishlist =
-      state.wishlist.filter(
-        item =>
-          String(item.id) !==
-          String(id)
-      );
-
-
-    saveWishlist();
-
-    updateWishlistUI();
-
-  }
-
-
-  /* =========================================================
-     RECENT PRODUCTS
-     ========================================================= */
-
-  function saveRecent() {
-
-    writeStorage(
-      STORAGE.recent,
-      state.recent
+    showToast(
+      "تمت إضافة المنتج للمفضلة",
+      "success"
     );
 
+    return true;
   }
 
+  /* =========================================================
+     RECENTLY VIEWED
+     ========================================================= */
 
-  function addRecent(product) {
-
-    const normalized =
-      normalizeProduct(
-        product
-      );
+  function addRecentlyViewed(product) {
+    const normalized = normalizeProduct(product);
 
     if (!normalized) {
       return;
     }
 
+    const id = getProductId(normalized);
 
-    const id =
-      normalized.id;
+    recentProducts = recentProducts.filter(
+      item => getProductId(item) !== id
+    );
 
+    recentProducts.unshift(normalized);
 
-    state.recent =
-      state.recent.filter(
-        item =>
-          String(item.id) !==
-          id
-      );
-
-
-    state.recent.unshift({
-
-      id,
-
-      name:
-        normalized.name,
-
-      category:
-        normalized.category,
-
-      image:
-        normalized.image,
-
-      price:
-        getPrice(
-          normalized
-        )
-
-    });
-
-
-    state.recent =
-      state.recent.slice(
-        0,
-        10
-      );
-
+    recentProducts = recentProducts.slice(
+      0,
+      LIMITS.maxRecent
+    );
 
     saveRecent();
 
-  }
-
-
-  /* =========================================================
-     WHATSAPP
-     ========================================================= */
-
-  function buildWhatsAppUrl() {
-
-    if (!state.cart.length) {
-
-      return (
-        "https://wa.me/" +
-        WHATSAPP_NUMBER
-      );
-
-    }
-
-
-    let message =
-      "مرحبًا أبو طارق، أريد طلب المنتجات التالية:%0A%0A";
-
-
-    state.cart.forEach(
-      (item, index) => {
-
-        const price =
-          Number(
-            item.price ||
-            0
-          );
-
-        const quantity =
-          normalizeQuantity(
-            item.quantity
-          );
-
-
-        message +=
-          (
-            index + 1
-          ) +
-          ". " +
-          encodeURIComponent(
-            item.name
-          ) +
-          " × " +
-          quantity;
-
-
-        if (price > 0) {
-
-          message +=
-            " — " +
-            encodeURIComponent(
-              formatPrice(price)
-            );
-
-        }
-
-
-        message +=
-          "%0A";
-
+    dispatch(
+      "abo-tarek:recently-viewed-updated",
+      {
+        products: recentProducts.slice()
       }
     );
-
-
-    const total =
-      getCartTotal();
-
-
-    if (total > 0) {
-
-      message +=
-        "%0Aالإجمالي التقريبي: " +
-        encodeURIComponent(
-          formatPrice(total)
-        );
-
-    }
-
-
-    message +=
-      "%0A%0Aمن فضلك أكد لي الطلب والتفاصيل.";
-
-
-    return (
-      "https://wa.me/" +
-      WHATSAPP_NUMBER +
-      "?text=" +
-      message
-    );
-
   }
 
-
-  /* =========================================================
-     CART DRAWER
-     ========================================================= */
-
-  function ensureCartDrawer() {
-
-    let drawer =
-      document.getElementById(
-        "aboTarekCartDrawer"
-      );
-
-    if (drawer) {
-      return drawer;
-    }
-
-
-    drawer =
-      document.createElement(
-        "aside"
-      );
-
-
-    drawer.id =
-      "aboTarekCartDrawer";
-
-
-    drawer.className =
-      "abo-cart-drawer";
-
-
-    drawer.setAttribute(
-      "aria-hidden",
-      "true"
-    );
-
-
-    drawer.innerHTML = `
-
-      <div
-        class="abo-cart-overlay"
-        data-cart-close
-      ></div>
-
-      <div class="abo-cart-panel">
-
-        <div class="abo-cart-header">
-
-          <div>
-
-            <span class="abo-cart-kicker">
-              أبو طارق
-            </span>
-
-            <h2>
-              سلة المشتريات
-            </h2>
-
-          </div>
-
-          <button
-            type="button"
-            class="abo-cart-close"
-            data-cart-close
-            aria-label="إغلاق السلة"
-          >
-            ×
-          </button>
-
-        </div>
-
-
-        <div
-          class="abo-cart-body"
-          id="aboCartItems"
-        >
-        </div>
-
-
-        <div class="abo-cart-footer">
-
-          <div class="abo-cart-summary">
-
-            <span>
-              الإجمالي
-            </span>
-
-            <strong
-              id="aboCartTotal"
-            >
-              —
-            </strong>
-
-          </div>
-
-
-          <a
-            class="abo-cart-whatsapp"
-            id="aboCartWhatsApp"
-            href="#"
-            target="_blank"
-            rel="noopener"
-          >
-            💬 إتمام الطلب عبر واتساب
-          </a>
-
-
-          <button
-            type="button"
-            class="abo-cart-clear"
-            id="aboCartClear"
-          >
-            تفريغ السلة
-          </button>
-
-        </div>
-
-      </div>
-    `;
-
-
-    document.body.appendChild(
-      drawer
-    );
-
-
-    drawer.addEventListener(
-      "click",
-      event => {
-
-        const close =
-          event.target.closest(
-            "[data-cart-close]"
-          );
-
-        if (close) {
-          closeCart();
-          return;
-        }
-
-
-        const minus =
-          event.target.closest(
-            "[data-cart-minus]"
-          );
-
-        if (minus) {
-
-          const id =
-            minus.dataset.cartMinus;
-
-          const item =
-            findCartItem(id);
-
-          if (item) {
-
-            updateCartQuantity(
-              id,
-              item.quantity - 1
-            );
-
-            renderCart();
-
-          }
-
-          return;
-
-        }
-
-
-        const plus =
-          event.target.closest(
-            "[data-cart-plus]"
-          );
-
-        if (plus) {
-
-          const id =
-            plus.dataset.cartPlus;
-
-          const item =
-            findCartItem(id);
-
-          if (item) {
-
-            updateCartQuantity(
-              id,
-              item.quantity + 1
-            );
-
-            renderCart();
-
-          }
-
-          return;
-
-        }
-
-
-        const remove =
-          event.target.closest(
-            "[data-cart-remove]"
-          );
-
-        if (remove) {
-
-          removeFromCart(
-            remove.dataset.cartRemove
-          );
-
-          renderCart();
-
-          return;
-
-        }
-
-      }
-    );
-
-
-    const clearButton =
-      drawer.querySelector(
-        "#aboCartClear"
-      );
-
-
-    if (clearButton) {
-
-      clearButton.addEventListener(
-        "click",
-        () => {
-
-          if (
-            !state.cart.length
-          ) {
-            return;
-          }
-
-
-          clearCart();
-
-          renderCart();
-
-        }
-      );
-
-    }
-
-
-    const whatsapp =
-      drawer.querySelector(
-        "#aboCartWhatsApp"
-      );
-
-
-    if (whatsapp) {
-
-      whatsapp.addEventListener(
-        "click",
-        () => {
-
-          whatsapp.href =
-            buildWhatsAppUrl();
-
-        }
-      );
-
-    }
-
-
-    return drawer;
-
+  function getRecentlyViewed() {
+    return recentProducts.slice();
   }
-
-
-  function renderCart() {
-
-    const drawer =
-      ensureCartDrawer();
-
-
-    const items =
-      drawer.querySelector(
-        "#aboCartItems"
-      );
-
-
-    const total =
-      drawer.querySelector(
-        "#aboCartTotal"
-      );
-
-
-    const whatsapp =
-      drawer.querySelector(
-        "#aboCartWhatsApp"
-      );
-
-
-    if (!items) {
-      return;
-    }
-
-
-    if (!state.cart.length) {
-
-      items.innerHTML = `
-
-        <div class="abo-cart-empty">
-
-          <div>
-            🛒
-          </div>
-
-          <h3>
-            السلة فاضية
-          </h3>
-
-          <p>
-            اختار المنتجات اللي محتاجها وهتظهر هنا.
-          </p>
-
-          <a
-            href="./sections.html"
-            data-cart-close
-          >
-            تصفح كل الأصناف
-          </a>
-
-        </div>
-
-      `;
-
-    } else {
-
-      items.innerHTML =
-        state.cart.map(
-          item =>
-            renderCartItem(
-              item
-            )
-        ).join("");
-
-    }
-
-
-    if (total) {
-
-      const cartTotal =
-        getCartTotal();
-
-
-      total.textContent =
-        cartTotal > 0
-          ? formatPrice(
-              cartTotal
-            )
-          : "حسب السعر";
-
-    }
-
-
-    if (whatsapp) {
-
-      whatsapp.href =
-        buildWhatsAppUrl();
-
-      whatsapp.style.pointerEvents =
-        state.cart.length
-          ? "auto"
-          : "none";
-
-      whatsapp.style.opacity =
-        state.cart.length
-          ? "1"
-          : ".45";
-
-    }
-
-
-    updateCartBadge();
-
-  }
-
-
-  function renderCartItem(item) {
-
-    const id =
-      escapeHtml(
-        item.id
-      );
-
-    const image =
-      escapeHtml(
-        resolveImage(
-          item.image
-        )
-      );
-
-    const name =
-      escapeHtml(
-        item.name
-      );
-
-    const category =
-      escapeHtml(
-        item.category
-      );
-
-    const price =
-      Number(
-        item.price ||
-        0
-      );
-
-
-    return `
-
-      <article
-        class="abo-cart-item"
-        data-cart-id="${id}"
-      >
-
-        <a
-          href="./product.html?id=${encodeURIComponent(item.id)}"
-          class="abo-cart-item-image"
-        >
-
-          <img
-            src="${image}"
-            alt="${name}"
-            loading="lazy"
-            decoding="async"
-            width="100"
-            height="100"
-          >
-
-        </a>
-
-
-        <div class="abo-cart-item-content">
-
-          <div class="abo-cart-item-top">
-
-            <div>
-
-              ${
-                category
-                  ? `
-                    <span class="abo-cart-item-category">
-                      ${category}
-                    </span>
-                  `
-                  : ""
-              }
-
-              <h3>
-                ${name}
-              </h3>
-
-            </div>
-
-
-            <button
-              type="button"
-              class="abo-cart-remove"
-              data-cart-remove="${id}"
-              aria-label="حذف المنتج"
-            >
-              ×
-            </button>
-
-          </div>
-
-
-          <div class="abo-cart-item-bottom">
-
-            <div class="abo-cart-qty">
-
-              <button
-                type="button"
-                data-cart-minus="${id}"
-                aria-label="تقليل الكمية"
-              >
-                −
-              </button>
-
-              <strong>
-                ${normalizeQuantity(
-                  item.quantity
-                )}
-              </strong>
-
-              <button
-                type="button"
-                data-cart-plus="${id}"
-                aria-label="زيادة الكمية"
-              >
-                +
-              </button>
-
-            </div>
-
-
-            <div class="abo-cart-item-price">
-
-              ${
-                price > 0
-                  ? escapeHtml(
-                      formatPrice(price)
-                    )
-                  : "السعر حسب الطلب"
-              }
-
-            </div>
-
-          </div>
-
-        </div>
-
-      </article>
-
-    `;
-
-  }
-
-
-  function openCart() {
-
-    const drawer =
-      ensureCartDrawer();
-
-
-    renderCart();
-
-
-    drawer.classList.add(
-      "is-open"
-    );
-
-
-    drawer.setAttribute(
-      "aria-hidden",
-      "false"
-    );
-
-
-    document.body.classList.add(
-      "abo-cart-open"
-    );
-
-
-    state.drawerOpen =
-      true;
-
-  }
-
-
-  function closeCart() {
-
-    const drawer =
-      document.getElementById(
-        "aboTarekCartDrawer"
-      );
-
-
-    if (!drawer) {
-      return;
-    }
-
-
-    drawer.classList.remove(
-      "is-open"
-    );
-
-
-    drawer.setAttribute(
-      "aria-hidden",
-      "true"
-    );
-
-
-    document.body.classList.remove(
-      "abo-cart-open"
-    );
-
-
-    state.drawerOpen =
-      false;
-
-  }
-
-
-  function updateCartBadge() {
-
-    const count =
-      getCartCount();
-
-
-    $$(
-      "[data-cart-count], .cart-count, #cartCount"
-    ).forEach(
-      badge => {
-
-        badge.textContent =
-          String(count);
-
-
-        badge.hidden =
-          count <= 0;
-
-      }
-    );
-
-
-    $$(
-      "[data-open-cart], #openCart, .cart-button"
-    ).forEach(
-      button => {
-
-        if (
-          !button.dataset
-            .cartBound
-        ) {
-
-          button.dataset
-            .cartBound =
-            "true";
-
-        }
-
-      }
-    );
-
-  }
-
-
-  function updateCartUI() {
-
-    updateCartBadge();
-
-    if (state.drawerOpen) {
-      renderCart();
-    }
-
-  }
-
-
-  /* =========================================================
-     WISHLIST UI
-     ========================================================= */
-
-  function updateWishlistUI() {
-
-    const ids =
-      new Set(
-        wishlistIds()
-      );
-
-
-    $$(
-      "[data-wishlist-id]"
-    ).forEach(
-      button => {
-
-        const id =
-          String(
-            button.dataset
-              .wishlistId
-          );
-
-
-        const active =
-          ids.has(id);
-
-
-        button.classList.toggle(
-          "is-active",
-          active
-        );
-
-
-        button.setAttribute(
-          "aria-pressed",
-          String(active)
-        );
-
-
-        const label =
-          button.querySelector(
-            "[data-wishlist-label]"
-          );
-
-
-        if (label) {
-
-          label.textContent =
-            active
-              ? "في المفضلة"
-              : "إضافة للمفضلة";
-
-        }
-
-      }
-    );
-
-
-    $$(
-      "[data-wishlist-count]"
-    ).forEach(
-      badge => {
-
-        badge.textContent =
-          String(
-            state.wishlist.length
-          );
-
-        badge.hidden =
-          state.wishlist.length === 0;
-
-      }
-    );
-
-  }
-
 
   /* =========================================================
      TOAST
      ========================================================= */
 
   function ensureToastContainer() {
-
-    let container =
-      document.getElementById(
-        "aboTarekToastContainer"
-      );
-
-
-    if (container) {
-      return container;
+    if (toastContainer) {
+      return toastContainer;
     }
 
-
-    container =
-      document.createElement(
-        "div"
+    toastContainer =
+      document.querySelector(
+        ".abo-toast-container"
       );
 
+    if (!toastContainer) {
+      toastContainer =
+        document.createElement("div");
 
-    container.id =
-      "aboTarekToastContainer";
+      toastContainer.className =
+        "abo-toast-container";
 
+      toastContainer.setAttribute(
+        "aria-live",
+        "polite"
+      );
 
-    container.className =
-      "abo-toast-container";
+      document.body.appendChild(
+        toastContainer
+      );
+    }
 
-
-    container.setAttribute(
-      "aria-live",
-      "polite"
-    );
-
-
-    document.body.appendChild(
-      container
-    );
-
-
-    return container;
-
+    return toastContainer;
   }
 
-
-  function toast(message) {
-
-    try {
-
-      if (
-        typeof window.ABO_TAREK_TOAST ===
-        "function"
-      ) {
-
-        window.ABO_TAREK_TOAST(
-          message
-        );
-
-        return;
-
-      }
-
-    } catch (_) {}
-
+  function showToast(message, type = "info") {
+    if (!document.body) {
+      return;
+    }
 
     const container =
       ensureToastContainer();
 
+    const toast =
+      document.createElement("div");
 
-    const item =
-      document.createElement(
-        "div"
+    toast.className =
+      "abo-toast abo-toast-" +
+      cleanText(type || "info");
+
+    toast.setAttribute(
+      "role",
+      "status"
+    );
+
+    toast.innerHTML =
+      '<span class="abo-toast-message">' +
+      escapeHtml(message) +
+      "</span>";
+
+    container.appendChild(toast);
+
+    requestAnimationFrame(() => {
+      toast.classList.add("is-visible");
+    });
+
+    window.setTimeout(() => {
+      toast.classList.remove(
+        "is-visible"
       );
 
-
-    item.className =
-      "abo-toast";
-
-
-    item.textContent =
-      String(message);
-
-
-    container.appendChild(
-      item
-    );
-
-
-    requestAnimationFrame(
-      () => {
-
-        item.classList.add(
-          "is-visible"
-        );
-
-      }
-    );
-
-
-    setTimeout(
-      () => {
-
-        item.classList.remove(
-          "is-visible"
-        );
-
-
-        setTimeout(
-          () => {
-
-            item.remove();
-
-          },
-          250
-        );
-
-      },
-      2500
-    );
-
+      window.setTimeout(() => {
+        toast.remove();
+      }, 250);
+    }, 2600);
   }
 
-
   /* =========================================================
-     CUSTOM EVENTS
+     CART COUNT UI
      ========================================================= */
 
-  function dispatch(
-    name,
-    detail = {}
-  ) {
+  function updateCartCountElements() {
+    const count = getCartCount();
 
-    try {
+    document
+      .querySelectorAll(
+        "#cartCount," +
+        ".cart-count," +
+        "[data-cart-count]"
+      )
+      .forEach(element => {
+        element.textContent = String(count);
 
-      document.dispatchEvent(
-        new CustomEvent(
-          name,
-          {
-            detail
-          }
-        )
-      );
+        element.hidden = count <= 0;
 
-    } catch (_) {}
-
+        element.classList.toggle(
+          "is-empty",
+          count <= 0
+        );
+      });
   }
 
-
-  /* =========================================================
-     BUTTON EVENT HANDLING
-     ========================================================= */
-
-  function bindGlobalClicks() {
-
-    document.addEventListener(
-      "click",
-      event => {
-
-        const cartButton =
-          event.target.closest(
-            "[data-open-cart]"
+  function updateWishlistUI() {
+    document
+      .querySelectorAll(
+        "[data-wishlist-id]," +
+        ".wishlist-btn[data-product-id]," +
+        ".product-wishlist[data-product-id]"
+      )
+      .forEach(button => {
+        const id =
+          button.getAttribute(
+            "data-wishlist-id"
+          ) ||
+          button.getAttribute(
+            "data-product-id"
           );
 
+        const active =
+          isInWishlist(id);
 
-        if (cartButton) {
+        button.classList.toggle(
+          "is-active",
+          active
+        );
 
-          event.preventDefault();
+        button.classList.toggle(
+          "active",
+          active
+        );
 
-          openCart();
+        button.setAttribute(
+          "aria-pressed",
+          active ? "true" : "false"
+        );
 
-          return;
-
-        }
-
-
-        const wishlistButton =
-          event.target.closest(
-            "[data-wishlist-id]"
+        const icon =
+          button.querySelector(
+            "[data-wishlist-icon]"
           );
 
-
-        if (wishlistButton) {
-
-          event.preventDefault();
-
-
-          const id =
-            wishlistButton.dataset
-              .wishlistId;
-
-
-          const product =
-            findProductById(
-              id
-            );
-
-
-          if (product) {
-
-            toggleWishlist(
-              product
-            );
-
-          }
-
-          return;
-
+        if (icon) {
+          icon.textContent =
+            active ? "♥" : "♡";
         }
-
-
-        const quickAdd =
-          event.target.closest(
-            "[data-add-cart-id]"
-          );
-
-
-        if (quickAdd) {
-
-          event.preventDefault();
-
-
-          const id =
-            quickAdd.dataset
-              .addCartId;
-
-
-          const product =
-            findProductById(
-              id
-            );
-
-
-          if (product) {
-
-            const quantity =
-              normalizeQuantity(
-                quickAdd.dataset
-                  .quantity ||
-                1
-              );
-
-
-            addToCart(
-              product,
-              quantity
-            );
-
-          }
-
-          return;
-
-        }
-
-      }
-    );
-
+      });
   }
 
-
   /* =========================================================
-     PRODUCT DATA
+     CART DRAWER
      ========================================================= */
 
-  function findProductById(id) {
-
-    const target =
-      String(id);
-
-
-    const source =
-      state.products;
-
-
-    const product =
-      source.find(
-        item =>
-          String(
-            productId(item)
-          ) === target
-      );
-
-
-    if (product) {
-      return normalizeProduct(
-        product
-      );
+  function ensureCartDrawer() {
+    if (cartDrawer) {
+      return cartDrawer;
     }
 
+    cartDrawer =
+      document.querySelector(
+        ".abo-cart-drawer"
+      );
 
-    /*
-      Also try data exposed by app.js.
-    */
-
-    try {
-
-      const app =
-        window.ABO_TAREK_APP;
-
-
-      if (
-        app &&
-        typeof app.getProducts ===
-        "function"
-      ) {
-
-        const products =
-          app.getProducts() ||
-          [];
-
-
-        const found =
-          products.find(
-            item =>
-              String(
-                productId(item)
-              ) === target
-          );
-
-
-        if (found) {
-
-          return normalizeProduct(
-            found
-          );
-
-        }
-
-      }
-
-    } catch (_) {}
-
-
-    return null;
-
-  }
-
-
-  function syncProducts() {
-
-    try {
-
-      const app =
-        window.ABO_TAREK_APP;
-
-
-      if (
-        app &&
-        typeof app.getProducts ===
-        "function"
-      ) {
-
-        const products =
-          app.getProducts();
-
-
-        if (
-          Array.isArray(products)
-        ) {
-
-          state.products =
-            products
-              .map(
-                normalizeProduct
-              )
-              .filter(Boolean);
-
-          return;
-
-        }
-
-      }
-
-    } catch (_) {}
-
-
-    /*
-      Fallback to cached products.
-    */
-
-    try {
-
-      const key =
-        CFG?.CACHE_KEYS?.products ||
-        "abo_tarek_products_v14";
-
-
-      const raw =
-        localStorage.getItem(
-          key
-        );
-
-
-      if (!raw) {
-        return;
-      }
-
-
-      const data =
-        JSON.parse(raw);
-
-
-      const products =
-        Array.isArray(data)
-          ? data
-          : data?.products;
-
-
-      if (
-        Array.isArray(products)
-      ) {
-
-        state.products =
-          products
-            .map(
-              normalizeProduct
-            )
-            .filter(Boolean);
-
-      }
-
-    } catch (_) {}
-
-  }
-
-
-  /* =========================================================
-     RECENT PRODUCTS UI
-     ========================================================= */
-
-  function renderRecentProducts(
-    container
-  ) {
-
-    if (!container) {
-      return;
+    if (cartDrawer) {
+      return cartDrawer;
     }
 
+    const overlay =
+      document.createElement("div");
 
-    const recentIds =
-      state.recent.map(
-        item =>
-          String(item.id)
-      );
+    overlay.className =
+      "abo-cart-overlay";
 
+    overlay.hidden = true;
 
-    const products =
-      recentIds
-        .map(
-          id =>
-            findProductById(id)
-        )
-        .filter(Boolean)
-        .slice(0, 6);
+    const drawer =
+      document.createElement("aside");
 
+    drawer.className =
+      "abo-cart-drawer";
 
-    if (!products.length) {
+    drawer.setAttribute(
+      "aria-label",
+      "سلة المشتريات"
+    );
 
-      container.innerHTML =
-        "";
-
-      return;
-
-    }
-
-
-    container.innerHTML =
-      products.map(
-        product =>
-          renderMiniProduct(
-            product
-          )
-      ).join("");
-
-
-  }
-
-
-  function renderMiniProduct(
-    product
-  ) {
-
-    const id =
-      escapeHtml(
-        product.id
-      );
-
-    const name =
-      escapeHtml(
-        product.name
-      );
-
-    const image =
-      escapeHtml(
-        resolveImage(
-          product.image
-        )
-      );
-
-    const price =
-      getPrice(product);
-
-
-    return `
-
-      <article class="abo-mini-product">
-
-        <a
-          href="./product.html?id=${encodeURIComponent(product.id)}"
-          class="abo-mini-product-image"
-        >
-
-          <img
-            src="${image}"
-            alt="${name}"
-            loading="lazy"
-            decoding="async"
-            width="180"
-            height="180"
-          >
-
-        </a>
-
-
-        <div class="abo-mini-product-content">
-
-          <h3>
-
-            <a
-              href="./product.html?id=${encodeURIComponent(product.id)}"
-            >
-              ${name}
-            </a>
-
-          </h3>
-
-
-          ${
-            price > 0
-              ? `
-                <strong>
-                  ${escapeHtml(
-                    formatPrice(price)
-                  )}
-                </strong>
-              `
-              : ""
-          }
-
+    drawer.innerHTML = `
+      <div class="abo-cart-header">
+        <div>
+          <span class="abo-cart-kicker">طلبك</span>
+          <h2>سلة المشتريات</h2>
         </div>
 
-      </article>
+        <button
+          type="button"
+          class="abo-cart-close"
+          data-cart-close
+          aria-label="إغلاق السلة"
+        >×</button>
+      </div>
 
+      <div
+        class="abo-cart-body"
+        data-cart-body
+      ></div>
+
+      <div
+        class="abo-cart-footer"
+        data-cart-footer
+      ></div>
     `;
 
-  }
-
-
-  function refreshRecentSections() {
-
-    $$(
-      "[data-recent-products], #recentlyViewedGrid"
-    ).forEach(
-      container =>
-        renderRecentProducts(
-          container
-        )
+    document.body.appendChild(
+      overlay
     );
 
+    document.body.appendChild(
+      drawer
+    );
+
+    overlay.addEventListener(
+      "click",
+      closeCart
+    );
+
+    drawer.addEventListener(
+      "click",
+      handleCartClick
+    );
+
+    cartDrawer = drawer;
+
+    return cartDrawer;
   }
 
+  function renderCartDrawer() {
+    const drawer =
+      ensureCartDrawer();
+
+    const body =
+      drawer.querySelector(
+        "[data-cart-body]"
+      );
+
+    const footer =
+      drawer.querySelector(
+        "[data-cart-footer]"
+      );
+
+    if (!body || !footer) {
+      return;
+    }
+
+    if (!cart.length) {
+      body.innerHTML = `
+        <div class="abo-cart-empty">
+          <div class="abo-cart-empty-icon">🛒</div>
+          <h3>السلة فاضية</h3>
+          <p>اختار المنتجات اللي عايز تطلبها وهتظهر هنا.</p>
+
+          <button
+            type="button"
+            class="abo-feature-btn abo-feature-btn-primary"
+            data-cart-close
+          >
+            تصفح المنتجات
+          </button>
+        </div>
+      `;
+
+      footer.innerHTML = "";
+      return;
+    }
+
+    body.innerHTML = cart
+      .map(item => {
+        const product = item.product;
+        const quantity =
+          safeNumber(item.quantity, 1);
+
+        const price =
+          getProductPrice(product);
+
+        const image =
+          resolveImage(product);
+
+        return `
+          <article
+            class="abo-cart-item"
+            data-cart-item-id="${escapeHtml(
+              product.id
+            )}"
+          >
+            <div class="abo-cart-item-media">
+              ${
+                image
+                  ? `
+                    <img
+                      src="${escapeHtml(image)}"
+                      alt="${escapeHtml(product.name)}"
+                      loading="lazy"
+                    >
+                  `
+                  : `
+                    <div class="abo-cart-item-placeholder">
+                      🛍️
+                    </div>
+                  `
+              }
+            </div>
+
+            <div class="abo-cart-item-info">
+              <h3>
+                ${escapeHtml(product.name)}
+              </h3>
+
+              ${
+                product.category
+                  ? `
+                    <span class="abo-cart-item-category">
+                      ${escapeHtml(product.category)}
+                    </span>
+                  `
+                  : ""
+              }
+
+              ${
+                price > 0
+                  ? `
+                    <strong class="abo-cart-item-price">
+                      ${formatPrice(price)}
+                    </strong>
+                  `
+                  : `
+                    <span class="abo-cart-item-price">
+                      السعر عند الطلب
+                    </span>
+                  `
+              }
+
+              <div class="abo-cart-item-controls">
+                <button
+                  type="button"
+                  data-cart-action="decrease"
+                  data-product-id="${escapeHtml(
+                    product.id
+                  )}"
+                  aria-label="تقليل الكمية"
+                >−</button>
+
+                <span>
+                  ${quantity}
+                </span>
+
+                <button
+                  type="button"
+                  data-cart-action="increase"
+                  data-product-id="${escapeHtml(
+                    product.id
+                  )}"
+                  aria-label="زيادة الكمية"
+                >+</button>
+
+                <button
+                  type="button"
+                  class="abo-cart-remove"
+                  data-cart-action="remove"
+                  data-product-id="${escapeHtml(
+                    product.id
+                  )}"
+                >
+                  حذف
+                </button>
+              </div>
+            </div>
+          </article>
+        `;
+      })
+      .join("");
+
+    const total =
+      getCartTotal();
+
+    footer.innerHTML = `
+      <div class="abo-cart-total">
+        <span>الإجمالي</span>
+        <strong>
+          ${
+            total > 0
+              ? formatPrice(total)
+              : "السعر عند الطلب"
+          }
+        </strong>
+      </div>
+
+      <div class="abo-cart-actions">
+        <button
+          type="button"
+          class="abo-feature-btn abo-feature-btn-primary"
+          data-cart-whatsapp
+        >
+          طلب عبر واتساب
+        </button>
+
+        <button
+          type="button"
+          class="abo-feature-btn abo-feature-btn-secondary"
+          data-cart-clear
+        >
+          تفريغ السلة
+        </button>
+      </div>
+    `;
+  }
+
+  function openCart() {
+    const drawer =
+      ensureCartDrawer();
+
+    renderCartDrawer();
+
+    const overlay =
+      document.querySelector(
+        ".abo-cart-overlay"
+      );
+
+    drawer.classList.add(
+      "is-open"
+    );
+
+    if (overlay) {
+      overlay.hidden = false;
+
+      requestAnimationFrame(() => {
+        overlay.classList.add(
+          "is-visible"
+        );
+      });
+    }
+
+    document.body.classList.add(
+      "abo-cart-open"
+    );
+
+    document.body.classList.add(
+      "abo-scroll-locked"
+    );
+  }
+
+  function closeCart() {
+    const drawer =
+      cartDrawer ||
+      document.querySelector(
+        ".abo-cart-drawer"
+      );
+
+    const overlay =
+      document.querySelector(
+        ".abo-cart-overlay"
+      );
+
+    if (drawer) {
+      drawer.classList.remove(
+        "is-open"
+      );
+    }
+
+    if (overlay) {
+      overlay.classList.remove(
+        "is-visible"
+      );
+
+      window.setTimeout(() => {
+        overlay.hidden = true;
+      }, 200);
+    }
+
+    document.body.classList.remove(
+      "abo-cart-open"
+    );
+
+    document.body.classList.remove(
+      "abo-scroll-locked"
+    );
+  }
+
+  function handleCartClick(event) {
+    const close =
+      event.target.closest(
+        "[data-cart-close]"
+      );
+
+    if (close) {
+      closeCart();
+      return;
+    }
+
+    const actionButton =
+      event.target.closest(
+        "[data-cart-action]"
+      );
+
+    if (actionButton) {
+      const action =
+        actionButton.getAttribute(
+          "data-cart-action"
+        );
+
+      const productId =
+        actionButton.getAttribute(
+          "data-product-id"
+        );
+
+      if (action === "increase") {
+        updateCartQuantity(
+          productId,
+          1
+        );
+      }
+
+      if (action === "decrease") {
+        updateCartQuantity(
+          productId,
+          -1
+        );
+      }
+
+      if (action === "remove") {
+        removeFromCart(productId);
+      }
+
+      renderCartDrawer();
+      return;
+    }
+
+    if (
+      event.target.closest(
+        "[data-cart-clear]"
+      )
+    ) {
+      clearCart();
+      renderCartDrawer();
+      return;
+    }
+
+    if (
+      event.target.closest(
+        "[data-cart-whatsapp]"
+      )
+    ) {
+      openWhatsAppOrder();
+    }
+  }
+
+  function updateCartUI() {
+    updateCartCountElements();
+
+    if (cartDrawer) {
+      renderCartDrawer();
+    }
+  }
+
+  /* =========================================================
+     WHATSAPP
+     ========================================================= */
+
+  function getWhatsAppNumber() {
+    const value =
+      CFG.WHATSAPP_NUMBER ||
+      CFG.CONTACT?.whatsappNumber ||
+      CFG.DEFAULTS?.whatsappNumber ||
+      "201551604163";
+
+    const normalized =
+      String(value)
+        .replace(/\D/g, "")
+        .replace(/^00/, "");
+
+    if (
+      normalized.startsWith("01") &&
+      normalized.length === 11
+    ) {
+      return "20" + normalized;
+    }
+
+    if (
+      normalized.startsWith("1") &&
+      normalized.length === 10
+    ) {
+      return "20" + normalized;
+    }
+
+    return normalized;
+  }
+
+  function buildWhatsAppUrl(message) {
+    const number =
+      getWhatsAppNumber();
+
+    return (
+      "https://wa.me/" +
+      number +
+      "?text=" +
+      encodeURIComponent(message)
+    );
+  }
+
+  function buildCartMessage() {
+    const lines = [
+      "السلام عليكم، عايز أعمل طلب من أبو طارق للأدوات المنزلية.",
+      "",
+      "🛒 المنتجات:"
+    ];
+
+    cart.forEach((item, index) => {
+      const product =
+        item.product;
+
+      const quantity =
+        safeNumber(
+          item.quantity,
+          1
+        );
+
+      const price =
+        getProductPrice(product);
+
+      let line =
+        `${index + 1}) ${product.name} × ${quantity}`;
+
+      if (price > 0) {
+        line +=
+          ` — ${formatPrice(
+            price * quantity
+          )}`;
+      }
+
+      lines.push(line);
+    });
+
+    lines.push("");
+
+    const total =
+      getCartTotal();
+
+    if (total > 0) {
+      lines.push(
+        `💰 الإجمالي التقريبي: ${formatPrice(total)}`
+      );
+    }
+
+    lines.push("");
+    lines.push(
+      "من فضلك أكدلي الطلب والتفاصيل."
+    );
+
+    return lines.join("\n");
+  }
+
+  function openWhatsAppOrder() {
+    if (!cart.length) {
+      showToast(
+        "السلة فاضية",
+        "info"
+      );
+
+      return;
+    }
+
+    const url =
+      buildWhatsAppUrl(
+        buildCartMessage()
+      );
+
+    window.open(
+      url,
+      "_blank",
+      "noopener,noreferrer"
+    );
+
+    dispatch(
+      "abo-tarek:checkout",
+      {
+        cart: getCart(),
+        count: getCartCount(),
+        total: getCartTotal()
+      }
+    );
+  }
+
+  function openProductWhatsApp(
+    product,
+    quantity = 1
+  ) {
+    const normalized =
+      normalizeProduct(product);
+
+    if (!normalized) {
+      return;
+    }
+
+    const price =
+      getProductPrice(normalized);
+
+    let message =
+      "السلام عليكم، عايز أستفسر عن المنتج ده من أبو طارق للأدوات المنزلية.\n\n";
+
+    message +=
+      "🛍️ المنتج: " +
+      normalized.name;
+
+    if (normalized.category) {
+      message +=
+        "\n📂 القسم: " +
+        normalized.category;
+    }
+
+    message +=
+      "\n🔢 الكمية: " +
+      Math.max(
+        1,
+        safeNumber(quantity, 1)
+      );
+
+    if (price > 0) {
+      message +=
+        "\n💰 السعر: " +
+        formatPrice(price);
+    }
+
+    const url =
+      buildWhatsAppUrl(message);
+
+    window.open(
+      url,
+      "_blank",
+      "noopener,noreferrer"
+    );
+  }
 
   /* =========================================================
      PRODUCT MODAL
      ========================================================= */
 
   function ensureProductModal() {
+    if (modal) {
+      return modal;
+    }
 
-    let modal =
-      document.getElementById(
-        "aboTarekProductModal"
+    modal =
+      document.querySelector(
+        ".abo-product-modal"
       );
-
 
     if (modal) {
       return modal;
     }
 
+    const overlay =
+      document.createElement("div");
 
-    modal =
-      document.createElement(
-        "div"
-      );
-
-
-    modal.id =
-      "aboTarekProductModal";
-
-
-    modal.className =
+    overlay.className =
       "abo-product-modal";
 
-
-    modal.setAttribute(
-      "aria-hidden",
-      "true"
-    );
-
-
-    modal.innerHTML = `
+    overlay.innerHTML = `
+      <div class="abo-product-modal-backdrop"></div>
 
       <div
-        class="abo-product-modal-overlay"
-        data-product-modal-close
-      ></div>
-
-      <div
-        class="abo-product-modal-panel"
+        class="abo-product-modal-dialog"
         role="dialog"
         aria-modal="true"
-        aria-labelledby="aboProductModalTitle"
+        aria-label="تفاصيل المنتج"
       >
-
         <button
           type="button"
           class="abo-product-modal-close"
-          data-product-modal-close
+          data-modal-close
           aria-label="إغلاق"
-        >
-          ×
-        </button>
-
+        >×</button>
 
         <div
-          id="aboProductModalContent"
-        >
-        </div>
+          class="abo-product-modal-media"
+          data-modal-media
+        ></div>
 
+        <div
+          class="abo-product-modal-content"
+          data-modal-content
+        ></div>
       </div>
     `;
 
-
     document.body.appendChild(
-      modal
+      overlay
     );
 
-
-    modal.addEventListener(
+    overlay.addEventListener(
       "click",
-      event => {
-
-        if (
-          event.target.closest(
-            "[data-product-modal-close]"
-          )
-        ) {
-
-          closeProductModal();
-
-        }
-
-      }
+      handleModalClick
     );
 
+    modal = overlay;
 
     return modal;
-
   }
 
-
-  function openProductModal(
-    product
-  ) {
-
+  function renderProductModal(product) {
     const normalized =
-      normalizeProduct(
-        product
-      );
-
+      normalizeProduct(product);
 
     if (!normalized) {
       return;
     }
 
-
-    const modal =
+    const element =
       ensureProductModal();
 
+    modalProduct =
+      normalized;
+
+    modalQuantity = 1;
+
+    const media =
+      element.querySelector(
+        "[data-modal-media]"
+      );
 
     const content =
-      modal.querySelector(
-        "#aboProductModalContent"
+      element.querySelector(
+        "[data-modal-content]"
       );
-
-
-    if (!content) {
-      return;
-    }
-
 
     const image =
-      escapeHtml(
-        resolveImage(
-          normalized.image
-        )
-      );
-
-    const name =
-      escapeHtml(
-        normalized.name
-      );
-
-    const category =
-      escapeHtml(
-        normalized.category
-      );
-
-    const description =
-      escapeHtml(
-        normalized.description
-      );
+      resolveImage(normalized);
 
     const price =
-      getPrice(
-        normalized
-      );
+      getProductPrice(normalized);
 
+    const hasOldPrice =
+      normalized.oldPrice > 0 &&
+      price > 0 &&
+      normalized.oldPrice > price;
 
-    content.innerHTML = `
+    const favorite =
+      isInWishlist(normalized);
 
-      <div class="abo-product-modal-grid">
-
-        <div class="abo-product-modal-image">
-
+    if (media) {
+      media.innerHTML = image
+        ? `
           <img
-            src="${image}"
-            alt="${name}"
-            width="700"
-            height="600"
-            decoding="async"
+            src="${escapeHtml(image)}"
+            alt="${escapeHtml(
+              normalized.name
+            )}"
           >
+        `
+        : `
+          <div class="abo-product-modal-placeholder">
+            🛍️
+          </div>
+        `;
+    }
 
-        </div>
-
-
-        <div class="abo-product-modal-info">
-
+    if (content) {
+      content.innerHTML = `
+        <div class="abo-product-modal-top">
           ${
-            category
+            normalized.isOffer
               ? `
-                <span class="abo-product-modal-category">
-                  ${category}
+                <span class="abo-product-modal-badge">
+                  عرض خاص
                 </span>
               `
               : ""
           }
 
-
-          <h2 id="aboProductModalTitle">
-            ${name}
-          </h2>
-
-
           ${
-            description
+            normalized.category
               ? `
-                <p>
-                  ${description}
-                </p>
+                <span class="abo-product-modal-category">
+                  ${escapeHtml(
+                    normalized.category
+                  )}
+                </span>
               `
               : ""
           }
+        </div>
 
+        <h2>
+          ${escapeHtml(
+            normalized.name
+          )}
+        </h2>
 
+        ${
+          normalized.description
+            ? `
+              <p class="abo-product-modal-description">
+                ${escapeHtml(
+                  normalized.description
+                )}
+              </p>
+            `
+            : ""
+        }
+
+        <div class="abo-product-modal-price">
           ${
             price > 0
               ? `
-                <div class="abo-product-modal-price">
-                  ${escapeHtml(
-                    formatPrice(price)
-                  )}
-                </div>
+                <strong>
+                  ${formatPrice(price)}
+                </strong>
               `
               : `
-                <div class="abo-product-modal-no-price">
-                  للاستفسار عن السعر تواصل معنا.
-                </div>
+                <strong>
+                  السعر عند الطلب
+                </strong>
               `
           }
 
+          ${
+            hasOldPrice
+              ? `
+                <del>
+                  ${formatPrice(
+                    normalized.oldPrice
+                  )}
+                </del>
+              `
+              : ""
+          }
+        </div>
 
-          <div class="abo-product-modal-actions">
+        <div class="abo-product-modal-quantity">
+          <span>الكمية</span>
+
+          <div class="abo-inline-quantity">
+            <button
+              type="button"
+              data-modal-quantity="-1"
+              aria-label="تقليل"
+            >−</button>
+
+            <strong data-modal-qty>
+              1
+            </strong>
 
             <button
               type="button"
-              class="btn-primary"
-              data-modal-add-cart
-            >
-              🛒 أضف للسلة
-            </button>
-
-
-            <a
-              class="btn-whatsapp"
-              href="${buildSingleProductWhatsApp(
-                normalized,
-                1
-              )}"
-              target="_blank"
-              rel="noopener"
-            >
-              💬 واتساب
-            </a>
-
-
-            <a
-              class="btn-outline"
-              href="./product.html?id=${encodeURIComponent(normalized.id)}"
-            >
-              التفاصيل كاملة
-            </a>
-
+              data-modal-quantity="1"
+              aria-label="زيادة"
+            >+</button>
           </div>
-
         </div>
 
-      </div>
-    `;
+        <div class="abo-product-modal-actions">
+          <button
+            type="button"
+            class="abo-feature-btn abo-feature-btn-primary"
+            data-modal-add
+          >
+            🛒 أضف للسلة
+          </button>
 
+          <button
+            type="button"
+            class="abo-feature-btn abo-feature-btn-secondary"
+            data-modal-whatsapp
+          >
+            واتساب
+          </button>
 
-    const addButton =
-      content.querySelector(
-        "[data-modal-add-cart]"
-      );
+          <button
+            type="button"
+            class="abo-feature-btn abo-feature-btn-ghost ${
+              favorite ? "is-active" : ""
+            }"
+            data-modal-wishlist
+            aria-pressed="${
+              favorite ? "true" : "false"
+            }"
+          >
+            ${
+              favorite
+                ? "♥ في المفضلة"
+                : "♡ أضف للمفضلة"
+            }
+          </button>
+        </div>
 
+        <a
+          class="abo-product-modal-details"
+          href="product.html?id=${encodeURIComponent(
+            normalized.id
+          )}"
+        >
+          عرض صفحة المنتج كاملة
+        </a>
+      `;
+    }
+  }
 
-    if (addButton) {
-
-      addButton.addEventListener(
-        "click",
-        () => {
-
-          addToCart(
-            normalized,
-            1
-          );
-
-        }
-      );
-
+  function updateModalQuantityUI() {
+    if (!modal) {
+      return;
     }
 
+    const element =
+      modal.querySelector(
+        "[data-modal-qty]"
+      );
 
-    modal.classList.add(
+    if (element) {
+      element.textContent =
+        String(modalQuantity);
+    }
+  }
+
+  function handleModalClick(event) {
+    if (
+      event.target.closest(
+        ".abo-product-modal-backdrop"
+      ) ||
+      event.target.closest(
+        "[data-modal-close]"
+      )
+    ) {
+      closeProductModal();
+      return;
+    }
+
+    const quantityButton =
+      event.target.closest(
+        "[data-modal-quantity]"
+      );
+
+    if (quantityButton) {
+      const delta =
+        safeNumber(
+          quantityButton.getAttribute(
+            "data-modal-quantity"
+          ),
+          0
+        );
+
+      modalQuantity = Math.max(
+        1,
+        Math.min(
+          LIMITS.maxQuantity,
+          modalQuantity + delta
+        )
+      );
+
+      updateModalQuantityUI();
+      return;
+    }
+
+    if (
+      event.target.closest(
+        "[data-modal-add]"
+      )
+    ) {
+      if (modalProduct) {
+        addToCart(
+          modalProduct,
+          modalQuantity
+        );
+      }
+
+      return;
+    }
+
+    if (
+      event.target.closest(
+        "[data-modal-whatsapp]"
+      )
+    ) {
+      if (modalProduct) {
+        openProductWhatsApp(
+          modalProduct,
+          modalQuantity
+        );
+      }
+
+      return;
+    }
+
+    if (
+      event.target.closest(
+        "[data-modal-wishlist]"
+      )
+    ) {
+      if (modalProduct) {
+        toggleWishlist(
+          modalProduct
+        );
+
+        renderProductModal(
+          modalProduct
+        );
+      }
+    }
+  }
+
+  function openProductModal(product) {
+    const normalized =
+      normalizeProduct(product);
+
+    if (!normalized) {
+      return;
+    }
+
+    renderProductModal(
+      normalized
+    );
+
+    const element =
+      ensureProductModal();
+
+    element.classList.add(
       "is-open"
     );
-
-
-    modal.setAttribute(
-      "aria-hidden",
-      "false"
-    );
-
 
     document.body.classList.add(
       "abo-modal-open"
     );
 
-
-    addRecent(
-      normalized
+    document.body.classList.add(
+      "abo-scroll-locked"
     );
 
+    addRecentlyViewed(
+      normalized
+    );
   }
 
-
   function closeProductModal() {
-
-    const modal =
-      document.getElementById(
-        "aboTarekProductModal"
-      );
-
-
     if (!modal) {
       return;
     }
-
 
     modal.classList.remove(
       "is-open"
     );
 
-
-    modal.setAttribute(
-      "aria-hidden",
-      "true"
-    );
-
-
     document.body.classList.remove(
       "abo-modal-open"
     );
 
+    if (
+      !document.querySelector(
+        ".abo-cart-drawer.is-open"
+      )
+    ) {
+      document.body.classList.remove(
+        "abo-scroll-locked"
+      );
+    }
+
+    modalProduct = null;
   }
-
-
-  function buildSingleProductWhatsApp(
-    product,
-    quantity
-  ) {
-
-    const name =
-      String(
-        product?.name ||
-        "منتج"
-      );
-
-
-    let message =
-      "مرحبًا أبو طارق، أريد الاستفسار عن:%0A";
-
-    message +=
-      encodeURIComponent(
-        name
-      );
-
-
-    message +=
-      "%0Aالكمية: " +
-      encodeURIComponent(
-        normalizeQuantity(
-          quantity
-        )
-      );
-
-
-    return (
-      "https://wa.me/" +
-      WHATSAPP_NUMBER +
-      "?text=" +
-      message
-    );
-
-  }
-
 
   /* =========================================================
-     KEYBOARD
+     GLOBAL UI HANDLERS
+     
+     IMPORTANT:
+     We intentionally DO NOT delegate product-card
+     add-to-cart or wishlist clicks here.
+
+     app.js and sections.html call the public API directly.
+     This prevents double additions.
      ========================================================= */
 
-  function bindKeyboard() {
+  function handleGlobalClick(event) {
+    const cartTrigger =
+      event.target.closest(
+        "[data-cart-trigger]," +
+        "#cartTrigger," +
+        ".cart-trigger," +
+        ".open-cart"
+      );
 
-    document.addEventListener(
-      "keydown",
-      event => {
+    if (cartTrigger) {
+      event.preventDefault();
+      openCart();
+      return;
+    }
 
-        if (
-          event.key ===
-          "Escape"
-        ) {
+    const closeTrigger =
+      event.target.closest(
+        "[data-cart-close]"
+      );
 
-          if (
-            state.drawerOpen
-          ) {
+    if (
+      closeTrigger &&
+      !event.target.closest(
+        ".abo-cart-drawer"
+      )
+    ) {
+      closeCart();
+      return;
+    }
 
-            closeCart();
+    const modalTrigger =
+      event.target.closest(
+        "[data-product-modal]"
+      );
 
-          }
+    if (modalTrigger) {
+      event.preventDefault();
 
+      let product = null;
 
-          closeProductModal();
+      try {
+        const raw =
+          modalTrigger.getAttribute(
+            "data-product-modal"
+          );
 
+        if (raw) {
+          product =
+            JSON.parse(
+              raw
+            );
         }
+      } catch (error) {}
 
+      if (!product) {
+        const id =
+          modalTrigger.getAttribute(
+            "data-product-id"
+          );
+
+        product =
+          findProductAnywhere(id);
       }
-    );
 
-  }
-
-
-  /* =========================================================
-     CART LINK AUTO-CONVERSION
-     ========================================================= */
-
-  function bindExistingCartButtons() {
-
-    $$(
-      "#cartButton, .cart-button, [data-cart-button]"
-    ).forEach(
-      button => {
-
-        if (
-          button.dataset
-            .featuresBound ===
-          "true"
-        ) {
-          return;
-        }
-
-
-        button.dataset
-          .featuresBound =
-          "true";
-
-
-        button.addEventListener(
-          "click",
-          event => {
-
-            event.preventDefault();
-
-            openCart();
-
-          }
+      if (product) {
+        openProductModal(
+          product
         );
-
       }
-    );
-
+    }
   }
 
-
   /* =========================================================
-     APP EVENTS
+     PRODUCT LOOKUP
      ========================================================= */
 
-  function bindAppEvents() {
+  function findProductAnywhere(id) {
+    const cleanId =
+      cleanText(id);
 
-    document.addEventListener(
-      "abo-tarek:add-to-cart",
-      event => {
+    if (!cleanId) {
+      return null;
+    }
 
-        const product =
-          event.detail?.product;
+    try {
+      const app =
+        window.ABO_TAREK_APP;
 
+      if (
+        app &&
+        typeof app.getProductById ===
+          "function"
+      ) {
+        const found =
+          app.getProductById(
+            cleanId
+          );
 
-        const quantity =
-          event.detail?.quantity ||
-          1;
+        if (found) {
+          return normalizeProduct(
+            found
+          );
+        }
+      }
 
+      if (
+        app &&
+        Array.isArray(
+          app.products
+        )
+      ) {
+        const found =
+          app.products.find(
+            item =>
+              getProductId(item) ===
+              cleanId
+          );
 
-        if (product) {
+        if (found) {
+          return normalizeProduct(
+            found
+          );
+        }
+      }
+    } catch (error) {}
 
-          /*
-            Prevent duplicate fallback
-            handlers by using our single
-            source of truth.
-          */
+    try {
+      const cacheKeys = [
+        CFG.CACHE_KEYS?.products,
+        "abo_tarek_products_v14",
+        "abo_tarek_products_v13",
+        "abo_tarek_products_v12",
+        "abo_tarek_products_v11"
+      ].filter(Boolean);
 
-          const normalized =
-            normalizeProduct(
-              product
+      for (const key of cacheKeys) {
+        const data =
+          readStorage(
+            key,
+            []
+          );
+
+        if (
+          Array.isArray(data)
+        ) {
+          const found =
+            data.find(
+              item =>
+                getProductId(item) ===
+                cleanId
             );
 
-
-          if (normalized) {
-
-            addToCart(
-              normalized,
-              quantity
+          if (found) {
+            return normalizeProduct(
+              found
             );
-
           }
-
         }
-
       }
-    );
+    } catch (error) {}
 
-
-    document.addEventListener(
-      "abo-tarek:toggle-wishlist",
-      event => {
-
-        const product =
-          event.detail?.product;
-
-
-        if (product) {
-
-          toggleWishlist(
-            product
-          );
-
-        }
-
-      }
-    );
-
-
-    document.addEventListener(
-      "abo-tarek:app-ready",
-      () => {
-
-        syncProducts();
-        updateWishlistUI();
-        updateCartUI();
-        refreshRecentSections();
-
-      }
-    );
-
-
-    document.addEventListener(
-      "abo-tarek:render-complete",
-      () => {
-
-        syncProducts();
-        bindExistingCartButtons();
-        updateWishlistUI();
-        updateCartUI();
-        refreshRecentSections();
-
-      }
-    );
-
+    return null;
   }
-
 
   /* =========================================================
-     BODY SCROLL LOCK
+     CART / WISHLIST BUTTON STATE
      ========================================================= */
 
-  function setupScrollLock() {
-
-    const observer =
-      new MutationObserver(
-        () => {
-
-          const locked =
-            document.body.classList.contains(
-              "abo-cart-open"
-            ) ||
-            document.body.classList.contains(
-              "abo-modal-open"
-            );
-
-
-          document.body.classList.toggle(
-            "abo-features-no-scroll",
-            locked
-          );
-
-        }
-      );
-
-
-    observer.observe(
-      document.body,
-      {
-        attributes: true,
-        attributeFilter: [
-          "class"
-        ]
-      }
-    );
-
+  function refreshFeatureButtons() {
+    updateCartCountElements();
+    updateWishlistUI();
   }
 
+  /* =========================================================
+     INITIALIZATION
+     ========================================================= */
+
+  function init() {
+    if (initialized) {
+      return;
+    }
+
+    initialized = true;
+
+    loadState();
+
+    document.addEventListener(
+      "click",
+      handleGlobalClick
+    );
+
+    updateCartUI();
+    refreshFeatureButtons();
+
+    dispatch(
+      "abo-tarek:features-ready",
+      {
+        cart: getCart(),
+        wishlist: getWishlist(),
+        recent: getRecentlyViewed()
+      }
+    );
+  }
 
   /* =========================================================
      PUBLIC API
      ========================================================= */
 
-  window.ABO_TAREK_FEATURES = {
+  const API = {
+    version: "final-stable-1.0.0",
 
-    /* cart */
-
-    addToCart,
-
-    updateCartQuantity,
-
-    removeFromCart,
-
-    clearCart,
-
+    /* Cart */
+    getCart,
     getCartCount,
-
     getCartTotal,
-
+    addToCart,
+    setCartQuantity,
+    updateCartQuantity,
+    removeFromCart,
+    clearCart,
     openCart,
-
     closeCart,
 
-    getCart:
-      () =>
-        [...state.cart],
-
-
-    /* wishlist */
-
+    /* Wishlist */
+    getWishlist,
+    isInWishlist,
     toggleWishlist,
 
-    isInWishlist,
+    /* Recently viewed */
+    addRecentlyViewed,
+    getRecentlyViewed,
 
-    removeFromWishlist,
-
-    getWishlist:
-      () =>
-        [...state.wishlist],
-
-
-    /* recent */
-
-    addRecent,
-
-    getRecent:
-      () =>
-        [...state.recent],
-
-
-    /* modal */
-
+    /* Product */
     openProductModal,
-
     closeProductModal,
 
-
-    /* utility */
-
-    toast,
-
-    formatPrice,
-
-    getPrice,
-
+    /* WhatsApp */
+    openWhatsAppOrder,
+    openProductWhatsApp,
     buildWhatsAppUrl,
+    buildCartMessage,
 
-    refresh:
-      () => {
+    /* UI */
+    showToast,
+    updateCartUI,
+    refreshFeatureButtons,
 
-        syncProducts();
-        updateCartUI();
-        updateWishlistUI();
-        refreshRecentSections();
-
-      }
-
+    /* Utilities */
+    normalizeProduct,
+    getProductPrice,
+    formatPrice,
+    resolveImage
   };
 
+  window.ABO_TAREK_FEATURES =
+    API;
 
-  /*
-    Backward compatibility alias.
-  */
-
-  window.ABO_TAREK_CART = {
-
-    add:
-      addToCart,
-
-    remove:
-      removeFromCart,
-
-    update:
-      updateCartQuantity,
-
-    clear:
-      clearCart,
-
-    open:
-      openCart,
-
-    close:
-      closeCart,
-
-    count:
-      getCartCount,
-
-    total:
-      getCartTotal
-
-  };
-
+  /* Compatibility alias */
+  window.ABO_TAREK_CART =
+    API;
 
   /* =========================================================
-     INIT
+     DOM READY
      ========================================================= */
-
-  function init() {
-
-    if (
-      state.initialized
-    ) {
-      return;
-    }
-
-
-    state.initialized =
-      true;
-
-
-    loadStorage();
-
-    syncProducts();
-
-    ensureCartDrawer();
-
-    bindGlobalClicks();
-
-    bindKeyboard();
-
-    bindAppEvents();
-
-    bindExistingCartButtons();
-
-    setupScrollLock();
-
-    updateCartUI();
-
-    updateWishlistUI();
-
-    refreshRecentSections();
-
-
-    /*
-      Make product cards created later
-      immediately compatible.
-    */
-
-    dispatch(
-      "abo-tarek:features-ready",
-      {
-        features:
-          window.ABO_TAREK_FEATURES
-      }
-    );
-
-  }
-
 
   if (
     document.readyState ===
     "loading"
   ) {
-
     document.addEventListener(
       "DOMContentLoaded",
       init,
@@ -3124,11 +2093,58 @@
         once: true
       }
     );
-
   } else {
-
     init();
-
   }
+
+  /* =========================================================
+     KEEP UI IN SYNC WHEN OTHER FILES UPDATE STATE
+     ========================================================= */
+
+  document.addEventListener(
+    "abo-tarek:cart-updated",
+    () => {
+      updateCartCountElements();
+
+      if (cartDrawer) {
+        renderCartDrawer();
+      }
+    }
+  );
+
+  document.addEventListener(
+    "abo-tarek:wishlist-updated",
+    () => {
+      updateWishlistUI();
+    }
+  );
+
+  window.addEventListener(
+    "storage",
+    event => {
+      if (
+        event.key ===
+        STORAGE.cart
+      ) {
+        loadState();
+        updateCartUI();
+      }
+
+      if (
+        event.key ===
+        STORAGE.wishlist
+      ) {
+        loadState();
+        updateWishlistUI();
+      }
+
+      if (
+        event.key ===
+        STORAGE.recent
+      ) {
+        loadState();
+      }
+    }
+  );
 
 })();
