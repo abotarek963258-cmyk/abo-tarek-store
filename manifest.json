@@ -1,13 +1,13 @@
 {
-  "id": "/abo-tarek-store/",
+  "id": "./",
   "name": "أبو طارق للأدوات المنزلية",
   "short_name": "أبو طارق",
-  "description": "كل احتياجات البيت والمطبخ في مكان واحد - أبو طارق للأدوات المنزلية في الإسكندرية",
-  "start_url": "/abo-tarek-store/",
-  "scope": "/abo-tarek-store/",
+  "description": "كل احتياجات البيت والمطبخ في مكان واحد - الإسكندرية",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#F7F1E3",
+  "background_color": "#071321",
   "theme_color": "#071321",
   "lang": "ar",
   "dir": "rtl",
@@ -18,19 +18,19 @@
   "prefer_related_applications": false,
   "icons": [
     {
-      "src": "/abo-tarek-store/assets/logo.png",
+      "src": "assets/logo.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/abo-tarek-store/assets/logo.png",
+      "src": "assets/logo.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/abo-tarek-store/assets/logo.png",
+      "src": "assets/logo.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
