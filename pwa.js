@@ -1,36 +1,52 @@
 /* =========================================================
-   ABO TAREK STORE - PWA REGISTRATION
-   DARK NAVY LUXURY EDITION
+   ABO TAREK STORE
+   PWA.JS
+   Progressive Web App Controller
+   DARK NAVY LUXURY
    ========================================================= */
 
 (function () {
   "use strict";
 
   /* =========================================================
-     SERVICE WORKER
+     CONFIG
      ========================================================= */
 
-  if ("serviceWorker" in navigator) {
-    window.addEventListener("load", function () {
-      navigator.serviceWorker
-        .register("./sw.js", { scope: "./" })
-        .then(function () {
-          console.log("✅ ABO TAREK SW registered");
-        })
-        .catch(function (err) {
-          console.warn("⚠️ SW registration failed:", err);
-        });
-    });
-  }
+  const ROOT = window.ABO_TAREK || {};
+  const CFG =
+    ROOT.CONFIG ||
+    window.ABO_TAREK_CONFIG ||
+    {};
+
+  const PWA_CONFIG = {
+    enabled:
+      CFG?.PWA?.ENABLED !== false,
+
+    serviceWorker:
+      String(
+        CFG?.PWA?.SERVICE_WORKER ||
+        "./sw.js"
+      ).trim(),
+
+    scope:
+      String(
+        CFG?.PWA?.SCOPE ||
+        "./"
+      ).trim()
+  };
+
 
   /* =========================================================
-     INSTALL PROMPT
+     STATE
      ========================================================= */
 
-  let deferredPrompt = null;
+  const state = {
+    initialized: false,
+    registration: null,
+    installPrompt: null,
+    installed: false
+  };
 
-  const INSTALL_DISMISSED_KEY = "abo_tarek_pwa_dismissed";
-  const INSTALL_DISMISSED_TTL = 24 * 60 * 60 * 1000;
 
   /* =========================================================
      HELPERS
@@ -39,535 +55,596 @@
   function isStandalone() {
     return (
       window.matchMedia &&
-      window.matchMedia("(display-mode: standalone)").matches
-    ) || window.navigator.standalone === true;
+      window.matchMedia(
+        "(display-mode: standalone)"
+      ).matches
+    ) ||
+    window.navigator.standalone === true;
   }
 
-  function wasRecentlyDismissed() {
+
+  function dispatch(name, detail = {}) {
     try {
-      const value = localStorage.getItem(INSTALL_DISMISSED_KEY);
-
-      if (!value) {
-        return false;
-      }
-
-      const timestamp = Number(value);
-
-      if (!Number.isFinite(timestamp)) {
-        localStorage.removeItem(INSTALL_DISMISSED_KEY);
-        return false;
-      }
-
-      if (Date.now() - timestamp < INSTALL_DISMISSED_TTL) {
-        return true;
-      }
-
-      localStorage.removeItem(INSTALL_DISMISSED_KEY);
-      return false;
-
-    } catch (error) {
-      return false;
-    }
-  }
-
-  function rememberDismissal() {
-    try {
-      localStorage.setItem(
-        INSTALL_DISMISSED_KEY,
-        String(Date.now())
+      window.dispatchEvent(
+        new CustomEvent(
+          name,
+          { detail }
+        )
       );
     } catch (error) {
-      /* localStorage may be unavailable */
+      /* Silent by design */
     }
   }
 
-  function canShowBanner() {
-    if (isStandalone()) {
-      return false;
-    }
 
-    if (document.getElementById("pwaInstallBanner")) {
-      return false;
-    }
+  function showInstallButton() {
 
-    return true;
-  }
+    const buttons =
+      document.querySelectorAll(
+        "#installAppBtn, [data-install-app]"
+      );
 
-  /* =========================================================
-     BEFORE INSTALL PROMPT
-     ========================================================= */
+    buttons.forEach(
+      function (button) {
 
-  window.addEventListener("beforeinstallprompt", function (event) {
-    event.preventDefault();
+        button.hidden = false;
 
-    deferredPrompt = event;
-
-    console.log("✅ PWA install prompt captured");
-
-    /*
-      لو البانر اتعمل قبل وصول الحدث،
-      بنسيبه ظاهر عادي.
-    */
-  });
-
-  /* =========================================================
-     APP INSTALLED
-     ========================================================= */
-
-  window.addEventListener("appinstalled", function () {
-    console.log("✅ أبو طارق تم تثبيته كتطبيق");
-
-    deferredPrompt = null;
-
-    hideBanner();
-
-    try {
-      localStorage.removeItem(INSTALL_DISMISSED_KEY);
-    } catch (error) {
-      /* ignore */
-    }
-  });
-
-  /* =========================================================
-     CREATE INSTALL BANNER
-     ========================================================= */
-
-  function createBanner() {
-    console.log("🎯 Creating Abu Tarek PWA banner...");
-
-    if (!canShowBanner()) {
-      return;
-    }
-
-    /*
-      لو المستخدم قفل البانر قريب، ما نزعجوش تاني
-      لمدة 24 ساعة.
-    */
-    if (wasRecentlyDismissed()) {
-      console.log("ℹ️ PWA banner recently dismissed");
-      return;
-    }
-
-    const banner = document.createElement("div");
-
-    banner.id = "pwaInstallBanner";
-
-    banner.style.cssText = `
-      position: fixed;
-      bottom: 0;
-      right: 0;
-      left: 0;
-      z-index: 99999;
-      padding: 14px;
-      pointer-events: none;
-      font-family: Cairo, Arial, sans-serif;
-      transform: translateY(120%);
-      transition:
-        transform 0.45s cubic-bezier(.22,1,.36,1),
-        opacity 0.3s ease;
-      opacity: 0;
-    `;
-
-    banner.innerHTML = `
-      <div
-        style="
-          pointer-events:auto;
-          display:flex;
-          align-items:center;
-          gap:14px;
-          padding:14px 16px;
-          max-width:720px;
-          margin:0 auto;
-
-          background:
-            linear-gradient(
-              145deg,
-              #071321 0%,
-              #0b1d30 55%,
-              #12304a 100%
-            );
-
-          border:1px solid rgba(212,175,55,.65);
-          border-radius:18px;
-
-          box-shadow:
-            0 18px 55px rgba(0,0,0,.32),
-            0 0 0 1px rgba(255,255,255,.03) inset;
-
-          color:#f6f0e2;
-        "
-      >
-
-        <!-- LOGO -->
-
-        <div
-          style="
-            width:52px;
-            height:52px;
-            flex:0 0 52px;
-
-            display:flex;
-            align-items:center;
-            justify-content:center;
-
-            border-radius:14px;
-
-            background:
-              linear-gradient(
-                145deg,
-                #f6f0e2,
-                #ebe3d3
-              );
-
-            border:1px solid rgba(212,175,55,.75);
-
-            box-shadow:
-              0 5px 18px rgba(0,0,0,.22);
-          "
-        >
-          <img
-            src="./assets/logo.png"
-            alt="أبو طارق"
-            style="
-              width:43px;
-              height:43px;
-              object-fit:contain;
-              display:block;
-            "
-          >
-        </div>
-
-        <!-- TEXT -->
-
-        <div
-          style="
-            flex:1;
-            min-width:0;
-            text-align:right;
-          "
-        >
-          <strong
-            style="
-              display:block;
-              color:#f2d98b;
-              font-size:14px;
-              line-height:1.6;
-              font-weight:900;
-            "
-          >
-            📱 ثبّت تطبيق أبو طارق
-          </strong>
-
-          <span
-            style="
-              display:block;
-              margin-top:2px;
-              color:rgba(246,240,226,.78);
-              font-size:11px;
-              line-height:1.6;
-              font-weight:600;
-            "
-          >
-            وصول أسرع للموقع من شاشة موبايلك
-          </span>
-        </div>
-
-        <!-- INSTALL -->
-
-        <button
-          type="button"
-          id="pwaInstallBtn"
-          style="
-            min-height:42px;
-            padding:0 20px;
-
-            background:
-              linear-gradient(
-                135deg,
-                #d4af37,
-                #e4c35a
-              );
-
-            color:#071321;
-
-            border:1px solid rgba(242,217,139,.8);
-            border-radius:12px;
-
-            font-family:Cairo, Arial, sans-serif;
-            font-size:12px;
-            font-weight:900;
-
-            cursor:pointer;
-            flex:0 0 auto;
-
-            box-shadow:
-              0 6px 18px rgba(212,175,55,.22);
-
-            transition:
-              transform .2s ease,
-              box-shadow .2s ease;
-          "
-        >
-          ثبّت التطبيق
-        </button>
-
-        <!-- CLOSE -->
-
-        <button
-          type="button"
-          id="pwaInstallClose"
-          aria-label="إغلاق"
-          style="
-            width:34px;
-            height:34px;
-            flex:0 0 34px;
-
-            display:flex;
-            align-items:center;
-            justify-content:center;
-
-            background:rgba(255,255,255,.05);
-            color:#f6f0e2;
-
-            border:1px solid rgba(255,255,255,.08);
-            border-radius:10px;
-
-            font-family:Arial,sans-serif;
-            font-size:22px;
-            line-height:1;
-
-            cursor:pointer;
-          "
-        >
-          ×
-        </button>
-
-      </div>
-    `;
-
-    document.body.appendChild(banner);
-
-    /* =======================================================
-       BUTTON HOVER
-       ======================================================= */
-
-    const installBtn = document.getElementById("pwaInstallBtn");
-
-    if (installBtn) {
-      installBtn.addEventListener("mouseenter", function () {
-        installBtn.style.transform = "translateY(-1px)";
-        installBtn.style.boxShadow =
-          "0 9px 24px rgba(212,175,55,.32)";
-      });
-
-      installBtn.addEventListener("mouseleave", function () {
-        installBtn.style.transform = "translateY(0)";
-        installBtn.style.boxShadow =
-          "0 6px 18px rgba(212,175,55,.22)";
-      });
-    }
-
-    /* =======================================================
-       SHOW ANIMATION
-       ======================================================= */
-
-    requestAnimationFrame(function () {
-      requestAnimationFrame(function () {
-        banner.style.transform = "translateY(0)";
-        banner.style.opacity = "1";
-      });
-    });
-
-    /* =======================================================
-       INSTALL BUTTON
-       ======================================================= */
-
-    if (installBtn) {
-      installBtn.addEventListener("click", async function () {
-        console.log(
-          "📲 Install clicked:",
-          !!deferredPrompt
+        button.style.removeProperty(
+          "display"
         );
 
-        if (deferredPrompt) {
-          try {
-            deferredPrompt.prompt();
+        button.removeAttribute(
+          "aria-hidden"
+        );
+      }
+    );
+  }
 
-            const result =
-              await deferredPrompt.userChoice;
 
-            console.log(
-              "PWA user choice:",
-              result && result.outcome
-            );
+  function hideInstallButton() {
 
-            deferredPrompt = null;
+    const buttons =
+      document.querySelectorAll(
+        "#installAppBtn, [data-install-app]"
+      );
 
-            hideBanner();
+    buttons.forEach(
+      function (button) {
 
-          } catch (error) {
-            console.error(
-              "❌ PWA prompt error:",
-              error
-            );
+        button.hidden = true;
 
-            showManualInstructions();
-          }
+        button.setAttribute(
+          "aria-hidden",
+          "true"
+        );
+      }
+    );
+  }
 
+
+  /* =========================================================
+     INSTALL PROMPT
+     ========================================================= */
+
+  async function promptInstall() {
+
+    if (
+      !state.installPrompt
+    ) {
+      return {
+        accepted: false,
+        available: false
+      };
+    }
+
+    const promptEvent =
+      state.installPrompt;
+
+    state.installPrompt =
+      null;
+
+    hideInstallButton();
+
+
+    try {
+
+      await promptEvent.prompt();
+
+      const choice =
+        await promptEvent.userChoice;
+
+      dispatch(
+        "abo-tarek:pwa-install-result",
+        {
+          outcome:
+            choice?.outcome ||
+            "unknown"
+        }
+      );
+
+      return {
+        accepted:
+          choice?.outcome ===
+          "accepted",
+
+        available: true,
+
+        outcome:
+          choice?.outcome ||
+          "unknown"
+      };
+
+    } catch (error) {
+
+      return {
+        accepted: false,
+        available: false
+      };
+    }
+  }
+
+
+  /* =========================================================
+     SERVICE WORKER UPDATE
+     ========================================================= */
+
+  function watchRegistration(
+    registration
+  ) {
+
+    if (!registration) {
+      return;
+    }
+
+
+    if (
+      registration.waiting
+    ) {
+
+      dispatch(
+        "abo-tarek:pwa-update-ready",
+        {
+          registration
+        }
+      );
+    }
+
+
+    registration.addEventListener(
+      "updatefound",
+      function () {
+
+        const worker =
+          registration.installing;
+
+        if (!worker) {
           return;
         }
 
-        /*
-          بعض الأجهزة والمتصفحات لا توفر
-          beforeinstallprompt.
-        */
-        showManualInstructions();
-      });
+
+        worker.addEventListener(
+          "statechange",
+          function () {
+
+            if (
+              worker.state ===
+                "installed" &&
+              navigator.serviceWorker
+            ) {
+
+              if (
+                navigator.serviceWorker
+                  .controller
+              ) {
+
+                dispatch(
+                  "abo-tarek:pwa-update-ready",
+                  {
+                    registration
+                  }
+                );
+
+              } else {
+
+                dispatch(
+                  "abo-tarek:pwa-ready",
+                  {
+                    registration
+                  }
+                );
+              }
+            }
+          }
+        );
+      }
+    );
+  }
+
+
+  /* =========================================================
+     SERVICE WORKER REGISTRATION
+     ========================================================= */
+
+  async function registerServiceWorker() {
+
+    if (
+      !PWA_CONFIG.enabled
+    ) {
+      return null;
     }
 
-    /* =======================================================
-       CLOSE BUTTON
-       ======================================================= */
 
-    const closeBtn =
-      document.getElementById("pwaInstallClose");
+    if (
+      !("serviceWorker" in navigator)
+    ) {
+      return null;
+    }
 
-    if (closeBtn) {
-      closeBtn.addEventListener(
-        "click",
-        function () {
-          rememberDismissal();
-          hideBanner();
+
+    /*
+      Service workers require HTTPS
+      except for localhost.
+    */
+
+    const secure =
+      window.location.protocol ===
+        "https:" ||
+      window.location.hostname ===
+        "localhost" ||
+      window.location.hostname ===
+        "127.0.0.1";
+
+    if (!secure) {
+      return null;
+    }
+
+
+    try {
+
+      const registration =
+        await navigator.serviceWorker.register(
+          PWA_CONFIG.serviceWorker,
+          {
+            scope:
+              PWA_CONFIG.scope
+          }
+        );
+
+      state.registration =
+        registration;
+
+
+      watchRegistration(
+        registration
+      );
+
+
+      dispatch(
+        "abo-tarek:pwa-registered",
+        {
+          registration
         }
       );
+
+
+      return registration;
+
+    } catch (error) {
+
+      console.warn(
+        "ABO TAREK PWA registration failed:",
+        error
+      );
+
+      dispatch(
+        "abo-tarek:pwa-error",
+        {
+          error
+        }
+      );
+
+      return null;
     }
   }
 
+
   /* =========================================================
-     HIDE BANNER
+     SERVICE WORKER MESSAGE HANDLER
      ========================================================= */
 
-  function hideBanner() {
-    const banner =
-      document.getElementById("pwaInstallBanner");
+  function bindServiceWorkerMessages() {
 
-    if (!banner) {
+    if (
+      !("serviceWorker" in navigator)
+    ) {
       return;
     }
 
-    banner.style.transform =
-      "translateY(120%)";
 
-    banner.style.opacity = "0";
+    navigator.serviceWorker.addEventListener(
+      "message",
+      function (event) {
 
-    setTimeout(function () {
-      if (banner && banner.parentNode) {
-        banner.remove();
+        const data =
+          event.data || {};
+
+
+        if (
+          data.type ===
+          "ABO_TAREK_SW_READY"
+        ) {
+
+          dispatch(
+            "abo-tarek:pwa-ready",
+            data
+          );
+        }
+
+
+        if (
+          data.type ===
+          "ABO_TAREK_SW_UPDATED"
+        ) {
+
+          dispatch(
+            "abo-tarek:pwa-updated",
+            data
+          );
+        }
       }
-    }, 450);
+    );
   }
 
+
   /* =========================================================
-     MANUAL INSTALL INSTRUCTIONS
+     INSTALL EVENT
      ========================================================= */
 
-  function showManualInstructions() {
-    const userAgent =
-      navigator.userAgent || "";
+  function bindInstallEvents() {
 
-    const isIOS =
-      /iPhone|iPad|iPod/i.test(userAgent);
+    window.addEventListener(
+      "beforeinstallprompt",
+      function (event) {
 
-    const isAndroid =
-      /Android/i.test(userAgent);
+        event.preventDefault();
 
-    let message =
-      "لتثبيت تطبيق أبو طارق:\n\n";
+        state.installPrompt =
+          event;
 
-    if (isIOS) {
 
-      message +=
-        "1. افتح الموقع من Safari\n" +
-        "2. اضغط زر المشاركة\n" +
-        "3. اختر «إضافة إلى الشاشة الرئيسية»\n" +
-        "4. اضغط «إضافة»";
+        if (!isStandalone()) {
+          showInstallButton();
+        }
 
-    } else if (isAndroid) {
 
-      message +=
-        "1. افتح قائمة Chrome (⋮)\n" +
-        "2. اختر «تثبيت التطبيق» أو «إضافة إلى الشاشة الرئيسية»\n" +
-        "3. اضغط «تثبيت»";
+        dispatch(
+          "abo-tarek:pwa-install-available"
+        );
+      }
+    );
+
+
+    window.addEventListener(
+      "appinstalled",
+      function () {
+
+        state.installed =
+          true;
+
+        state.installPrompt =
+          null;
+
+        hideInstallButton();
+
+
+        dispatch(
+          "abo-tarek:pwa-installed"
+        );
+      }
+    );
+
+
+    document.addEventListener(
+      "click",
+      function (event) {
+
+        const button =
+          event.target.closest(
+            "#installAppBtn, [data-install-app]"
+          );
+
+        if (!button) {
+          return;
+        }
+
+        event.preventDefault();
+
+        promptInstall();
+      }
+    );
+  }
+
+
+  /* =========================================================
+     VISIBILITY / UPDATE CHECK
+     ========================================================= */
+
+  function bindVisibility() {
+
+    document.addEventListener(
+      "visibilitychange",
+      function () {
+
+        if (
+          document.visibilityState !==
+          "visible"
+        ) {
+          return;
+        }
+
+
+        if (
+          state.registration &&
+          typeof state.registration
+            .update ===
+            "function"
+        ) {
+
+          state.registration
+            .update()
+            .catch(
+              function () {
+                /* Silent */
+              }
+            );
+        }
+      }
+    );
+  }
+
+
+  /* =========================================================
+     INIT
+     ========================================================= */
+
+  async function init() {
+
+    if (
+      state.initialized
+    ) {
+      return;
+    }
+
+    state.initialized =
+      true;
+
+    state.installed =
+      isStandalone();
+
+
+    if (state.installed) {
+      hideInstallButton();
+    }
+
+
+    bindInstallEvents();
+    bindServiceWorkerMessages();
+    bindVisibility();
+
+
+    /*
+      Register after the page has loaded
+      so PWA never blocks the first render.
+    */
+
+    if (
+      document.readyState ===
+      "complete"
+    ) {
+
+      registerServiceWorker();
 
     } else {
 
-      message +=
-        "1. افتح قائمة المتصفح\n" +
-        "2. اختر «تثبيت أبو طارق» أو «Install App»\n" +
-        "3. أكد التثبيت";
-    }
-
-    alert(message);
-  }
-
-  /* =========================================================
-     SCHEDULE
-     ========================================================= */
-
-  function scheduleBanner() {
-    /*
-      لا تظهر نافذة التثبيت داخل التطبيق المثبت.
-    */
-    if (isStandalone()) {
-      console.log(
-        "ℹ️ Standalone mode detected - PWA banner skipped"
+      window.addEventListener(
+        "load",
+        function () {
+          registerServiceWorker();
+        },
+        {
+          once: true
+        }
       );
-      return;
     }
 
-    console.log(
-      "⏰ Abu Tarek PWA banner scheduled"
-    );
 
-    setTimeout(function () {
-      createBanner();
-    }, 3000);
+    dispatch(
+      "abo-tarek:pwa-initialized",
+      {
+        enabled:
+          PWA_CONFIG.enabled,
+
+        installed:
+          state.installed
+      }
+    );
   }
 
-  /* =========================================================
-     INITIALIZE
-     ========================================================= */
-
-  if (document.readyState === "loading") {
-
-    document.addEventListener(
-      "DOMContentLoaded",
-      scheduleBanner
-    );
-
-  } else {
-
-    scheduleBanner();
-  }
 
   /* =========================================================
      PUBLIC API
      ========================================================= */
 
-  window.showInstallBanner = createBanner;
-  window.hideInstallBanner = hideBanner;
-
   window.ABO_TAREK_PWA = {
-    show: createBanner,
-    hide: hideBanner,
-    isStandalone: isStandalone,
-    isInstallPromptAvailable: function () {
-      return !!deferredPrompt;
-    }
+
+    init,
+
+    register:
+      registerServiceWorker,
+
+    install:
+      promptInstall,
+
+    isInstalled:
+      isStandalone,
+
+    getRegistration:
+      function () {
+        return state.registration;
+      },
+
+    isInstallAvailable:
+      function () {
+        return !!state.installPrompt;
+      },
+
+    status:
+      function () {
+
+        return {
+          initialized:
+            state.initialized,
+
+          enabled:
+            PWA_CONFIG.enabled,
+
+          installed:
+            isStandalone(),
+
+          installAvailable:
+            !!state.installPrompt,
+
+          serviceWorkerSupported:
+            "serviceWorker" in
+            navigator,
+
+          registration:
+            !!state.registration
+        };
+      }
   };
 
-  console.log(
-    "✅ ABO TAREK pwa.js loaded - Dark Navy Luxury"
-  );
+
+  /* =========================================================
+     START
+     ========================================================= */
+
+  if (
+    document.readyState ===
+    "loading"
+  ) {
+
+    document.addEventListener(
+      "DOMContentLoaded",
+      init,
+      {
+        once: true
+      }
+    );
+
+  } else {
+
+    init();
+  }
 
 })();
