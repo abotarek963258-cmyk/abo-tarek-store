@@ -1,723 +1,804 @@
 /* =========================================================
    ABO TAREK STORE
-   CONFIGURATION MASTER FILE
-   DARK NAVY LUXURY EDITION
+   CONFIGURATION MASTER
+   DARK NAVY LUXURY
+   FINAL STABLE EDITION
    ========================================================= */
 
-window.ABO_TAREK = window.ABO_TAREK || {};
+(function () {
+  "use strict";
 
-window.ABO_TAREK.CONFIG = {
-
-  /* =======================================================
-     API
-     ======================================================= */
-
-  DATA_URL:
-    "https://script.google.com/macros/s/AKfycbycQxcL3WeELjc-YQ6EY86X-QZXUtWKLH2WHz_CDoRY72SIhd5mBRQBUVhVuA-AfgME/exec",
+  window.ABO_TAREK = window.ABO_TAREK || {};
 
   /* =======================================================
-     WHATSAPP
+     MASTER CONFIG
      ======================================================= */
 
-  WHATSAPP_NUMBER:
-    "201551604163",
+  const CONFIG = {
 
+    /* -------------------------------------------------------
+       API
+       ------------------------------------------------------- */
 
-  /* =======================================================
-     CACHE KEYS
-     ======================================================= */
+    DATA_URL:
+      "https://script.google.com/macros/s/AKfycbycQxcL3WeELjc-YQ6EY86X-QZXUtWKLH2WHz_CDoRY72SIhd5mBRQBUVhVuA-AfgME/exec",
 
-  CACHE_KEYS: {
+    /* -------------------------------------------------------
+       CONTACT
+       ------------------------------------------------------- */
 
-    PRODUCTS:
-      "abo_tarek_products_v14",
+    WHATSAPP_NUMBER: "201551604163",
 
-    SETTINGS:
-      "abo_tarek_settings_v14",
+    CONTACT: {
+      WHATSAPP: "201551604163",
 
-    CART:
-      "abo_tarek_cart_v4",
+      PHONES: [
+        "01223599165",
+        "01222474380",
+        "01201344419",
+        "035133602"
+      ],
 
-    WISHLIST:
-      "abo_tarek_wishlist_v3",
+      PHONE1: "01223599165",
+      PHONE2: "01222474380",
+      PHONE3: "01201344419",
+      PHONE4: "035133602",
 
-    RECENT:
-      "abo_tarek_recent_v3",
+      ADDRESSES: [
+        "كوبري الناموس",
+        "العوايد"
+      ],
 
-    ADMIN_SESSION:
-      "abo_tarek_admin_session_v4"
+      ADDRESS1: "كوبري الناموس",
+      ADDRESS2: "العوايد"
+    },
 
-  },
+    /* -------------------------------------------------------
+       SOCIAL
+       ------------------------------------------------------- */
 
+    SOCIAL: {
+      FACEBOOK:
+        "https://www.facebook.com/profile.php?id=61587289863971",
 
-  /* =======================================================
-     CACHE TIMES
-     ======================================================= */
+      INSTAGRAM:
+        "https://www.instagram.com/abotarekstore/",
 
-  CACHE_TIME:
-    30 * 60 * 1000,
+      TIKTOK:
+        "https://www.tiktok.com/@abo.tarek.store2"
+    },
 
-  BACKGROUND_REFRESH_TIME:
-    5 * 60 * 1000,
+    /* -------------------------------------------------------
+       LOCAL STORAGE
+       ------------------------------------------------------- */
 
-  SETTINGS_CACHE_TIME:
-    60 * 60 * 1000,
+    CACHE_KEYS: {
+      PRODUCTS: "abo_tarek_products_v14",
+      SETTINGS: "abo_tarek_settings_v14",
+      CART: "abo_tarek_cart_v4",
+      WISHLIST: "abo_tarek_wishlist_v3",
+      RECENT: "abo_tarek_recent_v3",
+      ADMIN_SESSION: "abo_tarek_admin_session_v4"
+    },
 
+    CACHE_TIME: 30 * 60 * 1000,
 
-  /* =======================================================
-     CATEGORY ICONS
-     ======================================================= */
+    BACKGROUND_REFRESH_TIME: 5 * 60 * 1000,
 
-  CATEGORY_ICONS: {
+    SETTINGS_CACHE_TIME: 60 * 60 * 1000,
 
-    "سفرة":
-      "🍽️",
+    /* -------------------------------------------------------
+       CATEGORY ICONS
+       ------------------------------------------------------- */
 
-    "سفرة وأكل":
-      "🍽️",
+    CATEGORY_ICONS: {
+      "سفرة": "🍽️",
+      "سفرة وطعام": "🍽️",
 
-    "شاي وقهوة":
-      "☕",
+      "شاي وقهوة": "☕",
+      "شاي": "☕",
+      "قهوة": "☕",
 
-    "أكواب وكاسات":
-      "🥛",
+      "أكواب وكاسات": "🥛",
+      "أكواب": "🥛",
+      "كاسات": "🥛",
 
-    "أكواب":
-      "🥛",
+      "مطبخ": "🍳",
+      "أدوات المطبخ": "🍳",
 
-    "كاسات":
-      "🥂",
+      "أواني طهي": "🥘",
+      "حلل وأواني": "🥘",
 
-    "مطبخ":
-      "🍳",
+      "ميلامين": "🍽️",
 
-    "أدوات المطبخ":
-      "🍳",
+      "أدوات منزلية": "🏠",
+      "أدوات منزلية متنوعة": "🏠",
 
-    "أواني طهي":
-      "🥘",
+      "تنظيف": "🧹",
 
-    "حلل":
-      "🥘",
+      "تخزين": "🧺",
 
-    "ميلامين":
-      "🍽️",
+      "بلاستيك": "🧴",
 
-    "أدوات منزلية":
-      "🏠",
+      "أخرى": "✦"
+    },
 
-    "منزل":
-      "🏠",
+    FALLBACK_ICON: "✦",
 
-    "بلاستيك":
-      "🧺",
+    /* -------------------------------------------------------
+       DEFAULT SETTINGS
+       ------------------------------------------------------- */
 
-    "تنظيف":
-      "🧹",
+    DEFAULT_SETTINGS: {
 
-    "تخزين":
-      "📦",
+      siteName:
+        "أبو طارق للأدوات المنزلية",
 
-    "مستلزمات منزلية":
-      "🏡"
+      siteTagline:
+        "كل اللي بيتك محتاجه في مكان واحد",
 
-  },
+      heroTitle:
+        "كل اللي بيتك محتاجه في مكان واحد",
 
-  FALLBACK_ICON:
-    "✦",
+      heroSubtitle:
+        "من أدوات المطبخ والسفرة، للأكواب والكاسات، والشاي والقهوة",
 
+      heroImage:
+        "assets/storefront.jpg",
 
-  /* =======================================================
-     DEFAULT SETTINGS
-     ======================================================= */
+      logoImage:
+        "assets/logo.png",
 
-  DEFAULT_SETTINGS: {
+      whatsappNumber:
+        "201551604163",
 
-    siteName:
-      "أبو طارق للأدوات المنزلية",
+      phone1:
+        "01223599165",
 
-    siteTagline:
-      "كل اللي بيتك محتاجه في مكان واحد",
+      phone2:
+        "01222474380",
 
-    heroTitle:
-      "كل اللي بيتك محتاجه في مكان واحد",
+      phone3:
+        "01201344419",
 
-    heroSubtitle:
-      "من أدوات المطبخ والسفرة، للأكواب والكاسات، والشاي والقهوة",
+      phone4:
+        "035133602",
 
-    heroImage:
-      "assets/storefront.jpg",
+      address1:
+        "كوبري الناموس",
 
-    logoImage:
-      "assets/logo.png",
+      address2:
+        "العوايد",
 
-    whatsappNumber:
-      "201551604163",
+      facebookUrl:
+        "https://www.facebook.com/profile.php?id=61587289863971",
 
-    phone1:
-      "01223599165",
+      instagramUrl:
+        "https://www.instagram.com/abotarekstore/",
 
-    phone2:
-      "01222474380",
+      tiktokUrl:
+        "https://www.tiktok.com/@abo.tarek.store2",
 
-    phone3:
-      "01201344419",
+      primaryColor:
+        "#D4AF37",
 
-    phone4:
-      "035133602",
+      topStripText:
+        "✦ أبو طارق للأدوات المنزلية — توصيل لكل الإسكندرية"
+    },
 
-    address1:
-      "كوبري الناموس",
+    /* -------------------------------------------------------
+       SITE
+       ------------------------------------------------------- */
 
-    address2:
-      "العوايد",
+    SITE: {
+      NAME:
+        "أبو طارق للأدوات المنزلية",
 
-    facebookUrl:
-      "https://www.facebook.com/profile.php?id=61587289863971",
+      TAGLINE:
+        "كل اللي بيتك محتاجه في مكان واحد",
 
-    instagramUrl:
-      "https://www.instagram.com/abotarekstore/",
+      CITY:
+        "الإسكندرية",
 
-    tiktokUrl:
-      "https://www.tiktok.com/@abo.tarek.store2",
+      COUNTRY:
+        "مصر",
 
-    /* Dark Navy Luxury */
-    primaryColor:
-      "#D4AF37",
+      LANGUAGE:
+        "ar",
 
-    topStripText:
-      "✦ أبو طارق للأدوات المنزلية — توصيل لكل الإسكندرية"
+      DIR:
+        "rtl",
 
-  },
+      CURRENCY:
+        "ج.م"
+    },
 
+    /* -------------------------------------------------------
+       COLORS
+       ------------------------------------------------------- */
 
-  /* =======================================================
-     BRAND COLORS
-     ======================================================= */
+    COLORS: {
 
-  COLORS: {
+      NAVY:
+        "#071321",
 
-    navy:
-      "#071321",
+      NAVY_2:
+        "#0B1D30",
 
-    navySoft:
-      "#0A1F33",
+      NAVY_3:
+        "#102943",
 
-    navyCard:
-      "#0D263D",
+      NAVY_4:
+        "#12304A",
 
-    navyLight:
-      "#12324B",
+      NAVY_SOFT:
+        "#173957",
 
-    cream:
-      "#F5EFE3",
+      CREAM:
+        "#F6F0E2",
 
-    creamSoft:
-      "#EDE4D2",
+      CREAM_2:
+        "#FBF8F1",
 
-    gold:
-      "#D4AF37",
+      CREAM_3:
+        "#EBE2CF",
 
-    goldLight:
-      "#E7C85A",
+      GOLD:
+        "#D4AF37",
 
-    goldDark:
-      "#A9871F",
+      GOLD_2:
+        "#E4C35A",
 
-    white:
-      "#FFFFFF",
+      GOLD_3:
+        "#F2D98B",
 
-    muted:
-      "#AAB6C3",
+      TEXT:
+        "#F6F0E2",
 
-    border:
-      "rgba(212, 175, 55, 0.22)"
+      TEXT_DARK:
+        "#071321",
 
-  },
+      MUTED:
+        "#AEB8C4",
 
+      BORDER:
+        "rgba(212,175,55,.22)"
+    },
 
-  /* =======================================================
-     SITE INFORMATION
-     ======================================================= */
+    /* -------------------------------------------------------
+       FEATURES
+       ------------------------------------------------------- */
 
-  SITE: {
+    FEATURES: {
 
-    NAME:
-      "أبو طارق للأدوات المنزلية",
+      CART:
+        true,
 
-    SHORT_NAME:
-      "أبو طارق",
+      WISHLIST:
+        true,
 
-    DESCRIPTION:
-      "أبو طارق للأدوات المنزلية في الإسكندرية — أدوات منزلية ومطبخ وسفرة وأكواب وكاسات وشاي وقهوة.",
+      RECENT:
+        true,
 
-    CITY:
-      "الإسكندرية",
+      PRODUCT_MODAL:
+        true,
 
-    COUNTRY:
-      "مصر"
+      MULTIPLE_IMAGES:
+        true,
 
-  },
+      PRICES:
+        true,
 
+      OFFERS:
+        true,
 
-  /* =======================================================
-     CONTACT
-     ======================================================= */
+      ADMIN_SETTINGS:
+        true,
 
-  CONTACT: {
+      ADMIN_IMAGE_UPLOAD:
+        true
+    },
 
-    WHATSAPP:
-      "201551604163",
+    /* -------------------------------------------------------
+       PRODUCTS
+       ------------------------------------------------------- */
 
-    PHONES: [
-      "01223599165",
-      "01222474380",
-      "01201344419",
-      "035133602"
-    ],
+    PRODUCTS: {
 
-    ADDRESSES: [
-      "كوبري الناموس",
-      "العوايد"
-    ]
+      MAX_ADDITIONAL_IMAGES:
+        5,
 
-  },
+      DEFAULT_SORT:
+        "sortOrder",
 
+      SHOW_INACTIVE:
+        false,
 
-  /* =======================================================
-     SOCIAL
-     ======================================================= */
+      SHOW_HOME_ONLY:
+        false
+    },
 
-  SOCIAL: {
+    /* -------------------------------------------------------
+       CART
+       ------------------------------------------------------- */
 
-    FACEBOOK:
-      "https://www.facebook.com/profile.php?id=61587289863971",
+    CART: {
 
-    INSTAGRAM:
-      "https://www.instagram.com/abotarekstore/",
+      ENABLED:
+        true,
 
-    TIKTOK:
-      "https://www.tiktok.com/@abo.tarek.store2"
+      STORAGE_KEY:
+        "abo_tarek_cart_v4",
 
-  },
+      WHATSAPP_NUMBER:
+        "201551604163",
 
+      MAX_QUANTITY:
+        99
+    },
 
-  /* =======================================================
-     FEATURE FLAGS
-     ======================================================= */
+    /* -------------------------------------------------------
+       WISHLIST
+       ------------------------------------------------------- */
 
-  FEATURES: {
+    WISHLIST: {
 
-    CART:
-      true,
+      ENABLED:
+        true,
 
-    WISHLIST:
-      true,
+      STORAGE_KEY:
+        "abo_tarek_wishlist_v3"
+    },
 
-    RECENT:
-      true,
+    /* -------------------------------------------------------
+       RECENT PRODUCTS
+       ------------------------------------------------------- */
 
-    PRODUCT_MODAL:
-      true,
+    RECENT: {
 
-    MULTIPLE_IMAGES:
-      true,
+      ENABLED:
+        true,
 
-    PRICES:
-      true,
+      STORAGE_KEY:
+        "abo_tarek_recent_v3",
 
-    OFFERS:
-      true,
+      MAX_ITEMS:
+        12
+    },
 
-    ADMIN_SETTINGS:
-      true,
+    /* -------------------------------------------------------
+       ADMIN
+       ------------------------------------------------------- */
 
-    ADMIN_IMAGE_UPLOAD:
-      true
+    ADMIN: {
 
-  },
+      SESSION_KEY:
+        "abo_tarek_admin_session_v4",
 
+      SESSION_DURATION:
+        8 * 60 * 60 * 1000,
 
-  /* =======================================================
-     PRODUCT SETTINGS
-     ======================================================= */
+      MAX_UPLOAD_MB:
+        5,
 
-  PRODUCTS: {
+      MAX_PRODUCT_IMAGES:
+        6
+    },
 
-    MAX_ADDITIONAL_IMAGES:
-      5,
+    /* -------------------------------------------------------
+       IMAGES
+       ------------------------------------------------------- */
 
-    DEFAULT_SORT:
-      "sortOrder",
+    IMAGES: {
 
-    SHOW_INACTIVE:
-      false,
+      MAX_SIZE_BYTES:
+        5 * 1024 * 1024,
 
-    SHOW_HOME_ONLY:
-      false
+      ALLOWED_TYPES: [
+        "image/jpeg",
+        "image/jpg",
+        "image/png",
+        "image/webp",
+        "image/gif"
+      ],
 
-  },
+      PRODUCT_FOLDER:
+        "products",
 
+      HERO_FOLDER:
+        "products/hero",
 
-  /* =======================================================
-     CART SETTINGS
-     ======================================================= */
+      LOGO_FOLDER:
+        "products/logo"
+    },
 
-  CART: {
+    /* -------------------------------------------------------
+       PRICING
+       ------------------------------------------------------- */
 
-    ENABLED:
-      true,
+    PRICING: {
 
-    STORAGE_KEY:
-      "abo_tarek_cart_v4",
+      ENABLED:
+        true,
 
-    WHATSAPP_NUMBER:
-      "201551604163",
+      CURRENCY:
+        "جنيه",
 
-    MAX_QUANTITY:
-      99
+      CURRENCY_SHORT:
+        "ج.م",
 
-  },
+      SHOW_CURRENCY:
+        true,
 
+      DECIMAL_PLACES:
+        0
+    },
 
-  /* =======================================================
-     WISHLIST SETTINGS
-     ======================================================= */
+    /* -------------------------------------------------------
+       API BEHAVIOR
+       ------------------------------------------------------- */
 
-  WISHLIST: {
+    API: {
 
-    ENABLED:
-      true,
+      METHOD:
+        "POST",
 
-    STORAGE_KEY:
-      "abo_tarek_wishlist_v3"
+      GET_METHOD:
+        "GET",
 
-  },
+      REQUEST_TIMEOUT:
+        20000,
 
+      RETRY_COUNT:
+        2
+    },
 
-  /* =======================================================
-     RECENT PRODUCTS
-     ======================================================= */
+    /* -------------------------------------------------------
+       STORAGE VERSION
+       ------------------------------------------------------- */
 
-  RECENT: {
-
-    ENABLED:
-      true,
-
-    STORAGE_KEY:
-      "abo_tarek_recent_v3",
-
-    MAX_ITEMS:
-      12
-
-  },
-
-
-  /* =======================================================
-     ADMIN
-     ======================================================= */
-
-  ADMIN: {
-
-    SESSION_KEY:
-      "abo_tarek_admin_session_v4",
-
-    SESSION_DURATION:
-      8 * 60 * 60 * 1000,
-
-    MAX_UPLOAD_MB:
-      5,
-
-    MAX_PRODUCT_IMAGES:
-      6
-
-  },
-
-
-  /* =======================================================
-     IMAGE SETTINGS
-     ======================================================= */
-
-  IMAGES: {
-
-    MAX_SIZE_BYTES:
-      5 * 1024 * 1024,
-
-    ALLOWED_TYPES: [
-      "image/jpeg",
-      "image/jpg",
-      "image/png",
-      "image/webp",
-      "image/gif"
-    ],
-
-    PRODUCT_FOLDER:
-      "products",
-
-    HERO_FOLDER:
-      "products/hero",
-
-    LOGO_FOLDER:
-      "products/logo"
-
-  },
+    STORAGE_VERSION:
+      "14"
+  };
 
 
   /* =======================================================
-     PRICE SETTINGS
+     EXPOSE MASTER CONFIG
      ======================================================= */
 
-  PRICING: {
+  window.ABO_TAREK.CONFIG = CONFIG;
 
-    ENABLED:
-      true,
+  /*
+     Compatibility alias.
+     بعض الملفات القديمة تعتمد على ABO_TAREK_CONFIG مباشرة.
+  */
 
-    CURRENCY:
-      "جنيه",
-
-    CURRENCY_SHORT:
-      "ج.م",
-
-    SHOW_CURRENCY:
-      true,
-
-    DECIMAL_PLACES:
-      0
-
-  },
+  window.ABO_TAREK_CONFIG = CONFIG;
 
 
   /* =======================================================
-     API SETTINGS
+     SAFE GETTER
      ======================================================= */
 
-  API: {
-
-    METHOD:
-      "POST",
-
-    GET_METHOD:
-      "GET",
-
-    REQUEST_TIMEOUT:
-      20000,
-
-    RETRY_COUNT:
-      2
-
-  },
-
-
-  /* =======================================================
-     STORAGE VERSION
-     ======================================================= */
-
-  STORAGE_VERSION:
-    "14"
-
-};
-
-
-/* =========================================================
-   SAFE GLOBAL ALIASES
-   ========================================================= */
-
-window.ABO_TAREK_CONFIG =
-  window.ABO_TAREK.CONFIG;
-
-
-/* =========================================================
-   SMALL HELPERS
-   ========================================================= */
-
-window.ABO_TAREK.getConfig =
-  function (key, fallback) {
+  window.ABO_TAREK.getConfig = function (key, fallback) {
 
     try {
 
-      const config =
-        window.ABO_TAREK.CONFIG;
-
-      if (
-        key === undefined ||
-        key === null ||
-        key === ""
-      ) {
-        return config;
+      if (!key) {
+        return fallback;
       }
 
-      const parts =
-        String(key).split(".");
+      const parts = String(key).split(".");
+      let value = CONFIG;
 
-      let current =
-        config;
-
-      for (
-        let i = 0;
-        i < parts.length;
-        i++
-      ) {
+      for (let i = 0; i < parts.length; i++) {
 
         if (
-          current === null ||
-          current === undefined
+          value === null ||
+          value === undefined ||
+          !Object.prototype.hasOwnProperty.call(value, parts[i])
         ) {
           return fallback;
         }
 
-        if (
-          !Object.prototype.hasOwnProperty.call(
-            current,
-            parts[i]
-          )
-        ) {
-          return fallback;
-        }
-
-        current =
-          current[parts[i]];
+        value = value[parts[i]];
       }
 
-      return current;
+      return value === undefined ? fallback : value;
 
     } catch (error) {
 
       return fallback;
-
     }
-
   };
 
 
-/* =========================================================
-   GET CATEGORY ICON
-   ========================================================= */
+  /* =======================================================
+     CATEGORY ICON
+     ======================================================= */
 
-window.ABO_TAREK.getCategoryIcon =
-  function (category) {
+  window.ABO_TAREK.getCategoryIcon = function (category) {
 
-    const icons =
-      window.ABO_TAREK.CONFIG.CATEGORY_ICONS;
+    const value = String(category || "").trim();
 
-    const fallback =
-      window.ABO_TAREK.CONFIG.FALLBACK_ICON;
-
-    const name =
-      String(
-        category || ""
-      ).trim();
-
-    if (!name) {
-      return fallback;
+    if (!value) {
+      return CONFIG.FALLBACK_ICON;
     }
 
     if (
       Object.prototype.hasOwnProperty.call(
-        icons,
-        name
+        CONFIG.CATEGORY_ICONS,
+        value
       )
     ) {
-      return icons[name];
+      return CONFIG.CATEGORY_ICONS[value];
     }
 
-    return fallback;
+    const normalized = value.toLowerCase();
 
+    const keys = Object.keys(CONFIG.CATEGORY_ICONS);
+
+    for (let i = 0; i < keys.length; i++) {
+
+      const key = String(keys[i]).toLowerCase();
+
+      if (
+        normalized.indexOf(key) !== -1 ||
+        key.indexOf(normalized) !== -1
+      ) {
+        return CONFIG.CATEGORY_ICONS[keys[i]];
+      }
+    }
+
+    return CONFIG.FALLBACK_ICON;
   };
 
 
-/* =========================================================
-   GET DEFAULT SETTING
-   ========================================================= */
+  /* =======================================================
+     DEFAULT SETTING
+     ======================================================= */
 
-window.ABO_TAREK.getDefaultSetting =
-  function (key, fallback) {
-
-    const defaults =
-      window.ABO_TAREK.CONFIG.DEFAULT_SETTINGS;
+  window.ABO_TAREK.getDefaultSetting = function (
+    key,
+    fallback
+  ) {
 
     if (
       Object.prototype.hasOwnProperty.call(
-        defaults,
+        CONFIG.DEFAULT_SETTINGS,
         key
       )
     ) {
-      return defaults[key];
+      return CONFIG.DEFAULT_SETTINGS[key];
     }
 
     return fallback;
-
   };
 
 
-/* =========================================================
-   NORMALIZE WHATSAPP NUMBER
-   ========================================================= */
+  /* =======================================================
+     NORMALIZE WHATSAPP NUMBER
+     ======================================================= */
 
-window.ABO_TAREK.normalizeWhatsApp =
-  function (number) {
+  window.ABO_TAREK.normalizeWhatsApp = function (number) {
 
-    let value =
-      String(
-        number ||
-        window.ABO_TAREK.CONFIG.WHATSAPP_NUMBER ||
-        ""
-      );
+    let value = String(number || "").trim();
 
-    value =
-      value.replace(
-        /[^\d]/g,
-        ""
-      );
-
-    if (
-      value.indexOf("00") === 0
-    ) {
-      value =
-        value.substring(2);
+    if (!value) {
+      value = CONFIG.WHATSAPP_NUMBER;
     }
 
-    if (
-      value.indexOf("01") === 0
-    ) {
-      value =
-        "20" +
-        value.substring(1);
+    /*
+      إزالة أي مسافات أو رموز.
+    */
+
+    value = value.replace(/[^\d+]/g, "");
+
+    /*
+      لو الرقم يبدأ بـ +
+    */
+
+    if (value.charAt(0) === "+") {
+      value = value.substring(1);
     }
+
+    /*
+      مصر:
+      015xxxxxxxx
+      010xxxxxxxx
+      011xxxxxxxx
+      012xxxxxxxx
+      016xxxxxxxx
+
+      تتحول إلى:
+      2015xxxxxxxx
+      2010xxxxxxxx
+      ...
+    */
+
+    if (/^01\d{9}$/.test(value)) {
+      value = "20" + value.substring(1);
+    }
+
+    /*
+      لو مكتوب 20 بالفعل.
+    */
+
+    if (/^20\d{10}$/.test(value)) {
+      return value;
+    }
+
+    /*
+      لو الرقم محلي بعدد غير قياسي،
+      نرجعه كما هو بدل ما نفسده.
+    */
 
     return value;
-
   };
 
 
-/* =========================================================
-   BUILD WHATSAPP URL
-   ========================================================= */
+  /* =======================================================
+     BUILD WHATSAPP URL
+     ======================================================= */
 
-window.ABO_TAREK.buildWhatsAppUrl =
-  function (message) {
+  window.ABO_TAREK.buildWhatsAppUrl = function (message) {
 
     const number =
       window.ABO_TAREK.normalizeWhatsApp(
-        window.ABO_TAREK.CONFIG.WHATSAPP_NUMBER
+        CONFIG.WHATSAPP_NUMBER
       );
 
     const text =
       encodeURIComponent(
-        String(
-          message || ""
-        )
+        String(message || "")
       );
 
-    return (
-      "https://wa.me/" +
-      number +
-      "?text=" +
-      text
-    );
-
+    return "https://wa.me/" + number + "?text=" + text;
   };
 
 
-/* =========================================================
-   EOF
-   ========================================================= */
+  /* =======================================================
+     GET CONTACT NUMBER
+     ======================================================= */
+
+  window.ABO_TAREK.getWhatsAppNumber = function (settings) {
+
+    const source =
+      settings &&
+      settings.whatsappNumber
+        ? settings.whatsappNumber
+        : CONFIG.WHATSAPP_NUMBER;
+
+    return window.ABO_TAREK.normalizeWhatsApp(source);
+  };
+
+
+  /* =======================================================
+     IMAGE URL HELPER
+     ======================================================= */
+
+  window.ABO_TAREK.resolveImageUrl = function (
+    image,
+    fallback
+  ) {
+
+    const value = String(image || "").trim();
+
+    if (!value) {
+      return fallback || "assets/storefront.jpg";
+    }
+
+    /*
+      روابط كاملة.
+    */
+
+    if (
+      /^https?:\/\//i.test(value) ||
+      /^data:image\//i.test(value)
+    ) {
+      return value;
+    }
+
+    /*
+      مسار GitHub / assets.
+    */
+
+    if (value.charAt(0) === "/") {
+      return value;
+    }
+
+    return value;
+  };
+
+
+  /* =======================================================
+     PRODUCT PRICE HELPERS
+     ======================================================= */
+
+  window.ABO_TAREK.getProductPrice = function (product) {
+
+    if (!product) {
+      return null;
+    }
+
+    const offer =
+      Number(product.offerPrice);
+
+    const price =
+      Number(product.price);
+
+    const oldPrice =
+      Number(product.oldPrice);
+
+    if (
+      product.isOffer === true &&
+      Number.isFinite(offer) &&
+      offer > 0
+    ) {
+      return offer;
+    }
+
+    if (
+      Number.isFinite(price) &&
+      price > 0
+    ) {
+      return price;
+    }
+
+    if (
+      Number.isFinite(oldPrice) &&
+      oldPrice > 0
+    ) {
+      return oldPrice;
+    }
+
+    return null;
+  };
+
+
+  window.ABO_TAREK.formatPrice = function (value) {
+
+    const number = Number(value);
+
+    if (!Number.isFinite(number)) {
+      return "";
+    }
+
+    return (
+      number.toLocaleString("ar-EG", {
+        maximumFractionDigits:
+          CONFIG.PRICING.DECIMAL_PLACES
+      }) +
+      " " +
+      CONFIG.PRICING.CURRENCY_SHORT
+    );
+  };
+
+
+  /* =======================================================
+     DEBUG / VERSION
+     ======================================================= */
+
+  window.ABO_TAREK.VERSION =
+    "14.0.0";
+
+  window.ABO_TAREK.CONFIG_READY =
+    true;
+
+
+  /* =======================================================
+     OPTIONAL CONSOLE MESSAGE
+     ======================================================= */
+
+  if (
+    window.location &&
+    window.location.hostname === "localhost"
+  ) {
+
+    console.log(
+      "[Abo Tarek] Config loaded:",
+      CONFIG
+    );
+  }
+
+})();
