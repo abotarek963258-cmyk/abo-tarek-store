@@ -2562,14 +2562,15 @@
 
       "use strict";
 
-      function initAboTarekMobileMenu() {
+    function initAboTarekMobileMenu() {
 
-        const menu =
-          document.getElementById("mobileMenu");
+  // app.js هو المسؤول عن المنيو لتجنب تكرار الأحداث
+  if (window.ABO_TAREK_APP) {
+    return;
+  }
 
-        const button =
-          document.getElementById("menuBtn");
-
+  const menu =
+    document.getElementById("mobileMenu");
         const cartCount =
           document.getElementById(
             "mobileMenuCartCount"
