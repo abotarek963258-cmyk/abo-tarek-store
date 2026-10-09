@@ -4435,3 +4435,188 @@ footer { background:#040c14!important; border-top:1px solid rgba(212,173,98,.12)
 @media (prefers-reduced-motion:reduce) {
   .product, .product-image img, .product-whatsapp { transition:none!important; }
 }
+
+/* =========================================================
+   ABO TAREK — FINAL CURRENT-HOMEPAGE LAYOUT FIX
+   This layer intentionally comes last to override conflicting
+   legacy rules and match index.html's actual class names.
+   ========================================================= */
+
+html { scroll-behavior: smooth; background: #06111c !important; }
+body.dark-luxury-home {
+  margin: 0 !important;
+  min-width: 320px;
+  overflow-x: hidden;
+  color: #f5f0e5 !important;
+  background:
+    radial-gradient(circle at 12% 0%, rgba(212,173,98,.075), transparent 25%),
+    linear-gradient(180deg, #071321 0%, #091827 52%, #06111c 100%) !important;
+  font-family: "Cairo", Tahoma, Arial, sans-serif !important;
+  line-height: 1.75;
+}
+body.dark-luxury-home *, body.dark-luxury-home *::before, body.dark-luxury-home *::after { box-sizing: border-box; }
+body.dark-luxury-home img { max-width: 100%; }
+body.dark-luxury-home a { -webkit-tap-highlight-color: transparent; }
+body.dark-luxury-home .container { width: min(1240px, calc(100% - 40px)); margin-inline: auto; }
+
+/* Header / brand / search */
+body.dark-luxury-home .top-strip { background:#050d16 !important; color:#c5bdad !important; border-bottom:1px solid rgba(212,173,98,.12); }
+body.dark-luxury-home .top-strip-inner { min-height:34px; display:flex; align-items:center; justify-content:space-between; gap:8px 18px; flex-wrap:wrap; padding-block:5px; font-size:11px; }
+body.dark-luxury-home .site-header { position:sticky; top:0; z-index:1000; background:rgba(5,15,25,.96) !important; border-bottom:1px solid rgba(212,173,98,.18) !important; box-shadow:0 10px 28px rgba(0,0,0,.22); backdrop-filter:blur(16px); }
+body.dark-luxury-home .site-header .nav { min-height:76px; display:flex; align-items:center; gap:18px; }
+body.dark-luxury-home .brand { display:flex; align-items:center; gap:10px; width:auto; flex:0 0 auto; text-decoration:none; }
+body.dark-luxury-home .brand img { display:block; width:52px; height:52px; object-fit:contain; }
+body.dark-luxury-home .brand-text { display:flex; flex-direction:column; line-height:1.35; white-space:nowrap; }
+body.dark-luxury-home .brand-text strong { color:#f0d89a; font-size:18px; font-weight:900; }
+body.dark-luxury-home .brand-text > span { color:#c8c1b5; font-size:11px; font-weight:700; }
+body.dark-luxury-home .header-search { display:flex; align-items:center; flex:1 1 210px; min-width:100px; max-width:380px; height:42px; overflow:hidden; border:1px solid rgba(212,173,98,.23); border-radius:12px; background:rgba(255,255,255,.045); }
+body.dark-luxury-home .header-search input { width:100%; min-width:0; height:100%; padding:0 12px; color:#f5f0e5; background:transparent; border:0; outline:0; font:inherit; font-size:12px; }
+body.dark-luxury-home .header-search input::placeholder { color:#929ca4; }
+body.dark-luxury-home .search-btn { width:42px; height:100%; flex:0 0 42px; border:0; color:#f0d89a; background:rgba(212,173,98,.12); }
+body.dark-luxury-home .header-actions { display:flex; align-items:center; gap:7px; margin-inline-start:auto; }
+body.dark-luxury-home .header-btn, body.dark-luxury-home .menu-btn { min-height:41px; display:inline-flex; align-items:center; justify-content:center; gap:7px; padding:7px 11px; border:1px solid rgba(212,173,98,.2); border-radius:11px; background:rgba(255,255,255,.035); color:#f0eadf; font:inherit; font-size:12px; font-weight:800; text-decoration:none; white-space:nowrap; }
+body.dark-luxury-home .header-btn.whatsapp-btn { color:#d8f4e5; background:rgba(21,151,103,.13); border-color:rgba(21,151,103,.28); }
+body.dark-luxury-home .menu-btn { display:none; width:42px; padding:0; font-size:22px; }
+
+/* Hero: current markup uses .hero-inner and .hero-image (not legacy hero-grid) */
+body.dark-luxury-home .hero { position:relative; isolation:isolate; overflow:hidden; padding:clamp(48px,6vw,82px) 0 clamp(42px,5vw,70px) !important; color:#f8f2e7 !important; background:radial-gradient(circle at 15% 85%,rgba(24,66,93,.36),transparent 32%),radial-gradient(circle at 85% 8%,rgba(212,173,98,.13),transparent 28%),linear-gradient(130deg,#071321 0%,#0b2033 55%,#102b41 100%) !important; }
+body.dark-luxury-home .hero-inner { position:relative; z-index:1; display:grid; grid-template-columns:minmax(0,1fr) minmax(300px,.9fr); align-items:center; gap:clamp(28px,5vw,68px); }
+body.dark-luxury-home .hero-copy { min-width:0; }
+body.dark-luxury-home .hero-badge { display:inline-flex; align-items:center; gap:7px; padding:7px 12px; border:1px solid rgba(212,173,98,.25); border-radius:999px; color:#e2c47d; background:rgba(212,173,98,.075); font-size:12px; font-weight:800; }
+body.dark-luxury-home .hero-title { display:flex; flex-direction:column; gap:2px; margin:17px 0 16px !important; color:#fbf5e9 !important; font-size:clamp(34px,4.2vw,58px) !important; line-height:1.28 !important; font-weight:900 !important; letter-spacing:-.5px; }
+body.dark-luxury-home .hero-title span:last-child { color:#e0bf73; }
+body.dark-luxury-home .hero-description { max-width:620px; margin:0 !important; color:#c4cbd0 !important; font-size:clamp(13px,1.25vw,16px) !important; line-height:2 !important; }
+body.dark-luxury-home .hero-actions { display:flex; align-items:center; gap:11px; flex-wrap:wrap; margin-top:24px; }
+body.dark-luxury-home .btn-primary, body.dark-luxury-home .btn-whatsapp { min-height:47px; display:inline-flex; align-items:center; justify-content:center; gap:7px; padding:11px 17px; border-radius:12px; font-size:13px; font-weight:900; text-decoration:none; }
+body.dark-luxury-home .btn-primary { color:#111b25 !important; background:linear-gradient(135deg,#f1d99a,#d4ad62 70%,#b88d40) !important; border:1px solid rgba(255,235,180,.55); }
+body.dark-luxury-home .btn-whatsapp { color:#e2f7eb !important; background:rgba(21,151,103,.15) !important; border:1px solid rgba(40,190,125,.32); }
+body.dark-luxury-home .hero-trust { display:flex; flex-wrap:wrap; gap:8px 17px; margin-top:21px; color:#c9c2b4; font-size:11px; font-weight:700; }
+body.dark-luxury-home .hero-image { position:relative; min-width:0; overflow:hidden; padding:10px; border:1px solid rgba(212,173,98,.28); border-radius:24px; background:linear-gradient(145deg,rgba(255,255,255,.09),rgba(255,255,255,.025)); box-shadow:0 28px 70px rgba(0,0,0,.32); }
+body.dark-luxury-home .hero-image::after { content:""; position:absolute; inset:10px; border:1px solid rgba(255,255,255,.15); border-radius:16px; pointer-events:none; }
+body.dark-luxury-home .hero-image img { display:block; width:100%; height:clamp(260px,35vw,440px); object-fit:cover; object-position:center; border-radius:16px; }
+
+/* Benefits row */
+body.dark-luxury-home .features-bar { position:relative; z-index:2; padding:18px 0; background:#081522; border-block:1px solid rgba(212,173,98,.13); }
+body.dark-luxury-home .features-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; }
+body.dark-luxury-home .feature-item { min-width:0; display:flex; align-items:center; gap:11px; padding:13px; border:1px solid rgba(212,173,98,.14); border-radius:14px; background:linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.015)); }
+body.dark-luxury-home .feature-icon { width:40px; height:40px; flex:0 0 40px; display:grid; place-items:center; border-radius:12px; color:#e0bf73; background:rgba(212,173,98,.10); font-size:19px; }
+body.dark-luxury-home .feature-text { min-width:0; display:flex; flex-direction:column; gap:2px; }
+body.dark-luxury-home .feature-text strong { color:#f2eadb; font-size:12px; font-weight:900; }
+body.dark-luxury-home .feature-text span { color:#9da7ad; font-size:10px; line-height:1.6; }
+
+/* Section layout: h2.section-title is the heading itself in current HTML */
+body.dark-luxury-home .section { padding:clamp(44px,6vw,76px) 0 !important; background:transparent !important; }
+body.dark-luxury-home .categories-section { background:rgba(255,255,255,.012) !important; }
+body.dark-luxury-home .section-header { display:flex; align-items:flex-end; justify-content:space-between; gap:18px; margin-bottom:25px; }
+body.dark-luxury-home .section-header > div { min-width:0; }
+body.dark-luxury-home .section-kicker { display:inline-block; margin:0 0 5px; color:#d8b66a !important; font-size:12px !important; font-weight:900; }
+body.dark-luxury-home h2.section-title { display:block; width:auto; max-width:100%; margin:0 !important; padding:0 !important; color:#f4ecdd !important; font-size:clamp(23px,2.8vw,32px) !important; line-height:1.45 !important; text-align:right !important; font-weight:900 !important; letter-spacing:0; }
+body.dark-luxury-home .section-description { max-width:690px; margin:6px 0 0 !important; color:#9da8ae !important; font-size:12px !important; line-height:1.9 !important; }
+body.dark-luxury-home .see-all { flex:0 0 auto; display:inline-flex; align-items:center; justify-content:center; gap:6px; min-height:39px; padding:8px 12px; border:1px solid rgba(212,173,98,.2); border-radius:11px; color:#e0bf73 !important; background:rgba(212,173,98,.055); text-decoration:none; font-size:11px; font-weight:900; white-space:nowrap; }
+body.dark-luxury-home .see-all:hover { background:rgba(212,173,98,.11); border-color:rgba(212,173,98,.38); }
+body.dark-luxury-home .section > .container > .section-header { margin-bottom:24px; }
+
+/* Categories grid uses .categories-grid in current index.html */
+body.dark-luxury-home .categories-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px; align-items:stretch; }
+body.dark-luxury-home .categories-grid .cat { min-width:0; min-height:94px; display:flex; align-items:center; gap:12px; padding:15px; border:1px solid rgba(212,173,98,.16); border-radius:16px; background:linear-gradient(145deg,#10263a,#091927) !important; color:#f2eadb !important; text-align:right; font:inherit; font-size:13px; font-weight:900; cursor:pointer; box-shadow:0 10px 25px rgba(0,0,0,.13); transition:transform .2s ease,border-color .2s ease,background .2s ease; }
+body.dark-luxury-home .categories-grid .cat:hover { transform:translateY(-3px); border-color:rgba(212,173,98,.4); }
+body.dark-luxury-home .cat-icon { width:43px; height:43px; flex:0 0 43px; display:grid; place-items:center; border-radius:13px; background:rgba(212,173,98,.10); color:#e0bf73; font-size:20px; }
+
+/* Product grids and cards */
+body.dark-luxury-home .products-grid, body.dark-luxury-home #productsGrid, body.dark-luxury-home #offersGrid, body.dark-luxury-home #recentlyViewedGrid { display:grid !important; grid-template-columns:repeat(4,minmax(0,1fr)) !important; align-items:stretch; gap:18px !important; }
+body.dark-luxury-home .product { min-width:0; min-height:100%; height:100%; display:flex !important; flex-direction:column !important; overflow:hidden; border:1px solid rgba(216,182,106,.27) !important; border-radius:18px !important; background:linear-gradient(155deg,#14283d 0%,#0b1929 60%,#08131f 100%) !important; color:#f7f0e4 !important; box-shadow:0 12px 28px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.035) !important; transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease; }
+body.dark-luxury-home .product:hover { transform:translateY(-4px); border-color:rgba(216,182,106,.68) !important; box-shadow:0 20px 38px rgba(0,0,0,.29) !important; }
+body.dark-luxury-home .product-image { position:relative; width:100%; height:clamp(170px,19vw,230px) !important; min-height:0; flex:0 0 auto; display:flex !important; align-items:center; justify-content:center; overflow:hidden; padding:10px !important; background:#f7f2e8 !important; border:0 !important; border-bottom:1px solid rgba(216,182,106,.5) !important; }
+body.dark-luxury-home .product-image img, body.dark-luxury-home .product-image picture img { display:block; width:100% !important; height:100% !important; max-width:100%; max-height:100%; object-fit:contain !important; object-position:center; border-radius:8px; }
+body.dark-luxury-home .product-image-placeholder { width:100%; height:100%; display:grid; place-items:center; align-content:center; background:linear-gradient(135deg,#f7f2e8,#e8dfd0) !important; color:#7c8992; }
+body.dark-luxury-home .placeholder-icon { font-size:34px; }
+body.dark-luxury-home .product-body { min-width:0; flex:1 1 auto; display:flex !important; flex-direction:column !important; align-items:stretch; gap:7px; padding:13px !important; background:transparent !important; text-align:right; }
+body.dark-luxury-home .product-category { align-self:flex-start; max-width:100%; display:inline-flex; align-items:center; overflow:hidden; margin:0 !important; padding:4px 9px; border:1px solid rgba(216,182,106,.22); border-radius:999px; background:rgba(216,182,106,.09) !important; color:#e1c47d !important; font-size:10px; font-weight:800; line-height:1.55; white-space:nowrap; text-overflow:ellipsis; }
+body.dark-luxury-home .product h3 { display:-webkit-box; min-height:3.15em; margin:1px 0 0 !important; overflow:hidden; color:#f7f0e4 !important; font-family:"Cairo",Tahoma,Arial,sans-serif; font-size:clamp(12px,1.1vw,15px) !important; font-weight:900 !important; line-height:1.65 !important; overflow-wrap:anywhere; -webkit-box-orient:vertical; -webkit-line-clamp:2; }
+body.dark-luxury-home .product-description-short, body.dark-luxury-home .product-description { display:-webkit-box; min-height:2.9em; margin:0 !important; overflow:hidden; color:#aeb9c4 !important; font-size:11px !important; line-height:1.75 !important; overflow-wrap:anywhere; -webkit-box-orient:vertical; -webkit-line-clamp:2; }
+body.dark-luxury-home .product-details-trigger { align-self:flex-start; padding:2px 0; border:0 !important; background:transparent !important; color:#e0bf73 !important; font:inherit; font-size:10px; font-weight:800; cursor:pointer; }
+body.dark-luxury-home .product-price-row, body.dark-luxury-home .price-box { display:flex; align-items:baseline; flex-wrap:wrap; gap:7px; min-height:25px; margin:2px 0 0; }
+body.dark-luxury-home .product-price, body.dark-luxury-home .product .price, body.dark-luxury-home .product .current-price, body.dark-luxury-home .current-price { color:#e4c477 !important; font-size:16px !important; font-weight:900 !important; line-height:1.7; }
+body.dark-luxury-home .product .old-price, body.dark-luxury-home .product .product-old-price, body.dark-luxury-home .product-old-price, body.dark-luxury-home .old-price { color:#929da6 !important; font-size:10px !important; text-decoration:line-through; }
+body.dark-luxury-home .product-footer { width:100%; display:flex !important; flex-direction:column; gap:7px; margin-top:auto !important; padding-top:9px !important; }
+body.dark-luxury-home .product-whatsapp { width:100%; min-height:41px; display:flex !important; align-items:center; justify-content:center; padding:8px 10px; border:1px solid rgba(255,235,181,.5) !important; border-radius:11px !important; background:linear-gradient(135deg,#f0d99b,#d8b66a 65%,#bd9548) !important; color:#101b28 !important; text-align:center; text-decoration:none; font-family:inherit; font-size:11px !important; font-weight:900 !important; line-height:1.55; }
+body.dark-luxury-home .abo-add-cart, body.dark-luxury-home .product .abo-add-cart { width:100%; min-height:39px; margin:0 !important; border:1px solid rgba(216,182,106,.32) !important; border-radius:11px !important; background:rgba(216,182,106,.10) !important; color:#f1d89d !important; font-family:inherit; font-size:11px; font-weight:900; }
+body.dark-luxury-home .offer-badge { position:absolute; z-index:4; top:9px; right:9px; }
+body.dark-luxury-home .loading, body.dark-luxury-home .empty, body.dark-luxury-home .error-state { grid-column:1/-1; color:#b5bec5 !important; text-align:center; }
+
+/* About / branches / reasons / contact text rhythm */
+body.dark-luxury-home .about-section, body.dark-luxury-home .branches-section, body.dark-luxury-home .why-us-section { border-top:1px solid rgba(212,173,98,.07); }
+body.dark-luxury-home .about-section p, body.dark-luxury-home .why-us-section p, body.dark-luxury-home .branches-section p { color:#b0b9bf; line-height:1.95; }
+body.dark-luxury-home .branches-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
+body.dark-luxury-home .branch-card { min-width:0; display:flex; align-items:center; gap:14px; padding:20px; border:1px solid rgba(212,173,98,.17); border-radius:17px; background:linear-gradient(145deg,#10263a,#091927) !important; color:#f3ecdf !important; text-decoration:none; }
+body.dark-luxury-home .branch-card h3 { margin:2px 0; color:#f1d89a !important; font-size:18px; }
+body.dark-luxury-home .branch-card p, body.dark-luxury-home .branch-card span { color:#aeb8be; }
+body.dark-luxury-home .contact-section { background:linear-gradient(135deg,#0d273c,#06131f) !important; border-block:1px solid rgba(212,173,98,.14); }
+body.dark-luxury-home .contact-box { border:1px solid rgba(212,173,98,.18) !important; border-radius:22px; background:linear-gradient(145deg,rgba(255,255,255,.05),rgba(255,255,255,.015)) !important; color:#f5eee2; }
+body.dark-luxury-home .contact-box h2 { color:#f5eee2 !important; }
+body.dark-luxury-home .contact-box p { color:#aeb7bd !important; }
+body.dark-luxury-home footer { background:#040c14 !important; color:#98a1a5 !important; border-top:1px solid rgba(212,173,98,.13); }
+
+/* Responsive corrections */
+@media (max-width: 1050px) {
+  body.dark-luxury-home .site-header .nav { gap:10px; }
+  body.dark-luxury-home .brand-text strong { font-size:16px; }
+  body.dark-luxury-home .header-btn { padding-inline:8px; }
+  body.dark-luxury-home .header-btn .label { font-size:10px; }
+  body.dark-luxury-home .products-grid, body.dark-luxury-home #productsGrid, body.dark-luxury-home #offersGrid, body.dark-luxury-home #recentlyViewedGrid { grid-template-columns:repeat(3,minmax(0,1fr)) !important; gap:14px !important; }
+  body.dark-luxury-home .categories-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
+}
+@media (max-width: 760px) {
+  body.dark-luxury-home .container { width:min(100% - 28px,680px); }
+  body.dark-luxury-home .site-header .nav { min-height:66px; gap:8px; }
+  body.dark-luxury-home .brand img { width:43px; height:43px; }
+  body.dark-luxury-home .brand-text strong { font-size:14px; }
+  body.dark-luxury-home .brand-text > span { font-size:9px; }
+  body.dark-luxury-home .header-search { flex:1 1 90px; max-width:none; height:38px; }
+  body.dark-luxury-home .header-actions { gap:5px; }
+  body.dark-luxury-home .header-btn { min-width:37px; min-height:38px; padding:5px 7px; gap:4px; }
+  body.dark-luxury-home .header-btn .label { display:none; }
+  body.dark-luxury-home .menu-btn { display:inline-flex; min-height:38px; }
+  body.dark-luxury-home .hero-inner { grid-template-columns:1fr; gap:25px; }
+  body.dark-luxury-home .hero-copy { order:1; }
+  body.dark-luxury-home .hero-image { order:2; max-width:560px; width:100%; margin-inline:auto; }
+  body.dark-luxury-home .hero-image img { height:clamp(220px,62vw,350px); }
+  body.dark-luxury-home .hero-title { font-size:clamp(32px,8vw,46px) !important; }
+  body.dark-luxury-home .features-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  body.dark-luxury-home .categories-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+  body.dark-luxury-home .categories-grid .cat { min-height:78px; padding:10px; gap:8px; font-size:11px; }
+  body.dark-luxury-home .cat-icon { width:36px; height:36px; flex-basis:36px; font-size:17px; }
+  body.dark-luxury-home .section-header { align-items:flex-start; gap:10px; }
+  body.dark-luxury-home .section-header .see-all { margin-top:14px; min-height:34px; padding:6px 8px; font-size:10px; }
+  body.dark-luxury-home .section-description { font-size:11px !important; }
+  body.dark-luxury-home .products-grid, body.dark-luxury-home #productsGrid, body.dark-luxury-home #offersGrid, body.dark-luxury-home #recentlyViewedGrid { grid-template-columns:repeat(2,minmax(0,1fr)) !important; gap:11px !important; }
+  body.dark-luxury-home .product { border-radius:14px !important; }
+  body.dark-luxury-home .product-image { height:clamp(125px,38vw,175px) !important; padding:7px !important; }
+  body.dark-luxury-home .product-body { padding:10px !important; gap:6px; }
+  body.dark-luxury-home .product-category { padding:3px 7px; font-size:9px; }
+  body.dark-luxury-home .product h3 { min-height:3.2em; font-size:11px !important; line-height:1.65 !important; }
+  body.dark-luxury-home .product-description-short, body.dark-luxury-home .product-description { min-height:2.8em; font-size:9px !important; }
+  body.dark-luxury-home .product-price, body.dark-luxury-home .product .price, body.dark-luxury-home .product .current-price, body.dark-luxury-home .current-price { font-size:13px !important; }
+  body.dark-luxury-home .product-whatsapp, body.dark-luxury-home .abo-add-cart { min-height:35px; padding:6px 4px; font-size:9px !important; border-radius:9px !important; }
+  body.dark-luxury-home .branches-grid { grid-template-columns:1fr; }
+}
+@media (max-width: 420px) {
+  body.dark-luxury-home .container { width:calc(100% - 22px); }
+  body.dark-luxury-home .top-strip-inner { justify-content:center; gap:3px 10px; font-size:9px; }
+  body.dark-luxury-home .brand-text { display:none; }
+  body.dark-luxury-home .hero-actions { align-items:stretch; }
+  body.dark-luxury-home .hero-actions a { flex:1 1 100%; width:100%; }
+  body.dark-luxury-home .features-grid { gap:8px; }
+  body.dark-luxury-home .feature-item { padding:9px; gap:7px; }
+  body.dark-luxury-home .feature-icon { width:33px; height:33px; flex-basis:33px; font-size:16px; }
+  body.dark-luxury-home .feature-text strong { font-size:10px; }
+  body.dark-luxury-home .feature-text span { font-size:9px; }
+  body.dark-luxury-home .section-header { flex-direction:column; align-items:stretch; }
+  body.dark-luxury-home .section-header .see-all { align-self:flex-start; margin-top:0; }
+  body.dark-luxury-home .product-image { height:130px !important; }
+  body.dark-luxury-home .product-body { padding:8px !important; }
+  body.dark-luxury-home .product h3 { font-size:10px !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  body.dark-luxury-home *, body.dark-luxury-home *::before, body.dark-luxury-home *::after { scroll-behavior:auto !important; transition:none !important; animation:none !important; }
+}
