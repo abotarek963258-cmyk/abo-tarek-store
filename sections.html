@@ -2080,28 +2080,17 @@
             return;
           }
 
+      
           const wishlistButton =
             event.target.closest(
               "[data-wishlist-id]"
             );
 
           if (wishlistButton) {
-
-            const id =
-              wishlistButton.dataset.wishlistId;
-
-            const product =
-              state.products.find(
-                item => item.id === id
-              );
-
-            if (product) {
-              toggleWishlist(product);
-            }
-
+            // features.js هو المسؤول عن تنفيذ ضغطة القلب.
+            // لا ننفذ toggleWishlist هنا مرة ثانية.
             return;
           }
-
           const detailsButton =
             event.target.closest(
               "[data-details-product]"
