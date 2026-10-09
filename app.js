@@ -1,9 +1,10 @@
+
 /* =========================================================
    ABO TAREK STORE
    APP ENGINE
-   FINAL STABLE EDITION
+   FINAL STABLE EDITION 1.2
    Public Data • Products • Sections • Search • Home
-   Mobile Menu • Cart Bridge • Site Settings
+   Mobile Menu • Cart Bridge • Site Settings • Valid Offers
    ========================================================= */
 
 (function () {
@@ -32,25 +33,22 @@
     CFG.CACHE_KEYS?.settings ||
     "abo_tarek_settings_v3";
 
-  const CACHE_TTL =
-    Number(
-      CFG.CACHE_TIMES?.products ||
-      CFG.CACHE_TTL ||
-      30 * 60 * 1000
-    );
+  const CACHE_TTL = Number(
+    CFG.CACHE_TIMES?.products ||
+    CFG.CACHE_TTL ||
+    30 * 60 * 1000
+  );
 
-  const REQUEST_TIMEOUT =
-    Number(
-      CFG.API?.TIMEOUT ||
-      CFG.API_TIMEOUT ||
-      25000
-    );
+  const REQUEST_TIMEOUT = Number(
+    CFG.API?.TIMEOUT ||
+    CFG.API_TIMEOUT ||
+    25000
+  );
 
-  const BG_REFRESH_AFTER =
-    Number(
-      CFG.CACHE_TIMES?.background ||
-      10 * 60 * 1000
-    );
+  const BG_REFRESH_AFTER = Number(
+    CFG.CACHE_TIMES?.background ||
+    10 * 60 * 1000
+  );
 
   /* =========================================================
      STATE
@@ -198,44 +196,21 @@
 
       images,
 
-      description: cleanText(
-        product.description
-      ),
+      description: cleanText(product.description),
 
-      active: toBool(
-        product.active,
-        true
-      ),
+      active: toBool(product.active, true),
 
-      showHome: toBool(
-        product.showHome,
-        false
-      ),
+      showHome: toBool(product.showHome, false),
 
-      isOffer: toBool(
-        product.isOffer,
-        false
-      ),
+      isOffer: toBool(product.isOffer, false),
 
-      sortOrder: safeNumber(
-        product.sortOrder,
-        0
-      ),
+      sortOrder: safeNumber(product.sortOrder, 0),
 
-      price: safeNumber(
-        product.price,
-        0
-      ),
+      price: safeNumber(product.price, 0),
 
-      oldPrice: safeNumber(
-        product.oldPrice,
-        0
-      ),
+      oldPrice: safeNumber(product.oldPrice, 0),
 
-      offerPrice: safeNumber(
-        product.offerPrice,
-        0
-      )
+      offerPrice: safeNumber(product.offerPrice, 0)
     };
   }
 
@@ -261,16 +236,8 @@
     return {
       id,
       name,
-
-      sortOrder: safeNumber(
-        section.sortOrder,
-        0
-      ),
-
-      active: toBool(
-        section.active,
-        true
-      )
+      sortOrder: safeNumber(section.sortOrder, 0),
+      active: toBool(section.active, true)
     };
   }
 
@@ -279,9 +246,7 @@
       return {};
     }
 
-    return {
-      ...value
-    };
+    return { ...value };
   }
 
   function sortProducts(list) {
@@ -328,9 +293,7 @@
   function dispatch(name, detail = {}) {
     try {
       document.dispatchEvent(
-        new CustomEvent(name, {
-          detail
-        })
+        new CustomEvent(name, { detail })
       );
     } catch (error) {}
   }
@@ -385,29 +348,28 @@
     }
 
     if (!imageObserver) {
-      imageObserver =
-        new IntersectionObserver(
-          entries => {
-            entries.forEach(entry => {
-              if (!entry.isIntersecting) {
-                return;
-              }
+      imageObserver = new IntersectionObserver(
+        entries => {
+          entries.forEach(entry => {
+            if (!entry.isIntersecting) {
+              return;
+            }
 
-              const img = entry.target;
-              const src = img.dataset.src;
+            const img = entry.target;
+            const src = img.dataset.src;
 
-              if (src) {
-                img.src = src;
-                img.removeAttribute("data-src");
-              }
+            if (src) {
+              img.src = src;
+              img.removeAttribute("data-src");
+            }
 
-              imageObserver.unobserve(img);
-            });
-          },
-          {
-            rootMargin: "250px 0px"
-          }
-        );
+            imageObserver.unobserve(img);
+          });
+        },
+        {
+          rootMargin: "250px 0px"
+        }
+      );
     }
 
     document
@@ -435,16 +397,47 @@
       }
     } catch (error) {}
 
-    if (safeNumber(product.offerPrice, 0) > 0) {
-      return safeNumber(
-        product.offerPrice,
-        0
-      );
+    const offerPrice = safeNumber(product.offerPrice, 0);
+
+    if (offerPrice > 0) {
+      return offerPrice;
     }
 
-    return safeNumber(
-      product.price,
-      0
+    return safeNumber(product.price, 0);
+  }
+
+  /*
+    السعر الأصلي المستخدم للمقارنة في العروض:
+    oldPrice أولاً، ثم price.
+  */
+  function getOfferOriginalPrice(product) {
+    if (!product) {
+      return 0;
+    }
+
+    const oldPrice = safeNumber(product.oldPrice, 0);
+    const regularPrice = safeNumber(product.price, 0);
+
+    return oldPrice > 0 ? oldPrice : regularPrice;
+  }
+
+  /*
+    العرض الصحيح يحتاج:
+    1. المنتج معلّم كعرض.
+    2. سعر عرض أكبر من صفر.
+    3. السعر الأصلي أعلى من سعر العرض.
+  */
+  function isValidOffer(product) {
+    if (!product || !toBool(product.isOffer, false)) {
+      return false;
+    }
+
+    const offerPrice = safeNumber(product.offerPrice, 0);
+    const originalPrice = getOfferOriginalPrice(product);
+
+    return (
+      offerPrice > 0 &&
+      originalPrice > offerPrice
     );
   }
 
@@ -461,15 +454,11 @@
       }
 
       return (
-        new Intl.NumberFormat("ar-EG").format(
-          amount
-        ) + " جنيه"
-      );
-    } catch (error) {
-      return (
-        amount.toLocaleString("en-US") +
+        new Intl.NumberFormat("ar-EG").format(amount) +
         " جنيه"
       );
+    } catch (error) {
+      return amount.toLocaleString("en-US") + " جنيه";
     }
   }
 
@@ -493,11 +482,7 @@
 
   function writeStorage(key, value) {
     try {
-      localStorage.setItem(
-        key,
-        JSON.stringify(value)
-      );
-
+      localStorage.setItem(key, JSON.stringify(value));
       return true;
     } catch (error) {
       return false;
@@ -505,33 +490,16 @@
   }
 
   function saveCache() {
-    writeStorage(
-      CACHE_KEY,
-      products
-    );
-
-    writeStorage(
-      SECTIONS_CACHE_KEY,
-      sections
-    );
-
-    writeStorage(
-      SETTINGS_CACHE_KEY,
-      settings
-    );
-
-    writeStorage(
-      CACHE_KEY + "_time",
-      Date.now()
-    );
+    writeStorage(CACHE_KEY, products);
+    writeStorage(SECTIONS_CACHE_KEY, sections);
+    writeStorage(SETTINGS_CACHE_KEY, settings);
+    writeStorage(CACHE_KEY + "_time", Date.now());
   }
 
   function getCacheTime() {
     try {
       return safeNumber(
-        localStorage.getItem(
-          CACHE_KEY + "_time"
-        ),
+        localStorage.getItem(CACHE_KEY + "_time"),
         0
       );
     } catch (error) {
@@ -540,51 +508,29 @@
   }
 
   function loadCache() {
-    const cachedProducts =
-      readStorage(
-        CACHE_KEY,
-        []
-      );
-
-    const cachedSections =
-      readStorage(
-        SECTIONS_CACHE_KEY,
-        []
-      );
-
-    const cachedSettings =
-      readStorage(
-        SETTINGS_CACHE_KEY,
-        {}
-      );
+    const cachedProducts = readStorage(CACHE_KEY, []);
+    const cachedSections = readStorage(SECTIONS_CACHE_KEY, []);
+    const cachedSettings = readStorage(SETTINGS_CACHE_KEY, {});
 
     if (Array.isArray(cachedProducts)) {
-      products =
-        sortProducts(
-          cachedProducts
-            .map(normalizeProduct)
-            .filter(Boolean)
-        );
+      products = sortProducts(
+        cachedProducts
+          .map(normalizeProduct)
+          .filter(Boolean)
+      );
     }
 
     if (Array.isArray(cachedSections)) {
-      sections =
-        sortSections(
-          cachedSections
-            .map(normalizeSection)
-            .filter(Boolean)
-        );
+      sections = sortSections(
+        cachedSections
+          .map(normalizeSection)
+          .filter(Boolean)
+      );
     }
 
-    settings =
-      normalizeSettings(
-        cachedSettings
-      );
+    settings = normalizeSettings(cachedSettings);
 
-    return (
-      products.length > 0 ||
-      sections.length > 0
-    );
+    return products.length > 0 || sections.length > 0;
   }
 
   /* =========================================================
@@ -596,23 +542,18 @@
     options = {},
     timeout = REQUEST_TIMEOUT
   ) {
-    const controller =
-      new AbortController();
+    const controller = new AbortController();
 
-    const timer =
-      window.setTimeout(
-        () => {
-          controller.abort();
-        },
-        timeout
-      );
+    const timer = window.setTimeout(
+      () => controller.abort(),
+      timeout
+    );
 
     return fetch(
       url,
       {
         ...options,
-        signal:
-          controller.signal
+        signal: controller.signal
       }
     ).finally(() => {
       window.clearTimeout(timer);
@@ -622,40 +563,30 @@
   async function fetchPublicBundle() {
     const url =
       DATA_URL +
-      (
-        DATA_URL.includes("?")
-          ? "&"
-          : "?"
-      ) +
+      (DATA_URL.includes("?") ? "&" : "?") +
       "t=" +
       Date.now();
 
-    const response =
-      await fetchWithTimeout(
-        url,
-        {
-          method: "GET",
-          cache: "no-store",
-          headers: {
-            Accept: "application/json"
-          }
+    const response = await fetchWithTimeout(
+      url,
+      {
+        method: "GET",
+        cache: "no-store",
+        headers: {
+          Accept: "application/json"
         }
-      );
+      }
+    );
 
     if (!response.ok) {
-      throw new Error(
-        "HTTP " +
-        response.status
-      );
+      throw new Error("HTTP " + response.status);
     }
 
-    const data =
-      await response.json();
+    const data = await response.json();
 
     if (!data || data.ok === false) {
       throw new Error(
-        data?.error ||
-        "استجابة غير صالحة من السيرفر"
+        data?.error || "استجابة غير صالحة من السيرفر"
       );
     }
 
@@ -664,56 +595,38 @@
 
   function applyBundle(data) {
     const bundle =
-      data?.data &&
-      typeof data.data === "object"
+      data?.data && typeof data.data === "object"
         ? data.data
         : data;
 
-    const rawProducts =
-      Array.isArray(bundle?.products)
-        ? bundle.products
-        : [];
+    const rawProducts = Array.isArray(bundle?.products)
+      ? bundle.products
+      : [];
 
-    const rawSections =
-      Array.isArray(bundle?.sections)
-        ? bundle.sections
-        : [];
+    const rawSections = Array.isArray(bundle?.sections)
+      ? bundle.sections
+      : [];
 
     const rawSettings =
-      bundle?.settings &&
-      typeof bundle.settings === "object"
+      bundle?.settings && typeof bundle.settings === "object"
         ? bundle.settings
         : {};
 
-    products =
-      sortProducts(
-        rawProducts
-          .map(normalizeProduct)
-          .filter(
-            product =>
-              product &&
-              product.active !== false
-          )
-      );
+    products = sortProducts(
+      rawProducts
+        .map(normalizeProduct)
+        .filter(product => product && product.active !== false)
+    );
 
-    sections =
-      sortSections(
-        rawSections
-          .map(normalizeSection)
-          .filter(
-            section =>
-              section &&
-              section.active !== false
-          )
-      );
+    sections = sortSections(
+      rawSections
+        .map(normalizeSection)
+        .filter(section => section && section.active !== false)
+    );
 
-    settings =
-      normalizeSettings(
-        rawSettings
-      );
+    settings = normalizeSettings(rawSettings);
 
     saveCache();
-
     applySiteSettings();
   }
 
@@ -722,38 +635,30 @@
       return refreshInFlight;
     }
 
-    refreshInFlight =
-      (async () => {
-        try {
-          const data =
-            await fetchPublicBundle();
+    refreshInFlight = (async () => {
+      try {
+        const data = await fetchPublicBundle();
 
-          applyBundle(data);
+        applyBundle(data);
+        renderAll();
 
-          renderAll();
+        dispatch("abo-tarek:data-updated", {
+          products: products.slice(),
+          sections: sections.slice(),
+          settings: { ...settings }
+        });
 
-          dispatch(
-            "abo-tarek:data-updated",
-            {
-              products: products.slice(),
-              sections: sections.slice(),
-              settings: {
-                ...settings
-              }
-            }
-          );
-
-          return true;
-        } catch (error) {
-          if (!options.silent) {
-            showConnectionError(error);
-          }
-
-          return false;
-        } finally {
-          refreshInFlight = null;
+        return true;
+      } catch (error) {
+        if (!options.silent) {
+          showConnectionError(error);
         }
-      })();
+
+        return false;
+      } finally {
+        refreshInFlight = null;
+      }
+    })();
 
     return refreshInFlight;
   }
@@ -763,13 +668,9 @@
      ========================================================= */
 
   function getSetting(key, fallback = "") {
-    const value =
-      settings?.[key];
+    const value = settings?.[key];
 
-    if (
-      value == null ||
-      value === ""
-    ) {
+    if (value == null || value === "") {
       return fallback;
     }
 
@@ -785,281 +686,142 @@
   }
 
   function applySiteSettings() {
-    const siteName =
-      getSetting(
-        "siteName",
-        "أبو طارق للأدوات المنزلية"
-      );
-
-    const tagline =
-      getSetting(
-        "siteTagline",
-        "كل اللي بيتك محتاجه في مكان واحد"
-      );
-
-    const heroTitle =
-      getSetting(
-        "heroTitle",
-        "كل اللي بيتك محتاجه في مكان واحد"
-      );
-
-    const heroSubtitle =
-      getSetting(
-        "heroSubtitle",
-        "من أدوات المطبخ والسفرة، للأكواب والكاسات، والشاي والقهوة"
-      );
-
-    const logo =
-      getSetting(
-        "logoImage",
-        "assets/logo.png"
-      );
-
-    const hero =
-      getSetting(
-        "heroImage",
-        "assets/storefront.jpg"
-      );
-
-    const whatsapp =
-      getSetting(
-        "whatsappNumber",
-        CFG.WHATSAPP_NUMBER ||
-        "201551604163"
-      );
-
-    const phone1 =
-      getSetting(
-        "phone1",
-        "01223599165"
-      );
-
-    const phone2 =
-      getSetting(
-        "phone2",
-        "01222474380"
-      );
-
-    const phone3 =
-      getSetting(
-        "phone3",
-        "01201344419"
-      );
-
-    const phone4 =
-      getSetting(
-        "phone4",
-        "035133602"
-      );
-
-    const address1 =
-      getSetting(
-        "address1",
-        "كوبري الناموس"
-      );
-
-    const address2 =
-      getSetting(
-        "address2",
-        "العوايد"
-      );
-
-    setText(
-      "[data-site-name]",
-      siteName
+    const siteName = getSetting(
+      "siteName",
+      "أبو طارق للأدوات المنزلية"
     );
 
-    setText(
-      "[data-site-tagline]",
-      tagline
+    const tagline = getSetting(
+      "siteTagline",
+      "كل اللي بيتك محتاجه في مكان واحد"
     );
 
-    setText(
-      "[data-hero-title]",
-      heroTitle
+    const heroTitle = getSetting(
+      "heroTitle",
+      "كل اللي بيتك محتاجه في مكان واحد"
     );
 
-    setText(
-      "[data-hero-subtitle]",
-      heroSubtitle
+    const heroSubtitle = getSetting(
+      "heroSubtitle",
+      "من أدوات المطبخ والسفرة، للأكواب والكاسات، والشاي والقهوة"
     );
 
-    setText(
-      "[data-phone-1]",
-      phone1
+    const logo = getSetting(
+      "logoImage",
+      "assets/logo.png"
     );
 
-    setText(
-      "[data-phone-2]",
-      phone2
+    const hero = getSetting(
+      "heroImage",
+      "assets/storefront.jpg"
     );
 
-    setText(
-      "[data-phone-3]",
-      phone3
+    const whatsapp = getSetting(
+      "whatsappNumber",
+      CFG.WHATSAPP_NUMBER || "201551604163"
     );
 
-    setText(
-      "[data-phone-4]",
-      phone4
-    );
+    const phone1 = getSetting("phone1", "01223599165");
+    const phone2 = getSetting("phone2", "01222474380");
+    const phone3 = getSetting("phone3", "01201344419");
+    const phone4 = getSetting("phone4", "035133602");
 
-    setText(
-      "[data-address-1]",
-      address1
-    );
+    const address1 = getSetting("address1", "كوبري الناموس");
+    const address2 = getSetting("address2", "العوايد");
 
-    setText(
-      "[data-address-2]",
-      address2
-    );
+    setText("[data-site-name]", siteName);
+    setText("[data-site-tagline]", tagline);
+    setText("[data-hero-title]", heroTitle);
+    setText("[data-hero-subtitle]", heroSubtitle);
+
+    setText("[data-phone-1]", phone1);
+    setText("[data-phone-2]", phone2);
+    setText("[data-phone-3]", phone3);
+    setText("[data-phone-4]", phone4);
+
+    setText("[data-address-1]", address1);
+    setText("[data-address-2]", address2);
 
     document
       .querySelectorAll("[data-site-logo]")
       .forEach(img => {
-        img.src =
-          resolveImage(logo);
+        img.src = resolveImage(logo);
       });
 
     document
       .querySelectorAll("[data-hero-image]")
       .forEach(img => {
-        img.src =
-          resolveImage(hero);
+        img.src = resolveImage(hero);
       });
 
-    const title =
-      document.querySelector("title");
+    const title = document.querySelector("title");
 
     if (
       title &&
-      document.body.classList.contains(
-        "dark-luxury-home"
-      )
+      document.body.classList.contains("dark-luxury-home")
     ) {
-      title.textContent =
-        siteName +
-        " | " +
-        tagline;
+      title.textContent = siteName + " | " + tagline;
     }
 
-    const whatsappDigits =
-      String(whatsapp || "")
-        .replace(/\D/g, "");
+    const whatsappDigits = String(whatsapp || "").replace(/\D/g, "");
 
     document
       .querySelectorAll("[data-whatsapp]")
       .forEach(link => {
         if (whatsappDigits) {
-          link.href =
-            "https://wa.me/" +
-            whatsappDigits;
+          link.href = "https://wa.me/" + whatsappDigits;
         }
       });
 
     document
       .querySelectorAll("[data-phone]")
       .forEach(link => {
-        const phone =
-          cleanText(
-            link.dataset.phone ||
-            phone1
-          );
+        const phone = cleanText(link.dataset.phone || phone1);
 
-        link.href =
-          "tel:" +
-          phone.replace(
-            /\s+/g,
-            ""
-          );
+        link.href = "tel:" + phone.replace(/\s+/g, "");
       });
 
     applySocialSettings();
-
-    updateMobileMenuContact(
-      whatsappDigits,
-      phone1
-    );
+    updateMobileMenuContact(whatsappDigits, phone1);
   }
 
   function applySocialSettings() {
-    const facebook =
-      getSetting(
-        "facebookUrl",
-        ""
-      );
-
-    const instagram =
-      getSetting(
-        "instagramUrl",
-        ""
-      );
-
-    const tiktok =
-      getSetting(
-        "tiktokUrl",
-        ""
-      );
+    const facebook = getSetting("facebookUrl", "");
+    const instagram = getSetting("instagramUrl", "");
+    const tiktok = getSetting("tiktokUrl", "");
 
     document
-      .querySelectorAll(
-        "[data-social='facebook'], [data-setting='facebook']"
-      )
+      .querySelectorAll("[data-social='facebook'], [data-setting='facebook']")
       .forEach(link => {
-        if (facebook) {
-          link.href =
-            facebook;
-        }
+        if (facebook) link.href = facebook;
       });
 
     document
-      .querySelectorAll(
-        "[data-social='instagram'], [data-setting='instagram']"
-      )
+      .querySelectorAll("[data-social='instagram'], [data-setting='instagram']")
       .forEach(link => {
-        if (instagram) {
-          link.href =
-            instagram;
-        }
+        if (instagram) link.href = instagram;
       });
 
     document
-      .querySelectorAll(
-        "[data-social='tiktok'], [data-setting='tiktok']"
-      )
+      .querySelectorAll("[data-social='tiktok'], [data-setting='tiktok']")
       .forEach(link => {
-        if (tiktok) {
-          link.href =
-            tiktok;
-        }
+        if (tiktok) link.href = tiktok;
       });
   }
 
-  function updateMobileMenuContact(
-    whatsappDigits,
-    phone1
-  ) {
+  function updateMobileMenuContact(whatsappDigits, phone1) {
     document
-      .querySelectorAll(
-        ".mobile-menu-contact-btn.whatsapp"
-      )
+      .querySelectorAll(".mobile-menu-contact-btn.whatsapp")
       .forEach(link => {
         if (whatsappDigits) {
-          link.href =
-            "https://wa.me/" +
-            whatsappDigits;
+          link.href = "https://wa.me/" + whatsappDigits;
         }
       });
 
     document
-      .querySelectorAll(
-        ".mobile-menu-contact-btn.phone"
-      )
+      .querySelectorAll(".mobile-menu-contact-btn.phone")
       .forEach(link => {
-        link.href =
-          "tel:" +
-          String(phone1 || "")
-            .replace(/\s+/g, "");
+        link.href = "tel:" + String(phone1 || "").replace(/\s+/g, "");
       });
   }
 
@@ -1069,10 +831,7 @@
 
   function getCategoryIcon(category) {
     try {
-      if (
-        typeof CFG.getCategoryIcon ===
-        "function"
-      ) {
+      if (typeof CFG.getCategoryIcon === "function") {
         return CFG.getCategoryIcon(category);
       }
     } catch (error) {}
@@ -1087,100 +846,63 @@
       "أدوات منزلية": "🏠"
     };
 
-    return (
-      icons[cleanText(category)] ||
-      "🛍️"
-    );
+    return icons[cleanText(category)] || "🛍️";
   }
 
   function renderCategories() {
-    const container =
-      document.querySelector(
-        "#categoryGrid"
-      );
+    const container = document.querySelector("#categoryGrid");
 
     if (!container) {
       return;
     }
 
     if (!sections.length) {
-      const categories =
-        [
-          ...new Set(
-            products
-              .map(
-                product =>
-                  product.category
-              )
-              .filter(Boolean)
-          )
-        ];
+      const categories = [
+        ...new Set(
+          products
+            .map(product => product.category)
+            .filter(Boolean)
+        )
+      ];
 
-      sections =
-        categories.map(
-          (name, index) => ({
-            id: name,
-            name,
-            sortOrder: index,
-            active: true
-          })
-        );
+      sections = categories.map((name, index) => ({
+        id: name,
+        name,
+        sortOrder: index,
+        active: true
+      }));
     }
 
-    container.innerHTML =
-      sections
-        .filter(
-          section =>
-            section.active !== false
-        )
-        .map(
-          section => {
-            const count =
-              products.filter(
-                product =>
-                  product.category ===
-                  section.name
-              ).length;
+    container.innerHTML = sections
+      .filter(section => section.active !== false)
+      .map(section => {
+        const count = products.filter(
+          product => product.category === section.name
+        ).length;
 
-            return `
-              <a
-                class="category-card"
-                href="sections.html?category=${encodeURIComponent(
-                  section.name
-                )}"
-                data-category-card
-              >
-                <span class="category-card-icon">
-                  ${getCategoryIcon(
-                    section.name
-                  )}
-                </span>
+        return `
+          <a
+            class="category-card"
+            href="sections.html?category=${encodeURIComponent(section.name)}"
+            data-category-card
+          >
+            <span class="category-card-icon">
+              ${getCategoryIcon(section.name)}
+            </span>
 
-                <span class="category-card-content">
-                  <strong>
-                    ${escapeHtml(
-                      section.name
-                    )}
-                  </strong>
+            <span class="category-card-content">
+              <strong>${escapeHtml(section.name)}</strong>
+              <small>
+                ${count}
+                ${count === 1 ? "منتج" : "منتجات"}
+              </small>
+            </span>
 
-                  <small>
-                    ${count}
-                    ${
-                      count === 1
-                        ? "منتج"
-                        : "منتجات"
-                    }
-                  </small>
-                </span>
-
-                <span class="category-card-arrow">
-                  ←
-                </span>
-              </a>
-            `;
-          }
-        )
-        .join("");
+            <span class="category-card-arrow">←</span>
+          </a>
+        `;
+      })
+      .join("");
 
     setupLazyImages();
   }
@@ -1189,44 +911,34 @@
      PRODUCT CARD
      ========================================================= */
 
-  function renderProductCard(
-    product,
-    options = {}
-  ) {
-    const price =
-      getProductPrice(product);
+  function renderProductCard(product, options = {}) {
+    const isOffer = isValidOffer(product);
 
-    const oldPrice =
-      safeNumber(
-        product.oldPrice,
-        0
-      );
+    /*
+      في حالة العرض الصحيح، السعر الحالي هو offerPrice.
+      في غير ذلك، نستخدم السعر العادي.
+    */
+    const price = isOffer
+      ? safeNumber(product.offerPrice, 0)
+      : getProductPrice(product);
 
-    const isOffer =
-      toBool(
-        product.isOffer,
-        false
-      );
+    const oldPrice = isOffer
+      ? getOfferOriginalPrice(product)
+      : safeNumber(product.oldPrice, 0);
 
-    const image =
-      getProductImage(product);
+    const image = getProductImage(product);
+    const lazy = options.lazy !== false;
 
-    const lazy =
-      options.lazy !== false;
-
-    const features =
-      window.ABO_TAREK_FEATURES;
+    const features = window.ABO_TAREK_FEATURES;
 
     const favorite =
       features &&
-      typeof features.isInWishlist ===
-        "function"
+      typeof features.isInWishlist === "function"
         ? features.isInWishlist(product)
         : false;
 
-    const imageHtml =
-      image
-        ? `
+    const imageHtml = image
+      ? `
           <img
             ${
               lazy
@@ -1238,14 +950,12 @@
                 ? "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
                 : escapeHtml(image)
             }"
-            alt="${escapeHtml(
-              product.name
-            )}"
+            alt="${escapeHtml(product.name)}"
             loading="lazy"
             decoding="async"
           >
         `
-        : `
+      : `
           <div class="product-card-placeholder">
             🛍️
           </div>
@@ -1254,63 +964,37 @@
     return `
       <article
         class="product-card"
-        data-product-id="${escapeHtml(
-          product.id
-        )}"
+        data-product-id="${escapeHtml(product.id)}"
       >
         <div class="product-card-media">
 
           ${
             isOffer
-              ? `
-                <span class="product-offer-badge">
-                  عرض
-                </span>
-              `
+              ? `<span class="product-offer-badge">عرض</span>`
               : ""
           }
 
           <button
             type="button"
             class="wishlist-btn ${
-              favorite
-                ? "is-active active"
-                : ""
+              favorite ? "is-active active" : ""
             }"
-            data-product-id="${escapeHtml(
-              product.id
-            )}"
-            data-wishlist-id="${escapeHtml(
-              product.id
-            )}"
+            data-product-id="${escapeHtml(product.id)}"
+            data-wishlist-id="${escapeHtml(product.id)}"
             aria-label="${
-              favorite
-                ? "إزالة من المفضلة"
-                : "إضافة للمفضلة"
+              favorite ? "إزالة من المفضلة" : "إضافة للمفضلة"
             }"
-            aria-pressed="${
-              favorite
-                ? "true"
-                : "false"
-            }"
+            aria-pressed="${favorite ? "true" : "false"}"
           >
             <span data-wishlist-icon>
-              ${
-                favorite
-                  ? "♥"
-                  : "♡"
-              }
+              ${favorite ? "♥" : "♡"}
             </span>
           </button>
 
           <a
             class="product-card-image-link"
-            href="product.html?id=${encodeURIComponent(
-              product.id
-            )}"
-            aria-label="${escapeHtml(
-              product.name
-            )}"
+            href="product.html?id=${encodeURIComponent(product.id)}"
+            aria-label="${escapeHtml(product.name)}"
           >
             ${imageHtml}
           </a>
@@ -1322,23 +1006,15 @@
             product.category
               ? `
                 <span class="product-card-category">
-                  ${escapeHtml(
-                    product.category
-                  )}
+                  ${escapeHtml(product.category)}
                 </span>
               `
               : ""
           }
 
           <h3 class="product-card-title">
-            <a
-              href="product.html?id=${encodeURIComponent(
-                product.id
-              )}"
-            >
-              ${escapeHtml(
-                product.name
-              )}
+            <a href="product.html?id=${encodeURIComponent(product.id)}">
+              ${escapeHtml(product.name)}
             </a>
           </h3>
 
@@ -1346,9 +1022,7 @@
             product.description
               ? `
                 <p class="product-card-description">
-                  ${escapeHtml(
-                    product.description
-                  ).slice(0, 110)}
+                  ${escapeHtml(product.description).slice(0, 110)}
                 </p>
               `
               : ""
@@ -1373,8 +1047,7 @@
               }
 
               ${
-                oldPrice > price &&
-                price > 0
+                oldPrice > price && price > 0
                   ? `
                     <del class="product-old-price">
                       ${formatPrice(oldPrice)}
@@ -1388,9 +1061,7 @@
             <button
               type="button"
               class="add-to-cart-btn"
-              data-product-id="${escapeHtml(
-                product.id
-              )}"
+              data-product-id="${escapeHtml(product.id)}"
             >
               <span>🛒</span>
               <span>أضف للسلة</span>
@@ -1400,9 +1071,7 @@
 
           <a
             class="product-details-link"
-            href="product.html?id=${encodeURIComponent(
-              product.id
-            )}"
+            href="product.html?id=${encodeURIComponent(product.id)}"
           >
             عرض التفاصيل
             <span>←</span>
@@ -1419,19 +1088,13 @@
 
   function getFeaturedProducts() {
     return products
-      .filter(
-        product =>
-          product.showHome
-      )
+      .filter(product => product.showHome)
       .slice(0, 12);
   }
 
   function getOfferProducts() {
     return products
-      .filter(
-        product =>
-          product.isOffer
-      )
+      .filter(isValidOffer)
       .slice(0, 12);
   }
 
@@ -1442,13 +1105,9 @@
   function renderProductCollection(
     selector,
     list,
-    emptyText =
-      "لا توجد منتجات حالياً"
+    emptyText = "لا توجد منتجات حالياً"
   ) {
-    const container =
-      document.querySelector(
-        selector
-      );
+    const container = document.querySelector(selector);
 
     if (!container) {
       return;
@@ -1458,50 +1117,52 @@
       container.innerHTML = `
         <div class="products-empty">
           <span>🛍️</span>
-          <p>
-            ${escapeHtml(
-              emptyText
-            )}
-          </p>
+          <p>${escapeHtml(emptyText)}</p>
         </div>
       `;
 
       return;
     }
 
-    container.innerHTML =
-      list
-        .map(
-          product =>
-            renderProductCard(
-              product
-            )
-        )
-        .join("");
+    container.innerHTML = list
+      .map(product => renderProductCard(product))
+      .join("");
 
     setupLazyImages();
   }
 
   function renderHomeProducts() {
-    const featured =
-      getFeaturedProducts();
+    const featured = getFeaturedProducts();
+    const latest = getLatestProducts();
+    const offers = getOfferProducts();
 
-    const latest =
-      getLatestProducts();
+    /*
+      قسم العروض:
+      يظهر فقط لو فيه عروض صحيحة بأسعار فعلية.
+      لو مفيش عروض، نخفي القسم ونفرغ محتواه.
+    */
+    const offersSection = document.querySelector("#offers");
+    const offersGrid = document.querySelector("#offersGrid");
 
-    const offers =
-      getOfferProducts();
+    if (offersSection) {
+      offersSection.hidden = offers.length === 0;
+    }
 
-    renderProductCollection(
-      "#offersGrid",
-      offers,
-      "لا توجد عروض حالياً"
-    );
+    if (offersGrid) {
+      if (offers.length) {
+        renderProductCollection(
+          "#offersGrid",
+          offers,
+          "لا توجد عروض حالياً"
+        );
+      } else {
+        offersGrid.innerHTML = "";
+      }
+    }
 
-    const mainProducts =
-      featured.length
-        ? featured
-        : latest;
+    const mainProducts = featured.length
+      ? featured
+      : latest;
 
     renderProductCollection(
       "#productsGrid",
@@ -1517,15 +1178,8 @@
      ========================================================= */
 
   function renderRecentlyViewed() {
-    const section =
-      document.querySelector(
-        "#recentlyViewed"
-      );
-
-    const grid =
-      document.querySelector(
-        "#recentlyViewedGrid"
-      );
+    const section = document.querySelector("#recentlyViewed");
+    const grid = document.querySelector("#recentlyViewedGrid");
 
     if (!section || !grid) {
       return;
@@ -1536,14 +1190,9 @@
     try {
       if (
         window.ABO_TAREK_FEATURES &&
-        typeof window
-          .ABO_TAREK_FEATURES
-          .getRecentlyViewed ===
-          "function"
+        typeof window.ABO_TAREK_FEATURES.getRecentlyViewed === "function"
       ) {
-        recent =
-          window.ABO_TAREK_FEATURES
-            .getRecentlyViewed();
+        recent = window.ABO_TAREK_FEATURES.getRecentlyViewed();
       }
     } catch (error) {}
 
@@ -1552,30 +1201,17 @@
       return;
     }
 
-    const mapped =
-      recent
-        .map(
-          recentProduct => {
-            const id =
-              getProductId(
-                recentProduct
-              );
+    const mapped = recent
+      .map(recentProduct => {
+        const id = getProductId(recentProduct);
 
-            return (
-              products.find(
-                product =>
-                  getProductId(
-                    product
-                  ) === id
-              ) ||
-              normalizeProduct(
-                recentProduct
-              )
-            );
-          }
-        )
-        .filter(Boolean)
-        .slice(0, 8);
+        return (
+          products.find(product => getProductId(product) === id) ||
+          normalizeProduct(recentProduct)
+        );
+      })
+      .filter(Boolean)
+      .slice(0, 8);
 
     if (!mapped.length) {
       section.hidden = true;
@@ -1584,15 +1220,9 @@
 
     section.hidden = false;
 
-    grid.innerHTML =
-      mapped
-        .map(
-          product =>
-            renderProductCard(
-              product
-            )
-        )
-        .join("");
+    grid.innerHTML = mapped
+      .map(product => renderProductCard(product))
+      .join("");
 
     setupLazyImages();
   }
@@ -1602,57 +1232,39 @@
      ========================================================= */
 
   function getFilteredProducts() {
-    let result =
-      products.slice();
+    let result = products.slice();
 
     if (currentCategory) {
-      result =
-        result.filter(
-          product =>
-            product.category ===
-            currentCategory
-        );
+      result = result.filter(
+        product => product.category === currentCategory
+      );
     }
 
-    const query =
-      cleanText(
-        currentSearch
-      ).toLowerCase();
+    const query = cleanText(currentSearch).toLowerCase();
 
     if (query) {
-      result =
-        result.filter(
-          product => {
-            const haystack =
-              [
-                product.name,
-                product.category,
-                product.description
-              ]
-                .join(" ")
-                .toLowerCase();
+      result = result.filter(product => {
+        const haystack = [
+          product.name,
+          product.category,
+          product.description
+        ]
+          .join(" ")
+          .toLowerCase();
 
-            return haystack.includes(
-              query
-            );
-          }
-        );
+        return haystack.includes(query);
+      });
     }
 
     return result;
   }
 
   function runSearch(query) {
-    currentSearch =
-      cleanText(query);
+    currentSearch = cleanText(query);
 
-    const filtered =
-      getFilteredProducts();
+    const filtered = getFilteredProducts();
 
-    const grid =
-      document.querySelector(
-        "#productsGrid"
-      );
+    const grid = document.querySelector("#productsGrid");
 
     if (grid) {
       renderProductCollection(
@@ -1662,14 +1274,8 @@
       );
     }
 
-    if (
-      currentSearch ||
-      currentCategory
-    ) {
-      const section =
-        document.querySelector(
-          "#products"
-        );
+    if (currentSearch || currentCategory) {
+      const section = document.querySelector("#products");
 
       if (section) {
         section.scrollIntoView({
@@ -1679,25 +1285,17 @@
       }
     }
 
-    dispatch(
-      "abo-tarek:search",
-      {
-        query:
-          currentSearch,
-        category:
-          currentCategory,
-        results:
-          filtered.length
-      }
-    );
+    dispatch("abo-tarek:search", {
+      query: currentSearch,
+      category: currentCategory,
+      results: filtered.length
+    });
   }
 
   function setCategory(category) {
-    currentCategory =
-      cleanText(category);
+    currentCategory = cleanText(category);
 
-    const filtered =
-      getFilteredProducts();
+    const filtered = getFilteredProducts();
 
     renderProductCollection(
       "#productsGrid",
@@ -1705,15 +1303,10 @@
       "لا توجد منتجات في هذا القسم"
     );
 
-    dispatch(
-      "abo-tarek:category-changed",
-      {
-        category:
-          currentCategory,
-        results:
-          filtered.length
-      }
-    );
+    dispatch("abo-tarek:category-changed", {
+      category: currentCategory,
+      results: filtered.length
+    });
   }
 
   /* =========================================================
@@ -1721,160 +1314,111 @@
      ========================================================= */
 
   function findProductById(id) {
-    const cleanId =
-      cleanText(id);
+    const cleanId = cleanText(id);
 
     if (!cleanId) {
       return null;
     }
 
-    return (
-      products.find(
-        product =>
-          getProductId(
-            product
-          ) === cleanId
-      ) ||
-      null
-    );
+    return products.find(
+      product => getProductId(product) === cleanId
+    ) || null;
   }
 
   function handleProductActions(event) {
-    const addButton =
-      event.target.closest(
-        ".add-to-cart-btn"
-      );
+    const target = event.target;
+
+    if (!target || typeof target.closest !== "function") {
+      return;
+    }
+
+    const addButton = target.closest(".add-to-cart-btn");
 
     if (addButton) {
       event.preventDefault();
       event.stopPropagation();
 
-      const id =
-        addButton.getAttribute(
-          "data-product-id"
-        );
-
-      const product =
-        findProductById(id);
+      const id = addButton.getAttribute("data-product-id");
+      const product = findProductById(id);
 
       if (!product) {
         return;
       }
 
-      const features =
-        window.ABO_TAREK_FEATURES;
+      const features = window.ABO_TAREK_FEATURES;
 
       if (
         features &&
-        typeof features.addToCart ===
-          "function"
+        typeof features.addToCart === "function"
       ) {
-        features.addToCart(
-          product,
-          1
-        );
+        /*
+          نمرر المنتج الأصلي من البيانات.
+          منطق السلة النهائي يظل داخل features.js.
+        */
+        features.addToCart(product, 1);
       }
 
       updateMobileCartCount();
-
       return;
     }
 
-    const wishlistButton =
-      event.target.closest(
-        ".wishlist-btn"
-      );
+    const wishlistButton = target.closest(".wishlist-btn");
 
     if (wishlistButton) {
       event.preventDefault();
       event.stopPropagation();
 
       const id =
-        wishlistButton.getAttribute(
-          "data-product-id"
-        ) ||
-        wishlistButton.getAttribute(
-          "data-wishlist-id"
-        );
+        wishlistButton.getAttribute("data-product-id") ||
+        wishlistButton.getAttribute("data-wishlist-id");
 
-      const product =
-        findProductById(id);
+      const product = findProductById(id);
 
       if (!product) {
         return;
       }
 
-      const features =
-        window.ABO_TAREK_FEATURES;
+      const features = window.ABO_TAREK_FEATURES;
 
       if (
         features &&
-        typeof features.toggleWishlist ===
-          "function"
+        typeof features.toggleWishlist === "function"
       ) {
-        features.toggleWishlist(
-          product
-        );
+        features.toggleWishlist(product);
       }
 
       updateRenderedWishlistState();
-
-      return;
     }
   }
 
   function updateRenderedWishlistState() {
-    const features =
-      window.ABO_TAREK_FEATURES;
+    const features = window.ABO_TAREK_FEATURES;
 
     if (
       !features ||
-      typeof features.isInWishlist !==
-        "function"
+      typeof features.isInWishlist !== "function"
     ) {
       return;
     }
 
     document
-      .querySelectorAll(
-        ".wishlist-btn[data-product-id]"
-      )
+      .querySelectorAll(".wishlist-btn[data-product-id]")
       .forEach(button => {
-        const id =
-          button.getAttribute(
-            "data-product-id"
-          );
+        const id = button.getAttribute("data-product-id");
+        const active = features.isInWishlist(id);
 
-        const active =
-          features.isInWishlist(id);
-
-        button.classList.toggle(
-          "is-active",
-          active
-        );
-
-        button.classList.toggle(
-          "active",
-          active
-        );
+        button.classList.toggle("is-active", active);
+        button.classList.toggle("active", active);
 
         button.setAttribute(
           "aria-pressed",
-          active
-            ? "true"
-            : "false"
+          active ? "true" : "false"
         );
 
-        const icon =
-          button.querySelector(
-            "[data-wishlist-icon]"
-          );
+        const icon = button.querySelector("[data-wishlist-icon]");
 
         if (icon) {
-          icon.textContent =
-            active
-              ? "♥"
-              : "♡";
+          icon.textContent = active ? "♥" : "♡";
         }
       });
   }
@@ -1884,77 +1428,50 @@
      ========================================================= */
 
   function setupSearch() {
-    const forms =
-      document.querySelectorAll(
-        "[data-site-search], #siteSearchForm, .site-search-form, #headerSearchForm"
-      );
+    const forms = document.querySelectorAll(
+      "[data-site-search], #siteSearchForm, .site-search-form, #headerSearchForm"
+    );
 
     forms.forEach(form => {
-      if (
-        form.dataset.appSearchReady ===
-        "1"
-      ) {
+      if (form.dataset.appSearchReady === "1") {
         return;
       }
 
-      form.dataset.appSearchReady =
-        "1";
+      form.dataset.appSearchReady = "1";
 
-      form.addEventListener(
-        "submit",
-        event => {
-          event.preventDefault();
+      form.addEventListener("submit", event => {
+        event.preventDefault();
 
-          const input =
-            form.querySelector(
-              "input[name='q'], input[type='search'], input"
-            );
+        const input = form.querySelector(
+          "input[name='q'], input[type='search'], input"
+        );
 
-          runSearch(
-            input
-              ? input.value
-              : ""
-          );
-        }
-      );
+        runSearch(input ? input.value : "");
+      });
     });
 
     document
-      .querySelectorAll(
-        "[data-search-input], #headerSearchInput"
-      )
+      .querySelectorAll("[data-search-input], #headerSearchInput")
       .forEach(input => {
-        if (
-          input.dataset.appSearchReady ===
-          "1"
-        ) {
+        if (input.dataset.appSearchReady === "1") {
           return;
         }
 
-        input.dataset.appSearchReady =
-          "1";
+        input.dataset.appSearchReady = "1";
 
-        input.addEventListener(
-          "input",
-          event => {
-            const value =
-              event.target.value;
+        input.addEventListener("input", event => {
+          const value = event.target.value;
 
-            if (
-              value.length === 0 ||
-              value.length >= 2
-            ) {
-              currentSearch =
-                value;
+          if (value.length === 0 || value.length >= 2) {
+            currentSearch = value;
 
-              renderProductCollection(
-                "#productsGrid",
-                getFilteredProducts(),
-                "مفيش منتجات مطابقة لبحثك"
-              );
-            }
+            renderProductCollection(
+              "#productsGrid",
+              getFilteredProducts(),
+              "مفيش منتجات مطابقة لبحثك"
+            );
           }
-        );
+        });
       });
   }
 
@@ -1963,28 +1480,21 @@
      ========================================================= */
 
   function getMobileMenuElements() {
-    const button =
-      document.querySelector(
-        "#menuBtn, #menuToggle, [data-menu-toggle], [data-mobile-menu-toggle], .menu-toggle"
-      );
+    const button = document.querySelector(
+      "#menuBtn, #menuToggle, [data-menu-toggle], [data-mobile-menu-toggle], .menu-toggle"
+    );
 
-    const menu =
-      document.querySelector(
-        "#mobileMenu, [data-mobile-menu], .mobile-menu"
-      );
+    const menu = document.querySelector(
+      "#mobileMenu, [data-mobile-menu], .mobile-menu"
+    );
 
-    return {
-      button,
-      menu
-    };
+    return { button, menu };
   }
 
   function isMobileMenuOpen() {
     return Boolean(
       mobileMenu &&
-      mobileMenu.classList.contains(
-        "is-open"
-      )
+      mobileMenu.classList.contains("is-open")
     );
   }
 
@@ -1997,15 +1507,10 @@
 
       mobileMenuButton.setAttribute(
         "aria-label",
-        open
-          ? "إغلاق القائمة"
-          : "فتح القائمة"
+        open ? "إغلاق القائمة" : "فتح القائمة"
       );
 
-      mobileMenuButton.classList.toggle(
-        "is-active",
-        open
-      );
+      mobileMenuButton.classList.toggle("is-active", open);
     }
 
     if (mobileMenu) {
@@ -2021,29 +1526,20 @@
       return;
     }
 
-    mobileMenu.classList.add(
-      "is-open"
-    );
-
-    document.body.classList.add(
-      "mobile-menu-open"
-    );
+    mobileMenu.classList.add("is-open");
+    document.body.classList.add("mobile-menu-open");
 
     updateMobileMenuAria(true);
-
     updateMobileCartCount();
 
-    const firstLink =
-      mobileMenu.querySelector(
-        ".mobile-menu-link, .mobile-menu-close"
-      );
+    const firstLink = mobileMenu.querySelector(
+      ".mobile-menu-link, .mobile-menu-close"
+    );
 
     if (firstLink) {
       window.setTimeout(() => {
         try {
-          firstLink.focus({
-            preventScroll: true
-          });
+          firstLink.focus({ preventScroll: true });
         } catch (error) {}
       }, 80);
     }
@@ -2054,13 +1550,8 @@
       return;
     }
 
-    mobileMenu.classList.remove(
-      "is-open"
-    );
-
-    document.body.classList.remove(
-      "mobile-menu-open"
-    );
+    mobileMenu.classList.remove("is-open");
+    document.body.classList.remove("mobile-menu-open");
 
     updateMobileMenuAria(false);
   }
@@ -2074,10 +1565,9 @@
   }
 
   function updateMobileCartCount() {
-    const countElement =
-      document.querySelector(
-        "#mobileMenuCartCount"
-      );
+    const countElement = document.querySelector(
+      "#mobileMenuCartCount"
+    );
 
     if (!countElement) {
       return;
@@ -2086,222 +1576,154 @@
     let count = 0;
 
     try {
-      const features =
-        window.ABO_TAREK_FEATURES;
+      const features = window.ABO_TAREK_FEATURES;
 
       if (
         features &&
-        typeof features.getCartCount ===
-          "function"
+        typeof features.getCartCount === "function"
       ) {
-        count =
-          safeNumber(
-            features.getCartCount(),
-            0
-          );
+        count = safeNumber(features.getCartCount(), 0);
       } else {
-        const cart =
-          readStorage(
-            "abo_tarek_cart_v1",
-            []
-          );
+        const cart = readStorage("abo_tarek_cart_v1", []);
 
         if (Array.isArray(cart)) {
-          count =
-            cart.reduce(
-              (total, item) =>
-                total +
-                safeNumber(
-                  item?.quantity,
-                  0
-                ),
-              0
-            );
+          count = cart.reduce(
+            (total, item) =>
+              total + safeNumber(item?.quantity, 0),
+            0
+          );
         }
       }
     } catch (error) {}
 
-    countElement.textContent =
-      String(count);
+    countElement.textContent = count > 99 ? "99+" : String(count);
 
-    countElement.classList.toggle(
-      "has-items",
-      count > 0
-    );
+    countElement.classList.toggle("has-items", count > 0);
   }
 
   function setupMobileMenu() {
-    const elements =
-      getMobileMenuElements();
-
-    const button =
-      elements.button;
-
-    const menu =
-      elements.menu;
+    const elements = getMobileMenuElements();
+    const button = elements.button;
+    const menu = elements.menu;
 
     if (!button || !menu) {
       return;
     }
 
-    mobileMenuButton =
-      button;
+    mobileMenuButton = button;
+    mobileMenu = menu;
 
-    mobileMenu =
-      menu;
+    if (menu.dataset.appMobileMenuReady !== "1") {
+      menu.dataset.appMobileMenuReady = "1";
 
-    if (
-      mobileMenu.dataset.appMobileMenuReady !==
-      "1"
-    ) {
-      mobileMenu.dataset.appMobileMenuReady =
-        "1";
-
-      mobileMenu
+      menu
         .querySelectorAll(
           "[data-mobile-menu-close], .mobile-menu-backdrop, .mobile-menu-close"
         )
         .forEach(element => {
-          element.addEventListener(
-            "click",
-            event => {
-              event.preventDefault();
-              closeMobileMenu();
+          element.addEventListener("click", event => {
+            /*
+              لا نمنع التنقل الافتراضي للروابط.
+              نقفل القائمة فقط.
+            */
+            if (
+              element.matches("button") ||
+              element.hasAttribute("data-mobile-menu-close")
+            ) {
+              if (element.tagName === "BUTTON") {
+                event.preventDefault();
+              }
             }
-          );
-        });
-
-      mobileMenu
-        .querySelectorAll(
-          ".mobile-menu-link:not(.mobile-menu-button)"
-        )
-        .forEach(link => {
-          link.addEventListener(
-            "click",
-            () => {
-              closeMobileMenu();
-            }
-          );
-        });
-
-      const cartButton =
-        mobileMenu.querySelector(
-          "[data-cart-button]"
-        );
-
-      if (cartButton) {
-        cartButton.addEventListener(
-          "click",
-          event => {
-            event.preventDefault();
 
             closeMobileMenu();
+          });
+        });
 
-            window.setTimeout(() => {
-              const features =
-                window.ABO_TAREK_FEATURES;
+      menu
+        .querySelectorAll(".mobile-menu-link:not(.mobile-menu-button)")
+        .forEach(link => {
+          link.addEventListener("click", () => {
+            closeMobileMenu();
+          });
+        });
 
-              if (
-                features &&
-                typeof features.openCart ===
-                  "function"
-              ) {
-                features.openCart();
-              }
-            }, 120);
-          }
-        );
+      const cartButton = menu.querySelector("[data-cart-button]");
+
+      if (cartButton) {
+        cartButton.addEventListener("click", event => {
+          event.preventDefault();
+
+          closeMobileMenu();
+
+          window.setTimeout(() => {
+            const features = window.ABO_TAREK_FEATURES;
+
+            if (
+              features &&
+              typeof features.openCart === "function"
+            ) {
+              features.openCart();
+            }
+          }, 120);
+        });
       }
     }
 
+    /*
+      مهم:
+      لو زر المنيو عليه data-inline-mobile-menu،
+      فالسكريبت الموجود في index.html هو المسؤول عنه.
+      نمنع إضافة مستمع ثانٍ لنفس الزر.
+    */
     if (
-      button.dataset.appMobileMenuButtonReady !==
-      "1"
+      button.dataset.inlineMobileMenu === "1" ||
+      button.dataset.appMobileMenuButtonReady === "1"
     ) {
-      button.dataset.appMobileMenuButtonReady =
-        "1";
-
-      button.addEventListener(
-        "click",
-        event => {
-          event.preventDefault();
-          event.stopPropagation();
-
-          toggleMobileMenu();
-        }
-      );
+      updateMobileMenuAria(isMobileMenuOpen());
+      updateMobileCartCount();
+      return;
     }
 
-    updateMobileMenuAria(
-      isMobileMenuOpen()
-    );
+    button.dataset.appMobileMenuButtonReady = "1";
 
+    button.addEventListener("click", event => {
+      event.preventDefault();
+      event.stopPropagation();
+      toggleMobileMenu();
+    });
+
+    updateMobileMenuAria(isMobileMenuOpen());
     updateMobileCartCount();
   }
 
   function setupMobileMenuGlobalEvents() {
-    if (
-      document.body.dataset.mobileMenuGlobalReady ===
-      "1"
-    ) {
+    if (document.body.dataset.mobileMenuGlobalReady === "1") {
       return;
     }
 
-    document.body.dataset.mobileMenuGlobalReady =
-      "1";
+    document.body.dataset.mobileMenuGlobalReady = "1";
 
-    document.addEventListener(
-      "keydown",
-      event => {
-        if (
-          event.key === "Escape" &&
-          isMobileMenuOpen()
-        ) {
-          closeMobileMenu();
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape" && isMobileMenuOpen()) {
+        closeMobileMenu();
 
-          if (mobileMenuButton) {
-            try {
-              mobileMenuButton.focus({
-                preventScroll: true
-              });
-            } catch (error) {}
-          }
+        if (mobileMenuButton) {
+          try {
+            mobileMenuButton.focus({ preventScroll: true });
+          } catch (error) {}
         }
       }
-    );
+    });
 
-    window.addEventListener(
-      "resize",
-      () => {
-        if (
-          window.innerWidth > 850 &&
-          isMobileMenuOpen()
-        ) {
-          closeMobileMenu();
-        }
+    window.addEventListener("resize", () => {
+      if (window.innerWidth > 850 && isMobileMenuOpen()) {
+        closeMobileMenu();
       }
-    );
+    });
 
-    document.addEventListener(
-      "abo-tarek:cart-updated",
-      () => {
-        updateMobileCartCount();
-      }
-    );
-
-    document.addEventListener(
-      "abo-tarek:cart-changed",
-      () => {
-        updateMobileCartCount();
-      }
-    );
-
-    document.addEventListener(
-      "abo-tarek:features-ready",
-      () => {
-        updateMobileCartCount();
-      }
-    );
+    document.addEventListener("abo-tarek:cart-updated", updateMobileCartCount);
+    document.addEventListener("abo-tarek:cart-changed", updateMobileCartCount);
+    document.addEventListener("abo-tarek:features-ready", updateMobileCartCount);
   }
 
   /* =========================================================
@@ -2309,33 +1731,19 @@
      ========================================================= */
 
   function setupActiveNavigation() {
-    const path =
-      window.location.pathname;
+    const path = window.location.pathname;
 
-    const page =
-      path.endsWith("sections.html")
-        ? "sections"
-        : path.endsWith("product.html")
-        ? "product"
-        : "home";
+    const page = path.endsWith("sections.html")
+      ? "sections"
+      : path.endsWith("product.html")
+      ? "product"
+      : "home";
 
-    document
-      .querySelectorAll(
-        "[data-nav]"
-      )
-      .forEach(link => {
-        const value =
-          cleanText(
-            link.getAttribute(
-              "data-nav"
-            )
-          );
+    document.querySelectorAll("[data-nav]").forEach(link => {
+      const value = cleanText(link.getAttribute("data-nav"));
 
-        link.classList.toggle(
-          "is-active",
-          value === page
-        );
-      });
+      link.classList.toggle("is-active", value === page);
+    });
   }
 
   /* =========================================================
@@ -2343,41 +1751,26 @@
      ========================================================= */
 
   function setupWhatsAppButtons() {
-    const number =
-      String(
-        getSetting(
-          "whatsappNumber",
-          CFG.WHATSAPP_NUMBER ||
-          "201551604163"
-        )
-      ).replace(
-        /\D/g,
-        ""
-      );
+    const number = String(
+      getSetting(
+        "whatsappNumber",
+        CFG.WHATSAPP_NUMBER || "201551604163"
+      )
+    ).replace(/\D/g, "");
 
     if (!number) {
       return;
     }
 
-    document
-      .querySelectorAll(
-        "[data-whatsapp]"
-      )
-      .forEach(button => {
-        if (
-          button.dataset.whatsappReady ===
-          "1"
-        ) {
-          return;
-        }
+    document.querySelectorAll("[data-whatsapp]").forEach(button => {
+      if (button.dataset.whatsappReady === "1") {
+        button.href = "https://wa.me/" + number;
+        return;
+      }
 
-        button.dataset.whatsappReady =
-          "1";
-
-        button.href =
-          "https://wa.me/" +
-          number;
-      });
+      button.dataset.whatsappReady = "1";
+      button.href = "https://wa.me/" + number;
+    });
   }
 
   /* =========================================================
@@ -2385,29 +1778,19 @@
      ========================================================= */
 
   function setLoading(active) {
-    document.body.classList.toggle(
-      "is-loading-data",
-      active
-    );
+    document.body.classList.toggle("is-loading-data", active);
   }
 
   function showConnectionError(error) {
-    console.warn(
-      "[Abo Tarek] Data refresh failed:",
-      error
-    );
+    console.warn("[Abo Tarek] Data refresh failed:", error);
 
-    if (
-      products.length ||
-      sections.length
-    ) {
+    if (products.length || sections.length) {
       return;
     }
 
-    const grids =
-      document.querySelectorAll(
-        "#productsGrid, #offersGrid, #categoryGrid"
-      );
+    const grids = document.querySelectorAll(
+      "#productsGrid, #offersGrid, #categoryGrid"
+    );
 
     grids.forEach(grid => {
       if (!grid) {
@@ -2417,16 +1800,9 @@
       grid.innerHTML = `
         <div class="products-error">
           <span>⚠️</span>
-          <strong>
-            تعذر تحميل البيانات حالياً
-          </strong>
-          <p>
-            تأكد من الاتصال بالإنترنت وحاول مرة أخرى.
-          </p>
-          <button
-            type="button"
-            class="retry-data-btn"
-          >
+          <strong>تعذر تحميل البيانات حالياً</strong>
+          <p>تأكد من الاتصال بالإنترنت وحاول مرة أخرى.</p>
+          <button type="button" class="retry-data-btn">
             إعادة المحاولة
           </button>
         </div>
@@ -2435,33 +1811,27 @@
   }
 
   function setupRetry() {
-    if (
-      document.body.dataset.retryReady ===
-      "1"
-    ) {
+    if (document.body.dataset.retryReady === "1") {
       return;
     }
 
-    document.body.dataset.retryReady =
-      "1";
+    document.body.dataset.retryReady = "1";
 
-    document.addEventListener(
-      "click",
-      event => {
-        const button =
-          event.target.closest(
-            ".retry-data-btn"
-          );
+    document.addEventListener("click", event => {
+      const target = event.target;
 
-        if (!button) {
-          return;
-        }
-
-        refreshData({
-          silent: false
-        });
+      if (!target || typeof target.closest !== "function") {
+        return;
       }
-    );
+
+      const button = target.closest(".retry-data-btn");
+
+      if (!button) {
+        return;
+      }
+
+      refreshData({ silent: false });
+    });
   }
 
   /* =========================================================
@@ -2469,37 +1839,20 @@
      ========================================================= */
 
   function setupConnectionEvents() {
-    if (
-      document.body.dataset.connectionReady ===
-      "1"
-    ) {
+    if (document.body.dataset.connectionReady === "1") {
       return;
     }
 
-    document.body.dataset.connectionReady =
-      "1";
+    document.body.dataset.connectionReady = "1";
 
-    window.addEventListener(
-      "online",
-      () => {
-        document.body.classList.remove(
-          "is-offline"
-        );
+    window.addEventListener("online", () => {
+      document.body.classList.remove("is-offline");
+      refreshData({ silent: true });
+    });
 
-        refreshData({
-          silent: true
-        });
-      }
-    );
-
-    window.addEventListener(
-      "offline",
-      () => {
-        document.body.classList.add(
-          "is-offline"
-        );
-      }
-    );
+    window.addEventListener("offline", () => {
+      document.body.classList.add("is-offline");
+    });
   }
 
   /* =========================================================
@@ -2507,42 +1860,25 @@
      ========================================================= */
 
   function setupVisibilityRefresh() {
-    if (
-      document.body.dataset.visibilityReady ===
-      "1"
-    ) {
+    if (document.body.dataset.visibilityReady === "1") {
       return;
     }
 
-    document.body.dataset.visibilityReady =
-      "1";
+    document.body.dataset.visibilityReady = "1";
 
-    document.addEventListener(
-      "visibilitychange",
-      () => {
-        if (
-          document.visibilityState !==
-          "visible"
-        ) {
-          return;
-        }
-
-        const cacheAge =
-          Date.now() -
-          getCacheTime();
-
-        if (
-          cacheAge >
-          BG_REFRESH_AFTER
-        ) {
-          refreshData({
-            silent: true
-          });
-        }
-
-        updateMobileCartCount();
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState !== "visible") {
+        return;
       }
-    );
+
+      const cacheAge = Date.now() - getCacheTime();
+
+      if (cacheAge > BG_REFRESH_AFTER) {
+        refreshData({ silent: true });
+      }
+
+      updateMobileCartCount();
+    });
   }
 
   /* =========================================================
@@ -2553,32 +1889,23 @@
     applySiteSettings();
 
     renderCategories();
-
     renderHomeProducts();
 
     setupSearch();
-
     setupMobileMenu();
-
     setupMobileMenuGlobalEvents();
-
     setupActiveNavigation();
-
     setupWhatsAppButtons();
 
     setupLazyImages();
-
     updateRenderedWishlistState();
-
     updateMobileCartCount();
 
-    const features =
-      window.ABO_TAREK_FEATURES;
+    const features = window.ABO_TAREK_FEATURES;
 
     if (
       features &&
-      typeof features.refreshFeatureButtons ===
-        "function"
+      typeof features.refreshFeatureButtons === "function"
     ) {
       features.refreshFeatureButtons();
     }
@@ -2589,57 +1916,38 @@
      ========================================================= */
 
   function setupEvents() {
-    if (
-      document.body.dataset.appEventsReady ===
-      "1"
-    ) {
+    if (document.body.dataset.appEventsReady === "1") {
       return;
     }
 
-    document.body.dataset.appEventsReady =
-      "1";
+    document.body.dataset.appEventsReady = "1";
 
-    document.addEventListener(
-      "click",
-      handleProductActions
-    );
+    document.addEventListener("click", handleProductActions);
 
     document.addEventListener(
       "abo-tarek:wishlist-updated",
-      () => {
-        updateRenderedWishlistState();
-      }
+      updateRenderedWishlistState
     );
 
     document.addEventListener(
       "abo-tarek:recently-viewed-updated",
-      () => {
-        renderRecentlyViewed();
-      }
+      renderRecentlyViewed
     );
 
-    document.addEventListener(
-      "abo-tarek:features-ready",
-      () => {
-        updateRenderedWishlistState();
-        renderRecentlyViewed();
-        updateMobileCartCount();
-      }
-    );
+    document.addEventListener("abo-tarek:features-ready", () => {
+      updateRenderedWishlistState();
+      renderRecentlyViewed();
+      updateMobileCartCount();
+    });
 
     document.addEventListener(
       "abo-tarek:cart-updated",
-      () => {
-        updateMobileCartCount();
-      }
+      updateMobileCartCount
     );
 
     setupRetry();
-
     setupConnectionEvents();
-
     setupVisibilityRefresh();
-
     setupMobileMenuGlobalEvents();
   }
 
@@ -2648,8 +1956,7 @@
      ========================================================= */
 
   const API = {
-    version:
-      "final-stable-1.1.0",
+    version: "final-stable-1.2.0",
 
     get products() {
       return products.slice();
@@ -2660,40 +1967,30 @@
     },
 
     get settings() {
-      return {
-        ...settings
-      };
+      return { ...settings };
     },
 
-    getProductById:
-      findProductById,
+    getProductById: findProductById,
 
-    getProducts:
-      () =>
-        products.slice(),
+    getProducts: () => products.slice(),
 
-    getSections:
-      () =>
-        sections.slice(),
+    getSections: () => sections.slice(),
 
-    getSettings:
-      () => ({
-        ...settings
-      }),
+    getSettings: () => ({ ...settings }),
 
-    search:
-      runSearch,
+    search: runSearch,
 
-    filterByCategory:
-      setCategory,
+    filterByCategory: setCategory,
 
-    refresh:
-      () =>
-        refreshData({
-          silent: false
-        }),
+    refresh: () => refreshData({ silent: false }),
 
     getProductPrice,
+
+    getOfferOriginalPrice,
+
+    isValidOffer,
+
+    getOfferProducts,
 
     formatPrice,
 
@@ -2707,14 +2004,12 @@
 
     toggleMobileMenu,
 
-    getMobileMenuState:
-      isMobileMenuOpen,
+    getMobileMenuState: isMobileMenuOpen,
 
     updateMobileCartCount
   };
 
-  window.ABO_TAREK_APP =
-    API;
+  window.ABO_TAREK_APP = API;
 
   /* =========================================================
      INIT
@@ -2728,48 +2023,28 @@
     initialized = true;
 
     setLoading(true);
-
     loadCache();
 
     setupEvents();
-
     renderAll();
 
     /*
       لو عندنا Cache:
-      الصفحة تظهر فوراً،
-      وبعدها نعمل تحديث هادئ.
+      الصفحة تظهر فوراً، وبعدها تحديث هادئ.
     */
-    if (
-      products.length ||
-      sections.length
-    ) {
+    if (products.length || sections.length) {
       setLoading(false);
 
-      const cacheAge =
-        Date.now() -
-        getCacheTime();
+      const cacheAge = Date.now() - getCacheTime();
 
-      refreshData({
-        silent: true
-      });
+      refreshData({ silent: true });
 
-      if (
-        cacheAge <=
-        CACHE_TTL
-      ) {
-        dispatch(
-          "abo-tarek:app-ready",
-          {
-            products:
-              products.slice(),
-            sections:
-              sections.slice(),
-            settings: {
-              ...settings
-            }
-          }
-        );
+      if (cacheAge <= CACHE_TTL) {
+        dispatch("abo-tarek:app-ready", {
+          products: products.slice(),
+          sections: sections.slice(),
+          settings: { ...settings }
+        });
 
         return;
       }
@@ -2779,43 +2054,26 @@
       مفيش Cache:
       أول طلب لازم يجيب البيانات.
     */
-    await refreshData({
-      silent: false
-    });
+    await refreshData({ silent: false });
 
     setLoading(false);
 
-    dispatch(
-      "abo-tarek:app-ready",
-      {
-        products:
-          products.slice(),
-        sections:
-          sections.slice(),
-        settings: {
-          ...settings
-        }
-      }
-    );
+    dispatch("abo-tarek:app-ready", {
+      products: products.slice(),
+      sections: sections.slice(),
+      settings: { ...settings }
+    });
   }
 
   /* =========================================================
      START
      ========================================================= */
 
-  if (
-    document.readyState ===
-    "loading"
-  ) {
-    document.addEventListener(
-      "DOMContentLoaded",
-      init,
-      {
-        once: true
-      }
-    );
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init, {
+      once: true
+    });
   } else {
     init();
   }
-
 })();
