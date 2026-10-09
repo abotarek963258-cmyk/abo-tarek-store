@@ -210,7 +210,7 @@
 
   <link
     rel="stylesheet"
-    href="./style.css?v=7002"
+    href="./style.css?v=7000"
   >
 
   <link
@@ -654,6 +654,164 @@
 
     }
 
+
+    /* BRANCH DETAILS — responsive, readable on mobile */
+    .branches-section .branches-grid-detailed {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 22px;
+      align-items: stretch;
+    }
+
+    .branches-section .branch-card-detailed {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 18px;
+      min-width: 0;
+      padding: clamp(18px, 3vw, 26px);
+      border: 1px solid rgba(212, 175, 55, .24);
+      border-radius: 20px;
+      background: linear-gradient(145deg, rgba(14, 35, 55, .98), rgba(7, 19, 33, .98));
+      color: #f6f0e2;
+      text-decoration: none;
+      box-shadow: 0 14px 35px rgba(0, 0, 0, .16);
+    }
+
+    .branches-section .branch-card-heading {
+      display: flex;
+      align-items: flex-start;
+      gap: 13px;
+    }
+
+    .branches-section .branch-card-detailed .branch-icon {
+      display: flex;
+      flex: 0 0 44px;
+      width: 44px;
+      height: 44px;
+      align-items: center;
+      justify-content: center;
+      border-radius: 13px;
+      background: rgba(212, 175, 55, .12);
+      color: #d4af37;
+      font-size: 21px;
+    }
+
+    .branches-section .branch-card-detailed .branch-content {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .branches-section .branch-card-detailed .branch-label {
+      color: #d4af37;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .branches-section .branch-card-detailed h3 {
+      margin: 5px 0 8px;
+      color: #f6f0e2;
+      font-size: clamp(18px, 2vw, 22px);
+      line-height: 1.45;
+    }
+
+    .branches-section .branch-address {
+      margin: 0;
+      color: rgba(246, 240, 226, .82);
+      font-size: 13px;
+      line-height: 1.9;
+      overflow-wrap: anywhere;
+    }
+
+    .branches-section .branch-detail-list {
+      display: grid;
+      gap: 12px;
+      padding-top: 15px;
+      border-top: 1px solid rgba(246, 240, 226, .11);
+    }
+
+    .branches-section .branch-detail-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin: 0;
+      color: rgba(246, 240, 226, .82);
+      font-size: 13px;
+      line-height: 1.95;
+      overflow-wrap: anywhere;
+    }
+
+    .branches-section .branch-detail-row > span:first-child {
+      flex: 0 0 auto;
+    }
+
+    .branches-section .branch-detail-row strong {
+      color: #f6f0e2;
+      font-weight: 800;
+    }
+
+    .branches-section .branch-detail-row a {
+      color: #f2d77d;
+      text-decoration: none;
+      font-weight: 800;
+    }
+
+    .branches-section .branch-card-actions {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: auto;
+    }
+
+    .branches-section .branch-action {
+      display: flex;
+      min-height: 42px;
+      align-items: center;
+      justify-content: center;
+      padding: 9px 7px;
+      border: 1px solid rgba(212, 175, 55, .26);
+      border-radius: 11px;
+      background: rgba(212, 175, 55, .08);
+      color: #f6f0e2;
+      font-size: 11px;
+      font-weight: 800;
+      line-height: 1.5;
+      text-align: center;
+      text-decoration: none;
+      overflow-wrap: anywhere;
+    }
+
+    .branches-section .branch-action-map {
+      background: #d4af37;
+      color: #071321;
+      border-color: #d4af37;
+    }
+
+    .branches-section .branch-action-whatsapp {
+      color: #c4f4d4;
+      border-color: rgba(37, 211, 102, .3);
+      background: rgba(37, 211, 102, .09);
+    }
+
+    @media (max-width: 700px) {
+      .branches-section .branches-grid-detailed {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 16px;
+      }
+
+      .branches-section .branch-card-detailed {
+        padding: 18px;
+      }
+
+      .branches-section .branch-card-actions {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .branches-section .branch-action-map {
+        grid-column: 1 / -1;
+      }
+    }
+
   </style>
 
 
@@ -686,10 +844,8 @@
         "description": "أبو طارق للأدوات المنزلية في الإسكندرية.",
         "telephone": [
           "+201551604163",
-          "+201223599165",
           "+201222474380",
-          "+201201344419",
-          "+2035133602"
+          "+201201344419"
         ],
         "sameAs": [
           "https://www.facebook.com/profile.php?id=61587289863971",
@@ -713,10 +869,8 @@
         "description": "أبو طارق للأدوات المنزلية في الإسكندرية — أدوات منزلية وأدوات مطبخ وأواني وأكواب وكاسات وميلامين وأدوات سفرة.",
         "telephone": [
           "+201551604163",
-          "+201223599165",
           "+201222474380",
-          "+201201344419",
-          "+2035133602"
+          "+201201344419"
         ],
         "parentOrganization": {
           "@id": "https://abotarek963258-cmyk.github.io/abo-tarek-store/#organization"
@@ -1224,9 +1378,8 @@
 
 
         <a
-          href="tel:01223599165"
+          href="tel:+201551604163"
           class="mobile-menu-contact-btn phone"
-          data-setting="phone1"
         >
 
           <span>
@@ -1234,7 +1387,7 @@
           </span>
 
           <strong>
-            اتصال
+            اتصال بفرع العوايد
           </strong>
 
         </a>
@@ -1937,108 +2090,61 @@
       class="section branches-section"
       aria-labelledby="branchesTitle"
     >
-
       <div class="container">
-
         <div class="section-header centered">
-
           <div>
-
-            <span class="section-kicker">
-              📍 زورنا
-            </span>
-
-            <h2
-              class="section-title"
-              id="branchesTitle"
-            >
-              فروع أبو طارق في الإسكندرية
-            </h2>
-
-            <p class="section-description">
-              اختار الفرع الأقرب ليك وزورنا.
-            </p>
-
+            <span class="section-kicker">📍 زورنا</span>
+            <h2 class="section-title" id="branchesTitle">فروع أبو طارق في الإسكندرية</h2>
+            <p class="section-description">اختار الفرع الأقرب ليك، وشوف العنوان ومواعيد العمل وطرق التواصل.</p>
           </div>
-
         </div>
 
-
-        <div class="branches-grid">
-
-
-          <a
-            href="https://maps.app.goo.gl/eSGccYFsFV8KmgCF7"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="branch-card"
-          >
-
-            <div class="branch-icon">
-              📍
+        <div class="branches-grid branches-grid-detailed">
+          <article class="branch-card branch-card-detailed">
+            <div class="branch-card-heading">
+              <div class="branch-icon" aria-hidden="true">📍</div>
+              <div class="branch-content">
+                <span class="branch-label">فرع كوبري الناموس</span>
+                <h3>كوبري الناموس</h3>
+                <p class="branch-address">الإسكندرية، 9 شارع فاطمة الزهراء، متفرع من شارع المواسير.</p>
+              </div>
             </div>
 
-            <div class="branch-content">
-
-              <span class="branch-label">
-                الفرع الأول
-              </span>
-
-              <h3 data-setting="address1">
-                كوبري الناموس
-              </h3>
-
-              <span>
-                الإسكندرية
-              </span>
-
+            <div class="branch-detail-list">
+              <p class="branch-detail-row"><span aria-hidden="true">🕒</span><span><strong>مواعيد العمل</strong><br>السبت إلى الخميس: من 12 ظهرًا حتى 12 منتصف الليل.<br><strong>الجمعة:</strong> إجازة.</span></p>
+              <p class="branch-detail-row"><span aria-hidden="true">📞</span><span><strong>أرقام الفرع</strong><br><a href="tel:+201222474380" dir="ltr">01222474380</a><br><a href="tel:+201201344419" dir="ltr">01201344419</a></span></p>
             </div>
 
-            <span class="branch-arrow">
-              ←
-            </span>
+            <div class="branch-card-actions">
+              <a class="branch-action branch-action-map" href="https://maps.app.goo.gl/eSGccYFsFV8KmgCF7" target="_blank" rel="noopener noreferrer">📍 افتح الخريطة</a>
+              <a class="branch-action" href="tel:+201222474380">📞 اتصل بالفرع</a>
+              <a class="branch-action branch-action-whatsapp" href="https://wa.me/201222474380" target="_blank" rel="noopener noreferrer">💬 واتساب</a>
+            </div>
+          </article>
 
-          </a>
-
-
-          <a
-            href="https://maps.app.goo.gl/UuSj8ifqPBFMFxDY6"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="branch-card"
-          >
-
-            <div class="branch-icon">
-              📍
+          <article class="branch-card branch-card-detailed">
+            <div class="branch-card-heading">
+              <div class="branch-icon" aria-hidden="true">📍</div>
+              <div class="branch-content">
+                <span class="branch-label">فرع العوايد</span>
+                <h3>العوايد</h3>
+                <p class="branch-address">الإسكندرية، العوايد، شارع الـ500، بجوار مسجد الرحمة وكافتيريا الشايب.</p>
+              </div>
             </div>
 
-            <div class="branch-content">
-
-              <span class="branch-label">
-                الفرع الثاني
-              </span>
-
-              <h3 data-setting="address2">
-                العوايد
-              </h3>
-
-              <span>
-                الإسكندرية
-              </span>
-
+            <div class="branch-detail-list">
+              <p class="branch-detail-row"><span aria-hidden="true">🕒</span><span><strong>مواعيد العمل</strong><br>السبت إلى الخميس: من 12 ظهرًا حتى 12 منتصف الليل.<br><strong>الجمعة:</strong> من 4 عصرًا حتى 12 منتصف الليل.</span></p>
+              <p class="branch-detail-row"><span aria-hidden="true">📞</span><span><strong>رقم الفرع</strong><br><a href="tel:+201551604163" dir="ltr">01551604163</a> — اتصال وواتساب.</span></p>
             </div>
 
-            <span class="branch-arrow">
-              ←
-            </span>
-
-          </a>
-
-
+            <div class="branch-card-actions">
+              <a class="branch-action branch-action-map" href="https://maps.app.goo.gl/kB2BvbiEgyp89AFR7" target="_blank" rel="noopener noreferrer">📍 افتح الخريطة</a>
+              <a class="branch-action" href="tel:+201551604163">📞 اتصل بالفرع</a>
+              <a class="branch-action branch-action-whatsapp" href="https://wa.me/201551604163" target="_blank" rel="noopener noreferrer">💬 واتساب</a>
+            </div>
+          </article>
         </div>
-
       </div>
-
     </section>
 
 
@@ -2195,11 +2301,10 @@
             </a>
 
             <a
-              href="tel:01223599165"
+              href="tel:+201551604163"
               class="btn-outline"
-              data-setting="phone1"
             >
-              📞 01223599165
+              📞 اتصال بفرع العوايد — 01551604163
             </a>
 
             <a
@@ -2418,18 +2523,16 @@
             💬 واتساب
           </a>
 
-          <a
-            href="tel:01223599165"
-            data-setting="phone1"
-          >
-            📞 01223599165
+          <a href="tel:+201551604163">
+            📞 فرع العوايد: 01551604163
           </a>
 
-          <a
-            href="tel:01222474380"
-            data-setting="phone2"
-          >
-            📞 01222474380
+          <a href="tel:+201222474380">
+            📞 فرع كوبري الناموس: 01222474380
+          </a>
+
+          <a href="tel:+201201344419">
+            📞 رقم إضافي لفرع كوبري الناموس: 01201344419
           </a>
 
           <a href="./contact.html">
@@ -2562,15 +2665,14 @@
 
       "use strict";
 
-    function initAboTarekMobileMenu() {
+      function initAboTarekMobileMenu() {
 
-  // app.js هو المسؤول عن المنيو لتجنب تكرار الأحداث
-  if (window.ABO_TAREK_APP) {
-    return;
-  }
+        const menu =
+          document.getElementById("mobileMenu");
 
-  const menu =
-    document.getElementById("mobileMenu");
+        const button =
+          document.getElementById("menuBtn");
+
         const cartCount =
           document.getElementById(
             "mobileMenuCartCount"
@@ -2899,7 +3001,7 @@
 
   </script>
 
-<script src="./store-tools.js?v=1" defer></script>
+
 </body>
 
 </html>
