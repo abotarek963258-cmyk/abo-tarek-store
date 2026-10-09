@@ -2,7 +2,7 @@
 /* =========================================================
    ABO TAREK STORE
    APP ENGINE
-   FINAL STABLE EDITION 1.2
+   FINAL STABLE EDITION 1.3
    Public Data • Products • Sections • Search • Home
    Mobile Menu • Cart Bridge • Site Settings • Valid Offers
    ========================================================= */
@@ -160,6 +160,11 @@
 
         if (Array.isArray(parsed)) {
           images = parsed
+            .map(cleanText)
+            .filter(Boolean);
+        } else {
+          images = product.images
+            .split(/[,\n|]+/)
             .map(cleanText)
             .filter(Boolean);
         }
@@ -380,7 +385,7 @@
   }
 
   /* =========================================================
-     PRICE
+     PRICE AND OFFERS
      ========================================================= */
 
   function getProductPrice(product) {
@@ -388,27 +393,43 @@
       return 0;
     }
 
+    const offerPrice = safeNumber(product.offerPrice, 0);
+    const regularPrice = safeNumber(product.price, 0);
+
+    /*
+      نستخدم سعر العرض إذا كان صالحًا وأقل من السعر الأصلي.
+      هذا يمنع سعر عرض غير صحيح من استبدال السعر العادي.
+    */
+    const originalPrice = getOfferOriginalPrice(product);
+
+    if (
+      offerPrice > 0 &&
+      originalPrice > 0 &&
+      offerPrice < originalPrice
+    ) {
+      return offerPrice;
+    }
+
+    /*
+      الحفاظ على إعدادات التسعير المخصصة
+      للمنتجات التي ليس لديها عرض صالح.
+    */
     try {
       if (typeof CFG.getProductPrice === "function") {
-        return safeNumber(
-          CFG.getProductPrice(product),
-          0
+        return Math.max(
+          0,
+          safeNumber(CFG.getProductPrice(product), regularPrice)
         );
       }
     } catch (error) {}
 
-    const offerPrice = safeNumber(product.offerPrice, 0);
-
-    if (offerPrice > 0) {
-      return offerPrice;
-    }
-
-    return safeNumber(product.price, 0);
+    return regularPrice;
   }
 
   /*
-    السعر الأصلي المستخدم للمقارنة في العروض:
-    oldPrice أولاً، ثم price.
+    السعر الأصلي:
+    1. oldPrice إذا كان مسجلاً.
+    2. وإلا price.
   */
   function getOfferOriginalPrice(product) {
     if (!product) {
@@ -915,8 +936,9 @@
     const isOffer = isValidOffer(product);
 
     /*
-      في حالة العرض الصحيح، السعر الحالي هو offerPrice.
-      في غير ذلك، نستخدم السعر العادي.
+      لو المنتج عليه خصم صحيح:
+      السعر المعروض هو offerPrice.
+      السعر المشطوب هو oldPrice أو price.
     */
     const price = isOffer
       ? safeNumber(product.offerPrice, 0)
@@ -1137,9 +1159,8 @@
     const offers = getOfferProducts();
 
     /*
-      قسم العروض:
-      يظهر فقط لو فيه عروض صحيحة بأسعار فعلية.
-      لو مفيش عروض، نخفي القسم ونفرغ محتواه.
+      قسم العروض يظهر فقط عندما توجد عروض فعلية.
+      عند عدم وجود عروض، يتم إخفاء القسم ومسح محتواه.
     */
     const offersSection = document.querySelector("#offers");
     const offersGrid = document.querySelector("#offersGrid");
@@ -1149,7 +1170,7 @@
     }
 
     if (offersGrid) {
-      if (offers.length) {
+      if (offers.length > 0) {
         renderProductCollection(
           "#offersGrid",
           offers,
@@ -1196,7 +1217,7 @@
       }
     } catch (error) {}
 
-    if (!recent.length) {
+    if (!Array.isArray(recent) || !recent.length) {
       section.hidden = true;
       return;
     }
@@ -1263,7 +1284,6 @@
     currentSearch = cleanText(query);
 
     const filtered = getFilteredProducts();
-
     const grid = document.querySelector("#productsGrid");
 
     if (grid) {
@@ -1352,8 +1372,8 @@
         typeof features.addToCart === "function"
       ) {
         /*
-          نمرر المنتج الأصلي من البيانات.
-          منطق السلة النهائي يظل داخل features.js.
+          نمرر المنتج الأصلي حتى يظل منطق السلة
+          والكمية والطلب على واتساب داخل features.js.
         */
         features.addToCart(product, 1);
       }
@@ -1413,6 +1433,11 @@
         button.setAttribute(
           "aria-pressed",
           active ? "true" : "false"
+        );
+
+        button.setAttribute(
+          "aria-label",
+          active ? "إزالة من المفضلة" : "إضافة للمفضلة"
         );
 
         const icon = button.querySelector("[data-wishlist-icon]");
@@ -1523,6 +1548,12 @@
 
   function openMobileMenu() {
     if (!mobileMenu) {
+      const elements = getMobileMenuElements();
+      mobileMenuButton = elements.button;
+      mobileMenu = elements.menu;
+    }
+
+    if (!mobileMenu) {
       return;
     }
 
@@ -1546,6 +1577,12 @@
   }
 
   function closeMobileMenu() {
+    if (!mobileMenu) {
+      const elements = getMobileMenuElements();
+      mobileMenuButton = elements.button;
+      mobileMenu = elements.menu;
+    }
+
     if (!mobileMenu) {
       return;
     }
@@ -1627,7 +1664,7 @@
               نقفل القائمة فقط.
             */
             if (
-              element.matches("button") ||
+              element.tagName === "BUTTON" ||
               element.hasAttribute("data-mobile-menu-close")
             ) {
               if (element.tagName === "BUTTON") {
@@ -1649,7 +1686,9 @@
 
       const cartButton = menu.querySelector("[data-cart-button]");
 
-      if (cartButton) {
+      if (cartButton && cartButton.dataset.appMenuCartReady !== "1") {
+        cartButton.dataset.appMenuCartReady = "1";
+
         cartButton.addEventListener("click", event => {
           event.preventDefault();
 
@@ -1670,27 +1709,26 @@
     }
 
     /*
-      مهم:
-      لو زر المنيو عليه data-inline-mobile-menu،
-      فالسكريبت الموجود في index.html هو المسؤول عنه.
-      نمنع إضافة مستمع ثانٍ لنفس الزر.
+      لا نضيف مستمعًا ثانيًا لو الزر مربوط بالفعل.
+      عند وجود data-mobile-menu-toggle في index.html،
+      يجب أن يتولى Controller واحد فقط حدث الضغط.
     */
-    if (
+    const hasInlineToggle =
       button.dataset.inlineMobileMenu === "1" ||
-      button.dataset.appMobileMenuButtonReady === "1"
+      button.dataset.mobileMenuController === "inline";
+
+    if (
+      !hasInlineToggle &&
+      button.dataset.appMobileMenuButtonReady !== "1"
     ) {
-      updateMobileMenuAria(isMobileMenuOpen());
-      updateMobileCartCount();
-      return;
+      button.dataset.appMobileMenuButtonReady = "1";
+
+      button.addEventListener("click", event => {
+        event.preventDefault();
+        event.stopPropagation();
+        toggleMobileMenu();
+      });
     }
-
-    button.dataset.appMobileMenuButtonReady = "1";
-
-    button.addEventListener("click", event => {
-      event.preventDefault();
-      event.stopPropagation();
-      toggleMobileMenu();
-    });
 
     updateMobileMenuAria(isMobileMenuOpen());
     updateMobileCartCount();
@@ -1721,9 +1759,20 @@
       }
     });
 
-    document.addEventListener("abo-tarek:cart-updated", updateMobileCartCount);
-    document.addEventListener("abo-tarek:cart-changed", updateMobileCartCount);
-    document.addEventListener("abo-tarek:features-ready", updateMobileCartCount);
+    document.addEventListener(
+      "abo-tarek:cart-updated",
+      updateMobileCartCount
+    );
+
+    document.addEventListener(
+      "abo-tarek:cart-changed",
+      updateMobileCartCount
+    );
+
+    document.addEventListener(
+      "abo-tarek:features-ready",
+      updateMobileCartCount
+    );
   }
 
   /* =========================================================
@@ -1763,13 +1812,8 @@
     }
 
     document.querySelectorAll("[data-whatsapp]").forEach(button => {
-      if (button.dataset.whatsappReady === "1") {
-        button.href = "https://wa.me/" + number;
-        return;
-      }
-
-      button.dataset.whatsappReady = "1";
       button.href = "https://wa.me/" + number;
+      button.dataset.whatsappReady = "1";
     });
   }
 
@@ -1808,6 +1852,16 @@
         </div>
       `;
     });
+
+    /*
+      لا نترك عنوان قسم العروض ظاهرًا
+      عندما لا توجد منتجات محملة.
+    */
+    const offersSection = document.querySelector("#offers");
+
+    if (offersSection && !products.some(isValidOffer)) {
+      offersSection.hidden = true;
+    }
   }
 
   function setupRetry() {
@@ -1956,7 +2010,7 @@
      ========================================================= */
 
   const API = {
-    version: "final-stable-1.2.0",
+    version: "final-stable-1.3.0",
 
     get products() {
       return products.slice();
@@ -2030,7 +2084,7 @@
 
     /*
       لو عندنا Cache:
-      الصفحة تظهر فوراً، وبعدها تحديث هادئ.
+      الصفحة تظهر فورًا، وبعدها تحديث هادئ.
     */
     if (products.length || sections.length) {
       setLoading(false);
