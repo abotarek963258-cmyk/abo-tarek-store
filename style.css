@@ -5393,3 +5393,134 @@ body.dark-luxury-home .mobile-social.tiktok > span { background:#11151b !importa
   body.dark-luxury-home .contact-section .contact-actions > a { font-size:12px !important; padding:9px 10px !important; }
   body.dark-luxury-home .footer-social .social-link { flex-basis:39px !important; width:39px !important; min-width:39px !important; max-width:39px !important; height:39px !important; min-height:39px !important; max-height:39px !important; }
 }
+
+/* =========================================================
+   ABO TAREK — FINAL NAVIGATION + HEADER CART/WISHLIST POLISH
+   Scoped to the current homepage markup. Keep this at EOF.
+   ========================================================= */
+body.dark-luxury-home .main-nav {
+  position: relative !important;
+  z-index: 900 !important;
+  display: block !important;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(180deg,rgba(9,25,40,.98),rgba(6,17,29,.98)) !important;
+  border-bottom: 1px solid rgba(216,182,106,.18) !important;
+  box-shadow: 0 10px 25px rgba(0,0,0,.12);
+}
+body.dark-luxury-home .main-nav .nav-inner {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+  min-height: 58px;
+  padding-block: 9px !important;
+}
+body.dark-luxury-home .main-nav .nav-inner > a {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 38px;
+  padding: 8px 13px !important;
+  border: 1px solid rgba(216,182,106,.14) !important;
+  border-radius: 999px !important;
+  background: rgba(255,255,255,.025) !important;
+  color: #d9d8d0 !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  line-height: 1.45 !important;
+  text-decoration: none !important;
+  text-decoration-line: none !important;
+  white-space: nowrap;
+  transition: background .18s ease,border-color .18s ease,color .18s ease,transform .18s ease;
+}
+body.dark-luxury-home .main-nav .nav-inner > a::after { content: none !important; display: none !important; }
+body.dark-luxury-home .main-nav .nav-inner > a:hover,
+body.dark-luxury-home .main-nav .nav-inner > a:focus-visible {
+  color: #f5dfa1 !important;
+  background: rgba(216,182,106,.09) !important;
+  border-color: rgba(216,182,106,.42) !important;
+  text-decoration: none !important;
+  outline: none;
+  transform: translateY(-1px);
+}
+body.dark-luxury-home .main-nav .nav-inner > a.active,
+body.dark-luxury-home .main-nav .nav-inner > a[aria-current="page"] {
+  color: #102033 !important;
+  background: linear-gradient(135deg,#f0d99b,#d4ad62) !important;
+  border-color: rgba(255,235,181,.55) !important;
+  box-shadow: 0 7px 18px rgba(212,173,98,.13);
+}
+body.dark-luxury-home .header-count {
+  position: absolute;
+  top: -5px;
+  inset-inline-start: -5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 19px;
+  height: 19px;
+  padding: 0 5px;
+  border: 1px solid rgba(255,255,255,.3);
+  border-radius: 999px;
+  background: #d8b66a;
+  color: #071321;
+  font-size: 10px;
+  font-weight: 900;
+  line-height: 1;
+}
+body.dark-luxury-home .header-btn.cart-header-btn,
+body.dark-luxury-home .header-btn.wishlist-header-btn { position: relative; }
+body.dark-luxury-home .header-btn.cart-header-btn { border-color: rgba(216,182,106,.42) !important; background: linear-gradient(135deg,rgba(216,182,106,.16),rgba(216,182,106,.06)) !important; }
+body.dark-luxury-home .header-btn.wishlist-header-btn .icon { color: #f0b3be; font-size: 20px; }
+body.dark-luxury-home .header-btn.wishlist-header-btn:hover .icon { color: #ffcad2; }
+body.dark-luxury-home .header-btn .icon { line-height: 1; }
+
+/* Shared wishlist drawer — the existing features.js remains the owner of wishlist data. */
+.at-wishlist-overlay { position: fixed; inset: 0; z-index: 100010; display: flex; justify-content: flex-start; background: rgba(2,8,15,.68); opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .22s ease,visibility .22s ease; backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); }
+.at-wishlist-overlay.open { opacity: 1; visibility: visible; pointer-events: auto; }
+.at-wishlist-drawer { width: min(440px,100%); height: 100%; display: flex; flex-direction: column; overflow: hidden; color: #f6f0e4; background: linear-gradient(180deg,#0c2134,#06121f); border-inline-end: 1px solid rgba(216,182,106,.24); box-shadow: 20px 0 70px rgba(0,0,0,.42); transform: translateX(105%); transition: transform .25s ease; }
+.at-wishlist-overlay.open .at-wishlist-drawer { transform: translateX(0); }
+.at-wishlist-header { display:flex; align-items:center; justify-content:space-between; gap:14px; padding:20px; border-bottom:1px solid rgba(216,182,106,.16); }
+.at-wishlist-header > div { display:flex; flex-direction:column; gap:3px; }
+.at-wishlist-header strong { color:#f1d89a; font-size:19px; font-weight:900; }
+.at-wishlist-header small { color:#aab5bd; font-size:11px; }
+.at-wishlist-close { width:40px; height:40px; border:1px solid rgba(216,182,106,.2); border-radius:12px; background:rgba(216,182,106,.08); color:#f1d89a; font-size:27px; cursor:pointer; }
+.at-wishlist-body { flex:1; overflow:auto; padding:14px; }
+.at-wishlist-item { display:grid; grid-template-columns:76px minmax(0,1fr) 34px; align-items:center; gap:11px; padding:10px; margin-bottom:10px; border:1px solid rgba(216,182,106,.14); border-radius:15px; background:rgba(255,255,255,.035); }
+.at-wishlist-item > img { width:76px; height:76px; object-fit:contain; padding:5px; border-radius:10px; background:#f7f2e8; }
+.at-wishlist-item-info { min-width:0; display:flex; flex-direction:column; gap:3px; }
+.at-wishlist-item-info strong { color:#f7f0e4; font-size:12px; line-height:1.7; overflow-wrap:anywhere; }
+.at-wishlist-item-info small { color:#9eabb5; font-size:10px; }
+.at-wishlist-item-info span { color:#e4c477; font-size:11px; font-weight:900; }
+.at-wishlist-item > button { width:32px; height:32px; border:1px solid rgba(255,120,135,.22); border-radius:10px; background:rgba(183,53,67,.1); color:#ffb8c1; font-size:22px; cursor:pointer; }
+.at-wishlist-empty { min-height:230px; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:9px; padding:25px; color:#aeb9c2; }
+.at-wishlist-empty > span { display:grid; place-items:center; width:62px; height:62px; border:1px solid rgba(216,182,106,.22); border-radius:20px; background:rgba(216,182,106,.08); color:#e4c477; font-size:35px; }
+.at-wishlist-empty strong { color:#f5ecd9; font-size:15px; }
+.at-wishlist-empty p { max-width:260px; margin:0; font-size:12px; line-height:1.9; }
+@media (max-width: 900px) {
+  body.dark-luxury-home .main-nav .nav-inner { justify-content:flex-start !important; flex-wrap:nowrap !important; overflow-x:auto; overflow-y:hidden; padding-inline:14px !important; scrollbar-width:none; }
+  body.dark-luxury-home .main-nav .nav-inner::-webkit-scrollbar { display:none; }
+  body.dark-luxury-home .main-nav .nav-inner > a { flex:0 0 auto; }
+}
+@media (max-width: 760px) {
+  body.dark-luxury-home .header-actions .whatsapp-btn,
+  body.dark-luxury-home .header-actions .catalog-shortcut { display:none !important; }
+  body.dark-luxury-home .header-actions { gap:5px !important; }
+  body.dark-luxury-home .header-btn.cart-header-btn,
+  body.dark-luxury-home .header-btn.wishlist-header-btn { width:38px; min-width:38px; height:38px; min-height:38px; padding:0 !important; }
+  body.dark-luxury-home .header-btn.cart-header-btn .label,
+  body.dark-luxury-home .header-btn.wishlist-header-btn .label { display:none !important; }
+  body.dark-luxury-home .header-btn.cart-header-btn .icon { font-size:16px; }
+  body.dark-luxury-home .header-count { min-width:16px; height:16px; font-size:9px; top:-4px; inset-inline-start:-4px; }
+  body.dark-luxury-home .main-nav .nav-inner { min-height:48px; gap:6px !important; padding-block:6px !important; }
+  body.dark-luxury-home .main-nav .nav-inner > a { min-height:34px; padding:6px 11px !important; font-size:11px !important; }
+  .at-wishlist-drawer { width:min(390px,100%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .at-wishlist-overlay,.at-wishlist-drawer { transition:none !important; }
+}
+
