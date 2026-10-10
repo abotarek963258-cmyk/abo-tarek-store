@@ -39,11 +39,11 @@
 
   <!-- Main design -->
   <link rel="stylesheet"
-        href="./style.css?v=6000">
+        href="./style.css?v=7001">
 
   <!-- Features: cart / wishlist / product UI -->
   <link rel="stylesheet"
-        href="./features.css?v=6000">
+        href="./features.css?v=7001">
 
   <style>
     /* =========================================================
@@ -1061,6 +1061,55 @@
         transition-duration: .01ms !important;
       }
     }
+  
+
+    /* FINAL HEADER CONTROLS + MOBILE SIDE MENU */
+    .catalog-header-actions { gap:8px; }
+    .catalog-header-btn { position:relative; flex:0 0 auto; }
+    .catalog-header-count { position:absolute; top:-5px; inset-inline-start:-5px; display:inline-flex; align-items:center; justify-content:center; min-width:18px; height:18px; padding:0 4px; border:1px solid rgba(255,255,255,.25); border-radius:999px; background:var(--catalog-gold); color:#071321; font-size:9px; font-weight:900; line-height:1; }
+    .catalog-wishlist-btn { color:#f3c1cb; font-size:21px; }
+    .catalog-menu-btn { display:none; font-size:21px; }
+    .catalog-mobile-menu { position:fixed; inset:0; z-index:100020; visibility:hidden; opacity:0; pointer-events:none; transition:opacity .22s ease,visibility .22s ease; }
+    .catalog-mobile-menu.is-open { visibility:visible; opacity:1; pointer-events:auto; }
+    .catalog-menu-backdrop { position:absolute; inset:0; width:100%; height:100%; border:0; background:rgba(2,8,15,.72); backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px); }
+    .catalog-mobile-panel { position:absolute; top:0; right:0; display:flex; flex-direction:column; gap:9px; width:min(390px,92vw); height:100%; overflow:auto; padding:18px 15px 22px; border-left:1px solid rgba(212,175,55,.2); background:linear-gradient(180deg,#0b2032,#06121f); box-shadow:-20px 0 65px rgba(0,0,0,.4); transform:translateX(105%); transition:transform .24s ease; }
+    .catalog-mobile-menu.is-open .catalog-mobile-panel { transform:translateX(0); }
+    .catalog-mobile-head { display:flex; align-items:center; justify-content:space-between; gap:12px; padding-bottom:14px; border-bottom:1px solid rgba(212,175,55,.15); }
+    .catalog-mobile-brand { display:flex; align-items:center; gap:10px; min-width:0; }
+    .catalog-mobile-brand img { width:44px; height:44px; object-fit:contain; padding:4px; border-radius:12px; background:#f7f1e4; }
+    .catalog-mobile-brand span { display:flex; flex-direction:column; gap:2px; }
+    .catalog-mobile-brand strong { color:#f7f1e4; font-size:14px; }
+    .catalog-mobile-brand small { color:#d4af37; font-size:10px; }
+    .catalog-mobile-close { flex:0 0 40px; width:40px; height:40px; border:1px solid rgba(212,175,55,.24); border-radius:12px; background:rgba(212,175,55,.08); color:#f0d58a; font-size:26px; cursor:pointer; }
+    .catalog-mobile-welcome { display:flex; align-items:center; gap:10px; padding:13px; margin:4px 0; border:1px solid rgba(212,175,55,.12); border-radius:14px; background:rgba(255,255,255,.035); }
+    .catalog-mobile-welcome > span { display:grid; place-items:center; width:36px; height:36px; border-radius:11px; background:rgba(212,175,55,.1); color:#e4c477; }
+    .catalog-mobile-welcome div { display:flex; flex-direction:column; gap:2px; }
+    .catalog-mobile-welcome strong { color:#f7f1e4; font-size:12px; }
+    .catalog-mobile-welcome small { color:#9daab4; font-size:10px; }
+    .catalog-mobile-link { display:flex; align-items:center; gap:11px; width:100%; min-height:48px; padding:10px 12px; border:1px solid rgba(212,175,55,.12); border-radius:13px; background:rgba(255,255,255,.03); color:#e9e4d9; text-align:right; font:inherit; font-size:12px; text-decoration:none; cursor:pointer; }
+    .catalog-mobile-link > span { display:grid; place-items:center; flex:0 0 30px; width:30px; height:30px; border-radius:9px; background:rgba(212,175,55,.08); color:#e4c477; font-size:16px; }
+    .catalog-mobile-link b { flex:1; font-weight:800; }
+    .catalog-mobile-link i { color:#d4af37; font-style:normal; }
+    .catalog-mobile-link.featured { border-color:rgba(212,175,55,.32); background:linear-gradient(135deg,rgba(212,175,55,.15),rgba(212,175,55,.045)); }
+    .catalog-menu-count { display:inline-flex; align-items:center; justify-content:center; min-width:22px; height:22px; padding:0 5px; border-radius:999px; background:#d4af37; color:#071321; font-size:10px; }
+    .catalog-mobile-contact { display:flex; align-items:center; justify-content:center; gap:8px; min-height:45px; margin-top:5px; border:1px solid rgba(37,211,102,.25); border-radius:12px; background:rgba(37,211,102,.09); color:#c7f4d6; font-size:12px; font-weight:800; }
+    body.catalog-menu-open { overflow:hidden; }
+    @media(max-width:760px) {
+      .catalog-header-inner { gap:8px; }
+      .catalog-header-actions { gap:5px; }
+      .catalog-home-btn { min-width:38px; width:38px; padding:0 !important; }
+      .catalog-home-btn span { display:none; }
+      .catalog-menu-btn { display:inline-flex; }
+      .catalog-header-btn { min-width:38px; height:38px; }
+    }
+    @media(max-width:420px) {
+      .catalog-brand-text { display:none; }
+      .catalog-header-actions { gap:4px; }
+      .catalog-header-btn { min-width:35px; height:36px; }
+      .catalog-home-btn { min-width:35px; width:35px; }
+    }
+    @media(prefers-reduced-motion:reduce) { .catalog-mobile-menu,.catalog-mobile-panel { transition:none !important; } }
+
   </style>
 </head>
 
@@ -1122,13 +1171,31 @@
         </a>
 
         <button
-          class="catalog-header-btn"
+          class="catalog-header-btn catalog-cart-btn"
           type="button"
           id="catalogCartButton"
           aria-label="السلة">
-
           🛒
+          <span class="catalog-header-count" data-cart-count>0</span>
+        </button>
 
+        <button
+          class="catalog-header-btn catalog-wishlist-btn"
+          type="button"
+          data-wishlist-open
+          aria-label="المفضلة">
+          ♡
+          <span class="catalog-header-count" data-wishlist-count>0</span>
+        </button>
+
+        <button
+          class="catalog-header-btn catalog-menu-btn"
+          type="button"
+          id="catalogMenuBtn"
+          aria-label="فتح القائمة"
+          aria-controls="catalogMobileMenu"
+          aria-expanded="false">
+          ☰
         </button>
 
       </div>
@@ -1136,6 +1203,24 @@
     </div>
 
   </header>
+
+  <aside class="catalog-mobile-menu" id="catalogMobileMenu" aria-hidden="true">
+    <button type="button" class="catalog-menu-backdrop" data-catalog-menu-close aria-label="إغلاق القائمة"></button>
+    <nav class="catalog-mobile-panel" aria-label="قائمة الكتالوج">
+      <div class="catalog-mobile-head">
+        <a href="./index.html" class="catalog-mobile-brand"><img src="./assets/logo.png" alt="أبو طارق"><span><strong>أبو طارق</strong><small>للأدوات المنزلية</small></span></a>
+        <button type="button" class="catalog-mobile-close" data-catalog-menu-close aria-label="إغلاق القائمة">×</button>
+      </div>
+      <div class="catalog-mobile-welcome"><span>✦</span><div><strong>أهلاً بيك في أبو طارق</strong><small>اختار اللي محتاجه بسهولة</small></div></div>
+      <a class="catalog-mobile-link featured" href="./index.html" data-catalog-menu-close><span>🏠</span><b>الرجوع للرئيسية</b><i>←</i></a>
+      <a class="catalog-mobile-link" href="#catalogSearch" data-catalog-menu-close><span>🔎</span><b>ابحث عن صنف</b><i>←</i></a>
+      <a class="catalog-mobile-link" href="#catalogSections" data-catalog-menu-close><span>🗂️</span><b>الأقسام</b><i>←</i></a>
+      <a class="catalog-mobile-link" href="#catalogProducts" data-catalog-menu-close><span>🛍️</span><b>كل المنتجات</b><i>←</i></a>
+      <button class="catalog-mobile-link" type="button" data-cart-button data-catalog-menu-close><span>🛒</span><b>السلة</b><strong class="catalog-menu-count" data-cart-count>0</strong></button>
+      <button class="catalog-mobile-link" type="button" data-wishlist-open data-catalog-menu-close><span>♡</span><b>المفضلة</b><strong class="catalog-menu-count" data-wishlist-count>0</strong></button>
+      <a class="catalog-mobile-contact" href="https://wa.me/201551604163" target="_blank" rel="noopener noreferrer"><span>💬</span> تواصل على واتساب</a>
+    </nav>
+  </aside>
 
   <!-- =======================================================
        MAIN
@@ -1276,8 +1361,8 @@
        app.js IS INTENTIONALLY NOT LOADED HERE.
        ======================================================= -->
 
-  <script src="./config.js?v=6000"></script>
-  <script src="./features.js?v=6000" defer></script>
+  <script src="./config.js?v=7001"></script>
+  <script src="./features.js?v=7001" defer></script>
 
   <script>
     /* =========================================================
@@ -2080,17 +2165,28 @@
             return;
           }
 
-      
           const wishlistButton =
             event.target.closest(
               "[data-wishlist-id]"
             );
 
           if (wishlistButton) {
-            // features.js هو المسؤول عن تنفيذ ضغطة القلب.
-            // لا ننفذ toggleWishlist هنا مرة ثانية.
+
+            const id =
+              wishlistButton.dataset.wishlistId;
+
+            const product =
+              state.products.find(
+                item => item.id === id
+              );
+
+            if (product) {
+              toggleWishlist(product);
+            }
+
             return;
           }
+
           const detailsButton =
             event.target.closest(
               "[data-details-product]"
@@ -2328,6 +2424,67 @@
     })();
   </script>
 
-<script src="./store-tools.js?v=2" defer></script>
+</body>
+
+  <script>
+    (() => {
+      "use strict";
+      const menu = document.getElementById("catalogMobileMenu");
+      const button = document.getElementById("catalogMenuBtn");
+      const close = () => { if (!menu) return; menu.classList.remove("is-open"); menu.setAttribute("aria-hidden","true"); document.body.classList.remove("catalog-menu-open"); button?.setAttribute("aria-expanded","false"); };
+      const open = () => { if (!menu) return; menu.classList.add("is-open"); menu.setAttribute("aria-hidden","false"); document.body.classList.add("catalog-menu-open"); button?.setAttribute("aria-expanded","true"); };
+      button?.addEventListener("click", open);
+      menu?.addEventListener("click", event => { if (event.target.closest("[data-catalog-menu-close]")) close(); });
+      document.addEventListener("keydown", event => { if (event.key === "Escape") close(); });
+      menu?.querySelectorAll("a[data-catalog-menu-close]").forEach(link => link.addEventListener("click", close));
+    })();
+  </script>
+
+  <!-- Shared wishlist drawer, using the existing features.js API -->
+  <script>
+    (() => {
+      "use strict";
+      const STORAGE_KEY = "abo_tarek_wishlist_v1";
+      const esc = value => String(value ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
+      const api = () => window.ABO_TAREK_FEATURES || null;
+      const items = () => { const f=api(); if(f && typeof f.getWishlist==="function"){const v=f.getWishlist();if(Array.isArray(v))return v;} try{const v=JSON.parse(localStorage.getItem(STORAGE_KEY)||"[]");return Array.isArray(v)?v:[];}catch(_){return [];} };
+      const price = p => {const o=Number(p?.offerPrice),r=Number(p?.price),offer=p?.isOffer===true||p?.isOffer===1||p?.isOffer==="1"||String(p?.isOffer).toLowerCase()==="true";if(offer&&Number.isFinite(o)&&o>0)return o;if(Number.isFinite(r)&&r>0)return r;if(Number.isFinite(o)&&o>0)return o;return null;};
+      const money = n => {try{return new Intl.NumberFormat("ar-EG").format(n)+" ج.م";}catch(_){return n+" ج.م";}};
+      let root=null;
+      function render(){
+        if(!root){root=document.createElement("div");root.id="aboTarekWishlistDrawer";root.className="at-wishlist-overlay";root.innerHTML=`<aside class="at-wishlist-drawer" role="dialog" aria-modal="true" aria-label="المفضلة"><header class="at-wishlist-header"><div><strong>قائمة المفضلة</strong><small>الأصناف اللي اخترتها</small></div><button type="button" class="at-wishlist-close" data-wishlist-close aria-label="إغلاق المفضلة">×</button></header><div class="at-wishlist-body" id="atWishlistBody"></div></aside>`;document.body.appendChild(root);
+          root.addEventListener("click",event=>{if(event.target===root||event.target.closest("[data-wishlist-close]"))close();const del=event.target.closest("[data-wishlist-remove]");if(del){const f=api();if(f&&typeof f.removeFromWishlist==="function")f.removeFromWishlist(del.dataset.wishlistRemove);else{try{localStorage.setItem(STORAGE_KEY,JSON.stringify(items().filter(p=>String(typeof p==="object"?p.id:p)!==String(del.dataset.wishlistRemove))));}catch(_){}}draw();}});
+        }
+        const list=items();document.querySelectorAll("[data-wishlist-count]").forEach(el=>el.textContent=String(list.length));const body=root.querySelector("#atWishlistBody");
+        if(!list.length){body.innerHTML=`<div class="at-wishlist-empty"><span>♡</span><strong>المفضلة لسه فاضية</strong><p>اضغط على علامة القلب في أي منتج عشان تحفظه هنا.</p></div>`;return;}
+        body.innerHTML=list.map(raw=>{const p=typeof raw==="object"&&raw?raw:{id:raw,name:"منتج محفوظ"};const n=price(p);return `<article class="at-wishlist-item"><img src="${esc(p.image||"./assets/logo.png")}" alt="${esc(p.name||"منتج")}" loading="lazy" onerror="this.onerror=null;this.src='./assets/logo.png';"><div class="at-wishlist-item-info"><strong>${esc(p.name||"منتج")}</strong><small>${esc(p.category||"أبو طارق")}</small><span>${n===null?"السعر عند الطلب":money(n)}</span></div><button type="button" data-wishlist-remove="${esc(p.id)}" aria-label="حذف من المفضلة">×</button></article>`;}).join("");
+      }
+      function draw(){render();}
+      function open(){render();root.classList.add("open");document.body.classList.add("at-no-scroll");}
+      function close(){if(root)root.classList.remove("open");document.body.classList.remove("at-no-scroll");}
+      /* One wishlist click owner: prevent catalog + features.js duplicate toggles. */
+      document.addEventListener("click",event=>{
+        const button=event.target.closest(".wishlist-btn[data-wishlist-id], .catalog-wishlist-btn[data-wishlist-id]");
+        if(!button)return;
+        const f=api();if(!f||typeof f.toggleWishlist!=="function")return;
+        const card=button.closest(".product-card, .catalog-product-card, [data-product-id]");
+        const id=String(button.dataset.wishlistId||button.dataset.productId||card?.dataset.productId||"");if(!id||!card)return;
+        const text=selector=>card.querySelector(selector)?.textContent?.trim()||"";
+        const digits=value=>String(value||"").replace(/[٠-٩]/g,d=>"٠١٢٣٤٥٦٧٨٩".indexOf(d));
+        const parse=value=>{const clean=digits(value).replace(/,/g,"").replace(/[^0-9.]/g,"");const n=Number(clean);return clean&&Number.isFinite(n)&&n>0?n:null;};
+        const current=parse(text(".product-card-pricing .product-price, .catalog-price-box .catalog-price, .catalog-price-box .product-price, .catalog-price, .product-price, .current-price"));
+        const old=parse(text(".product-old-price, .catalog-old-price, .old-price"));
+        const offer=Boolean(card.querySelector(".product-offer-badge, .catalog-offer-badge, .offer-badge"));
+        const product={id,name:text(".product-card-title, .catalog-product-name, .product-name, h2, h3")||"منتج",category:text(".product-card-category, .catalog-product-category, .product-category"),description:text(".product-card-description, .catalog-product-description, .product-description"),image:card.querySelector("img")?.currentSrc||card.querySelector("img")?.src||"",price:current,oldPrice:old,offerPrice:offer?current:null,isOffer:offer};
+        event.preventDefault();event.stopImmediatePropagation();f.toggleWishlist(product);
+      },true);
+      document.addEventListener("click",event=>{const trigger=event.target.closest("[data-wishlist-open]");if(trigger){event.preventDefault();open();}});
+      document.addEventListener("keydown",event=>{if(event.key==="Escape")close();});
+      ["abo:tarek:wishlist:add","abo:tarek:wishlist:remove","abo:tarek:features-ready","abo-tarek:features-ready"].forEach(name=>document.addEventListener(name,()=>{document.querySelectorAll("[data-wishlist-count]").forEach(el=>el.textContent=String(items().length));if(root?.classList.contains("open"))draw();}));
+      const init=()=>document.querySelectorAll("[data-wishlist-count]").forEach(el=>el.textContent=String(items().length));if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init,{once:true});else init();
+    })();
+  </script>
+
+
 </body>
 </html>
