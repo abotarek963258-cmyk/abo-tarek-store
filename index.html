@@ -210,12 +210,12 @@
 
   <link
     rel="stylesheet"
-    href="./style.css?v=7001"
+    href="./style.css?v=7000"
   >
 
   <link
     rel="stylesheet"
-    href="./features.css?v=7001"
+    href="./features.css?v=7000"
   >
 
   <!-- =========================================================
@@ -1062,11 +1062,11 @@
 
         <a
           href="./sections.html"
-          class="header-btn catalog-shortcut"
+          class="header-btn"
           aria-label="كل الأصناف"
         >
 
-          <span class="icon" aria-hidden="true">
+          <span class="icon">
             🛍️
           </span>
 
@@ -1076,27 +1076,6 @@
 
         </a>
 
-        <button
-          class="header-btn cart-header-btn"
-          type="button"
-          data-cart-button
-          aria-label="فتح السلة"
-        >
-          <span class="icon" aria-hidden="true">🛒</span>
-          <span class="label">السلة</span>
-          <span class="header-count" data-cart-count>0</span>
-        </button>
-
-        <button
-          class="header-btn wishlist-header-btn"
-          type="button"
-          data-wishlist-open
-          aria-label="فتح المفضلة"
-        >
-          <span class="icon" aria-hidden="true">♡</span>
-          <span class="label">المفضلة</span>
-          <span class="header-count wishlist-count" data-wishlist-count>0</span>
-        </button>
 
         <button
           class="menu-btn"
@@ -1282,23 +1261,12 @@
           <strong
             class="mobile-menu-cart-count"
             id="mobileMenuCartCount"
-            data-cart-count
           >
             0
           </strong>
 
         </button>
 
-        <button
-          type="button"
-          class="mobile-menu-link mobile-menu-button mobile-menu-wishlist-button"
-          data-wishlist-open
-          data-mobile-menu-close
-        >
-          <span class="mobile-menu-link-icon">♡</span>
-          <span>المفضلة</span>
-          <strong class="mobile-menu-cart-count" data-wishlist-count>0</strong>
-        </button>
 
         <a
           href="#categories"
@@ -2678,9 +2646,9 @@
 
   <script src="./config.js?v=7000"></script>
 
-  <script src="./features.js?v=7001" defer></script>
+  <script src="./features.js?v=7000" defer></script>
 
-  <script src="./app.js?v=7001" defer></script>
+  <script src="./app.js?v=7000" defer></script>
 
   <script src="./analytics.js?v=7000" defer></script>
 
@@ -2817,10 +2785,6 @@
 
 
         function openMenu() {
-
-          if (!isMobile()) {
-            return;
-          }
 
           menu.classList.add("is-open");
 
@@ -3035,160 +2999,5 @@
 
 
 </body>
-
-  <!-- =========================================================
-       SHARED WISHLIST DRAWER — homepage + catalog
-       Uses the existing features.js wishlist API and storage.
-       ========================================================= -->
-  <script>
-    (() => {
-      "use strict";
-      const STORAGE_KEY = "abo_tarek_wishlist_v1";
-      const escapeHTML = (value) => String(value ?? "")
-        .replace(/&/g, "&amp;").replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;").replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-      const getFeatures = () => window.ABO_TAREK_FEATURES || null;
-      const getWishlist = () => {
-        const api = getFeatures();
-        if (api && typeof api.getWishlist === "function") {
-          const items = api.getWishlist();
-          if (Array.isArray(items)) return items;
-        }
-        try {
-          const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-          return Array.isArray(saved) ? saved : [];
-        } catch (_) { return []; }
-      };
-      const priceOf = (product) => {
-        const offer = Number(product?.offerPrice);
-        const regular = Number(product?.price);
-        if ((product?.isOffer === true || product?.isOffer === 1 || product?.isOffer === "1" || String(product?.isOffer).toLowerCase() === "true") && Number.isFinite(offer) && offer > 0) return offer;
-        if (Number.isFinite(regular) && regular > 0) return regular;
-        if (Number.isFinite(offer) && offer > 0) return offer;
-        return null;
-      };
-      const formatPrice = (value) => {
-        try { return new Intl.NumberFormat("ar-EG").format(value) + " ج.م"; }
-        catch (_) { return value + " ج.م"; }
-      };
-      let overlay = null;
-      function ensureDrawer() {
-        if (overlay) return overlay;
-        overlay = document.createElement("div");
-        overlay.className = "at-wishlist-overlay";
-        overlay.id = "aboTarekWishlistDrawer";
-        overlay.innerHTML = `
-          <aside class="at-wishlist-drawer" role="dialog" aria-modal="true" aria-label="المفضلة">
-            <header class="at-wishlist-header">
-              <div><strong>قائمة المفضلة</strong><small>الأصناف اللي اخترتها</small></div>
-              <button type="button" class="at-wishlist-close" data-wishlist-close aria-label="إغلاق المفضلة">×</button>
-            </header>
-            <div class="at-wishlist-body" id="atWishlistBody"></div>
-          </aside>`;
-        document.body.appendChild(overlay);
-        overlay.addEventListener("click", (event) => {
-          if (event.target === overlay || event.target.closest("[data-wishlist-close]")) closeDrawer();
-          const remove = event.target.closest("[data-wishlist-remove]");
-          if (remove) {
-            const api = getFeatures();
-            if (api && typeof api.removeFromWishlist === "function") {
-              api.removeFromWishlist(remove.dataset.wishlistRemove);
-            } else {
-              const next = getWishlist().filter(item => String(typeof item === "object" ? item.id : item) !== String(remove.dataset.wishlistRemove));
-              try { localStorage.setItem(STORAGE_KEY, JSON.stringify(next)); } catch (_) {}
-            }
-            renderDrawer();
-          }
-        });
-        return overlay;
-      }
-      function renderDrawer() {
-        const root = ensureDrawer();
-        const body = root.querySelector("#atWishlistBody");
-        const items = getWishlist();
-        document.querySelectorAll("[data-wishlist-count]").forEach(el => { el.textContent = String(items.length); });
-        if (!items.length) {
-          body.innerHTML = `<div class="at-wishlist-empty"><span>♡</span><strong>المفضلة لسه فاضية</strong><p>اضغط على علامة القلب في أي منتج عشان تحفظه هنا.</p></div>`;
-          return;
-        }
-        body.innerHTML = items.map(item => {
-          const product = typeof item === "object" && item ? item : {id:item, name:"منتج محفوظ"};
-          const price = priceOf(product);
-          return `<article class="at-wishlist-item" data-wishlist-item="${escapeHTML(product.id)}">
-            <img src="${escapeHTML(product.image || "./assets/logo.png")}" alt="${escapeHTML(product.name || "منتج")}" loading="lazy" onerror="this.onerror=null;this.src='./assets/logo.png';">
-            <div class="at-wishlist-item-info"><strong>${escapeHTML(product.name || "منتج")}</strong><small>${escapeHTML(product.category || "أبو طارق")}</small><span>${price === null ? "السعر عند الطلب" : formatPrice(price)}</span></div>
-            <button type="button" data-wishlist-remove="${escapeHTML(product.id)}" aria-label="حذف من المفضلة">×</button>
-          </article>`;
-        }).join("");
-      }
-      function openDrawer() {
-        const root = ensureDrawer();
-        renderDrawer();
-        root.classList.add("open");
-        document.body.classList.add("at-no-scroll");
-      }
-      function closeDrawer() {
-        if (!overlay) return;
-        overlay.classList.remove("open");
-        document.body.classList.remove("at-no-scroll");
-      }
-      /* One wishlist click owner: prevent app.js + features.js from toggling the same heart twice. */
-      document.addEventListener("click", (event) => {
-        const button = event.target.closest(".wishlist-btn[data-wishlist-id], .catalog-wishlist-btn[data-wishlist-id]");
-        if (!button) return;
-        const api = getFeatures();
-        if (!api || typeof api.toggleWishlist !== "function") return;
-        const card = button.closest(".product-card, .catalog-product-card, [data-product-id]");
-        const id = String(button.dataset.wishlistId || button.dataset.productId || card?.dataset.productId || "");
-        if (!id || !card) return;
-        const readText = selector => card.querySelector(selector)?.textContent?.trim() || "";
-        const normalizeDigits = value => String(value || "").replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d));
-        const parsePrice = value => {
-          const clean = normalizeDigits(value).replace(/,/g, "").replace(/[^0-9.]/g, "");
-          const number = Number(clean);
-          return clean && Number.isFinite(number) && number > 0 ? number : null;
-        };
-        const currentPriceText = readText(".product-card-pricing .product-price, .catalog-price-box .catalog-price, .catalog-price-box .product-price, .catalog-price, .product-price, .current-price");
-        const oldPriceText = readText(".product-old-price, .catalog-old-price, .old-price");
-        const currentPrice = parsePrice(currentPriceText);
-        const oldPrice = parsePrice(oldPriceText);
-        const isOffer = Boolean(card.querySelector(".product-offer-badge, .catalog-offer-badge, .offer-badge"));
-        const product = {
-          id,
-          name: readText(".product-card-title, .catalog-product-name, .product-name, h2, h3") || "منتج",
-          category: readText(".product-card-category, .catalog-product-category, .product-category"),
-          description: readText(".product-card-description, .catalog-product-description, .product-description"),
-          image: card.querySelector("img")?.currentSrc || card.querySelector("img")?.src || "",
-          price: currentPrice,
-          oldPrice,
-          offerPrice: isOffer ? currentPrice : null,
-          isOffer
-        };
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        api.toggleWishlist(product);
-      }, true);
-
-      document.addEventListener("click", (event) => {
-        const trigger = event.target.closest("[data-wishlist-open]");
-        if (!trigger) return;
-        event.preventDefault();
-        openDrawer();
-      });
-      document.addEventListener("keydown", (event) => { if (event.key === "Escape") closeDrawer(); });
-      ["abo:tarek:wishlist:add", "abo:tarek:wishlist:remove", "abo:tarek:features-ready", "abo-tarek:features-ready"].forEach(name => document.addEventListener(name, () => {
-        document.querySelectorAll("[data-wishlist-count]").forEach(el => { el.textContent = String(getWishlist().length); });
-        if (overlay?.classList.contains("open")) renderDrawer();
-      }));
-      const updateCounts = () => {
-        const count = getWishlist().length;
-        document.querySelectorAll("[data-wishlist-count]").forEach(el => { el.textContent = String(count); });
-      };
-      if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", updateCounts, {once:true});
-      else updateCounts();
-    })();
-  </script>
-
 
 </html>
