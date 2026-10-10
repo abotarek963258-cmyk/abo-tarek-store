@@ -1111,27 +1111,6 @@
     @media(prefers-reduced-motion:reduce) { .catalog-mobile-menu,.catalog-mobile-panel { transition:none !important; } }
 
   </style>
-
-  <style id="catalog-location-banner-styles">
-    .catalog-location-banner{
-      display:flex;align-items:center;justify-content:space-between;gap:22px;
-      margin:0 0 24px;padding:clamp(18px,3vw,28px);
-      border:1px solid rgba(212,175,55,.34);border-radius:22px;
-      background:radial-gradient(circle at 100% 0%,rgba(212,175,55,.16),transparent 42%),linear-gradient(135deg,#0b2035 0%,#071321 72%,#0d263c 100%);
-      box-shadow:0 14px 34px rgba(4,14,25,.14);color:#f6f0e2;
-    }
-    .catalog-location-copy{min-width:0;flex:1}
-    .catalog-location-kicker{display:inline-flex;align-items:center;gap:7px;margin-bottom:8px;color:#e5c77d;font-size:12px;font-weight:900;letter-spacing:.2px}
-    .catalog-location-copy h2{margin:0 0 8px;color:#fff7e6;font-size:clamp(20px,3vw,29px);line-height:1.35;font-weight:900}
-    .catalog-location-copy p{margin:0;color:#d7d9dc;font-size:14px;line-height:1.9;max-width:680px}
-    .catalog-location-home{display:inline-flex;align-items:center;justify-content:center;gap:9px;flex:0 0 auto;min-height:48px;padding:12px 17px;border:1px solid #e4c77d;border-radius:13px;background:linear-gradient(135deg,#f1d995,#d4af62);color:#071321;text-decoration:none;font-size:13px;font-weight:900;box-shadow:0 7px 18px rgba(0,0,0,.18);transition:transform .2s ease,filter .2s ease}
-    .catalog-location-home:hover{transform:translateY(-2px);filter:brightness(1.04)}
-    .catalog-location-home span:first-child{font-size:19px;line-height:1}
-    .catalog-location-home b{font-size:18px}
-    @media(max-width:640px){.catalog-location-banner{align-items:stretch;flex-direction:column;gap:15px;margin-bottom:19px;padding:18px;border-radius:17px}.catalog-location-copy h2{font-size:21px}.catalog-location-copy p{font-size:13px}.catalog-location-home{width:100%;box-sizing:border-box;min-height:47px}}
-    @media(prefers-reduced-motion:reduce){.catalog-location-home{transition:none}}
-  </style>
-
 </head>
 
 <body>
@@ -1247,36 +1226,22 @@
        MAIN
        ======================================================= -->
 
+  <style>
+    .catalog-context-banner{max-width:1180px;margin:22px auto 0;padding:clamp(20px,3vw,30px);border:1px solid rgba(212,175,55,.32);border-radius:22px;background:radial-gradient(circle at 95% 0%,rgba(212,175,55,.14),transparent 38%),linear-gradient(135deg,#0b2035 0%,#071321 68%,#101d2a 100%);box-shadow:0 14px 34px rgba(4,14,24,.12);display:flex;align-items:center;justify-content:space-between;gap:20px;color:#f6f0e2}
+    .catalog-context-copy{min-width:0}.catalog-context-kicker{display:inline-flex;align-items:center;gap:7px;color:#d4af37;font-size:12px;font-weight:800;letter-spacing:.2px;margin-bottom:7px}.catalog-context-banner h1{margin:0 0 8px;font-size:clamp(22px,3vw,32px);line-height:1.35;font-weight:900;color:#fff8e8}.catalog-context-banner p{margin:0;color:rgba(246,240,226,.78);font-size:14px;line-height:1.9}.catalog-context-home{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:48px;padding:12px 19px;border-radius:13px;background:linear-gradient(135deg,#e6c65b,#c89d26);color:#101b27!important;text-decoration:none!important;font-weight:900;font-size:14px;box-shadow:0 8px 20px rgba(212,175,55,.18);transition:transform .18s ease,filter .18s ease}.catalog-context-home:hover{transform:translateY(-2px);filter:brightness(1.04)}
+    @media(max-width:700px){.catalog-context-banner{margin:14px 12px 0;align-items:stretch;flex-direction:column;gap:15px;border-radius:17px}.catalog-context-banner p{font-size:13px}.catalog-context-home{width:100%;box-sizing:border-box}}
+  </style>
+  <section class="catalog-context-banner" aria-labelledby="catalogContextTitle">
+    <div class="catalog-context-copy">
+      <div class="catalog-context-kicker">✦ أنت الآن داخل الكتالوج</div>
+      <h1 id="catalogContextTitle">كتالوج أبو طارق للأدوات المنزلية</h1>
+      <p>تصفّح الأقسام واكتشف كل الأصناف بسهولة. لو حابب ترجع للموقع الرئيسي، استخدم الزرار هنا.</p>
+    </div>
+    <a class="catalog-context-home" href="./index.html" aria-label="الرجوع إلى الصفحة الرئيسية">⌂ الرجوع للصفحة الرئيسية</a>
+  </section>
+
   <main class="catalog-page">
 
-    <section class="catalog-location-banner" aria-label="أنت داخل كتالوج أبو طارق">
-      <div class="catalog-location-copy">
-        <span class="catalog-location-kicker">✦ كتالوج أبو طارق</span>
-        <h2>أنت الآن في الكتالوج</h2>
-        <p>تصفّح الأقسام واكتشف كل الأصناف، ولو حابب ترجع للموقع الرئيسي تقدر من الزرار هنا.</p>
-      </div>
-      <a class="catalog-location-home" href="./index.html">
-        <span aria-hidden="true">⌂</span>
-        <span>الرجوع للصفحة الرئيسية</span>
-        <b aria-hidden="true">←</b>
-      </a>
-    </section>
-
-    <section class="catalog-heading">
-
-      <div class="catalog-eyebrow">
-        كتالوج أبو طارق
-      </div>
-
-      <h1>
-        كل الأصناف
-      </h1>
-
-      <p>
-        تصفح منتجات أبو طارق واختار اللي يناسب بيتك بسهولة.
-      </p>
-
-    </section>
 
     <!-- SEARCH -->
 
@@ -2457,6 +2422,8 @@
 
     })();
   </script>
+
+</body>
 
   <script>
     (() => {
